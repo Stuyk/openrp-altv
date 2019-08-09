@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+  <head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+	<link rel="stylesheet" href="./style.css">
+  </head>
+  <body style="background-color: rgba(255, 255, 255, 0.2) !important;">
+	<div class="card" style="width: 18rem;" id="registerbody">
+	  <div id="fullcard">
+		<div class="card-body">
+		  <h5 class="card-title" id="pagetitle">Existing</h5>
+		  <div class="alert alert-danger small-alert" role="alert" id="alert">Warning</div>
+		  <div class="alert alert-success small-alert" role="alert" id="alertSuccess">Success</div>
+		  
+		  <div class="input-group input-group-sm mb-3">
+			<input type="text" class="form-control" placeholder="Username" id="username">
+		  </div>
+		  <div class="input-group input-group-sm mb-3">
+			<input type="password" class="form-control" placeholder="Password" id="password">
+		  </div>
+		  <div class="input-group input-group-sm mb-3">
+			<input type="password" class="form-control" placeholder="Password Again" id="passwordtwo">
+		  </div>
+		  <button type="button" class="btn btn-sm btn-block btn-primary" id="submit">Submit</button>
+		</div>
+		<div class="card-footer">
+		  <div class="btn-group w-100" role="group">
+			<button type="button" class="btn btn-sm btn-primary" id="existing">Existing Account</button>
+			<button type="button" class="btn btn-sm btn-block btn-secondary" id="register">Register Account</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
+	<script src="app.js" type="text/javascript"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.small-alert {
+    font-size: 9px !important;
+}

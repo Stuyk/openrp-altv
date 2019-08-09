@@ -48,3 +48,19 @@ resources/orp/server/server.mjs
 Example connection string:
 postgresql://postgres:abc123@localhost:5432/altv
 ```
+
+After installing the above; if you don't have a package.json in your main server directory where your .exe is you're going to need to do the following:
+
+```
+npm init
+```
+
+Then press enter a bunch of times until its done stepping you through.
+After you need to install the following packages:
+
+```
+npm install --save typeorm
+npm install --save mysql
+npm install --save pg
+npm install --save sjcl
+```

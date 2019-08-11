@@ -1,5 +1,9 @@
 import sjcl from 'sjcl';
 
+/**
+ * Hash a password with pbkdf2
+ * @param password
+ */
 export function encryptPassword(password) {
     const saltBits = sjcl.random.randomWords(2, 0);
     const salt = sjcl.codec.base64.fromBits(saltBits);
@@ -11,6 +15,7 @@ export function encryptPassword(password) {
     return `${key}$${salt}`;
 }
 
+// Verify a password matches the pbkdf2
 export function verifyPassword(password, storedPasswordHash) {
     const [_key, _salt] = storedPasswordHash.split('$');
     const saltBits = sjcl.codec.base64.toBits(_salt);

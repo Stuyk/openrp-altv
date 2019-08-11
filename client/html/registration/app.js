@@ -44,6 +44,8 @@ $('button').on('click', e => {
 
     if (e.target.id === 'submit') {
         console.log('submitting');
+        $('#submit').prop('disabled', true);
+
         var username = $('#username').val();
         var password = $('#password').val();
         var password2 = $('#passwordtwo').val();
@@ -85,11 +87,13 @@ function changeButtonFocus(id) {
 }
 
 function showAlertMessage(message) {
+    $('#submit').prop('disabled', false);
     $('#alert').html(`Error: ${message}`);
     $('#alert').show();
 }
 
 function showAlertSuccessMessage(message) {
+    $('#submit').prop('disabled', false);
     $('#alertSuccess').html(`Success! ${message}`);
     $('#alertSuccess').show();
 }

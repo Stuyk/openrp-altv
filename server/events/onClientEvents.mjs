@@ -9,3 +9,8 @@ alt.onClient('register', (player, username, password) => {
 alt.onClient('existing', (player, username, password) => {
     alt.emit('login:Event', player, username, password);
 });
+
+alt.onClient('temporaryTeleport', (player, coords) => {
+    player.tempPos = player.pos;
+    player.pos = coords;
+});

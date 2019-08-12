@@ -619,12 +619,12 @@ const facialFeatures = {
 
 const dataGroups = {
   Freckles: [facialFeatures['Freckles'], facialFeatures['FrecklesOpacity']],
-  Lipstick: [facialFeatures['Lipsstick'], facialFeatures['LipstickOpacity'], facialFeatures['LipstickColor'], facialFeatures['facialFeatures']],
+  Lipstick: [facialFeatures['Lipstick'], facialFeatures['LipstickOpacity'], facialFeatures['LipstickColor'], facialFeatures['LipstickColor2']],
   SunDamage: [facialFeatures['SunDamage'], facialFeatures['SunDamageOpacity']],
   Complexion: [facialFeatures['Complexion'], facialFeatures['ComplexionOpacity']],
   Blush: [facialFeatures['Blush'], facialFeatures['BlushOpacity'], facialFeatures['BlushColor']],
   Makeup: [facialFeatures['Makeup'], facialFeatures['MakeupOpacity'], facialFeatures['MakeupColor'], facialFeatures['MakeupColor2']],
-  Ageing: [facialFeatures['Ageing'], facialFeatures['AgeOpacity']],
+  Age: [facialFeatures['Age'], facialFeatures['AgeOpacity']],
   Eyebrows: [facialFeatures['Eyebrows'], facialFeatures['EyebrowsOpacity'], facialFeatures['EyebrowsColor'], facialFeatures['EyebrowsColor2']],
   FacialHair: [facialFeatures['FacialHair'], facialFeatures['FacialHairOpacity'], facialFeatures['FacialHairColor'], facialFeatures['FacialHairColor2']],
   Blemishes: [facialFeatures['Blemish'], facialFeatures['BlemishOpacity']],
@@ -695,53 +695,50 @@ function updatePlayerFace(key) {
 }
 
 // Update the face decor; ie. blemish, sundamage, facial hair, etc.
-function updateFaceDecor(keyInfo) {
-  var labelUsed = facialFeatures[keyInfo].label;
-  var data = [];
+function updateFaceDecor(key) {
+  var labelUsed = facialFeatures[key].label;
 
-  // Get the object keys from the data groups.
-  Object.keys(dataGroups).forEach((key) => {
-    console.log(dataGroups[key][0]['label']);
+  var dataGroupKey = undefined;
 
-    /*
+  for (var data in dataGroups) {
+    var foundData = dataGroups[data].find(dat => dat.label === labelUsed);
+    if (foundData === undefined) continue;
 
-    var index = dataGroups[key].indexOf(x => x.label === labelUsed);
+    dataGroupKey = data;
+    break;
+  }
 
-    console.log(index);
+  if (dataGroupKey === undefined) return;
 
-    if (index === -1)
-      return;
-
-    console.log('Found!?');
-
-
-    /*
-    // Go through each array in the data groups and check for a matching label.
-    for (var i = 0; i < dataGroups[key].length; i++) {
-      console.log(JSON.stringify(dataGroups[key][i]));
-      /*
-      if (dataGroups[key][i].label === labelUsed) {
-        // Send all of the information over; since it also contains the component info.
-        alt.emit('updateFaceDecor', JSON.stringify(dataGroups[key][i]));
-      }
-      
-    }
-    */
-  });
+  alt.emit('updateFaceDecor', JSON.stringify(dataGroups[dataGroupKey]));
 }
 
 // Update the face features such as nosewidth, height, etc.
 function updateFaceFeature(key) {
-  console.log(key);
+  alt.emit('updateFaceFeature', facialFeatures[key].id, facialFeatures[key].value);
 }
 
 // Update the hair for the player.
 function updateHair(key) {
-  console.log(key);
+  var labelUsed = facialFeatures[key].label;
+
+  var dataGroupKey = undefined;
+
+  for (var data in dataGroups) {
+    var foundData = dataGroups[data].find(dat => dat.label === labelUsed);
+    if (foundData === undefined) continue;
+
+    dataGroupKey = data;
+    break;
+  }
+
+  if (dataGroupKey === undefined) return;
+
+  alt.emit('updateHair', JSON.stringify(dataGroups[dataGroupKey]));
 }
 
 function updateEyes(key) {
-  console.log(key);
+  alt.emit('updateEyes', facialFeatures[key].value);
 }
 
 

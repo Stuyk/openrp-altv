@@ -675,6 +675,7 @@ function changeValue(key, increment) {
     }/${facialFeatures[key].max}]</span>`
   );
 
+  // Call the function tied to the object element.
   facialFeatures[key].func(key);
 }
 
@@ -717,10 +718,15 @@ function updateHair(key) {
   alt.emit('updateHair', JSON.stringify(result));
 }
 
+// Update the eyes for the player.
 function updateEyes(key) {
   alt.emit('updateEyes', facialFeatures[key].value);
 }
 
+/**
+ * Returns undefined or the group of elements to pass.
+ * @param {keyFromButton} key 
+ */
 function getGroupByKey(key) {
   var labelUsed = facialFeatures[key].label;
 

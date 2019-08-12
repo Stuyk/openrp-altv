@@ -87,6 +87,27 @@ export function loadCharacterCustomizer() {
     webView.focus();
     alt.showCursor(true);
 
+    // Update Sex
+    webView.on('updateSex', updateSex);
+
+    // Update Head Blend / Player Face
+    webView.on('updatePlayerFace', updatePlayerFace);
+
+    // Update Face Decor; Sun Damage, Lipstick, etc.
+    webView.on('updateFaceDecor', updateFaceDecor);
+
+
+
+
+
+
+
+
+
+
+
+    // Don't use this garbage.
+    /*
     // Setup the events for the webview.
     // Update the player's face.
     webView.on(
@@ -112,15 +133,9 @@ export function loadCharacterCustomizer() {
         }
     );
 
-    // Update Sex
-    webView.on('updateSex', value => {
-        if (value === 0) {
-            resetCamera(native.getHashKey('mp_f_freemode_01'));
-        } else {
-            resetCamera(native.getHashKey('mp_m_freemode_01'));
-        }
-    });
+    
 
+    /*
     // Update Hair Style
     webView.on('updateHairStyle', (hair, colorA, colorB, hairTexture) => {
         native.setPedComponentVariation(modPed, 2, hair, hairTexture, 0);
@@ -299,7 +314,32 @@ export function loadCharacterCustomizer() {
             }
         }
     });
+    */
 }
+
+// Player Sex Updates, for model changes.
+function updateSex(value) {
+    if (value === 0) {
+        resetCamera(native.getHashKey('mp_f_freemode_01'));
+    } else {
+        resetCamera(native.getHashKey('mp_m_freemode_01'));
+    }
+}
+
+// Player Face Updates; for head blend and such.
+function updatePlayerFace(valuesAsJSON) {
+    const values = JSON.parse(valuesAsJSON);
+    native.setPedHeadBlendData(modPed, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], false);
+}
+
+// Player Face Decor, SunDamage, Makeup, Lipstick, etc.
+function updateFaceDecor(valuesAsJSON) {
+    alt.log(valuesAsJSON);
+}
+
+
+
+
 
 function resetCamera(modelToUse) {
     // Delete the new ped.

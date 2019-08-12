@@ -696,21 +696,11 @@ function updatePlayerFace(key) {
 
 // Update the face decor; ie. blemish, sundamage, facial hair, etc.
 function updateFaceDecor(key) {
-  var labelUsed = facialFeatures[key].label;
+  var result = getGroupByKey(key);
 
-  var dataGroupKey = undefined;
+  if (result === undefined) return;
 
-  for (var data in dataGroups) {
-    var foundData = dataGroups[data].find(dat => dat.label === labelUsed);
-    if (foundData === undefined) continue;
-
-    dataGroupKey = data;
-    break;
-  }
-
-  if (dataGroupKey === undefined) return;
-
-  alt.emit('updateFaceDecor', JSON.stringify(dataGroups[dataGroupKey]));
+  alt.emit('updateFaceDecor', JSON.stringify(result));
 }
 
 // Update the face features such as nosewidth, height, etc.
@@ -720,6 +710,18 @@ function updateFaceFeature(key) {
 
 // Update the hair for the player.
 function updateHair(key) {
+  var result = getGroupByKey(key);
+
+  if (result === undefined) return;
+
+  alt.emit('updateHair', JSON.stringify(result));
+}
+
+function updateEyes(key) {
+  alt.emit('updateEyes', facialFeatures[key].value);
+}
+
+function getGroupByKey(key) {
   var labelUsed = facialFeatures[key].label;
 
   var dataGroupKey = undefined;
@@ -732,14 +734,13 @@ function updateHair(key) {
     break;
   }
 
-  if (dataGroupKey === undefined) return;
+  if (dataGroupKey === undefined) return undefined;
 
-  alt.emit('updateHair', JSON.stringify(dataGroups[dataGroupKey]));
+  return dataGroups[dataGroupKey];
 }
 
-function updateEyes(key) {
-  alt.emit('updateEyes', facialFeatures[key].value);
-}
+
+
 
 
 

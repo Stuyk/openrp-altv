@@ -6,7 +6,7 @@ alt.on('connectionComplete', () => {
 
     alt.requestIpl('ex_dt1_02_office_02b');
 
-    var coordLoc = native.getInteriorAtCoords(-141.1987, -620.913, 168.8205);
+    let coordLoc = native.getInteriorAtCoords(-141.1987, -620.913, 168.8205);
     alt.log(`Interior Location ID: ${coordLoc}`);
 
     native.loadInterior(coordLoc);

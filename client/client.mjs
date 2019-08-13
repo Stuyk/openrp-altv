@@ -1,8 +1,15 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+
+// Interiors
 import * as interiors from 'client/interiors/loadinteriors.mjs';
+
+// Customizers
+import * as facialCustomizer from 'client/customizers/character.mjs';
+
+// Update Events
 import * as onDisconnect from 'client/events/onDisconnect.mjs';
-import * as customizers from 'client/customizers/character.mjs';
+import * as onFacialUpdate from 'client/events/onFacialUpdate.mjs';
 
 // Where the gameplay camera starts.
 const startingCamPoint = {
@@ -19,11 +26,11 @@ const pointDirection = {
 };
 
 // Registration Webview; Shows on Client Start
-var registerWebview = new alt.WebView(
+let registerWebview = new alt.WebView(
     'http://resources/orp/client/html/registration/index.html'
 );
 
-var loginCamera = undefined;
+let loginCamera = undefined;
 
 // First function that is executed in this script.
 // Draws the camera, the webview, etc.
@@ -109,12 +116,12 @@ alt.onServer('tpw', tpToWaypoint);
 
 // Temporary Waypoint TP
 function tpToWaypoint() {
-    var waypoint = native.getFirstBlipInfoId(8);
+    let waypoint = native.getFirstBlipInfoId(8);
 
     if (native.doesBlipExist(waypoint)) {
-        var coords = native.getBlipInfoIdCoord(waypoint);
+        let coords = native.getBlipInfoIdCoord(waypoint);
 
-        var [_found, _res] = native.getGroundZFor3dCoord(
+        let [_found, _res] = native.getGroundZFor3dCoord(
             coords.x,
             coords.y,
             coords.z + 100,
@@ -132,6 +139,6 @@ function tpToWaypoint() {
 
 alt.on('keydown', key => {
     if (key === 'O'.charCodeAt(0)) {
-        customizers.loadCharacterCustomizer();
+        alt.emitServer('requestFaceCustomizer');
     }
 });

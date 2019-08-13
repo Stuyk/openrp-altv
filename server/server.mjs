@@ -17,6 +17,7 @@ alt.on('ConnectionComplete', () => {
     import('./events/onPlayerLogout.mjs');
     import('./events/onClientEvents.mjs');
     import('./events/onPlayerJoin.mjs');
+    import('./events/saveEvents.mjs');
 });
 
 chat.registerCmd('pos', player => {

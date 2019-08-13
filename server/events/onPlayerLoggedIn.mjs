@@ -33,7 +33,6 @@ function newCharacter(player) {
     // Take the player and spawn them at the default spawn location.
     player.spawn(defaultSpawn.x, defaultSpawn.y, defaultSpawn.z, 0);
     player.model = 'mp_m_freemode_01';
-    console.log('Creating player. Spawning.');
 
     // Save the new Character data to the database and assign to the player.
     db.upsertData(characterData, 'Character', characterData => {
@@ -55,4 +54,16 @@ function existingCharacter(player, characterData) {
 
     // Setup Character Data for Player
     player.characterData = characterData;
+
+    // Set Character Model
+    const characterFaceData = JSON.parse(characterData.characterface);
+
+    if (characterFaceData['Sex'].value === 0) {
+        player.model = 'mp_f_freemode_01';
+    } else {
+        player.model = 'mp_m_freemode_01';
+    }
+
+    // Apply the face to the player.
+    alt.emitClient(player, 'applyFacialData', characterData.characterface);
 }

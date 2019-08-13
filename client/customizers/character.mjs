@@ -13,18 +13,18 @@ const playerPoint = {
     z: 168.813232421875
 };
 
-var webView = undefined; // Used for the HTML View.
-var characterCamera = undefined; // Used for the Camera Manipulation
-var modPed = undefined; // The pedestrian we create.
-var fov = 28; // The FOV we change with scroll wheel.
-var [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
+let webView = undefined; // Used for the HTML View.
+let characterCamera = undefined; // Used for the Camera Manipulation
+let modPed = undefined; // The pedestrian we create.
+let fov = 28; // The FOV we change with scroll wheel.
+let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
     0,
     0
 ); // Get the current screen resolution the user is using.
-var lastHair = 0; // Get the last hair the player set.
+let lastHair = 0; // Get the last hair the player set.
 
 // Load the character customizer, freeze controls, create camera, and ped.
-export function loadCharacterCustomizer() {
+function loadCharacterCustomizer() {
     if (modPed !== undefined) return;
 
     // Reload Active Res for Reference
@@ -96,225 +96,20 @@ export function loadCharacterCustomizer() {
     // Update Face Decor; Sun Damage, Lipstick, etc.
     webView.on('updateFaceDecor', updateFaceDecor);
 
+    // Update Face Feature
+    webView.on('updateFaceFeature', updateFaceFeature);
 
+    // Update Hair
+    webView.on('updateHair', updateHair);
 
+    // Update Eyes
+    webView.on('updateEyes', updateEyes);
 
+    // Save Entire Face
+    webView.on('setPlayerFacialData', setPlayerFacialData);
 
-
-
-
-
-
-
-    // Don't use this garbage.
-    /*
-    // Setup the events for the webview.
-    // Update the player's face.
-    webView.on(
-        'updateHeadBlend',
-        // fFace - Father Face, mFace - Mother Face, tFace - Third Skin
-        // fMix - Face Mix
-        // sMix = Skin Mix
-        // tMix = Third Mix
-        (fFace, fSkin, mFace, mSkin, tFace, tSkin, fMix, sMix, tMix) => {
-            native.setPedHeadBlendData(
-                modPed,
-                fFace,
-                mFace,
-                tFace,
-                fSkin,
-                mSkin,
-                tSkin,
-                fMix,
-                sMix,
-                tMix,
-                false
-            );
-        }
-    );
-
-    
-
-    /*
-    // Update Hair Style
-    webView.on('updateHairStyle', (hair, colorA, colorB, hairTexture) => {
-        native.setPedComponentVariation(modPed, 2, hair, hairTexture, 0);
-        native.setPedHairColor(modPed, colorA, colorB);
-
-        if (lastHair !== hair) {
-            lastHair = hair;
-
-            const hairTextureVariations = native.getNumberOfPedTextureVariations(
-                modPed,
-                2,
-                hair
-            );
-
-            webView.emit('setHairTextureVariations', hairTextureVariations);
-        }
-    });
-
-    // Update Facial Features - Nose, and stuff. f = face feature
-    // Names are listed inside of the app.js for the names of the ff features.
-    webView.on('updateFacialFeatures', (eyeColor, faceValuesJSON) => {
-        native.setPedEyeColor(modPed, eyeColor);
-        let faceValues = JSON.parse(faceValuesJSON);
-
-        for (var index in faceValues) {
-            native.setPedFaceFeature(modPed, index, faceValues[index]);
-        }
-    });
-
-    webView.on('updateFacialDecor', arrayOfDecor => {
-        let decorData = JSON.parse(arrayOfDecor);
-
-        alt.log(arrayOfDecor);
-
-        for (var index = 0; index < decorData.length; index++) {
-            // Blemish, Blemish Opacity
-            if (index === 0) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    0,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-
-                alt.log('yep that a blemish');
-            }
-
-            // Facial Hair
-            if (index === 2) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    1,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-
-                native.setPedHeadOverlayColor(
-                    modPed,
-                    1,
-                    1,
-                    decorData[index + 2],
-                    decorData[index + 3]
-                );
-            }
-
-            // Eyebrows, Eyebrow Opacity, Eyebrow Color 1, Color 2
-            if (index === 6) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    2,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-
-                native.setPedHeadOverlayColor(
-                    modPed,
-                    2,
-                    1,
-                    decorData[index + 2],
-                    decorData[index + 3]
-                );
-            }
-
-            // Ageing
-            if (index === 10) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    3,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-            }
-
-            // Makeup
-            if (index === 12) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    4,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-
-                native.setPedHeadOverlayColor(
-                    modPed,
-                    4,
-                    2,
-                    decorData[index + 2],
-                    decorData[index + 3]
-                );
-            }
-
-            // Blush
-            if (index === 16) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    5,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-
-                native.setPedHeadOverlayColor(
-                    modPed,
-                    5,
-                    2,
-                    decorData[index + 2],
-                    decorData[index + 2]
-                );
-            }
-
-            // Complexion
-            if (index === 19) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    6,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-            }
-
-            // Sun Damage
-            if (index === 21) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    7,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-            }
-
-            // Lipstick
-            if (index === 23) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    8,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-
-                native.setPedHeadOverlayColor(
-                    modPed,
-                    8,
-                    2,
-                    decorData[index + 2],
-                    decorData[index + 3]
-                );
-            }
-
-            // Freckles
-            if (index === 27) {
-                native.setPedHeadOverlay(
-                    modPed,
-                    9,
-                    decorData[index],
-                    decorData[index + 1]
-                );
-            }
-        }
-    });
-    */
+    // Update Hair Color Choices for Buttons
+    updateHairColorChoices();
 }
 
 // Player Sex Updates, for model changes.
@@ -329,17 +124,88 @@ function updateSex(value) {
 // Player Face Updates; for head blend and such.
 function updatePlayerFace(valuesAsJSON) {
     const values = JSON.parse(valuesAsJSON);
-    native.setPedHeadBlendData(modPed, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], false);
+    native.setPedHeadBlendData(
+        modPed,
+        values[0],
+        values[1],
+        values[2],
+        values[3],
+        values[4],
+        values[5],
+        values[6],
+        values[7],
+        values[8],
+        false
+    );
 }
 
 // Player Face Decor, SunDamage, Makeup, Lipstick, etc.
-function updateFaceDecor(valuesAsJSON) {
-    alt.log(valuesAsJSON);
+function updateFaceDecor(dataAsJSON) {
+    let results = JSON.parse(dataAsJSON);
+    native.setPedHeadOverlay(
+        modPed,
+        results[0].id,
+        results[0].value,
+        results[1].value
+    );
+
+    // Only if one color is present.
+    if (results.length > 2 && results.length <= 3) {
+        native.setPedHeadOverlayColor(
+            modPed,
+            results[0].id,
+            results[2].colorType,
+            results[2].value,
+            results[2].value
+        );
+    }
+
+    // If two colors are present.
+    if (results.length > 3) {
+        native.setPedHeadOverlayColor(
+            modPed,
+            results[0].id,
+            results[2].colorType,
+            results[2].value,
+            results[3].value
+        );
+    }
 }
 
+function updateFaceFeature(id, value) {
+    native.setPedFaceFeature(modPed, id, value);
+}
 
+// Set the hair style, color, texture, etc. from the webview.
+// 'Hair', HairColor', 'HairHighlights', 'HairTexture'
+function updateHair(dataAsJSON) {
+    let results = JSON.parse(dataAsJSON);
 
+    if (lastHair !== results[0].value) {
+        lastHair = results[0].value;
 
+        let hairTextureVariations = native.getNumberOfPedTextureVariations(
+            modPed,
+            2,
+            results[0].value
+        );
+        webView.emit('setHairTextureVariations', hairTextureVariations);
+    }
+
+    native.setPedComponentVariation(
+        modPed,
+        2,
+        results[0].value,
+        results[3].value,
+        2
+    );
+    native.setPedHairColor(modPed, results[1].value, results[2].value);
+}
+
+// Set the eye color from the webview.
+function updateEyes(value) {
+    native.setPedEyeColor(modPed, value);
+}
 
 function resetCamera(modelToUse) {
     // Delete the new ped.
@@ -360,19 +226,57 @@ function resetCamera(modelToUse) {
     // Set the head blend data to 0 to prevent weird hair texture glitches. Thanks Matspyder
     native.setPedHeadBlendData(modPed, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
 
-    // Fetch number of styles from natives.
-    var beardStyles = native.getNumberOfPedDrawableVariations(modPed, 1);
-    var hairStyles = native.getNumberOfPedDrawableVariations(modPed, 2);
-    var hairColors = native.getNumHairColors();
-
-    // Emit the webview to update the style choices.
-    webView.emit('stylesUpdate', beardStyles, hairStyles, hairColors);
+    updateHairColorChoices();
 
     // Point camera at entity; with no offset.
     native.pointCamAtPedBone(characterCamera, modPed, 31086, 0, 0, 0, false);
 
     // Render the now setup camera; to the player.
     native.renderScriptCams(true, false, 0, true, false);
+}
+
+// Update the number of hair colors available.
+function updateHairColorChoices() {
+    // Fetch number of styles from natives.
+    let hairStyles = native.getNumberOfPedDrawableVariations(modPed, 2);
+    let hairColors = native.getNumHairColors();
+
+    // Emit the webview to update the style choices.
+    webView.emit('stylesUpdate', hairStyles, hairColors);
+}
+
+// Update the Camera when the FOV changes.
+function updateCamera() {
+    native.setCamFov(characterCamera, fov);
+    native.renderScriptCams(true, false, 0, true, false);
+}
+
+function setPlayerFacialData(facialDataJSON) {
+    alt.emitServer('setPlayerFacialData', facialDataJSON);
+
+    // Destroy the webview.
+    webView.destroy();
+
+    // Stop rendering the cameras.
+    native.renderScriptCams(false, false, 0, false, false);
+
+    // Hide the player's model.
+    native.setEntityAlpha(alt.Player.local.scriptID, 255, false);
+
+    // Destroy All Cameras
+    native.destroyAllCams(true);
+
+    // Remove the CharacterCamera
+    characterCamera = undefined;
+
+    // Delete the ped.
+    native.deletePed(modPed);
+
+    // Show the Radar
+    native.displayRadar(true);
+
+    // Stop showing the cursor
+    alt.showCursor(false);
 }
 
 // Called Constantly
@@ -418,13 +322,9 @@ alt.on('update', () => {
     }
 });
 
-// Update the Camera when the FOV changes.
-function updateCamera() {
-    native.setCamFov(characterCamera, fov);
-    native.renderScriptCams(true, false, 0, true, false);
-}
-
 // Delete the additional ped created on disconnect.
 alt.on('disconnect', () => {
     native.deletePed(modPed);
 });
+
+alt.onServer('requestFaceCustomizer', loadCharacterCustomizer);

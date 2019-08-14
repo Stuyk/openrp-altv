@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->customizers->character.mjs');
+
 const cameraPoint = {
     x: -140.7032928466797,
     y: -644.9724975585938,
@@ -24,7 +26,7 @@ let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
 let lastHair = 0; // Get the last hair the player set.
 
 // Load the character customizer, freeze controls, create camera, and ped.
-function loadCharacterCustomizer() {
+export function loadCharacterCustomizer() {
     if (modPed !== undefined) return;
 
     // Reload Active Res for Reference
@@ -110,6 +112,9 @@ function loadCharacterCustomizer() {
 
     // Update Hair Color Choices for Buttons
     updateHairColorChoices();
+
+    // Halt controls, add zoom in zoom out, and rotation.
+    alt.on('update', onUpdateEventCharacterCustomizer);
 }
 
 // Player Sex Updates, for model changes.
@@ -272,15 +277,19 @@ function setPlayerFacialData(facialDataJSON) {
     // Delete the ped.
     native.deletePed(modPed);
 
+    modPed = undefined;
+
     // Show the Radar
     native.displayRadar(true);
 
     // Stop showing the cursor
     alt.showCursor(false);
+
+    // Turn off the update function.
+    alt.off('update', onUpdateEventCharacterCustomizer);
 }
 
-// Called Constantly
-alt.on('update', () => {
+function onUpdateEventCharacterCustomizer() {
     if (characterCamera === undefined) return;
 
     // Disable Controls for the Player
@@ -320,11 +329,8 @@ alt.on('update', () => {
 
         native.setEntityHeading(modPed, heading + cursorRelativePos);
     }
-});
+}
 
-// Delete the additional ped created on disconnect.
-alt.on('disconnect', () => {
-    native.deletePed(modPed);
-});
-
-alt.onServer('requestFaceCustomizer', loadCharacterCustomizer);
+export function cleanupSpawnedPed() {
+    if (modPed !== undefined) native.deletePed(modPed);
+}

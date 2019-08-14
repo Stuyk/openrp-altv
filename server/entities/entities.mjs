@@ -1,5 +1,9 @@
 import orm from 'typeorm';
 
+console.log('Loaded: entities->entities.mjs');
+
+// These are the different table schemas provided.
+// Account is required for the login system.
 export const Account = new orm.EntitySchema({
     name: 'Account',
     columns: {
@@ -17,6 +21,7 @@ export const Account = new orm.EntitySchema({
     }
 });
 
+// Character is used to link an account to a character on creation.
 export const Character = new orm.EntitySchema({
     name: 'Character',
     columns: {

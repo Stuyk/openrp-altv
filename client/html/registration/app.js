@@ -1,3 +1,4 @@
+// General Setup for the Page
 $(() => {
     $('#passwordtwo').hide();
     $('#alert').hide();
@@ -8,37 +9,19 @@ var selection = 0;
 // 0 - Existing
 // 1 - Register
 
+// Called when any button is clicked.
 $('button').on('click', e => {
     $('#alert').hide();
     $('#alertSuccess').hide();
     changeButtonFocus(e.target.id);
 
     if (e.target.id === 'existing') {
-        selection = 0;
-        $('#pagetitle').addClass('animated flipOutX');
-        $('#register').removeClass('btn-primary');
-        $('#register').addClass('btn-secondary');
-        setTimeout(() => {
-            $('#passwordtwo').slideUp(200);
-            $('#pagetitle').removeClass('animated flipOutX');
-            $('#pagetitle').addClass('animated flipInX');
-            $('#pagetitle').html('Existing');
-        }, 300);
+        goToLogin();
         return;
     }
 
     if (e.target.id === 'register') {
-        selection = 1;
-        $('#pagetitle').addClass('animated flipOutX');
-        $('#existing').removeClass('btn-primary');
-        $('#existing').addClass('btn-secondary');
-
-        setTimeout(() => {
-            $('#passwordtwo').slideDown(200);
-            $('#pagetitle').removeClass('animated flipOutX');
-            $('#pagetitle').addClass('animated flipInX');
-            $('#pagetitle').html('Register');
-        }, 300);
+        goToRegister();
         return;
     }
 
@@ -81,23 +64,58 @@ $('button').on('click', e => {
     }
 });
 
+// Change the button focus from one to another.
 function changeButtonFocus(id) {
     $(`#${id}`).addClass('btn-primary');
     $(`#${id}`).removeClass('btn-secondary');
 }
 
+// Show an Alert Message
 function showAlertMessage(message) {
     $('#submit').prop('disabled', false);
     $('#alert').html(`Error: ${message}`);
     $('#alert').show();
 }
 
+// Show a Success Message
 function showAlertSuccessMessage(message) {
     $('#submit').prop('disabled', false);
     $('#alertSuccess').html(`Success! ${message}`);
     $('#alertSuccess').show();
 }
 
+// Navigate to the Login Menu
+function goToLogin() {
+    selection = 0;
+    changeButtonFocus('existing');
+    $('#pagetitle').addClass('animated flipOutX');
+    $('#register').removeClass('btn-primary');
+    $('#register').addClass('btn-secondary');
+    setTimeout(() => {
+        $('#passwordtwo').slideUp(200);
+        $('#pagetitle').removeClass('animated flipOutX');
+        $('#pagetitle').addClass('animated flipInX');
+        $('#pagetitle').html('Existing');
+    }, 300);
+}
+
+// Navigate to the Register Menu
+function goToRegister() {
+    selection = 1;
+    changeButtonFocus('register');
+    $('#pagetitle').addClass('animated flipOutX');
+    $('#existing').removeClass('btn-primary');
+    $('#existing').addClass('btn-secondary');
+
+    setTimeout(() => {
+        $('#passwordtwo').slideDown(200);
+        $('#pagetitle').removeClass('animated flipOutX');
+        $('#pagetitle').addClass('animated flipInX');
+        $('#pagetitle').html('Register');
+    }, 300);
+}
+
+// Alt Events
 if ('alt' in window) {
     alt.on('error', errorName => {
         showAlertMessage(errorName);
@@ -106,4 +124,6 @@ if ('alt' in window) {
     alt.on('success', successMessage => {
         showAlertSuccessMessage(successMessage);
     });
+
+    alt.on('goToLogin', goToLogin);
 }

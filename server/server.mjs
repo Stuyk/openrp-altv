@@ -1,25 +1,37 @@
 import * as alt from 'alt';
-import SQL from '../../postgres-wrapper/database.mjs';
-import { Account, Character } from './entities/entities.mjs';
 import * as chat from 'chat';
+import SQL from '../../postgres-wrapper/database.mjs';
+
+// Used for Table Schemas
+import { Account, Character } from './entities/entities.mjs';
+
+// Used for Database Info
+import * as DBConf from './configuration/database.mjs';
 
 // Setup Main Entities and Database Connection
-new SQL('postgresql://postgres:abc123@localhost:5432/altv', [
-    Account,
-    Character
-]);
+new SQL(
+    `postgresql://${DBConf.DatabaseInfo.username}:${
+        DBConf.DatabaseInfo.password
+    }@${DBConf.DatabaseInfo.address}:${DBConf.DatabaseInfo.port}/${
+        DBConf.DatabaseInfo.dbname
+    }`,
+    // Specify New Table Schemas Here
+    [Account, Character]
+);
 
-// From Database; load rest of modules that use database connection.
+// After Database Connection is complete. Load the rest of the modules.
+// This is required so we don't use the Database functionality too early.
+// Please keep that in mind if you plan on expanding this framework.
 alt.on('ConnectionComplete', () => {
-    // All additional will be imported here.
-    import('./registration/registration.mjs');
-    import('./events/onPlayerLoggedIn.mjs');
-    import('./events/onPlayerLogout.mjs');
-    import('./events/onClientEvents.mjs');
-    import('./events/onPlayerJoin.mjs');
-    import('./events/saveEvents.mjs');
+    // Standard Events
+    import('./events/playerConnect.mjs');
+    import('./events/playerDisconnect.mjs');
+    // Custom Client Events / Custom Server Events
+    import('./serverEvents/serverEventRouting.mjs');
+    import('./clientEvents/clientEventRouting.mjs');
 });
 
+/*
 chat.registerCmd('pos', player => {
     console.log(player.pos);
 });
@@ -39,3 +51,4 @@ alt.onClient('tpToWaypoint', (player, coords) => {
 chat.registerCmd('tpcoord', (player, arg) => {
     player.pos = { x: arg[0], y: arg[1], z: arg[2] };
 });
+*/

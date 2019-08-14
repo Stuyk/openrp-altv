@@ -1,9 +1,9 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
-// Called from both server and client.
-alt.onServer('applyFacialData', applyFacialData);
+alt.log('Loaded: client->character->facedata.mjs');
 
+// Used for facial features loop.
 const faceFeatureNames = [
     'NoseWidth',
     'NoseHeight',
@@ -27,7 +27,8 @@ const faceFeatureNames = [
     'NeckWidth'
 ];
 
-function applyFacialData(jsonData) {
+// Apply all of the facial data to the player.
+export function applyFacialData(jsonData) {
     const parsedData = JSON.parse(jsonData);
 
     const localPlayer = alt.Player.local.scriptID;

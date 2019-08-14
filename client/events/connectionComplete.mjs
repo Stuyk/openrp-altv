@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->events->connectionComplete.mjs');
+
 alt.on('connectionComplete', () => {
     alt.log('Loading Interiors');
 

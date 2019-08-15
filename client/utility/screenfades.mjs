@@ -1,6 +1,8 @@
 import * as native from 'natives';
 import * as alt from 'alt';
 
+alt.log('Loaded: utility->screenfade.mjs');
+
 export function fadeOut(ms) {
     native.doScreenFadeOut(ms);
 }

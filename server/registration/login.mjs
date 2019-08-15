@@ -139,6 +139,10 @@ function existingCharacter(player, characterData) {
 
     if (player.characterData.charactername !== null) {
         alt.log(`${player.characterData.charactername} has spawned.`);
+        player.setSyncedMeta(
+            'charactername',
+            player.characterData.charactername
+        );
     } else {
         alt.log(`${player.name} has spawned.`);
     }

@@ -40,6 +40,14 @@ altVServerFolder/
 
 **Important** You can configure your database connection inside of:
 
+**The chat resource needs chat cancelling turned on.**
+
+This can be done inside of index.mjs. This allows for ranged chat; and custom chat usage.
+
+```
+let cancelAllChat = true;
+```
+
 ```
 Change the 'text' inside of SQL(<here>)
 

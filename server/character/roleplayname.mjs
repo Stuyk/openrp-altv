@@ -12,6 +12,10 @@ export function setRoleplayName(player, roleplayName) {
             player.characterData.charactername = roleplayName;
             saveEvents.saveCharacterData(player);
             alt.emitClient(player, 'closeRoleplayNameDialog');
+            player.setSyncedMeta(
+                'charactername',
+                player.characterData.charactername
+            );
             return;
         }
 
@@ -29,5 +33,9 @@ export function setRoleplayName(player, roleplayName) {
         player.characterData.charactername = roleplayName;
         saveEvents.saveCharacterData(player);
         alt.emitClient(player, 'closeRoleplayNameDialog');
+        player.setSyncedMeta(
+            'charactername',
+            player.characterData.charactername
+        );
     });
 }

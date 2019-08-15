@@ -9,5 +9,5 @@ export const data = {
         'conditions.',
         'If you have any issues with these conditions; contact Stuyk promptly.'
     ],
-    do_you_agree: true
+    do_you_agree: false
 };

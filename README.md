@@ -80,19 +80,19 @@ export const DatabaseInfo = {
 ```yaml
 altVServerFolder/
 └── resources/
-├── chat/
-|   ├── index.mjs
-|   ├── client.mjs
-|   ├── resource.cfg
-|   └── html/
-├── orp/
-|   ├── server/
-|   ├── client/
-|   └── resource.cfg
-├── postgres-wrapper/
-|   ├── client.mjs
-|   ├── database.mjs
-|	└── resource.cfg
+|   ├── chat/
+|   |   ├── index.mjs
+|   |   ├── client.mjs
+|   |   ├── resource.cfg
+|   |   └── html/
+|   ├── orp/
+|   |   ├── server/
+|   |   ├── client/
+|   |   └── resource.cfg
+|   ├── postgres-wrapper/
+|   |   ├── client.mjs
+|   |   ├── database.mjs
+|   |	└── resource.cfg
 ```
 
 **\*Installing Packages for NodeJS**

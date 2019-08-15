@@ -15,26 +15,3 @@ var pos = {
     y: -279,
     z: 66
 };
-/*
-alt.on('update', () => {
-    let localPlayerName = alt.Player.local.getSyncedMeta('charactername');
-
-    if (localPlayerName === undefined || localPlayerName === null) return;
-
-    drawText3d(
-        localPlayerName,
-        alt.Player.local.pos.x,
-        alt.Player.local.pos.y,
-        alt.Player.local.pos.z,
-        0.5,
-        4,
-        255,
-        255,
-        255,
-        255,
-        true,
-        false,
-        99
-    );
-});
-*/

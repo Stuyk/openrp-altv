@@ -4,6 +4,7 @@ import {
     RegisterCamPoint,
     RegisterCamDirection
 } from '../configuration/coordinates.mjs';
+import * as playerutil from '../utility/player.mjs';
 
 console.log('Loaded: events->playerConnect.mjs');
 
@@ -13,12 +14,10 @@ alt.on('playerConnect', player => {
     // Setup chat functionality from Chat-Extended
     chat.setupPlayer(player);
 
+    // Setup extended functions for player
+    playerutil.setupPlayerFunctions(player);
+
     // Teleport player to location for the time being.
     player.pos = RegisterCamPoint;
-    alt.emitClient(
-        player,
-        'registerShowCamera',
-        RegisterCamPoint,
-        RegisterCamDirection
-    );
+    player.showRegisterDialogue(RegisterCamPoint, RegisterCamDirection);
 });

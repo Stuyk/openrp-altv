@@ -15,7 +15,7 @@ export function userRegister(player, username, password) {
 
     // Insure that username and password field are filled out.
     if (username === undefined || password === undefined) {
-        alt.emitClient(player, 'registerEvent', 'Registration failed.');
+        player.showRegisterEventError('Registration failed.');
         return;
     }
 
@@ -23,11 +23,7 @@ export function userRegister(player, username, password) {
     db.fetchData('username', username, 'Account', result => {
         // Check if Username is taken
         if (result !== undefined) {
-            alt.emitClient(
-                player,
-                'registerEvent',
-                'Username is already taken.'
-            );
+            player.showRegisterEventError('Username is already taken.');
             return;
         }
 
@@ -42,13 +38,11 @@ export function userRegister(player, username, password) {
 
         // Add the data to the database.
         db.upsertData(playerAccDoc, 'Account', () => {
-            alt.emitClient(
-                player,
-                'registerEventSuccess',
-                'New account was registered.'
+            player.showRegisterEventSuccess(
+                'New account was registered successfully.'
             );
 
-            alt.emitClient(player, 'registerEventGoToLogin');
+            player.showRegisterLogin();
         });
     });
 }

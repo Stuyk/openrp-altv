@@ -1,5 +1,4 @@
 import * as alt from 'alt';
-import * as dataEvents from '../database/saveevents.mjs';
 import * as login from '../registration/login.mjs';
 import * as chat from '../chat/chat.mjs';
 

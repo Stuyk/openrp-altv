@@ -11,17 +11,18 @@ alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 // REGISTRATION / LOGIN
 // Called when the player first joins the server,
 // displays the login camera to the user.
-alt.onServer('registerShowCamera', registration.registerShowCamera);
+// Takes two parameters: (regCamCoord, regCamPointAtCoord)
+alt.onServer('register:ShowDialogue', registration.showDialogue);
 
 // Called when there's an error/alert in the registration.
-alt.onServer('registerEvent', registration.registerEventError);
-alt.onServer('registerEventSuccess', registration.registerEventSuccess);
-alt.onServer('registerEventGoToLogin', registration.registerEventGoToLogin);
+// Params: msg
+alt.onServer('register:EmitEventError', registration.showError);
+alt.onServer('register:EmitEventSuccess', registration.showSuccess);
+// Params: NONE
+alt.onServer('register:ShowLogin', registration.showLogin);
 
-// =======================================================
-// REGISTRATION
 // Finish the login; and disable un-necessary events.
-alt.onServer('finishLogin', registration.finishLogin);
+alt.onServer('register:CloseDialogue', registration.closeDialogue);
 
 // =======================================================
 // CHARACTER FACE CUSTOMIZER
@@ -35,11 +36,11 @@ alt.onServer('applyFacialData', facedata.applyFacialData);
 
 // =======================================================
 // Screen Fade Effects, self explanatory; mostly takes millisecond parameters.
-alt.onServer('fadeOut', screenfades.fadeOut);
-alt.onServer('fadeIn', screenfades.fadeIn);
-alt.onServer('blurOut', screenfades.blurOut);
-alt.onServer('blurIn', screenfades.blurIn);
-alt.onServer('fadeOutFadeIn', screenfades.fadeOutFadeIn); // 2 params of milliseconds
+alt.onServer('screen:FadeOut', screenfades.fadeOut);
+alt.onServer('screen:FadeIn', screenfades.fadeIn);
+alt.onServer('screen:BlurOut', screenfades.blurOut);
+alt.onServer('screen:BlurIn', screenfades.blurIn);
+alt.onServer('screen:FadeOutFadeIn', screenfades.fadeOutFadeIn); // 2 params of milliseconds
 
 // =======================================================
 // Set Character Name

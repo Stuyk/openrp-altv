@@ -1,5 +1,4 @@
 import * as alt from 'alt';
-import * as saveEvents from '../database/saveevents.mjs';
 
 console.log('Loaded: events->playerDisconnect.mjs');
 
@@ -11,21 +10,21 @@ alt.on('playerDisconnect', (player, reason) => {
     }
 
     // Check if the player has character data.
-    if (player.characterData === undefined) {
+    if (player.data === undefined) {
         alt.log(`${player.name} has disconnected.`);
         return;
     }
 
     // Save players last location dependent on what they're doing.
     if (player.lastLocation !== undefined) {
-        player.characterData.lastposition = JSON.stringify(player.lastLocation);
+        player.data.lastposition = JSON.stringify(player.lastLocation);
     } else {
-        player.characterData.lastposition = JSON.stringify(player.pos);
+        player.data.lastposition = JSON.stringify(player.pos);
     }
 
-    player.characterData.health = player.health;
+    player.data.health = player.health;
 
     // Save the data.
-    saveEvents.saveCharacterData(player);
+    player.save();
     alt.log(`${player.name} has disconnected and logged out.`);
 });

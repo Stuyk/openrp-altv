@@ -1,10 +1,9 @@
 import * as alt from 'alt';
-import * as saveEvents from '../database/saveevents.mjs';
 
 console.log('Loaded: character->facedata.mjs');
 
 export function setFacialData(player, facialJSON) {
-    player.characterData.characterface = facialJSON;
+    player.data.face = facialJSON;
 
     // Parse the character data.
     const characterFaceData = JSON.parse(facialJSON);
@@ -15,7 +14,7 @@ export function setFacialData(player, facialJSON) {
         player.model = 'mp_m_freemode_01';
     }
 
-    saveEvents.saveCharacterData(player);
+    player.save();
     alt.emitClient(player, 'applyFacialData', facialJSON);
 
     if (player.needsRoleplayName) {

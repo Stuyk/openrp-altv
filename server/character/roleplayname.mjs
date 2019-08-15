@@ -1,5 +1,4 @@
 import * as alt from 'alt';
-import * as saveEvents from '../database/saveevents.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 const db = new SQL();
@@ -7,22 +6,17 @@ const db = new SQL();
 console.log('Loaded: character->roleplayname.mjs');
 
 export function setRoleplayName(player, roleplayName) {
-    db.selectData('Character', ['charactername'], results => {
+    db.selectData('Character', ['name'], results => {
         if (results === undefined) {
-            player.characterData.charactername = roleplayName;
-            saveEvents.saveCharacterData(player);
+            player.data.name = roleplayName;
+            player.save();
             alt.emitClient(player, 'closeRoleplayNameDialog');
-            player.setSyncedMeta(
-                'charactername',
-                player.characterData.charactername
-            );
+            player.setSyncedMeta('name', player.data.name);
             return;
         }
 
         var result = results.find(
-            dbData =>
-                dbData.charactername.toLowerCase() ===
-                roleplayName.toLowerCase()
+            dbData => dbData.name.toLowerCase() === roleplayName.toLowerCase()
         );
 
         if (result !== undefined) {
@@ -30,12 +24,10 @@ export function setRoleplayName(player, roleplayName) {
             return;
         }
 
-        player.characterData.charactername = roleplayName;
-        saveEvents.saveCharacterData(player);
+        player.data.name = roleplayName;
+        player.save();
+
         alt.emitClient(player, 'closeRoleplayNameDialog');
-        player.setSyncedMeta(
-            'charactername',
-            player.characterData.charactername
-        );
+        player.setSyncedMeta('name', player.data.name);
     });
 }

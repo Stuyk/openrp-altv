@@ -12,7 +12,7 @@ let loginCamera = undefined;
  * @param regCamCoord Coordinate of the login camera.
  * @param regCamPointAtCoord Coordinate to point the login camera at.
  */
-export function registerShowCamera(regCamCoord, regCamPointAtCoord) {
+export function showDialogue(regCamCoord, regCamPointAtCoord) {
     // Show the WebPage for Registration / Login
     registerWebview = new alt.WebView(urlForView);
     registerWebview.focus(); // Focus on the page.
@@ -61,8 +61,8 @@ function registerAccount(username, password) {
     alt.emitServer('registerAccount', username, password);
 }
 
-// Called when the
-export function finishLogin() {
+// Called when login is complete.
+export function closeDialogue() {
     loginCamera = undefined;
     native.destroyAllCams(true);
     native.displayRadar(true);
@@ -75,22 +75,23 @@ export function finishLogin() {
     registerWebview.off('existingAccount', existingAccount);
 
     registerWebview.destroy();
-    alt.offServer('registerEvent', registerEventError);
-    alt.offServer('registerEventSuccess', registerEventSuccess);
-    alt.offServer('registerEventGoToLogin', registerEventGoToLogin);
+    alt.offServer('register:ShowDialogue', showDialogue);
+    alt.offServer('register:ShowError', showError);
+    alt.offServer('register:ShowSuccess', showSuccess);
+    alt.offServer('register:CloseDialogue', closeDialogue);
 }
 
 // Send error message to the registerWebview.
-export function registerEventError(errorMessage) {
+export function showError(errorMessage) {
     registerWebview.emit('error', errorMessage);
 }
 
 // Send a success message when the login is successful.
-export function registerEventSuccess(successMessage) {
+export function showSuccess(successMessage) {
     registerWebview.emit('success', successMessage);
 }
 
 // Auto-switch to login panel.
-export function registerEventGoToLogin() {
+export function showLogin() {
     registerWebview.emit('goToLogin');
 }

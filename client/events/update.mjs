@@ -17,7 +17,7 @@ function drawPlayerNames() {
     alt.Player.all.forEach(player => {
         if (player === alt.Player.local) return;
 
-        let localPlayerName = player.getSyncedMeta('charactername');
+        let localPlayerName = player.getSyncedMeta('name');
 
         if (localPlayerName === undefined || localPlayerName === null) return;
 

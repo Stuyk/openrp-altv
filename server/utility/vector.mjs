@@ -1,5 +1,7 @@
 import * as alt from 'alt';
 
+console.log('Loaded: utility->vector.mjs');
+
 // Get all of the players in range of a position.
 export function getPlayersInRange(pos, range) {
     if (pos === undefined || range === undefined) {

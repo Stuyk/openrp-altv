@@ -1,5 +1,7 @@
 import * as alt from 'alt';
 
+console.log('Loaded: utility->locationhelper.mjs');
+
 export function goToLastLocation(player) {
     if (player.lastLocation === undefined) return;
 

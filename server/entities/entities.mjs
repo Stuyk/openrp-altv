@@ -30,18 +30,15 @@ export const Character = new orm.EntitySchema({
             type: 'int',
             generated: false
         },
-        charactername: {
+        name: {
             type: 'varchar',
             nullable: true
         },
-        characterface: {
+        face: {
             type: 'varchar',
             nullable: true
         },
         lastposition: {
-            type: 'varchar'
-        },
-        model: {
             type: 'varchar'
         },
         health: {

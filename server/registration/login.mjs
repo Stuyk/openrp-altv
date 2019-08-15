@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as crypto from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
+import * as facecustomizer from '../customizers/facialcustomizer.mjs';
 
 console.log('Loaded: registration->login.mjs');
 
@@ -54,6 +55,9 @@ export function userLogin(player, username, password) {
 
 // Called when the player is finishing their login.
 export function finishPlayerLogin(player, databaseID) {
+    // Fade the screen out in 1 second, then fade back after 2 seconds in 1 second.
+    alt.emitClient(player, 'fadeOutFadeIn', 200, 2000);
+
     player.guid = databaseID;
 
     db.fetchByIds(player.guid, 'Character', results => {
@@ -95,13 +99,24 @@ function existingCharacter(player, characterData) {
     const lastLogoutPos = JSON.parse(player.characterData.lastposition);
 
     // Spawn the player.
-    player.spawn(lastLogoutPos.x, lastLogoutPos.y, lastLogoutPos.z, 0);
+    player.spawn(lastLogoutPos.x, lastLogoutPos.y, lastLogoutPos.z, 1);
+
+    // Set Player Health
+    player.health = player.characterData.health;
+
+    // Set the player's name if its not null.
+    if (characterData.charactername !== null) {
+        player.needsRoleplayName = false;
+    } else {
+        player.needsRoleplayName = true;
+    }
 
     // Set Character Model and Data
     if (player.characterData.characterface === null) {
         // Show them the new character / new name menu.
         // TODO: Force show the menu.
-        player.model = 'mp_m_freemode_01';
+        player.model = 'mp_f_freemode_01'; // Set the player model.
+        facecustomizer.requestFacialCustomizer(player, lastLogoutPos); // Request facial changes menu.
     } else {
         // Load Existing Model
         const characterFaceData = JSON.parse(
@@ -115,15 +130,16 @@ function existingCharacter(player, characterData) {
 
         // Apply the face to the player.
         alt.emitClient(player, 'applyFacialData', characterData.characterface);
+
+        if (player.needsRoleplayName) {
+            alt.log('User needs a roleplay name.');
+            alt.emitClient(player, 'chooseRoleplayName');
+        }
     }
 
-    // Set Player Health
-    player.health = player.characterData.health;
-
-    // Set the player's name if its not null.
-    if (characterData.name !== null) {
-        player.name = characterData.name;
+    if (player.characterData.charactername !== null) {
+        alt.log(`${player.characterData.charactername} has spawned.`);
+    } else {
+        alt.log(`${player.name} has spawned.`);
     }
-
-    alt.log(`${player.name} has spawned.`);
 }

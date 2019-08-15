@@ -39,6 +39,36 @@ export function loadCharacterCustomizer() {
     alt.emitServer('temporaryTeleport', cameraPoint);
     native.displayRadar(false);
 
+    // Request these models if they're not already loaded.
+    native.requestModel(native.getHashKey('mp_m_freemode_01'));
+    native.requestModel(native.getHashKey('mp_f_freemode_01'));
+
+    // Create a pedestrian to customize.
+    modPed = native.createPed(
+        1,
+        native.getHashKey('mp_f_freemode_01'),
+        playerPoint.x,
+        playerPoint.y,
+        playerPoint.z,
+        0,
+        false,
+        false
+    );
+
+    // Set the head blend data to 0 to prevent texture issues.
+    native.setPedHeadBlendData(modPed, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
+
+    // Hide the player's model.
+    native.setEntityAlpha(alt.Player.local.scriptID, 0, false);
+
+    // Load the WebView
+    webView = new alt.WebView(
+        'http://resources/orp/client/html/character/index.html'
+    );
+
+    webView.focus();
+    alt.showCursor(true);
+
     // Setup the ped camera point.
     characterCamera = native.createCamWithParams(
         'DEFAULT_SCRIPTED_CAMERA',
@@ -53,41 +83,11 @@ export function loadCharacterCustomizer() {
         0
     );
 
-    // Request these models if they're not already loaded.
-    native.requestModel(native.getHashKey('mp_m_freemode_01'));
-    native.requestModel(native.getHashKey('mp_f_freemode_01'));
-
-    // Create a pedestrian to customize.
-    modPed = native.createPed(
-        26,
-        native.getHashKey('mp_f_freemode_01'),
-        playerPoint.x,
-        playerPoint.y,
-        playerPoint.z,
-        0,
-        false,
-        false
-    );
-
-    // Set the head blend data to 0 to prevent texture issues.
-    native.setPedHeadBlendData(modPed, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
-
     // Point camera at entity; with no offset.
     native.pointCamAtPedBone(characterCamera, modPed, 31086, 0, 0, 0, false);
 
     // Render the now setup camera; to the player.
     native.renderScriptCams(true, false, 0, true, false);
-
-    // Hide the player's model.
-    native.setEntityAlpha(alt.Player.local.scriptID, 0, false);
-
-    // Load the WebView
-    webView = new alt.WebView(
-        'http://resources/orp/client/html/character/index.html'
-    );
-
-    webView.focus();
-    alt.showCursor(true);
 
     // Update Sex
     webView.on('updateSex', updateSex);
@@ -259,6 +259,19 @@ function updateCamera() {
 function setPlayerFacialData(facialDataJSON) {
     alt.emitServer('setPlayerFacialData', facialDataJSON);
 
+    // Remove the CharacterCamera
+    characterCamera = undefined;
+
+    // Turn off webview events.
+    webView.off('updateSex', updateSex);
+    webView.off('updatePlayerFace', updatePlayerFace);
+    webView.off('updateFaceDecor', updateFaceDecor);
+    webView.off('updateFaceFeature', updateFaceFeature);
+    webView.off('updateHair', updateHair);
+    webView.off('updateEyes', updateEyes);
+    webView.off('setPlayerFacialData', setPlayerFacialData);
+    webView.unfocus();
+
     // Destroy the webview.
     webView.destroy();
 
@@ -270,9 +283,6 @@ function setPlayerFacialData(facialDataJSON) {
 
     // Destroy All Cameras
     native.destroyAllCams(true);
-
-    // Remove the CharacterCamera
-    characterCamera = undefined;
 
     // Delete the ped.
     native.deletePed(modPed);
@@ -287,6 +297,9 @@ function setPlayerFacialData(facialDataJSON) {
 
     // Turn off the update function.
     alt.off('update', onUpdateEventCharacterCustomizer);
+
+    // Request the last location.
+    alt.emitServer('requestLastLocation');
 }
 
 function onUpdateEventCharacterCustomizer() {

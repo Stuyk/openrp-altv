@@ -16,8 +16,13 @@ alt.on('playerDisconnect', (player, reason) => {
         return;
     }
 
-    // The data that is saved on player log out.
-    player.characterData.lastposition = JSON.stringify(player.pos);
+    // Save players last location dependent on what they're doing.
+    if (player.lastLocation !== undefined) {
+        player.characterData.lastposition = JSON.stringify(player.lastLocation);
+    } else {
+        player.characterData.lastposition = JSON.stringify(player.pos);
+    }
+
     player.characterData.health = player.health;
 
     // Save the data.

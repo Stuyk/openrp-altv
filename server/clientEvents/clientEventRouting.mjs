@@ -3,6 +3,8 @@ import * as register from '../registration/register.mjs';
 import * as login from '../registration/login.mjs';
 import * as facedata from '../character/facedata.mjs';
 import * as facecustomizer from '../customizers/facialcustomizer.mjs';
+import * as locationhelper from '../utility/locationhelper.mjs';
+import * as roleplayname from '../character/roleplayname.mjs';
 
 // On load; send a message.
 console.log('Loaded: clientEvents->clientEventRouting.mjs');
@@ -18,6 +20,12 @@ alt.onClient('setPlayerFacialData', facedata.setFacialData);
 
 // Request the facial customizer.
 alt.onClient('requestFaceCustomizer', facecustomizer.requestFacialCustomizer);
+
+// Go To Last Location
+alt.onClient('requestLastLocation', locationhelper.goToLastLocation);
+
+// Set the users roleplay name
+alt.onClient('setRoleplayName', roleplayname.setRoleplayName);
 
 // Temporary:
 // teleport to waypoint stuff

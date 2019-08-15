@@ -5,7 +5,6 @@ console.log('Loaded: character->facedata.mjs');
 
 export function setFacialData(player, facialJSON) {
     player.characterData.characterface = facialJSON;
-    player.pos = player.lastLocation;
 
     // Parse the character data.
     const characterFaceData = JSON.parse(facialJSON);
@@ -18,4 +17,8 @@ export function setFacialData(player, facialJSON) {
 
     saveEvents.saveCharacterData(player);
     alt.emitClient(player, 'applyFacialData', facialJSON);
+
+    if (player.needsRoleplayName) {
+        alt.emitClient(player, 'chooseRoleplayName');
+    }
 }

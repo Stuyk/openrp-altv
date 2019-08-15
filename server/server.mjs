@@ -28,12 +28,8 @@ if (!TermsAndConditions.data.do_you_agree) {
 } else {
     console.log('License agreement accepted. Moving on.');
     // Setup Main Entities and Database Connection
-    new SQL(
-        `postgresql://${DBConf.DatabaseInfo.username}:${
-            DBConf.DatabaseInfo.password
-        }@${DBConf.DatabaseInfo.address}:${DBConf.DatabaseInfo.port}/${
-            DBConf.DatabaseInfo.dbname
-        }`,
+    new SQL(DBConf.DatabaseInfo.type, DBConf.DatabaseInfo.address, DBConf.DatabaseInfo.port, DBConf.DatabaseInfo.username,
+		DBConf.DatabaseInfo.password, DBConf.DatabaseInfo.dbname,
         // Specify New Table Schemas Here
         [Account, Character]
     );

@@ -39,10 +39,20 @@ export const Character = new orm.EntitySchema({
             nullable: true
         },
         lastposition: {
-            type: 'varchar'
+            type: 'varchar',
+            nullable: true
         },
         health: {
-            type: 'int'
+            type: 'int',
+            default: 200
+        },
+        cash: {
+            type: 'numeric',
+            default: 0
+        },
+        bank: {
+            type: 'numeric',
+            default: 0
         }
     }
 });

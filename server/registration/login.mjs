@@ -3,6 +3,7 @@ import * as crypto from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
 import * as facecustomizer from '../customizers/facialcustomizer.mjs';
+import { PlayerDefaults } from '../configuration/player.mjs';
 
 console.log('Loaded: registration->login.mjs');
 
@@ -80,7 +81,9 @@ function newCharacter(player) {
         id: player.guid,
         lastposition: JSON.stringify(DefaultSpawn),
         model: 'mp_m_freemode_01',
-        health: 200
+        health: 200,
+        cash: PlayerDefaults.cash,
+        bank: PlayerDefaults.bank
     };
 
     // Save the new Character data to the database and assign to the player.
@@ -123,6 +126,9 @@ function existingCharacter(player, data) {
             player.showRoleplayNameDialogue();
         }
     }
+
+    data.cash = data.cash * 1;
+    data.bank = data.bank * 1;
 
     // Setup data on the player.
     player.data = data;

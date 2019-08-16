@@ -27,4 +27,7 @@ alt.on('ConnectionComplete', () => {
     // Custom Client Events / Custom Server Events
     import('./serverEvents/serverEventRouting.mjs');
     import('./clientEvents/clientEventRouting.mjs');
+
+    // Sandbox Commands
+    import('./commands/sandbox.mjs');
 });

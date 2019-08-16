@@ -19,6 +19,16 @@ export function setupPlayerFunctions(player) {
         });
     };
 
+    // Save only a specific field.
+    player.saveField = (id, fieldName, fieldValue) => {
+        db.updatePartialData(
+            id,
+            { [fieldName]: fieldValue },
+            'Character',
+            () => {}
+        );
+    };
+
     // ====================================
     // Registration Webview Related Events
     player.showRegisterDialogue = (regCamCoord, regCamPointAtCoord) => {
@@ -90,5 +100,63 @@ export function setupPlayerFunctions(player) {
 
     player.showRoleplayNameTaken = () => {
         alt.emitClient(player, 'roleplayname:ShowNameTaken');
+    };
+
+    // ====================================
+    // Money Functions
+    player.subCash = value => {
+        let absValue = Math.abs(parseFloat(value)) * 1;
+
+        if (player.data.cash < absValue) return false;
+
+        player.data.cash -= absValue;
+        player.data.cash = Number.parseFloat(player.data.cash).toFixed(2) * 1;
+        player.saveField(player.data.id, 'cash', player.data.cash);
+        return true;
+    };
+
+    player.addCash = value => {
+        let absValue = Math.abs(parseFloat(value));
+
+        if (player.data.cash + absValue > 92233720368547758.07) {
+            absValue = 0;
+        }
+
+        player.data.cash += absValue;
+        player.data.cash = Number.parseFloat(player.data.cash).toFixed(2) * 1;
+        player.saveField(player.data.id, 'cash', player.data.cash);
+        return true;
+    };
+
+    player.addBank = value => {
+        let absValue = Math.abs(parseFloat(value));
+
+        if (player.data.bank + absValue > 92233720368547758.07) {
+            absValue = 0;
+        }
+
+        player.data.bank += absValue;
+        player.data.bank = Number.parseFloat(player.data.bank).toFixed(2) * 1;
+        player.saveField(player.data.id, 'bank', player.data.bank);
+        return true;
+    };
+
+    player.subBank = value => {
+        let absValue = Math.abs(parseFloat(value)) * 1;
+
+        if (player.data.bank < absValue) return false;
+
+        player.data.bank -= absValue;
+        player.data.bank = Number.parseFloat(player.data.bank).toFixed(2) * 1;
+        player.saveField(player.data.id, 'bank', player.data.bank);
+        return true;
+    };
+
+    player.getCash = () => {
+        return player.data.cash;
+    };
+
+    player.getBank = () => {
+        return player.data.bank;
     };
 }

@@ -1,4 +1,5 @@
 export const DatabaseInfo = {
+    type: 'postgres',
     username: 'postgres',
     password: 'abc123',
     address: 'localhost',

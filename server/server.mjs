@@ -1,4 +1,4 @@
-import * as TermsAndConditions from '../terms-and-conditions.mjs'; // Terms & Conditions
+import * as TermsAndConditions from './configuration/terms-and-conditions.mjs'; // Terms & Conditions
 
 import fs from 'fs';
 

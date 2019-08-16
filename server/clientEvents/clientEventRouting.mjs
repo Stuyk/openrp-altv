@@ -10,22 +10,25 @@ import * as roleplayname from '../character/roleplayname.mjs';
 console.log('Loaded: clientEvents->clientEventRouting.mjs');
 
 // Called when a client attempts to Register an account.
-alt.onClient('registerAccount', register.userRegister);
+alt.onClient('register:NewAccount', register.newAccount);
 
 // Called when a client attempts to Login to an account.
-alt.onClient('existingAccount', login.userLogin);
+alt.onClient('register:ExistingAccount', login.existingAccount);
 
 // Set the player's facial data from the customizer.
-alt.onClient('setPlayerFacialData', facedata.setFacialData);
+alt.onClient('facecustomizer:setFacialData', facedata.setFacialData);
 
 // Request the facial customizer.
-alt.onClient('requestFaceCustomizer', facecustomizer.requestFacialCustomizer);
+alt.onClient(
+    'facialcustomizer:requestFacialCustomizer',
+    facecustomizer.requestFacialCustomizer
+);
 
 // Go To Last Location
-alt.onClient('requestLastLocation', locationhelper.goToLastLocation);
+alt.onClient('utility:GoToLastLocation', locationhelper.goToLastLocation);
 
 // Set the users roleplay name
-alt.onClient('setRoleplayName', roleplayname.setRoleplayName);
+alt.onClient('roleplayname:SetRoleplayName', roleplayname.setRoleplayName);
 
 // Temporary:
 // teleport to waypoint stuff

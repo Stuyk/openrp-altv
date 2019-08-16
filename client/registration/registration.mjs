@@ -54,11 +54,11 @@ export function showDialogue(regCamCoord, regCamPointAtCoord) {
 }
 
 function existingAccount(username, password) {
-    alt.emitServer('existingAccount', username, password);
+    alt.emitServer('register:ExistingAccount', username, password);
 }
 
 function registerAccount(username, password) {
-    alt.emitServer('registerAccount', username, password);
+    alt.emitServer('register:NewAccount', username, password);
 }
 
 // Called when login is complete.

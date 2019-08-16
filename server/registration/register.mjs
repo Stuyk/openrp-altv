@@ -7,7 +7,7 @@ console.log('Loaded: registration->register.mjs');
 const db = new SQL(); // Get DB Reference
 
 // Called when a user wants to register from the events folder.
-export function userRegister(player, username, password) {
+export function newAccount(player, username, password) {
     if (player.guid !== undefined) return;
 
     // Console Logging for Registration Attempts

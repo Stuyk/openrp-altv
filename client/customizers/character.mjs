@@ -257,7 +257,7 @@ function updateCamera() {
 }
 
 function setPlayerFacialData(facialDataJSON) {
-    alt.emitServer('setPlayerFacialData', facialDataJSON);
+    alt.emitServer('facecustomizer:setFacialData', facialDataJSON);
 
     // Remove the CharacterCamera
     characterCamera = undefined;
@@ -299,7 +299,7 @@ function setPlayerFacialData(facialDataJSON) {
     alt.off('update', onUpdateEventCharacterCustomizer);
 
     // Request the last location.
-    alt.emitServer('requestLastLocation');
+    alt.emitServer('utility:GoToLastLocation');
 }
 
 function onUpdateEventCharacterCustomizer() {

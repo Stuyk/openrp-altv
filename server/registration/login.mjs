@@ -10,7 +10,7 @@ const db = new SQL(); // Get DB Reference
 const LoggedInPlayers = [];
 
 // Called when a user wants to login from events folder.
-export function userLogin(player, username, password) {
+export function existingAccount(player, username, password) {
     if (player.guid !== undefined) return;
 
     // Console Logging for Login Attempts
@@ -106,7 +106,7 @@ function existingCharacter(player, data) {
     // Check if the player has a face.
     if (data.face === null) {
         player.model = 'mp_f_freemode_01';
-        facecustomizer.requestFacialCustomizer(player, lastLogoutPos);
+        facecustomizer.requestFacialCustomizer(player, lastPos);
     } else {
         // Load Existing Model
         const characterFaceData = JSON.parse(data.face);

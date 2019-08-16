@@ -3,7 +3,7 @@ import * as registration from 'client/registration/registration.mjs';
 import * as facecustomizer from 'client/customizers/character.mjs';
 import * as facedata from 'client/character/facedata.mjs';
 import * as screenfades from 'client/utility/screenfades.mjs';
-import * as charactername from 'client/character/roleplayname.mjs';
+import * as roleplayname from 'client/character/roleplayname.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -27,7 +27,7 @@ alt.onServer('register:CloseDialogue', registration.closeDialogue);
 // =======================================================
 // CHARACTER FACE CUSTOMIZER
 // Shows the face customizer overlay.
-alt.onServer('requestFaceCustomizer', facecustomizer.loadCharacterCustomizer);
+alt.onServer('facecustomizer:ShowDialogue', facecustomizer.showDialogue);
 
 // =======================================================
 // CHARACTER SPECIFIC EVENTS
@@ -44,6 +44,6 @@ alt.onServer('screen:FadeOutFadeIn', screenfades.fadeOutFadeIn); // 2 params of 
 
 // =======================================================
 // Set Character Name
-alt.onServer('chooseRoleplayName', charactername.chooseRoleplayName);
-alt.onServer('roleplayNameTaken', charactername.nameTaken);
-alt.onServer('closeRoleplayNameDialog', charactername.closeRoleplayNameDialog);
+alt.onServer('roleplayname:ShowDialogue', roleplayname.showDialogue);
+alt.onServer('roleplayname:ShowNameTaken', roleplayname.showNameTaken);
+alt.onServer('roleplayname:CloseDialogue', roleplayname.closeDialogue);

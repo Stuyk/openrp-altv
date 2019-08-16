@@ -71,4 +71,24 @@ export function setupPlayerFunctions(player) {
     player.screenBlurIn = timeInMS => {
         alt.emitClient(player, 'screen:BlurIn', timeInMS);
     };
+
+    // ====================================
+    // Face Customizer
+    player.showFaceCustomizerDialogue = () => {
+        alt.emitClient(player, 'facecustomizer:ShowDialogue');
+    };
+
+    // ====================================
+    // Roleplay Name Dialogues
+    player.showRoleplayNameDialogue = () => {
+        alt.emitClient(player, 'roleplayname:ShowDialogue');
+    };
+
+    player.closeRoleplayNameDialogue = () => {
+        alt.emitClient(player, 'roleplayname:CloseDialogue');
+    };
+
+    player.showRoleplayNameTaken = () => {
+        alt.emitClient(player, 'roleplayname:ShowNameTaken');
+    };
 }

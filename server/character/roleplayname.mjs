@@ -10,7 +10,7 @@ export function setRoleplayName(player, roleplayName) {
         if (results === undefined) {
             player.data.name = roleplayName;
             player.save();
-            alt.emitClient(player, 'closeRoleplayNameDialog');
+            player.closeRoleplayNameDialogue();
             player.setSyncedMeta('name', player.data.name);
             return;
         }
@@ -20,14 +20,13 @@ export function setRoleplayName(player, roleplayName) {
         );
 
         if (result !== undefined) {
-            alt.emitClient(player, 'roleplayNameTaken');
+            player.showRoleplayNameTaken();
             return;
         }
 
         player.data.name = roleplayName;
         player.save();
-
-        alt.emitClient(player, 'closeRoleplayNameDialog');
+        player.closeRoleplayNameDialogue();
         player.setSyncedMeta('name', player.data.name);
     });
 }

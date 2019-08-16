@@ -9,5 +9,5 @@ export function requestFacialCustomizer(player, location) {
         player.lastLocation = player.pos;
     }
 
-    alt.emitClient(player, 'requestFaceCustomizer');
+    player.showFaceCustomizerDialogue();
 }

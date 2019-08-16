@@ -18,6 +18,6 @@ export function setFacialData(player, facialJSON) {
     alt.emitClient(player, 'applyFacialData', facialJSON);
 
     if (player.needsRoleplayName) {
-        alt.emitClient(player, 'chooseRoleplayName');
+        player.showRoleplayNameDialogue();
     }
 }

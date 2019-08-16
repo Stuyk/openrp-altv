@@ -7,7 +7,7 @@ const viewPath = 'http://resources/orp/client/html/roleplayname/index.html';
 let webView = undefined;
 
 // Show the webview for the player to type in their roleplay name.
-export function chooseRoleplayName() {
+export function showDialogue() {
     webView = new alt.WebView(viewPath);
     webView.focus();
 
@@ -19,14 +19,14 @@ export function chooseRoleplayName() {
 }
 
 // Emit to the webview that the username is taken.
-export function nameTaken() {
+export function showNameTaken() {
     if (webView === undefined || webView === null) return;
 
     webView.emit('nameTaken');
 }
 
 // Finish using this webView.
-export function closeRoleplayNameDialog() {
+export function closeDialogue() {
     webView.off('setname', setRoleplayName);
     webView.unfocus();
     webView.destroy();

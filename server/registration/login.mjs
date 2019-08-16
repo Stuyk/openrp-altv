@@ -7,6 +7,7 @@ import * as facecustomizer from '../customizers/facialcustomizer.mjs';
 console.log('Loaded: registration->login.mjs');
 
 const db = new SQL(); // Get DB Reference
+const LoggedInPlayers = [];
 
 // Called when a user wants to login from events folder.
 export function userLogin(player, username, password) {
@@ -35,8 +36,16 @@ export function userLogin(player, username, password) {
             return;
         }
 
-        player.showRegisterEventSuccess('Successful login! Please wait...');
+        if (LoggedInPlayers.includes(username)) {
+            player.showRegisterEventError('This account is already logged in.');
+            return;
+        }
 
+        // Keep track of logged in players.
+        LoggedInPlayers.push(username);
+
+        player.username = username;
+        player.showRegisterEventSuccess('Successful login! Please wait...');
         finishPlayerLogin(player, user.id);
         alt.log(`${player.name} has logged in.`);
     });
@@ -82,34 +91,25 @@ function newCharacter(player) {
 
 // Called for any existing characters.
 function existingCharacter(player, data) {
-    // Setup data on the player.
-    player.data = data;
+    const lastPos = JSON.parse(data.lastposition);
+    player.needsRoleplayName = true;
+    player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
+    player.health = data.health;
 
-    // Logout or Spawn Position
-    const lastLogoutPos = JSON.parse(player.data.lastposition);
-
-    // Spawn the player.
-    player.spawn(lastLogoutPos.x, lastLogoutPos.y, lastLogoutPos.z, 1);
-
-    // Set Player Health
-    player.health = player.data.health;
-
-    // Set the player's name if its not null.
+    // Set player name.
     if (data.name !== null) {
         player.needsRoleplayName = false;
-    } else {
-        player.needsRoleplayName = true;
+        player.setSyncedMeta('name', data.name);
+        alt.log(`${data.name} has spawned.`);
     }
 
-    // Set Character Model and Data
-    if (player.data.face === null) {
-        // Show them the new character / new name menu.
-        // TODO: Force show the menu.
-        player.model = 'mp_f_freemode_01'; // Set the player model.
-        facecustomizer.requestFacialCustomizer(player, lastLogoutPos); // Request facial changes menu.
+    // Check if the player has a face.
+    if (data.face === null) {
+        player.model = 'mp_f_freemode_01';
+        facecustomizer.requestFacialCustomizer(player, lastLogoutPos);
     } else {
         // Load Existing Model
-        const characterFaceData = JSON.parse(player.data.face);
+        const characterFaceData = JSON.parse(data.face);
         if (characterFaceData['Sex'].value === 0) {
             player.model = 'mp_f_freemode_01';
         } else {
@@ -120,15 +120,19 @@ function existingCharacter(player, data) {
         alt.emitClient(player, 'applyFacialData', data.face);
 
         if (player.needsRoleplayName) {
-            alt.log('User needs a roleplay name.');
-            alt.emitClient(player, 'chooseRoleplayName');
+            player.showRoleplayNameDialogue();
         }
     }
 
-    if (player.data.name !== null) {
-        alt.log(`${player.data.name} has spawned.`);
-        player.setSyncedMeta('name', player.data.name);
-    } else {
-        alt.log(`${player.name} has spawned.`);
-    }
+    // Setup data on the player.
+    player.data = data;
+}
+
+export function removeLoggedInPlayer(username) {
+    let res = LoggedInPlayers.findIndex(x => x === username);
+
+    if (res <= -1) return;
+
+    let removedUser = LoggedInPlayers.splice(res, 1);
+    console.log(`${removedUser} was was logged out.`);
 }

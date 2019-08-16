@@ -4,7 +4,7 @@ Remember to 🌟 this Github if you 💖 it.
 
 ---
 
-### THIS IS A WORK IN PROGRESS AND IS NOT COMPLETE IN ANY WAY.\*\*
+### THIS IS A WORK IN PROGRESS AND IS NOT COMPLETE IN ANY WAY
 
 Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal functionality to get the base ground work for a roleplay gamemode started.
 
@@ -95,7 +95,7 @@ altVServerFolder/
 |   |	└── resource.cfg
 ```
 
-**\*Installing Packages for NodeJS**
+**Installing Packages for NodeJS**
 After installing the above; if you don't have a package.json in your main server directory where your .exe is you're going to need to do the following:
 
 Open a command prompt or powershell next to your .exe file
@@ -109,9 +109,8 @@ Then press enter a bunch of times until its done stepping you through.
 After you need to install the following packages from command prompt or power shell.
 
 ```
-npm install --save typeorm
-npm install --save pg
-npm install --save sjcl
+npm install typeorm
+npm install sjcl
 ```
 
 Great; now you have all the prerequisites.

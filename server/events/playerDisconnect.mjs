@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as login from '../registration/login.mjs';
 
 console.log('Loaded: events->playerDisconnect.mjs');
 
@@ -26,5 +27,8 @@ alt.on('playerDisconnect', (player, reason) => {
 
     // Save the data.
     player.save();
-    alt.log(`${player.name} has disconnected and logged out.`);
+    alt.log(`${player.name} has disconnected.`);
+
+    // Remove the logged in user.
+    login.removeLoggedInPlayer(player.username);
 });

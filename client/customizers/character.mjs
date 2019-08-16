@@ -26,7 +26,7 @@ let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
 let lastHair = 0; // Get the last hair the player set.
 
 // Load the character customizer, freeze controls, create camera, and ped.
-export function loadCharacterCustomizer() {
+export function showDialogue() {
     if (modPed !== undefined) return;
 
     // Reload Active Res for Reference

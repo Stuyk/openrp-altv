@@ -6,6 +6,7 @@ import {
 } from '../configuration/coordinates.mjs';
 import * as playerutil from '../utility/player.mjs';
 import * as interactionATM from '../interactions/atms.mjs';
+import * as interactionClothing from '../interactions/clothing.mjs';
 
 console.log('Loaded: events->playerConnect.mjs');
 
@@ -24,4 +25,5 @@ alt.on('playerConnect', player => {
 
     // Setup Interactions
     interactionATM.synchronizeBlips(player);
+    interactionClothing.synchronizeBlips(player);
 });

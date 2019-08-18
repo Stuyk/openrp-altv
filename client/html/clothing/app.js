@@ -117,8 +117,6 @@ $(() => {
     $('#modal').hide();
 
     for (let key in clothing) {
-        console.log(key);
-
         $('#populateButtons').append(
             `<div id="group-${key}" class="btn-group w-100 p-2 pl-3 pr-3" role="group"></div>`
         );
@@ -158,6 +156,8 @@ $(() => {
             );
         }
     }
+
+    alt.emit('getPreviousClothes');
 });
 
 // Updates the local facial values registered in this WebView
@@ -278,7 +278,27 @@ $('#closeModal').on('click', () => {
     $('#modal').hide();
 });
 
+function updateClothes(key, data) {
+    clothing[key].value = data.value;
+    clothing[`${key}Texture`].value = data.texture;
+
+    $(`#button-${key}`).html(
+        `${clothing[key].label} <span class="badge badge-secondary">[${
+            clothing[key].value
+        }|${clothing[key].max}]</span>`
+    );
+
+    $(`#button-${key}Texture`).html(
+        `${
+            clothing[`${key}Texture`].label
+        } <span class="badge badge-secondary">[${
+            clothing[`${key}Texture`].value
+        }|${clothing[`${key}Texture`].max}]</span>`
+    );
+}
+
 if ('alt' in window) {
     alt.on('updateMinMax', updateMinMax);
     alt.on('showError', showError);
+    alt.on('updateClothes', updateClothes);
 }

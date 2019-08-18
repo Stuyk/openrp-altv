@@ -58,6 +58,18 @@ export function showDialogue() {
     webView.on('requestComponentData', requestComponentData);
     webView.on('updateComponent', updateComponent);
     webView.on('verifyClothing', verifyClothing);
+    webView.on('getPreviousClothes', getPreviousClothes);
+}
+
+function getPreviousClothes() {
+    const clothingData = alt.Player.local.getSyncedMeta('clothing');
+    if (clothingData === undefined || clothingData === null) return;
+
+    const data = JSON.parse(clothingData);
+
+    for (let key in data) {
+        webView.emit('updateClothes', key, data[key]);
+    }
 }
 
 // On Update Customizer
@@ -169,6 +181,7 @@ export function closeDialogue() {
     webView.off('requestComponentData', requestComponentData);
     webView.off('updateComponent', updateComponent);
     webView.off('verifyClothing', verifyClothing);
+    webView.off('getPreviousClothes', getPreviousClothes);
 
     webView.unfocus();
     webView.destroy();
@@ -176,7 +189,7 @@ export function closeDialogue() {
     characterCamera = undefined;
     native.destroyAllCams(true);
 
-    native.displayRadar(false);
+    native.displayRadar(true);
 
     alt.showCursor(false);
     native.renderScriptCams(false, false, 0, false, false);
@@ -194,6 +207,14 @@ function verifyClothing(jsonData) {
             result[key].id,
             result[key].value,
             result[key].texture
+        );
+
+        native.setPedComponentVariation(
+            alt.Player.local.scriptID,
+            result[key].id,
+            result[key].value,
+            result[key].texture,
+            0
         );
 
         if (!isValid) {

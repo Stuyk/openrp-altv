@@ -217,5 +217,6 @@ export function setupPlayerFunctions(player) {
 
     player.syncClothing = data => {
         alt.emitClient(player, 'clothing:SyncClothing', data);
+        player.setSyncedMeta('clothing', data);
     };
 }

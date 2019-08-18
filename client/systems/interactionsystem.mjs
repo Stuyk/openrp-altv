@@ -13,7 +13,6 @@ alt.setInterval(() => {
     if (indexData === undefined || indexData === null) {
         interactionEnabled = false;
         alt.off('update', showKeyPress);
-        alt.off('keydown', keyPressHandler);
         return;
     }
 
@@ -22,30 +21,19 @@ alt.setInterval(() => {
     // Show prompt for interaction.
     interactionEnabled = true;
     alt.on('update', showKeyPress);
-    alt.on('keydown', keyPressHandler);
 }, 500);
 
 // Check for the key the user is pressing when enabled.
 function showKeyPress() {
-    utilitytext.drawText2d(
-        `Press "E" to Interact`,
-        0.5,
-        0.15,
-        0.5,
-        4,
-        255,
-        255,
-        255,
-        150,
-        true,
-        false,
-        99
+    native.beginTextCommandDisplayHelp('STRING');
+    native.addTextComponentSubstringPlayerName(
+        'Press ~INPUT_CONTEXT~ to Interact'
     );
-}
+    native.endTextCommandDisplayHelp(0, false, true, -1);
 
-// When the player wants to interact. The press this key.
-function keyPressHandler(key) {
-    if (key === 'E'.charCodeAt(0)) {
-        alt.emitServer('interaction:Exec');
+    if (native.isControlJustPressed(0, 38)) {
+        if (key === 'E'.charCodeAt(0)) {
+            alt.emitServer('interaction:Exec');
+        }
     }
 }

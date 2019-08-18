@@ -20,7 +20,7 @@ for (let i = 0; i < clothingList.Clothing.length; i++) {
         pos,
         'clothing', // type
         'clothing:ShowDialogue', // The event to call when the player presses 'E'.
-        2,
+        4,
         3
     );
 

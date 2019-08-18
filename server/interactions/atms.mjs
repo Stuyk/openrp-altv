@@ -21,7 +21,8 @@ for (let i = 0; i < atmList.Atms.length; i++) {
         'atm', // type
         'atm:ShowDialogue', // The event to call when the player presses 'E'.
         2,
-        3
+        3,
+        'to use the ATM.'
     );
 
     atms.push(res);

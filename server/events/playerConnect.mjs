@@ -12,6 +12,7 @@ console.log('Loaded: events->playerConnect.mjs');
 
 alt.on('playerConnect', player => {
     alt.log(`${player.name} has connected.`);
+    player.pos = RegisterCamPoint;
 
     // Setup chat functionality from Chat-Extended
     chat.setupPlayer(player);

@@ -21,7 +21,8 @@ for (let i = 0; i < clothingList.Clothing.length; i++) {
         'clothing', // type
         'clothing:ShowDialogue', // The event to call when the player presses 'E'.
         4,
-        3
+        3,
+        'to change your Clothes.'
     );
 
     clothingStores.push(res);

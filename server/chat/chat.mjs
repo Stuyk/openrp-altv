@@ -9,6 +9,8 @@ export function relayChat(player, msg) {
     // If they are not currently logged in; don't send the message.
     if (player.data === undefined) return;
 
+    if (msg.length <= 0) return;
+
     // If the character name is not set; we force them to set one.
     if (player.data.name === null) {
         alt.emitClient(player, 'chooseRoleplayName');

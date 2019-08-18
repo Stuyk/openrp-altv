@@ -4,7 +4,7 @@ import * as native from 'natives';
 const path = 'http://resources/orp/client/html/clothing/index.html';
 let webView = undefined;
 let characterCamera = undefined;
-let fov = 50;
+let fov = 90;
 let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
     0,
     0
@@ -82,19 +82,19 @@ function onUpdateCustomizer() {
     let cursorRelativePos = alt.getCursorPos().x;
 
     // Scroll to zoom in.
-    if (native.isDisabledControlJustPressed(0, 14)) {
+    if (native.isDisabledControlPressed(0, 14)) {
         if (cursorRelativePos < screenWidth / 2) return;
 
-        fov += 3;
+        fov += 0.1;
         if (fov >= 100) fov = 100;
         updateCamera();
     }
 
     // Scroll to zoom out
-    if (native.isDisabledControlJustPressed(0, 15)) {
+    if (native.isDisabledControlPressed(0, 15)) {
         if (cursorRelativePos < screenWidth - screenWidth / 2) return;
 
-        fov -= 3;
+        fov -= 0.1;
         if (fov <= 30) fov = 30;
         updateCamera();
     }

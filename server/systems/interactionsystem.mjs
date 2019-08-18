@@ -9,7 +9,7 @@ export const interactions = [];
 // The event is then relayed to server-side and checks for an index.
 // When the index is found the class executes the interaction.
 export class Interaction {
-    constructor(position, type, serverEventName, radius, height) {
+    constructor(position, type, serverEventName, radius, height, message) {
         this.pos = position;
         this.type = type;
         this.serverEventName = serverEventName;
@@ -20,6 +20,7 @@ export class Interaction {
             radius,
             height
         );
+        this.message = message;
 
         // Add to the interactions list.
         interactions.push(this);
@@ -41,36 +42,41 @@ export class Interaction {
 // If the colshape doesn't belong to the list above;
 // then the syncedMeta is not utilized here.
 export function forwardEventToPlayer(colshape, entity) {
-    let interactionResult = interactions.findIndex(
-        x => x.colshape === colshape
-    );
+    let index = interactions.findIndex(x => x.colshape === colshape);
 
-    if (interactionResult <= -1) return;
+    if (index <= -1) return;
 
-    entity.setSyncedMeta('interaction', interactionResult);
+    entity.setSyncedMeta('interaction', {
+        index: index,
+        message: interactions[index].message
+    });
 }
 
 // Attempts to find the interaction; and executes it when the
 // player hits the correct button. This is basically called
 // after the player press 'E' and is standing in a ColShape.
 export function attemptToExecuteInteraction(player) {
-    const interactionIndex = player.getSyncedMeta('interaction');
+    const data = player.getSyncedMeta('interaction');
 
-    if (interactionIndex === undefined || interactionIndex === null) return;
+    if (data === undefined || data === null) return;
 
-    if (interactions[interactionIndex] === undefined) return;
+    const index = data.index;
+
+    if (interactions[index] === undefined) return;
 
     player.setSyncedMeta('interaction', undefined);
-    interactions[interactionIndex].exec(player);
+    interactions[index].exec(player);
 }
 
 // Clear the interaction synced meta information.
 export function clearInteraction(player) {
-    const interactionIndex = player.getSyncedMeta('interaction');
+    const data = player.getSyncedMeta('interaction');
 
-    if (interactionIndex === undefined || interactionIndex === null) return;
+    if (data === undefined || data === null) return;
 
-    if (interactions[interactionIndex] === undefined) return;
+    const index = data.index;
+
+    if (interactions[index] === undefined) return;
 
     player.setSyncedMeta('interaction', undefined);
 }

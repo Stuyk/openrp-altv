@@ -5,6 +5,7 @@ import {
     RegisterCamDirection
 } from '../configuration/coordinates.mjs';
 import * as playerutil from '../utility/player.mjs';
+import * as interactionATM from '../interactions/atms.mjs';
 
 console.log('Loaded: events->playerConnect.mjs');
 
@@ -20,4 +21,7 @@ alt.on('playerConnect', player => {
     // Teleport player to location for the time being.
     player.pos = RegisterCamPoint;
     player.showRegisterDialogue(RegisterCamPoint, RegisterCamDirection);
+
+    // Setup Interactions
+    interactionATM.synchronizeBlips(player);
 });

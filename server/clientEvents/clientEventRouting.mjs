@@ -5,6 +5,8 @@ import * as facedata from '../character/facedata.mjs';
 import * as facecustomizer from '../customizers/facialcustomizer.mjs';
 import * as locationhelper from '../utility/locationhelper.mjs';
 import * as roleplayname from '../character/roleplayname.mjs';
+import * as interaction from '../systems/interactionsystem.mjs';
+import * as interactionAtm from '../interactions/atms.mjs';
 
 // On load; send a message.
 console.log('Loaded: clientEvents->clientEventRouting.mjs');
@@ -29,6 +31,13 @@ alt.onClient('utility:GoToLastLocation', locationhelper.goToLastLocation);
 
 // Set the users roleplay name
 alt.onClient('roleplayname:SetRoleplayName', roleplayname.setRoleplayName);
+
+// Interaction Stuff
+alt.onClient('interaction:Exec', interaction.attemptToExecuteInteraction);
+
+// Atm Handler
+alt.onClient('atm:Withdraw', interactionAtm.withdraw);
+alt.onClient('atm:Deposit', interactionAtm.deposit);
 
 // Temporary:
 // teleport to waypoint stuff

@@ -4,6 +4,8 @@ import * as facecustomizer from 'client/customizers/character.mjs';
 import * as facedata from 'client/character/facedata.mjs';
 import * as screenfades from 'client/utility/screenfades.mjs';
 import * as roleplayname from 'client/character/roleplayname.mjs';
+import * as bliphelper from 'client/blips/bliphelper.mjs';
+import * as atmPanel from 'client/panels/atm.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -47,3 +49,15 @@ alt.onServer('screen:FadeOutFadeIn', screenfades.fadeOutFadeIn); // 2 params of 
 alt.onServer('roleplayname:ShowDialogue', roleplayname.showDialogue);
 alt.onServer('roleplayname:ShowNameTaken', roleplayname.showNameTaken);
 alt.onServer('roleplayname:CloseDialogue', roleplayname.closeDialogue);
+
+// =======================================================
+// Create Blip
+alt.onServer('blip:CreateBlip', bliphelper.createBlip);
+
+// =======================================================
+// ATM Events
+alt.onServer('atm:ShowDialogue', atmPanel.showDialogue);
+alt.onServer('atm:CloseDialogue', atmPanel.closeDialogue);
+alt.onServer('atm:UpdateCash', atmPanel.updateCash);
+alt.onServer('atm:UpdateBank', atmPanel.updateBank);
+alt.onServer('atm:ShowSuccess', atmPanel.showSuccess);

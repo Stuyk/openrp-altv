@@ -104,6 +104,7 @@ export function setupPlayerFunctions(player) {
 
     // ====================================
     // Money Functions
+    // Remove cash from the player.
     player.subCash = value => {
         let absValue = Math.abs(parseFloat(value)) * 1;
 
@@ -115,6 +116,7 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    // Add cash to the player.
     player.addCash = value => {
         let absValue = Math.abs(parseFloat(value));
 
@@ -128,6 +130,7 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    // Add cash to the bank.
     player.addBank = value => {
         let absValue = Math.abs(parseFloat(value));
 
@@ -141,6 +144,7 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    // Subtract the cash from the bank.
     player.subBank = value => {
         let absValue = Math.abs(parseFloat(value)) * 1;
 
@@ -152,11 +156,52 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    // Get the player's cash balance.
     player.getCash = () => {
         return player.data.cash;
     };
 
+    // Get the player's bank balance.
     player.getBank = () => {
         return player.data.bank;
+    };
+
+    // ====================================
+    // Load Blip for client.
+    player.createBlip = (pos, blipType, blipColor, labelName) => {
+        alt.emitClient(
+            player,
+            'blip:CreateBlip',
+            pos,
+            blipType,
+            blipColor,
+            labelName
+        );
+    };
+
+    // ====================================
+    // Show the ATM Panel / Dialogue
+    player.showAtmPanel = () => {
+        alt.emitClient(player, 'atm:ShowDialogue');
+    };
+
+    // Close the ATM Panel / Dialogue
+    player.closeAtmPanel = () => {
+        alt.emitClient(player, 'atm:CloseDialogue');
+    };
+
+    // Update the ATM Cash balance the user sees.
+    player.updateAtmCash = value => {
+        alt.emitClient(player, 'atm:UpdateCash', value);
+    };
+
+    // Update the ATM Bank balance the user sees.
+    player.updateAtmBank = value => {
+        alt.emitClient(player, 'atm:UpdateBank', value);
+    };
+
+    // Show the ATM success message.
+    player.showAtmSuccess = msg => {
+        alt.emitClient(player, 'atm:ShowSuccess', msg);
     };
 }

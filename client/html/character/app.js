@@ -711,7 +711,7 @@ $(() => {
 
     // Submit Changes Button
     $('#populateButtons').append(
-        `<button type="button" class="btn btn-sm btn-block btn-primary" onclick="submitChanges();">Submit Changes</button>`
+        `<div class="btn-group w-100 p-2 pl-3 pr-3" role="group"><button type="button" class="btn btn-sm btn-block btn-primary" onclick="submitChanges();">Submit Changes</button></div>`
     );
 });
 

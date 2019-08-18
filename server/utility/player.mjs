@@ -204,4 +204,18 @@ export function setupPlayerFunctions(player) {
     player.showAtmSuccess = msg => {
         alt.emitClient(player, 'atm:ShowSuccess', msg);
     };
+
+    // =================================
+    // Show Clothing Panel
+    player.showClothingDialogue = () => {
+        alt.emitClient(player, 'clothing:ShowDialogue');
+    };
+
+    player.closeClothingDialogue = () => {
+        alt.emitClient(player, 'clothing:CloseDialogue');
+    };
+
+    player.syncClothing = data => {
+        alt.emitClient(player, 'clothing:SyncClothing', data);
+    };
 }

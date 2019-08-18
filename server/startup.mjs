@@ -36,4 +36,7 @@ alt.on('ConnectionComplete', () => {
 
     // Sandbox Commands
     import('./commands/sandbox.mjs');
+
+    // Weather + Time
+    import('./systems/time.mjs');
 });

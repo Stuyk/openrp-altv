@@ -130,6 +130,10 @@ function existingCharacter(player, data) {
     data.cash = data.cash * 1;
     data.bank = data.bank * 1;
 
+    if (data.clothing !== null || data.clothing !== undefined) {
+        player.syncClothing(data.clothing);
+    }
+
     // Setup data on the player.
     player.data = data;
 }

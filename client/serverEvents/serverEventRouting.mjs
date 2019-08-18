@@ -6,6 +6,8 @@ import * as screenfades from 'client/utility/screenfades.mjs';
 import * as roleplayname from 'client/character/roleplayname.mjs';
 import * as bliphelper from 'client/blips/bliphelper.mjs';
 import * as atmPanel from 'client/panels/atm.mjs';
+import * as clothing from 'client/character/clothing.mjs';
+import * as clothingPanel from 'client/customizers/clothing.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -61,3 +63,12 @@ alt.onServer('atm:CloseDialogue', atmPanel.closeDialogue);
 alt.onServer('atm:UpdateCash', atmPanel.updateCash);
 alt.onServer('atm:UpdateBank', atmPanel.updateBank);
 alt.onServer('atm:ShowSuccess', atmPanel.showSuccess);
+
+// =======================================================
+// Clothing Panel Events
+alt.onServer('clothing:ShowDialogue', clothingPanel.showDialogue);
+alt.onServer('clothing:CloseDialogue', clothingPanel.closeDialogue);
+
+// =======================================================
+// Clothing Events
+alt.onServer('clothing:SyncClothing', clothing.syncClothing);

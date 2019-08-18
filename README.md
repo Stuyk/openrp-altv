@@ -16,7 +16,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Login and Registration
 -   [x] Character Facial Customization
 -   [x] Roleplay Name Formatting
--   [ ] Character Clothing Customization
+-   [x] Character Clothing Customization
 -   [ ] Character Inventory System
 -   [ ] Vehicle System
 -   [ ] Vehicle Customization
@@ -30,6 +30,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Shop System
 -   [ ] Faction System
 -   [ ] Basic Anticheat
+-   [x] Time Sync
+-   [x] Interaction System
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 

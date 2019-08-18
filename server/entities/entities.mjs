@@ -38,6 +38,10 @@ export const Character = new orm.EntitySchema({
             type: 'varchar',
             nullable: true
         },
+        clothing: {
+            type: 'varchar',
+            nullable: true
+        },
         lastposition: {
             type: 'varchar',
             nullable: true

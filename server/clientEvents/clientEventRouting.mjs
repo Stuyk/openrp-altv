@@ -7,6 +7,7 @@ import * as locationhelper from '../utility/locationhelper.mjs';
 import * as roleplayname from '../character/roleplayname.mjs';
 import * as interaction from '../systems/interactionsystem.mjs';
 import * as interactionAtm from '../interactions/atms.mjs';
+import * as clothing from '../character/clothing.mjs';
 
 // On load; send a message.
 console.log('Loaded: clientEvents->clientEventRouting.mjs');
@@ -38,6 +39,9 @@ alt.onClient('interaction:Exec', interaction.attemptToExecuteInteraction);
 // Atm Handler
 alt.onClient('atm:Withdraw', interactionAtm.withdraw);
 alt.onClient('atm:Deposit', interactionAtm.deposit);
+
+// Clothing Handler
+alt.onClient('clothing:SaveClothing', clothing.saveClothing);
 
 // Temporary:
 // teleport to waypoint stuff

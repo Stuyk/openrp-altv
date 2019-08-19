@@ -24,3 +24,7 @@ chat.registerCmd('addcash', (player, value) => {
 
     player.addCash(data);
 });
+
+chat.registerCmd('wep', player => {
+    player.giveWeapon(-1312131151, 999, true);
+});

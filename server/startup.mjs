@@ -24,6 +24,7 @@ alt.on('ConnectionComplete', () => {
     // Standard Events
     import('./events/playerConnect.mjs');
     import('./events/playerDisconnect.mjs');
+    import('./events/playerDeath.mjs');
     import('./events/entityEnterColshape.mjs');
     import('./events/entityLeaveColshape.mjs');
 
@@ -36,6 +37,7 @@ alt.on('ConnectionComplete', () => {
 
     // Sandbox Commands
     import('./commands/sandbox.mjs');
+    import('./commands/revive.mjs');
 
     // Weather + Time
     import('./systems/time.mjs');

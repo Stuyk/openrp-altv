@@ -32,6 +32,10 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Basic Anticheat
 -   [x] Time Sync
 -   [x] Interaction System
+-   [x] Player Death Handling
+-   [x] Taxation
+-   [ ] Taxation goes to Government Fund
+-   [ ] Government Fund Management
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 

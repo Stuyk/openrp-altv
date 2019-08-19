@@ -125,6 +125,8 @@ function existingCharacter(player, data) {
         player.syncClothing(data.clothing);
     }
 
+    // Tax if PLAYER was dead on login.
+
     // Setup data on the player.
     player.data = data;
 }

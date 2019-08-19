@@ -15,3 +15,7 @@ export const Locations = [
         z: 34.4864501953125
     }
 ];
+
+export const Currency = {
+    feePct: 0.02 // The Cost of Being Revived after Dieing. Based on Percentage of player's income.
+};

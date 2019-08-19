@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as chat from 'chat';
+import * as configurationHospitals from '../configuration/hospitals.mjs';
 
 chat.registerCmd('revive', player => {
     if (player.revive) {
@@ -26,6 +27,12 @@ chat.registerCmd('revive', player => {
         player.revivePos = undefined;
         player.reviveTime = undefined;
         player.revive = false;
+        player.saveDead(false);
+        player.taxIncome(
+            configurationHospitals.Currency.feePct,
+            true,
+            'Hospital Fee'
+        );
         player.sendMessage('You have been revived.');
     }, 20000);
 });

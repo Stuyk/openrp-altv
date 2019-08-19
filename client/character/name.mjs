@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
-alt.log('Loaded: client->character->roleplayname.mjs');
+alt.log('Loaded: client->character->name.mjs');
 
 const viewPath = 'http://resources/orp/client/html/roleplayname/index.html';
 let webView = undefined;

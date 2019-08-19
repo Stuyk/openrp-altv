@@ -35,6 +35,18 @@ export function setupPlayerFunctions(player) {
     };
 
     // ====================================
+    // Save Last Location
+    player.saveLocation = pos => {
+        player.data.lastposition = pos;
+        player.saveField(player.data.id, 'lastposition', JSON.stringify(pos));
+    };
+
+    player.saveDead = value => {
+        player.data.dead = value;
+        player.saveField(player.data.id, 'dead', value);
+    };
+
+    // ====================================
     // Registration Webview Related Events
     player.showRegisterDialogue = (regCamCoord, regCamPointAtCoord) => {
         alt.emitClient(
@@ -195,6 +207,43 @@ export function setupPlayerFunctions(player) {
     // Get the player's bank balance.
     player.getBank = () => {
         return player.data.bank;
+    };
+
+    player.taxIncome = (percentage, useHighest, reason) => {
+        let cash = player.getCash(); // 0
+        let bank = player.getBank(); // 1
+
+        let taxType = 0;
+
+        if (useHighest) {
+            if (cash > bank) {
+                taxType = 0;
+            } else {
+                taxType = 1;
+            }
+        } else {
+            if (cash < bank) {
+                taxType = 0;
+            } else {
+                taxType = 1;
+            }
+        }
+
+        if (taxType === 0) {
+            let cashTaxAmount = cash * percentage;
+            cash -= cashTaxAmount;
+            player.data.cash = Number.parseFloat(cash).toFixed(2) * 1;
+            player.saveField(player.data.id, 'cash', player.data.cash);
+            player.sendMessage(`You were taxed: $${cashTaxAmount}`);
+        } else {
+            let bankTaxAmount = bank * percentage;
+            bank -= bankTaxAmount;
+            player.data.bank = Number.parseFloat(bank).toFixed(2) * 1;
+            player.saveField(player.data.id, 'bank', player.data.bank);
+            player.sendMessage(`You were taxed: $${bankTaxAmount}`);
+        }
+
+        player.sendMessage(`Reason: ${reason}`);
     };
 
     // ====================================

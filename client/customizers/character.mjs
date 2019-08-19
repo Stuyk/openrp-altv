@@ -257,7 +257,7 @@ function updateCamera() {
 }
 
 function setPlayerFacialData(facialDataJSON) {
-    alt.emitServer('facecustomizer:setFacialData', facialDataJSON);
+    alt.emitServer('face:SetFacialData', facialDataJSON);
 
     // Remove the CharacterCamera
     characterCamera = undefined;

@@ -1,7 +1,7 @@
 import * as alt from 'alt';
-import * as vector from '../utility/vector.mjs';
+import * as utilityVector from '../utility/vector.mjs';
 
-console.log('Loaded: systems->interactionsystem.mjs');
+console.log('Loaded: systems->interaction.mjs');
 
 export const interactions = [];
 
@@ -28,7 +28,7 @@ export class Interaction {
 
     // Call the server event from anywhere on the server-side.
     exec(player) {
-        if (vector.distance(player.pos, this.pos) > this.radius) {
+        if (utilityVector.distance(player.pos, this.pos) > this.radius) {
             player.setSyncedMeta('interaction', undefined);
             return;
         }

@@ -1,8 +1,8 @@
 import * as alt from 'alt';
-import * as crypto from '../utility/encryption.mjs';
+import * as utilityEncryption from '../utility/encryption.mjs';
+import * as customizersFace from '../customizers/face.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
-import * as facecustomizer from '../customizers/facialcustomizer.mjs';
 import { PlayerDefaults } from '../configuration/player.mjs';
 
 console.log('Loaded: registration->login.mjs');
@@ -30,7 +30,7 @@ export function existingAccount(player, username, password) {
             return;
         }
 
-        if (!crypto.verifyPassword(password, user.password)) {
+        if (!utilityEncryption.verifyPassword(password, user.password)) {
             player.showRegisterEventError(
                 'Username or Password does not match.'
             );
@@ -109,18 +109,9 @@ function existingCharacter(player, data) {
     // Check if the player has a face.
     if (data.face === null) {
         player.model = 'mp_f_freemode_01';
-        facecustomizer.requestFacialCustomizer(player, lastPos);
+        customizersFace.showFace(player, lastPos);
     } else {
-        // Load Existing Model
-        const characterFaceData = JSON.parse(data.face);
-        if (characterFaceData['Sex'].value === 0) {
-            player.model = 'mp_f_freemode_01';
-        } else {
-            player.model = 'mp_m_freemode_01';
-        }
-
-        // Apply the face to the player.
-        alt.emitClient(player, 'applyFacialData', data.face);
+        player.applyFace(data.face);
 
         if (player.needsRoleplayName) {
             player.showRoleplayNameDialogue();

@@ -1,6 +1,6 @@
 import * as alt from 'alt';
-import * as interactions from '../systems/interactionsystem.mjs';
-import * as atmList from '../configuration/atms.mjs';
+import * as systemsInteraction from '../systems/interaction.mjs';
+import * as configurationAtms from '../configuration/atms.mjs';
 
 console.log('Loaded: interactions->atms.mjs');
 
@@ -11,12 +11,12 @@ const atms = [];
 // Put them into the above list.
 // We also subtract 1 from the z position to ensure
 // that the player is not below the point.
-for (let i = 0; i < atmList.Atms.length; i++) {
-    let pos = atmList.Atms[i];
+for (let i = 0; i < configurationAtms.Locations.length; i++) {
+    let pos = configurationAtms.Locations[i];
     pos.z -= 1;
 
     // position, type, serverEventName, radius, height
-    let res = new interactions.Interaction(
+    let res = new systemsInteraction.Interaction(
         pos,
         'atm', // type
         'atm:ShowDialogue', // The event to call when the player presses 'E'.

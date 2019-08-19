@@ -1,4 +1,4 @@
-export const Clothing = [
+export const Locations = [
     {
         x: -160.74725341796875,
         y: -302.8483581542969,

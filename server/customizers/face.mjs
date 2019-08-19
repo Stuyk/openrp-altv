@@ -1,8 +1,8 @@
 import * as alt from 'alt';
 
-console.log(`Loaded: customizers->facialcustomizer.mjs`);
+console.log(`Loaded: customizers->face.mjs`);
 
-export function requestFacialCustomizer(player, location) {
+export function showFace(player, location) {
     if (location !== undefined) {
         player.lastLocation = location;
     } else {

@@ -1,6 +1,6 @@
 import * as alt from 'alt';
-import * as interactions from '../systems/interactionsystem.mjs';
-import * as clothingList from '../configuration/clothing.mjs';
+import * as systemsInteraction from '../systems/interaction.mjs';
+import * as configurationClothing from '../configuration/clothing.mjs';
 
 console.log('Loaded: interactions->clothing.mjs');
 
@@ -11,12 +11,12 @@ const clothingStores = [];
 // Put them into the above list.
 // We also subtract 1 from the z position to ensure
 // that the player is not below the point.
-for (let i = 0; i < clothingList.Clothing.length; i++) {
-    let pos = clothingList.Clothing[i];
+for (let i = 0; i < configurationClothing.Locations.length; i++) {
+    let pos = configurationClothing.Locations[i];
     pos.z -= 1;
 
     // position, type, serverEventName, radius, height
-    let res = new interactions.Interaction(
+    let res = new systemsInteraction.Interaction(
         pos,
         'clothing', // type
         'clothing:ShowDialogue', // The event to call when the player presses 'E'.

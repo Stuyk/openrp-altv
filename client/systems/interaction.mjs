@@ -1,8 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as utilitytext from 'client/utility/text.mjs';
 
-alt.log(`Loaded: systems->interactionsystem.mjs`);
+alt.log(`Loaded: systems->interaction.mjs`);
 
 let interactionEnabled = false;
 let currentLabel = undefined;

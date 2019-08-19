@@ -1,4 +1,4 @@
-export const Atms = [
+export const Locations = [
     {
         x: -1109.797,
         y: -1690.808,

@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->customizers->clothing.mjs');
+
 const path = 'http://resources/orp/client/html/clothing/index.html';
 let webView = undefined;
 let characterCamera = undefined;

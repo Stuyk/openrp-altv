@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
-alt.log('Loaded: client->character->facedata.mjs');
+alt.log('Loaded: client->character->face.mjs');
 
 // Used for facial features loop.
 const faceFeatureNames = [

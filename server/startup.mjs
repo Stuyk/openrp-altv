@@ -2,17 +2,17 @@ import * as alt from 'alt';
 import * as chat from 'chat';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character } from './entities/entities.mjs'; // Schemas for Database
-import * as DBConf from './configuration/database.mjs'; // Database Configuration
-import * as interactionsys from './systems/interactionsystem.mjs';
+import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration
+import * as systemsInteraction from './systems/interaction.mjs';
 
 // Setup Main Entities and Database Connection
 new SQL(
-    DBConf.DatabaseInfo.type,
-    DBConf.DatabaseInfo.address,
-    DBConf.DatabaseInfo.port,
-    DBConf.DatabaseInfo.username,
-    DBConf.DatabaseInfo.password,
-    DBConf.DatabaseInfo.dbname,
+    configurationDatabase.DatabaseInfo.type,
+    configurationDatabase.DatabaseInfo.address,
+    configurationDatabase.DatabaseInfo.port,
+    configurationDatabase.DatabaseInfo.username,
+    configurationDatabase.DatabaseInfo.password,
+    configurationDatabase.DatabaseInfo.dbname,
     // Specify New Table Schemas Here
     [Account, Character]
 );
@@ -28,8 +28,8 @@ alt.on('ConnectionComplete', () => {
     import('./events/entityLeaveColshape.mjs');
 
     // Custom Client Events / Custom Server Events
-    import('./serverEvents/serverEventRouting.mjs');
-    import('./clientEvents/clientEventRouting.mjs');
+    import('./serverEvents/events.mjs');
+    import('./clientEvents/events.mjs');
 
     // Interactions
     import('./interactions/atms.mjs');

@@ -36,5 +36,5 @@ export function closeDialogue() {
 
 // Routed to the server; to set the user's roleplay name.
 function setRoleplayName(roleplayname) {
-    alt.emitServer('roleplayname:SetRoleplayName', roleplayname);
+    alt.emitServer('character:SetRoleplayName', roleplayname);
 }

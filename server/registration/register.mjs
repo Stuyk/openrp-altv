@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import * as crypto from '../utility/encryption.mjs';
+import * as utilityEncryption from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: registration->register.mjs');
@@ -28,7 +28,7 @@ export function newAccount(player, username, password) {
         }
 
         // Encrypt the password.
-        const encryptedData = crypto.encryptPassword(password);
+        const encryptedData = utilityEncryption.encryptPassword(password);
 
         // Setup data for the account.
         const playerAccDoc = {

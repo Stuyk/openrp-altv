@@ -4,9 +4,9 @@ import {
     RegisterCamPoint,
     RegisterCamDirection
 } from '../configuration/coordinates.mjs';
-import * as playerutil from '../utility/player.mjs';
-import * as interactionATM from '../interactions/atms.mjs';
-import * as interactionClothing from '../interactions/clothing.mjs';
+import * as utilityPlayer from '../utility/player.mjs';
+import * as interactionsAtms from '../interactions/atms.mjs';
+import * as interactionsClothing from '../interactions/clothing.mjs';
 
 console.log('Loaded: events->playerConnect.mjs');
 
@@ -18,13 +18,13 @@ alt.on('playerConnect', player => {
     chat.setupPlayer(player);
 
     // Setup extended functions for player
-    playerutil.setupPlayerFunctions(player);
+    utilityPlayer.setupPlayerFunctions(player);
 
     // Teleport player to location for the time being.
     player.pos = RegisterCamPoint;
     player.showRegisterDialogue(RegisterCamPoint, RegisterCamDirection);
 
     // Setup Interactions
-    interactionATM.synchronizeBlips(player);
-    interactionClothing.synchronizeBlips(player);
+    interactionsAtms.synchronizeBlips(player);
+    interactionsClothing.synchronizeBlips(player);
 });

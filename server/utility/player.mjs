@@ -6,6 +6,11 @@ console.log('Loaded: utility->player.mjs');
 // Load the database handler.
 const db = new SQL();
 
+// These are player extension functions.
+// They can be called from anywhere inside of
+// this resource and they're very useful for
+// quickly interacting with player data.
+// Keep the sectioned off; it makes it easier.
 export function setupPlayerFunctions(player) {
     // ====================================
     // Enable Player Saving
@@ -85,7 +90,33 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Face Customizer
     player.showFaceCustomizerDialogue = () => {
-        alt.emitClient(player, 'facecustomizer:ShowDialogue');
+        alt.emitClient(player, 'face:ShowDialogue');
+    };
+
+    player.applyFace = valueJSON => {
+        const data = JSON.parse(valueJSON);
+
+        if (data['Sex'].value === 0) {
+            player.model = 'mp_f_freemode_01';
+        } else {
+            player.model = 'mp_m_freemode_01';
+        }
+
+        alt.emitClient(player, 'face:ApplyFacialData', valueJSON);
+    };
+
+    player.saveFace = valueJSON => {
+        const data = JSON.parse(valueJSON);
+
+        if (data['Sex'].value === 0) {
+            player.model = 'mp_f_freemode_01';
+        } else {
+            player.model = 'mp_m_freemode_01';
+        }
+
+        player.data.face = valueJSON;
+        player.saveField(player.data.id, 'face', valueJSON);
+        alt.emitClient(player, 'face:ApplyFacialData', valueJSON);
     };
 
     // ====================================
@@ -206,17 +237,44 @@ export function setupPlayerFunctions(player) {
     };
 
     // =================================
-    // Show Clothing Panel
+    /**
+     * Show the Clothing Dialogue
+     */
     player.showClothingDialogue = () => {
         alt.emitClient(player, 'clothing:ShowDialogue');
     };
 
+    /**
+     * Close the clothing Dialogue.
+     */
     player.closeClothingDialogue = () => {
         alt.emitClient(player, 'clothing:CloseDialogue');
     };
 
+    /**
+     * Sync the player's clothes from a JSON.
+     */
     player.syncClothing = data => {
         alt.emitClient(player, 'clothing:SyncClothing', data);
         player.setSyncedMeta('clothing', data);
+    };
+
+    /**
+     * Save the player's clothing.
+     */
+    player.saveClothing = dataJSON => {
+        player.data.clothing = dataJSON;
+        player.setSyncedMeta('clothing', dataJSON);
+        player.saveField(player.data.id, 'clothing', dataJSON);
+    };
+
+    // =================================
+    /**
+     * Set / Save the player's Roleplay name
+     */
+    player.saveRoleplayName = value => {
+        player.data.name = value;
+        player.setSyncedMeta('name', player.data.name);
+        player.saveField(player.data.id, 'name', player.data.name);
     };
 }

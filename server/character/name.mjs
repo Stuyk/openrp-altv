@@ -3,7 +3,7 @@ import SQL from '../../../postgres-wrapper/database.mjs';
 
 const db = new SQL();
 
-console.log('Loaded: character->roleplayname.mjs');
+console.log('Loaded: character->name.mjs');
 
 export function setRoleplayName(player, roleplayName) {
     db.selectData('Character', ['name'], results => {
@@ -24,9 +24,8 @@ export function setRoleplayName(player, roleplayName) {
             return;
         }
 
-        player.data.name = roleplayName;
-        player.save();
+        // Sets and saves the player's roleplay name.
+        player.saveRoleplayName(roleplayName);
         player.closeRoleplayNameDialogue();
-        player.setSyncedMeta('name', player.data.name);
     });
 }

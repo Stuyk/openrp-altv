@@ -129,6 +129,9 @@ function existingCharacter(player, data) {
 
     // Setup data on the player.
     player.data = data;
+
+    // Sync Inventory after player.data
+    player.syncInventory();
 }
 
 export function removeLoggedInPlayer(username) {

@@ -17,6 +17,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Character Facial Customization
 -   [x] Roleplay Name Formatting
 -   [x] Character Clothing Customization
+-   [ ] Glasses, Tattoos, etc.
 -   [ ] Character Inventory System
 -   [ ] Vehicle System
 -   [ ] Vehicle Customization
@@ -36,6 +37,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Taxation
 -   [ ] Taxation goes to Government Fund
 -   [ ] Government Fund Management
+-   [ ] Animation Manager
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 

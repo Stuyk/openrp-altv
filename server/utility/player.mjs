@@ -326,4 +326,91 @@ export function setupPlayerFunctions(player) {
         player.setSyncedMeta('name', player.data.name);
         player.saveField(player.data.id, 'name', player.data.name);
     };
+
+    // =================================
+    /**
+     * Create a new inventory or grab an existing inventory.
+     */
+    player.syncInventory = () => {
+        //(fieldName, fieldValue, repoName, callback)
+        db.fetchData('id', player.data.id, 'Inventory', result => {
+            if (result === undefined) {
+                db.upsertData(
+                    { id: player.data.id },
+                    'Inventory',
+                    inventory => {
+                        player.inventory = inventory;
+                        console.log(player.inventory);
+                    }
+                );
+            } else {
+                db.fetchByIds([player.data.id], 'Inventory', inventories => {
+                    player.inventory = inventories[0];
+                });
+            }
+        });
+    };
+
+    // Add an item to a player.
+    player.addItem = (itemName, quantity) => {
+        if (player.inventory[itemName] === undefined) {
+            console.log(
+                `${itemName} does not exist in the Schema. Case sensititive?`
+            );
+            return false;
+        }
+
+        player.inventory[itemName] += quantity;
+
+        db.updatePartialData(
+            player.data.id,
+            { [itemName]: player.inventory[itemName] },
+            'Inventory',
+            () => {}
+        );
+        return true;
+    };
+
+    // Remove an item from a player.
+    player.subItem = (itemName, quantity) => {
+        if (player.inventory[itemName] === undefined) {
+            console.log(
+                `${itemName} does not exist in the Schema. Case sensititive?`
+            );
+            return false;
+        }
+
+        // Player does not have enough.
+        if (player.inventory[itemName] < quantity) {
+            return false;
+        }
+
+        player.inventory[itemName] -= quantity;
+
+        db.updatePartialData(
+            player.data.id,
+            { [itemName]: player.inventory[itemName] },
+            'Inventory',
+            () => {}
+        );
+        return true;
+    };
+
+    // Mostly for consumption / item effects.
+    player.consumeItem = itemName => {
+        if (!player.subItem(itemName, 1)) {
+            return false;
+        }
+
+        alt.emit('item:Consume', player, itemName);
+        return true;
+    };
+
+    // Mostly for displaying items.
+    player.useItem = itemName => {
+        if (player.inventory[itemName] <= 0) return false;
+
+        alt.emit('item:UseItem', player, itemName);
+        return true;
+    };
 }

@@ -18,6 +18,8 @@ chat.registerCmd('veh', player => {
         0,
         0
     );
+
+    console.log(alt.Vehicle.all.length);
 });
 
 chat.registerCmd('addcash', (player, value) => {

@@ -1,0 +1,72 @@
+import * as alt from 'alt';
+import * as native from 'natives';
+import * as systemsSound from 'client/systems/sound.mjs';
+import * as utilityVector from 'client/utility/vector.mjs';
+import * as utilityText from 'client/utility/text.mjs';
+
+let itemsOnGround = [];
+
+export function itemDrop(player, item) {
+    if (alt.Player.local === player) {
+        systemsSound.playAudio('drop');
+    }
+
+    itemsOnGround.push({ pos: player.pos, item });
+    alt.on('update', drawItems);
+}
+
+export function itemPickup(hash) {
+    if (itemsOnGround.length <= 0) return;
+
+    let index = itemsOnGround.findIndex(x => x.item.hash === hash);
+
+    if (index <= -1) return;
+
+    itemsOnGround.splice(index, 1);
+
+    if (itemsOnGround.length <= 0) {
+        alt.off('update', drawItems);
+    }
+}
+
+function drawItems() {
+    if (itemsOnGround.length <= 0) {
+        alt.off('update', drawItems);
+        return;
+    }
+
+    itemsOnGround.forEach(itemData => {
+        let dist = utilityVector.distance(alt.Player.local.pos, itemData.pos);
+        if (dist <= 2) {
+            utilityText.drawText3d(
+                itemData.item.label,
+                itemData.pos.x,
+                itemData.pos.y,
+                itemData.pos.z - 1,
+                0.4,
+                4,
+                255,
+                255,
+                255,
+                255,
+                true,
+                false,
+                99
+            );
+
+            if (dist <= 1) {
+                native.beginTextCommandDisplayHelp('STRING');
+                native.addTextComponentSubstringPlayerName(
+                    `Press ~INPUT_CONTEXT~ to pick up the ${
+                        itemData.item.label
+                    }`
+                );
+                native.endTextCommandDisplayHelp(0, false, true, -1);
+
+                if (native.isControlJustReleased(0, 38)) {
+                    alt.emitServer('inventory:Pickup', itemData.item.hash);
+                }
+            }
+        }
+    });
+}

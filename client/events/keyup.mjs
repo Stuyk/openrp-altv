@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as chat from 'chat';
 

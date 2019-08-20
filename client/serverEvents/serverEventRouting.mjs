@@ -9,6 +9,7 @@ import * as panelsAtm from 'client/panels/atm.mjs';
 import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as characterClothing from 'client/character/clothing.mjs';
 import * as customizersClothing from 'client/customizers/clothing.mjs';
+import * as systemsInventory from 'client/systems/inventory.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -75,5 +76,10 @@ alt.onServer('clothing:CloseDialogue', customizersClothing.closeDialogue);
 alt.onServer('clothing:SyncClothing', characterClothing.syncClothing);
 
 // =======================================================
-// Inventory Sync
+// Inventory
+// Sync
 alt.onServer('inventory:FetchItems', panelsInventory.fetchItems);
+// Drop Item
+alt.onServer('inventory:ItemDrop', systemsInventory.itemDrop);
+// Pickup Item
+alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);

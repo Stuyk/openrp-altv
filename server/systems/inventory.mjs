@@ -6,6 +6,9 @@ console.log('Loaded: systems->inventory.mjs');
 
 const db = new SQL();
 
+// hash, itemdata
+let ItemDrops = new Map();
+
 // Called when a player consumes an item.
 alt.on('item:Consume', (player, itemObject) => {
     Object.keys(configurationItems.Items).forEach(key => {
@@ -84,10 +87,35 @@ export function use(player, hash) {
 }
 
 export function drop(player, hash) {
-    player.sendMessage('Not implemented yet.');
-    player.updateInventory();
+    var item = player.inventory.find(x => x.hash === hash);
+
+    if (item === undefined) return;
+
+    ItemDrops.set(hash, item);
+
+    if (!player.subItemByHash(hash, 1)) return;
+
+    alt.emitClient(null, 'inventory:ItemDrop', player, item);
 }
 
 export function destroy(player, hash) {
     player.destroyItem(hash);
+}
+
+export function pickup(player, hash) {
+    alt.emitClient(null, 'inventory:ItemPickup', hash);
+
+    if (!ItemDrops.has(hash)) return;
+
+    let item = { ...ItemDrops.get(hash) };
+    ItemDrops.delete(hash);
+
+    Object.keys(configurationItems.Items).forEach(key => {
+        if (configurationItems.Items[key].label !== item.label) return;
+
+        let clonedTemplate = { ...configurationItems.Items[key] };
+        clonedTemplate.props = item.props;
+
+        player.addItem(clonedTemplate, 1);
+    });
 }

@@ -63,6 +63,7 @@ alt.onClient('clothing:SaveClothing', characterClothing.saveClothing);
 alt.onClient('inventory:DestroyItem', systemsInventory.destroy);
 alt.onClient('inventory:UseItem', systemsInventory.use);
 alt.onClient('inventory:DropItem', systemsInventory.drop);
+alt.onClient('inventory:Pickup', systemsInventory.pickup);
 
 // Temporary:
 // teleport to waypoint stuff

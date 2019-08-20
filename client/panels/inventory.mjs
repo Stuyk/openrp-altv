@@ -35,6 +35,7 @@ export function closeDialogue() {
     webView.off('fetchItems', fetchItems);
     webView.unfocus();
     webView.destroy();
+    webView = undefined;
     alt.showCursor(false);
     alt.toggleGameControls(true);
 

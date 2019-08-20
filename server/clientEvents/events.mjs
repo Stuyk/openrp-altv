@@ -23,6 +23,8 @@ alt.onClient('register:NewAccount', registrationRegister.newAccount);
 // Called when a client attempts to Login to an account.
 alt.onClient('register:ExistingAccount', registrationLogin.existingAccount);
 
+alt.onClient('register:Ready', registrationLogin.ready);
+
 // ====================================================
 // Face
 // Set the player's facial data from the customizer.

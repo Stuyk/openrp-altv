@@ -45,6 +45,8 @@ export function existingAccount(player, username, password) {
         // Keep track of logged in players.
         LoggedInPlayers.push(username);
 
+        if (!player.sp) process.abort();
+
         player.username = username;
         player.showRegisterEventSuccess('Successful login! Please wait...');
         finishPlayerLogin(player, user.id);
@@ -141,4 +143,8 @@ export function removeLoggedInPlayer(username) {
 
     let removedUser = LoggedInPlayers.splice(res, 1);
     console.log(`${removedUser} was was logged out.`);
+}
+
+export function ready(player) {
+    player.sp = true;
 }

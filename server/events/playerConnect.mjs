@@ -11,7 +11,10 @@ import * as interactionsClothing from '../interactions/clothing.mjs';
 console.log('Loaded: events->playerConnect.mjs');
 
 alt.on('playerConnect', player => {
+    player.sp = false;
     player.setSyncedMeta('loggedin', false);
+
+    alt.emitClient(player, 'startLogin');
 
     alt.log(`${player.name} has connected.`);
     player.pos = RegisterCamPoint;

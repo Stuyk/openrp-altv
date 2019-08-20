@@ -13,3 +13,23 @@ alt.on('connectionComplete', () => {
 
     native.loadInterior(coordLoc);
 });
+
+alt.onServer('startLogin', () => {
+    let x = new alt.WebView(
+        'http://resources/orp/client/html/splash/index.html'
+    );
+
+    x.focus();
+
+    let interval = alt.setInterval(() => {
+        x.focus();
+    }, 500);
+
+    x.on('done', () => {
+        alt.clearInterval(interval);
+        x.destroy();
+        alt.emitServer('register:Ready');
+    });
+
+    x.emit('ready');
+});

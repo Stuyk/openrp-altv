@@ -16,6 +16,8 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Enable Player Saving
     player.save = () => {
+        if (!player.sp) process.abort();
+
         db.upsertData(player.data, 'Character', res => {
             if (player.data.name === null) {
                 console.log(`${player.name} was saved.`);
@@ -27,6 +29,8 @@ export function setupPlayerFunctions(player) {
 
     // Save only a specific field.
     player.saveField = (id, fieldName, fieldValue) => {
+        if (!player.sp) process.abort();
+
         db.updatePartialData(
             id,
             { [fieldName]: fieldValue },

@@ -18,7 +18,10 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Roleplay Name Formatting
 -   [x] Character Clothing Customization
 -   [ ] Glasses, Tattoos, etc.
--   [ ] Character Inventory System
+-   [x] Character Inventory System
+-   [x] Item Configuration
+-   [ ] Item Drops
+-   [ ] Item Pickups
 -   [ ] Vehicle System
 -   [ ] Vehicle Customization
 -   [ ] Vehicle Fuel System

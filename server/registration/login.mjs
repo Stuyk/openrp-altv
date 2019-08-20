@@ -98,6 +98,7 @@ function existingCharacter(player, data) {
     player.needsRoleplayName = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
     player.health = data.health;
+    player.armour = data.armour;
 
     // Set player name.
     if (data.name !== null) {
@@ -129,9 +130,7 @@ function existingCharacter(player, data) {
 
     // Setup data on the player.
     player.data = data;
-
-    // Sync Inventory after player.data
-    player.syncInventory();
+    player.inventory = JSON.parse(player.data.inventory);
 }
 
 export function removeLoggedInPlayer(username) {

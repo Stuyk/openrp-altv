@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as utilityEncryption from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: utility->player.mjs');
@@ -328,89 +329,101 @@ export function setupPlayerFunctions(player) {
     };
 
     // =================================
-    /**
-     * Create a new inventory or grab an existing inventory.
-     */
-    player.syncInventory = () => {
-        //(fieldName, fieldValue, repoName, callback)
-        db.fetchData('id', player.data.id, 'Inventory', result => {
-            if (result === undefined) {
-                db.upsertData(
-                    { id: player.data.id },
-                    'Inventory',
-                    inventory => {
-                        player.inventory = inventory;
-                        console.log(player.inventory);
-                    }
-                );
-            } else {
-                db.fetchByIds([player.data.id], 'Inventory', inventories => {
-                    player.inventory = inventories[0];
-                });
-            }
-        });
-    };
-
     // Add an item to a player.
-    player.addItem = (itemName, quantity) => {
-        if (player.inventory[itemName] === undefined) {
-            console.log(
-                `${itemName} does not exist in the Schema. Case sensititive?`
+    player.addItem = (itemTemplate, quantity, isUnique = false) => {
+        let itemClone = {
+            label: itemTemplate.label,
+            quantity: 0,
+            props: itemTemplate.props
+        };
+
+        // If the item is stackable; check if the player has it.
+        if (itemTemplate.stackable && !isUnique) {
+            // Find stackable item index.
+            let index = player.inventory.findIndex(
+                x => x.label === itemClone.label
             );
-            return false;
+
+            // The item exists.
+            if (index > -1) {
+                alt.emit('inventory:AddItem', player, index, quantity);
+                return;
+            }
         }
 
-        player.inventory[itemName] += quantity;
-
-        db.updatePartialData(
-            player.data.id,
-            { [itemName]: player.inventory[itemName] },
-            'Inventory',
-            () => {}
-        );
-        return true;
+        // This is for making a new item.
+        // Add the amount.
+        itemClone.quantity += quantity;
+        const hash = utilityEncryption.generateHash(JSON.stringify(itemClone));
+        itemClone.hash = hash;
+        player.inventory.push(itemClone);
+        player.data.inventory = JSON.stringify(player.inventory);
+        player.saveField(player.data.id, 'inventory', player.data.inventory);
     };
 
     // Remove an item from a player.
-    player.subItem = (itemName, quantity) => {
-        if (player.inventory[itemName] === undefined) {
-            console.log(
-                `${itemName} does not exist in the Schema. Case sensititive?`
-            );
-            return false;
-        }
-
-        // Player does not have enough.
-        if (player.inventory[itemName] < quantity) {
-            return false;
-        }
-
-        player.inventory[itemName] -= quantity;
-
-        db.updatePartialData(
-            player.data.id,
-            { [itemName]: player.inventory[itemName] },
-            'Inventory',
-            () => {}
+    player.subItem = (itemTemplate, quantity) => {
+        let index = player.inventory.findIndex(
+            x => x.label === itemTemplate.label
         );
+
+        if (index <= -1) return false;
+
+        if (player.inventory[index].quantity < quantity) return false;
+
+        alt.emit('inventory:SubItem', player, index, quantity);
         return true;
     };
 
-    // Mostly for consumption / item effects.
-    player.consumeItem = itemName => {
-        if (!player.subItem(itemName, 1)) {
-            return false;
-        }
+    player.subItemByHash = (itemHash, quantity) => {
+        let index = player.inventory.findIndex(x => x.hash === itemHash);
 
-        alt.emit('item:Consume', player, itemName);
+        if (index <= -1) return false;
+
+        if (player.inventory[index].quantity < quantity) return false;
+
+        alt.emit('inventory:SubItem', player, index, quantity);
+        return true;
+    };
+
+    player.addItemByHash = (itemHash, quantity) => {
+        let index = player.inventory.findIndex(x => x.hash === itemHash);
+
+        if (index <= -1) return false;
+
+        alt.emit('inventory:AddItem', player, index, quantity);
+    };
+
+    // Mostly for consumption / item effects.
+    player.consumeItem = itemHash => {
+        let index = player.inventory.findIndex(x => x.hash === itemHash);
+
+        if (index <= -1) return false;
+
+        let consumedItem = {
+            label: player.inventory[index].label,
+            props: player.inventory[index].props
+        };
+
+        // Failed to consume.
+        if (!player.subItemByHash(itemHash, 1)) return false;
+
+        alt.emit('item:Consume', player, consumedItem);
         return true;
     };
 
     // Mostly for displaying items.
-    player.useItem = itemName => {
-        if (player.inventory[itemName] <= 0) return false;
+    player.useItem = itemHash => {
+        let index = player.inventory.findIndex(x => x.hash === itemHash);
 
-        alt.emit('item:UseItem', player, itemName);
+        if (index <= -1) return false;
+
+        let consumedItem = {
+            label: player.inventory[index].label,
+            props: player.inventory[index].props
+        };
+
+        alt.emit('item:Use', player, consumedItem);
         return true;
     };
 }

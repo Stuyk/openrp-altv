@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as chat from 'chat';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
-import { Account, Character, Inventory } from './entities/entities.mjs'; // Schemas for Database
+import { Account, Character } from './entities/entities.mjs'; // Schemas for Database
 import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration
 import * as systemsInteraction from './systems/interaction.mjs';
 
@@ -14,7 +14,7 @@ new SQL(
     configurationDatabase.DatabaseInfo.password,
     configurationDatabase.DatabaseInfo.dbname,
     // Specify New Table Schemas Here
-    [Account, Character, Inventory]
+    [Account, Character]
 );
 
 // After Database Connection is complete. Load the rest of the modules.

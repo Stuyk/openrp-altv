@@ -1,24 +1,60 @@
 import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
+import SQL from '../../../postgres-wrapper/database.mjs';
 
-alt.on('item:Consume', (player, itemName) => {
-    const itemData = configurationItems.Items[itemName];
+console.log('Loaded: systems->inventory.mjs');
 
-    if (itemData === undefined) return;
+const db = new SQL();
 
-    // Emit the data to the event named in the configuration.
-    if (itemData.eventcall.length > 0) {
-        alt.emit(itemData.eventcall, player, itemData.props, itemData.message);
-    }
+// Called when a player consumes an item.
+alt.on('item:Consume', (player, itemObject) => {
+    Object.keys(configurationItems.Items).forEach(key => {
+        if (configurationItems.Items[key].label !== itemObject.label) return;
+
+        const itemTemplate = configurationItems.Items[key];
+        alt.emit(
+            itemTemplate.eventcall,
+            player,
+            itemObject.props,
+            itemTemplate.message
+        );
+        return;
+    });
 });
 
-alt.on('item:UseItem', (player, itemName) => {
-    const itemData = configurationItems.Items[itemName];
+// Called when a player uses an item.
+alt.on('item:Use', (player, itemObject) => {
+    Object.keys(configurationItems.Items).forEach(key => {
+        if (configurationItems.Items[key].label !== itemObject.label) return;
 
-    if (itemData === undefined) return;
+        const itemTemplate = configurationItems.Items[key];
+        alt.emit(
+            itemTemplate.eventcall,
+            player,
+            itemObject.props,
+            itemTemplate.message
+        );
+        return;
+    });
+});
 
-    // Emit the data to the event named in the configuration.
-    if (itemData.eventcall.length > 1) {
-        alt.emit(`${itemData.eventcall}`, player, itemData);
+// Remove an item from a player.
+alt.on('inventory:SubItem', (player, index, quantity) => {
+    player.inventory[index].quantity -= quantity;
+
+    if (player.inventory[index].quantity <= 0) {
+        player.inventory.splice(index, 1);
+        player.data.inventory = JSON.stringify(player.inventory);
+        player.saveField(player.data.id, 'inventory', player.data.inventory);
+        return;
     }
+
+    player.data.inventory = JSON.stringify(player.inventory);
+    player.saveField(player.data.id, 'inventory', player.data.inventory);
+});
+
+alt.on('inventory:AddItem', (player, index, quantity) => {
+    player.inventory[index].quantity += quantity;
+    player.data.inventory = JSON.stringify(player.inventory);
+    player.saveField(player.data.id, 'inventory', player.data.inventory);
 });

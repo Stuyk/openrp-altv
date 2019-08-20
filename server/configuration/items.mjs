@@ -7,6 +7,7 @@ export const Items = {
         eventcall: 'itemeffects:Consume',
         sellable: true,
         message: 'You eat the granola the bar. It tastes great.',
+        quantity: 0,
         props: {
             health: 5
         }
@@ -19,6 +20,7 @@ export const Items = {
         eventcall: 'itemeffects:Consume',
         sellable: true,
         message: 'You drink the soda.',
+        quantity: 0,
         props: {
             health: 3
         }
@@ -31,6 +33,7 @@ export const Items = {
         eventcall: 'itemeffects:ShowLicense',
         sellable: false,
         message: '',
+        quantity: 0,
         props: {}
     },
     PilotsLicense: {
@@ -41,6 +44,7 @@ export const Items = {
         eventcall: 'itemeffects:ShowLicense',
         sellable: false,
         message: '',
+        quantity: 0,
         props: {}
     },
     OpenCarryLicense: {
@@ -51,6 +55,7 @@ export const Items = {
         eventcall: 'itemeffects:ShowLicense',
         sellable: false,
         message: '',
+        quantity: 0,
         props: {}
     },
     WeaponLicense: {
@@ -61,6 +66,7 @@ export const Items = {
         eventcall: 'itemeffects:ShowLicense',
         sellable: false,
         message: '',
+        quantity: 0,
         props: {}
     },
     MilitaryLicense: {
@@ -71,6 +77,7 @@ export const Items = {
         eventcall: 'itemeffects:ShowLicense',
         sellable: false,
         message: '',
+        quantity: 0,
         props: {}
     }
 };

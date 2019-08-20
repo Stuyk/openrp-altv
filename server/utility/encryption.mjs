@@ -30,3 +30,12 @@ export function verifyPassword(password, storedPasswordHash) {
 
     return true;
 }
+
+/**
+ * Generate a hash based on string.
+ * @param data
+ */
+export function generateHash(data) {
+    let hashBytes = sjcl.hash.sha256.hash(data + Math.random(0, 900000000));
+    return sjcl.codec.hex.fromBits(hashBytes);
+}

@@ -1,5 +1,4 @@
 import orm from 'typeorm';
-import * as configurationItems from '../configuration/items.mjs';
 
 console.log('Loaded: entities->entities.mjs');
 
@@ -51,6 +50,10 @@ export const Character = new orm.EntitySchema({
             type: 'int',
             default: 200
         },
+        armour: {
+            type: 'int',
+            default: 0
+        },
         cash: {
             type: 'numeric',
             default: 0
@@ -62,32 +65,10 @@ export const Character = new orm.EntitySchema({
         dead: {
             type: 'bool',
             default: false
+        },
+        inventory: {
+            type: 'varchar',
+            default: '[]'
         }
     }
 });
-
-// Inventory is linked to Character IDs
-// The inventory schema is populated by
-// the items configuration. There's a function
-// below that handles this.
-let InventoryObject = {
-    name: 'Inventory',
-    columns: {
-        id: {
-            primary: true,
-            type: 'int',
-            generated: false
-        }
-    }
-};
-
-Object.keys(configurationItems.Items).forEach(key => {
-    if (InventoryObject.columns[key] === undefined) {
-        InventoryObject.columns[key] = {
-            type: 'numeric',
-            default: 0
-        };
-    }
-});
-
-export let Inventory = new orm.EntitySchema(InventoryObject);

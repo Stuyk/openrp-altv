@@ -6,6 +6,7 @@ import * as utilityScreenFades from 'client/utility/screenfades.mjs';
 import * as characterName from 'client/character/name.mjs';
 import * as blipsBlipHelper from 'client/blips/bliphelper.mjs';
 import * as panelsAtm from 'client/panels/atm.mjs';
+import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as characterClothing from 'client/character/clothing.mjs';
 import * as customizersClothing from 'client/customizers/clothing.mjs';
 
@@ -72,3 +73,7 @@ alt.onServer('clothing:CloseDialogue', customizersClothing.closeDialogue);
 // =======================================================
 // Clothing Events
 alt.onServer('clothing:SyncClothing', characterClothing.syncClothing);
+
+// =======================================================
+// Inventory Sync
+alt.onServer('inventory:FetchItems', panelsInventory.fetchItems);

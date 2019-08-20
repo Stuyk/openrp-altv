@@ -330,6 +330,11 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     // Add an item to a player.
+    player.syncInventory = () => {
+        player.inventory = JSON.parse(player.data.inventory);
+        player.setSyncedMeta('inventory', player.data.inventory);
+    };
+
     player.addItem = (itemTemplate, quantity, isUnique = false) => {
         let itemClone = {
             label: itemTemplate.label,
@@ -358,6 +363,7 @@ export function setupPlayerFunctions(player) {
         itemClone.hash = hash;
         player.inventory.push(itemClone);
         player.data.inventory = JSON.stringify(player.inventory);
+        player.setSyncedMeta('inventory', player.data.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
     };
 
@@ -394,6 +400,16 @@ export function setupPlayerFunctions(player) {
         alt.emit('inventory:AddItem', player, index, quantity);
     };
 
+    player.destroyItem = itemHash => {
+        let index = player.inventory.findIndex(x => x.hash === itemHash);
+
+        if (index <= -1) return false;
+
+        player.sendMessage(`${player.inventory[index].label} was destroyed.`);
+        player.subItemByHash(itemHash, 1);
+        return true;
+    };
+
     // Mostly for consumption / item effects.
     player.consumeItem = itemHash => {
         let index = player.inventory.findIndex(x => x.hash === itemHash);
@@ -424,6 +440,12 @@ export function setupPlayerFunctions(player) {
         };
 
         alt.emit('item:Use', player, consumedItem);
+        player.updateInventory();
         return true;
+    };
+
+    player.updateInventory = () => {
+        player.setSyncedMeta('inventory', JSON.stringify(player.inventory));
+        alt.emitClient(player, 'inventory:FetchItems');
     };
 }

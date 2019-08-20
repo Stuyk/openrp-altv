@@ -8,6 +8,7 @@ import * as customizersFace from '../customizers/face.mjs';
 import * as utilityLocationHelper from '../utility/locationhelper.mjs';
 import * as characterName from '../character/name.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
+import * as systemsInventory from '../systems/inventory.mjs';
 import * as interactionAtms from '../interactions/atms.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 
@@ -55,6 +56,11 @@ alt.onClient('atm:Deposit', interactionAtms.deposit);
 
 // Clothing Handler
 alt.onClient('clothing:SaveClothing', characterClothing.saveClothing);
+
+// Inventory
+alt.onClient('inventory:DestroyItem', systemsInventory.destroy);
+alt.onClient('inventory:UseItem', systemsInventory.use);
+alt.onClient('inventory:DropItem', systemsInventory.drop);
 
 // Temporary:
 // teleport to waypoint stuff

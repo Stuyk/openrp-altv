@@ -130,7 +130,8 @@ function existingCharacter(player, data) {
 
     // Setup data on the player.
     player.data = data;
-    player.inventory = JSON.parse(player.data.inventory);
+    player.syncInventory();
+    player.setSyncedMeta('loggedin', true);
 }
 
 export function removeLoggedInPlayer(username) {

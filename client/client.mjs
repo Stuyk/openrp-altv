@@ -8,6 +8,8 @@ import * as servereventrouting from 'client/serverEvents/serverEventRouting.mjs'
 import * as connectioncomplete from 'client/events/connectionComplete.mjs';
 import * as disconnect from 'client/events/disconnect.mjs';
 import * as update from 'client/events/update.mjs';
+import * as eventsKeyup from 'client/events/keyup.mjs';
+
 import * as interactionsystem from 'client/systems/interaction.mjs';
 import * as clothing from 'client/customizers/clothing.mjs';
 

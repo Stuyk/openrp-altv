@@ -10,7 +10,9 @@ let viewReady = false;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
-    if (panelsPanelStatus.getStatus('atm')) return;
+    if (panelsPanelStatus.isAnyPanelOpen()) return;
+
+    alt.emit('panel:SetStatus', 'atm', true);
 
     // Show the ATM Dialogue
     webView = new alt.WebView(pagePath);
@@ -22,8 +24,6 @@ export function showDialogue() {
     webView.on('deposit', depositBalance);
     webView.on('close', closeDialogue);
     webView.on('ready', dialogueReady);
-
-    alt.emit('panel:SetStatus', 'atm', true);
 }
 
 // Close the Dialogue for the ATM menu.

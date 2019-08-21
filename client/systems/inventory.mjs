@@ -5,6 +5,7 @@ import * as utilityVector from 'client/utility/vector.mjs';
 import * as utilityText from 'client/utility/text.mjs';
 
 let itemsOnGround = [];
+let pickingUpItem = false;
 
 export function itemDrop(player, item, randomPos) {
     if (alt.Player.local === player) {
@@ -26,12 +27,14 @@ export function itemPickup(hash) {
 
     if (itemsOnGround.length <= 0) {
         alt.off('update', drawItems);
+        pickingUpItem = false;
     }
 }
 
 function drawItems() {
     if (itemsOnGround.length <= 0) {
         alt.off('update', drawItems);
+        pickingUpItem = false;
         return;
     }
 
@@ -64,7 +67,14 @@ function drawItems() {
                 native.endTextCommandDisplayHelp(0, false, true, -1);
 
                 if (native.isControlJustReleased(0, 38)) {
+                    if (pickingUpItem) return;
+
+                    pickingUpItem = true;
                     alt.emitServer('inventory:Pickup', itemData.item.hash);
+
+                    alt.setTimeout(() => {
+                        pickingUpItem = false;
+                    }, 100);
                 }
             }
         }

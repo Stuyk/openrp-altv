@@ -3,6 +3,8 @@ import * as chat from 'chat';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
 
 chat.registerCmd('revive', player => {
+    if (!player.data.dead) return;
+
     if (player.revive) {
         player.sendMessage(
             `You will revive in ${(player.reviveTime - Date.now()) /

@@ -17,7 +17,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Character Facial Customization
 -   [x] Roleplay Name Formatting
 -   [x] Character Clothing Customization
--   [ ] Glasses, Tattoos, etc.
+-   [x] Glasses, Bracelets, etc.
+-   [ ] Tattoos
 -   [x] Character Inventory System
 -   [x] Item Configuration
 -   [x] Item Drops
@@ -31,6 +32,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Administrative Toolkit
 -   [x] Currency System
 -   [x] ATM / Bank System
+-   [ ] Player Transfers / Give Money
 -   [ ] Shop System
 -   [ ] Faction System
 -   [ ] Basic Anticheat
@@ -40,7 +42,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Taxation
 -   [ ] Taxation goes to Government Fund
 -   [ ] Government Fund Management
--   [ ] Animation Manager
+-   [x] Animation Manager
 -   [x] Splash Screens
 -   [x] Custom Sounds! Blat!
 

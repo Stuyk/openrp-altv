@@ -70,7 +70,12 @@ export const DefaultOutfits = {
         Feet: { value: 13, id: 6, texture: 0 },
         Accessories: { value: 0, id: 7, texture: 0 },
         Undershirt: { value: 2, id: 8, texture: 0 },
-        Shirt: { value: 0, id: 11, texture: 13 }
+        Shirt: { value: 0, id: 11, texture: 13 },
+        Hat: { value: -1, id: 0, texture: 0, isProp: true },
+        Glasses: { value: -1, id: 1, texture: 0, isProp: true },
+        Ears: { value: -1, id: 2, texture: 0, isProp: true },
+        Watches: { value: -1, id: 6, texture: 0, isProp: true },
+        Bracelet: { value: -1, id: 7, texture: 0, isProp: true }
     },
     Male: {
         Head: { value: 0, id: 1, texture: 0 },
@@ -80,6 +85,11 @@ export const DefaultOutfits = {
         Feet: { value: 4, id: 6, texture: 0 },
         Accessories: { value: 0, id: 7, texture: 0 },
         Undershirt: { value: 15, id: 8, texture: 0 },
-        Shirt: { value: 8, id: 11, texture: 10 }
+        Shirt: { value: 8, id: 11, texture: 10 },
+        Hat: { value: -1, id: 0, texture: 0, isProp: true },
+        Glasses: { value: -1, id: 1, texture: 0, isProp: true },
+        Ears: { value: -1, id: 2, texture: 0, isProp: true },
+        Watches: { value: -1, id: 6, texture: 0, isProp: true },
+        Bracelet: { value: -1, id: 7, texture: 0, isProp: true }
     }
 };

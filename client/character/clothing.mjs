@@ -8,12 +8,26 @@ export function syncClothing(jsonData) {
     const data = JSON.parse(jsonData);
 
     for (let key in data) {
-        native.setPedComponentVariation(
-            alt.Player.local.scriptID,
-            data[key].id,
-            data[key].value,
-            data[key].texture,
-            0
-        );
+        if (!data[key].isProp) {
+            native.setPedComponentVariation(
+                alt.Player.local.scriptID,
+                data[key].id,
+                data[key].value,
+                data[key].texture,
+                0
+            );
+        } else {
+            native.setPedPropIndex(
+                alt.Player.local.scriptID,
+                data[key].id,
+                data[key].value,
+                data[key].texture,
+                true
+            );
+
+            if (data[key].value === -1) {
+                native.clearPedProp(alt.Player.local.scriptID, data[key].id);
+            }
+        }
     }
 }

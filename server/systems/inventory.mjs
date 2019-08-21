@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as utilityVector from '../utility/vector.mjs';
+import * as utilityEncryption from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: systems->inventory.mjs');
@@ -19,6 +20,19 @@ alt.on('item:Consume', (player, itemObject) => {
 
         if (itemTemplate.sound !== undefined) {
             player.playAudio(itemTemplate.sound);
+        }
+
+        // animdict: 'mp_player_inteat@burger',
+        // anim: 'mp_player_int_eat_burger_fp',
+        // animflag: 49,
+        // Play animation for player if available.
+        if (itemTemplate.anim !== undefined) {
+            player.playAnimation(
+                itemTemplate.anim.dict,
+                itemTemplate.anim.name,
+                itemTemplate.anim.duration,
+                itemTemplate.anim.flag
+            );
         }
 
         alt.emit(
@@ -98,17 +112,24 @@ export function use(player, hash) {
 }
 
 export function drop(player, hash) {
-    var item = player.inventory.find(x => x.hash === hash);
+    let item = player.inventory.find(x => x.hash === hash);
 
     if (item === undefined) return;
 
-    ItemDrops.set(hash, item);
-
+    // Generate a clone of the object.
+    let clonedItem = { ...item };
     if (!player.subItemByHash(hash, 1)) return;
 
-    let randomPos = utilityVector.randPosAround(player.pos, 5);
+    // Regenerate new hash for each dropped item.
+    let newHash = JSON.stringify({ hash, clonedItem });
+    clonedItem.hash = newHash;
 
-    alt.emitClient(null, 'inventory:ItemDrop', player, item, randomPos);
+    // Setup the dropped item.
+    ItemDrops.set(newHash, clonedItem);
+
+    let randomPos = utilityVector.randPosAround(player.pos, 2);
+
+    alt.emitClient(null, 'inventory:ItemDrop', player, clonedItem, randomPos);
 }
 
 export function destroy(player, hash) {
@@ -121,6 +142,7 @@ export function pickup(player, hash) {
     if (!ItemDrops.has(hash)) return;
 
     player.playAudio('pickup');
+    player.playAnimation('random@mugging4', 'pickup_low', 1200, 33);
 
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);

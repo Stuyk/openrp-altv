@@ -110,6 +110,86 @@ const clothing = {
         min: 0,
         max: 1,
         id: 11
+    },
+    Hat: {
+        label: 'Hat',
+        value: 0,
+        min: -1,
+        max: 1,
+        id: 0,
+        isProp: true
+    },
+    HatTexture: {
+        label: 'Hat Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 0,
+        isProp: true
+    },
+    Glasses: {
+        label: 'Glasses',
+        value: 0,
+        min: -1,
+        max: 1,
+        id: 1,
+        isProp: true
+    },
+    GlassesTexture: {
+        label: 'Glasses Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 1,
+        isProp: true
+    },
+    Ears: {
+        label: 'Ears',
+        value: 0,
+        min: -1,
+        max: 1,
+        id: 2,
+        isProp: true
+    },
+    EarsTexture: {
+        label: 'Ears Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 2,
+        isProp: true
+    },
+    Watches: {
+        label: 'Watches',
+        value: 0,
+        min: -1,
+        max: 1,
+        id: 6,
+        isProp: true
+    },
+    WatchesTexture: {
+        label: 'Watches Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 6,
+        isProp: true
+    },
+    Bracelet: {
+        label: 'Bracelet',
+        value: 0,
+        min: -1,
+        max: 1,
+        id: 7,
+        isProp: true
+    },
+    BraceletTexture: {
+        label: 'Bracelet Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 7,
+        isProp: true
     }
 };
 
@@ -152,7 +232,8 @@ $(() => {
                 'requestComponentData',
                 key,
                 clothing[key].id,
-                clothing[key].value
+                clothing[key].value,
+                clothing[key].isProp
             );
         }
     }
@@ -205,10 +286,8 @@ function changeValue(key, increment) {
 
 function updateMinMax(key, res) {
     // {res.id, res.components, res.textures}
-    clothing[key].min = 0;
     clothing[key].max = res.components;
     clothing[`${key}Texture`].value = 0;
-    clothing[`${key}Texture`].min = 0;
     clothing[`${key}Texture`].max = res.textures;
 
     $(`#button-${key}`).html(
@@ -227,8 +306,6 @@ function updateMinMax(key, res) {
 }
 
 function pushChanges(key) {
-    let value = `${key}`;
-
     if (key.includes('Texture')) {
         key = key.replace('Texture', '');
     }
@@ -238,7 +315,8 @@ function pushChanges(key) {
         'updateComponent',
         clothing[key].id,
         clothing[key].value,
-        clothing[`${key}Texture`].value
+        clothing[`${key}Texture`].value,
+        clothing[key].isProp
     );
 }
 
@@ -264,6 +342,11 @@ function submitChanges() {
             id: clothing[key].id,
             texture: 0
         };
+
+        // Add Prop Info
+        if (clothing[key].isProp !== undefined) {
+            data[key].isProp = true;
+        }
     }
 
     alt.emit('verifyClothing', JSON.stringify(data));

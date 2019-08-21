@@ -471,4 +471,17 @@ export function setupPlayerFunctions(player) {
     player.playAudio = soundName => {
         alt.emitClient(player, 'sound:PlayAudio', soundName);
     };
+
+    // =================================
+    // Animation
+    player.playAnimation = (dictionary, name, durationInMS, flag) => {
+        alt.emitClient(
+            player,
+            'animation:PlayAnimation',
+            dictionary,
+            name,
+            durationInMS,
+            flag
+        );
+    };
 }

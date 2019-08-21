@@ -3,7 +3,7 @@ import * as registration from 'client/registration/registration.mjs';
 import * as customizersCharacter from 'client/customizers/character.mjs';
 import * as characterFace from 'client/character/face.mjs';
 import * as utilityScreenFades from 'client/utility/screenfades.mjs';
-import * as characterName from 'client/character/name.mjs';
+import * as panelsName from 'client/panels/name.mjs';
 import * as blipsBlipHelper from 'client/blips/bliphelper.mjs';
 import * as panelsAtm from 'client/panels/atm.mjs';
 import * as panelsInventory from 'client/panels/inventory.mjs';
@@ -11,6 +11,7 @@ import * as characterClothing from 'client/character/clothing.mjs';
 import * as customizersClothing from 'client/customizers/clothing.mjs';
 import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as systemsSound from 'client/systems/sound.mjs';
+import * as systemsAnimation from 'client/systems/animation.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -51,9 +52,9 @@ alt.onServer('screen:FadeOutFadeIn', utilityScreenFades.fadeOutFadeIn); // 2 par
 
 // =======================================================
 // Set Character Name
-alt.onServer('roleplayname:ShowDialogue', characterName.showDialogue);
-alt.onServer('roleplayname:ShowNameTaken', characterName.showNameTaken);
-alt.onServer('roleplayname:CloseDialogue', characterName.closeDialogue);
+alt.onServer('roleplayname:ShowDialogue', panelsName.showDialogue);
+alt.onServer('roleplayname:ShowNameTaken', panelsName.showNameTaken);
+alt.onServer('roleplayname:CloseDialogue', panelsName.closeDialogue);
 
 // =======================================================
 // Create Blip
@@ -88,3 +89,8 @@ alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);
 // =======================================================
 // Sound
 alt.onServer('sound:PlayAudio', systemsSound.playAudio);
+
+// =======================================================
+// Animation
+// playAnimation(dictionary, name, durationInMS, flag)
+alt.onServer('animation:PlayAnimation', systemsAnimation.playAnimation);

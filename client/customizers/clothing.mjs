@@ -149,30 +149,59 @@ function updateCamPos(isUp) {
     native.renderScriptCams(true, false, 0, true, false);
 }
 
-function requestComponentData(key, id, value) {
-    let components = native.getNumberOfPedDrawableVariations(
-        alt.Player.local.scriptID,
-        id
-    );
+function requestComponentData(key, id, value, isProp) {
+    if (!isProp) {
+        let components = native.getNumberOfPedDrawableVariations(
+            alt.Player.local.scriptID,
+            id
+        );
 
-    let textures = native.getNumberOfPedTextureVariations(
-        alt.Player.local.scriptID,
-        id,
-        value
-    );
+        let textures = native.getNumberOfPedTextureVariations(
+            alt.Player.local.scriptID,
+            id,
+            value
+        );
 
-    webView.emit('updateMinMax', key, { id, components, textures });
+        webView.emit('updateMinMax', key, { id, components, textures });
+    } else {
+        let components = native.getNumberOfPedPropDrawableVariations(
+            alt.Player.local.scriptID,
+            id
+        );
+
+        let textures = native.getNumberOfPedPropTextureVariations(
+            alt.Player.local.scriptID,
+            id,
+            value
+        );
+
+        webView.emit('updateMinMax', key, { id, components, textures });
+    }
 }
 
 // componentID, drawable, texture, palette
-function updateComponent(componentId, drawable, texture) {
-    native.setPedComponentVariation(
-        alt.Player.local.scriptID,
-        componentId,
-        drawable,
-        texture,
-        0
-    );
+function updateComponent(componentId, drawable, texture, isProp) {
+    if (!isProp) {
+        native.setPedComponentVariation(
+            alt.Player.local.scriptID,
+            componentId,
+            drawable,
+            texture,
+            0
+        );
+    } else {
+        native.setPedPropIndex(
+            alt.Player.local.scriptID,
+            componentId,
+            drawable,
+            texture,
+            true
+        );
+
+        if (drawable === -1) {
+            native.clearPedProp(alt.Player.local.scriptID, componentId);
+        }
+    }
 }
 
 export function closeDialogue() {
@@ -204,25 +233,57 @@ function verifyClothing(jsonData) {
     let cancelSave = false;
 
     for (let key in result) {
-        let isValid = native.isPedComponentVariationValid(
-            alt.Player.local.scriptID,
-            result[key].id,
-            result[key].value,
-            result[key].texture
-        );
+        // Not a prop.
+        if (!result[key].isProp) {
+            let isValid = native.isPedComponentVariationValid(
+                alt.Player.local.scriptID,
+                result[key].id,
+                result[key].value,
+                result[key].texture
+            );
 
-        native.setPedComponentVariation(
-            alt.Player.local.scriptID,
-            result[key].id,
-            result[key].value,
-            result[key].texture,
-            0
-        );
+            native.setPedComponentVariation(
+                alt.Player.local.scriptID,
+                result[key].id,
+                result[key].value,
+                result[key].texture,
+                0
+            );
 
-        if (!isValid) {
-            webView.emit('showError', `Invalid combination for ${key}`);
-            cancelSave = true;
-            return;
+            if (!isValid) {
+                webView.emit('showError', `Invalid combination for ${key}`);
+                cancelSave = true;
+                return;
+            }
+        } else {
+            // is a prop
+            let isValid = native.isPedPropValid(
+                alt.Player.local.scriptID,
+                result[key].id,
+                result[key].value,
+                result[key].texture
+            );
+
+            // Make an exception for turning off
+            // a prop.
+            if (result[key].value === -1) {
+                isValid = true;
+                native.clearPedProp(alt.Player.local.scriptID, result[key].id);
+            }
+
+            native.setPedPropIndex(
+                alt.Player.local.scriptID,
+                result[key].id,
+                result[key].value,
+                result[key].texture,
+                true
+            );
+
+            if (!isValid) {
+                webView.emit('showError', `Invalid combination for ${key}`);
+                cancelSave = true;
+                return;
+            }
         }
     }
 

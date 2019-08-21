@@ -9,21 +9,21 @@ let webView = undefined;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
-    if (panelsPanelStatus.getStatus('inventory')) return;
+    if (panelsPanelStatus.isAnyPanelOpen()) return;
+
+    alt.emit('panel:SetStatus', 'inventory', true);
 
     // Show the ATM Dialogue
     webView = new alt.WebView(pagePath);
     webView.focus();
     alt.showCursor(true);
-    alt.toggleGameControls(false);
 
     webView.on('drop', drop);
     webView.on('use', use);
     webView.on('destroy', destroy);
     webView.on('close', closeDialogue);
     webView.on('fetchItems', fetchItems);
-
-    alt.emit('panel:SetStatus', 'inventory', true);
+    alt.on('update', disableControls);
 }
 
 // Close the Dialogue for the ATM menu.
@@ -37,7 +37,7 @@ export function closeDialogue() {
     webView.destroy();
     webView = undefined;
     alt.showCursor(false);
-    alt.toggleGameControls(true);
+    alt.off('update', disableControls);
 
     alt.emit('panel:SetStatus', 'inventory', false);
 }
@@ -67,4 +67,9 @@ function use(hash) {
 
 function drop(hash) {
     alt.emitServer('inventory:DropItem', hash);
+}
+
+function disableControls() {
+    native.disableControlAction(0, 24, true);
+    native.disableControlAction(0, 25, true);
 }

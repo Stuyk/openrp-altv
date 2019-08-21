@@ -1,13 +1,18 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 
-alt.log('Loaded: client->character->name.mjs');
+alt.log('Loaded: client->panels->name.mjs');
 
 const viewPath = 'http://resources/orp/client/html/roleplayname/index.html';
 let webView = undefined;
 
 // Show the webview for the player to type in their roleplay name.
 export function showDialogue() {
+    if (panelsPanelStatus.isAnyPanelOpen()) return;
+
+    alt.emit('panel:SetStatus', 'name', true);
+
     webView = new alt.WebView(viewPath);
     webView.focus();
 
@@ -27,6 +32,7 @@ export function showNameTaken() {
 
 // Finish using this webView.
 export function closeDialogue() {
+    alt.emit('panel:SetStatus', 'inventory', false);
     webView.off('setname', setRoleplayName);
     webView.unfocus();
     webView.destroy();

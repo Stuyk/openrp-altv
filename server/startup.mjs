@@ -4,9 +4,10 @@ import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character } from './entities/entities.mjs'; // Schemas for Database
 import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration
 import * as systemsInteraction from './systems/interaction.mjs';
+import * as cache from './cache/cache.mjs';
 
 // Setup Main Entities and Database Connection
-new SQL(
+let db = new SQL(
     configurationDatabase.DatabaseInfo.type,
     configurationDatabase.DatabaseInfo.address,
     configurationDatabase.DatabaseInfo.port,
@@ -46,4 +47,27 @@ alt.on('ConnectionComplete', () => {
     // Import Item Effects
     import('./itemeffects/consume.mjs');
     import('./itemeffects/showlicense.mjs');
+
+    cacheInformation();
 });
+
+// Used to speed up the server dramatically.
+function cacheInformation() {
+    // Passwords are encrypted.
+    db.selectData('Account', ['id', 'username', 'password'], data => {
+        for (let i = 0; i < data.length; i++) {
+            cache.cacheAccount(data[i].username, data[i].id, data[i].password);
+        }
+
+        console.log(`=====> Cached: ${data.length} Accounts`);
+    });
+
+    // Used for quickly determing if a roleplay name is in use.
+    db.selectData('Character', ['name'], data => {
+        for (let i = 0; i < data.length; i++) {
+            cache.cacheName(data[i].name);
+        }
+
+        console.log(`=====> Cached: ${data.length} Character Names`);
+    });
+}

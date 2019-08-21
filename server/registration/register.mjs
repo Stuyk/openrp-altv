@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
+import * as cache from '../cache/cache.mjs';
 
 console.log('Loaded: registration->register.mjs');
 
@@ -19,30 +20,31 @@ export function newAccount(player, username, password) {
         return;
     }
 
-    // Check for existing username.
-    db.fetchData('username', username, 'Account', result => {
-        // Check if Username is taken
-        if (result !== undefined) {
-            player.showRegisterEventError('Username is already taken.');
-            return;
-        }
+    const account = cache.getAccount(username);
 
-        // Encrypt the password.
-        const encryptedData = utilityEncryption.encryptPassword(password);
+    // Check our Cache if the username exists.
+    if (account !== undefined) {
+        player.showRegisterEventError('Username is already taken.');
+        return;
+    }
 
-        // Setup data for the account.
-        const playerAccDoc = {
-            username,
-            password: encryptedData
-        };
+    // Encrypt the Password
+    const passHashSalt = utilityEncryption.encryptPassword(password);
 
-        // Add the data to the database.
-        db.upsertData(playerAccDoc, 'Account', () => {
-            player.showRegisterEventSuccess(
-                'New account was registered successfully.'
-            );
+    // Create Player Document
+    const playerAccDoc = {
+        username,
+        password: passHashSalt
+    };
 
-            player.showRegisterLogin();
-        });
+    db.upsertData(playerAccDoc, 'Account', res => {
+        // Add account to cache
+        cache.cacheAccount(res.username, res.id, passHashSalt);
+
+        player.showRegisterEventSuccess(
+            'New account was registered successfully.'
+        );
+
+        player.showRegisterLogin();
     });
 }

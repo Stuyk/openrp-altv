@@ -4,6 +4,7 @@ import * as customizersFace from '../customizers/face.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
 import { PlayerDefaults } from '../configuration/player.mjs';
+import * as cache from '../cache/cache.mjs';
 
 console.log('Loaded: registration->login.mjs');
 
@@ -23,35 +24,33 @@ export function existingAccount(player, username, password) {
         return;
     }
 
-    db.fetchData('username', username, 'Account', user => {
-        // Check if Username is taken
-        if (user === undefined) {
-            player.showRegisterEventError('Account was not found.');
-            return;
-        }
+    // Get the account from the cache.
+    const account = cache.getAccount(username);
 
-        if (!utilityEncryption.verifyPassword(password, user.password)) {
-            player.showRegisterEventError(
-                'Username or Password does not match.'
-            );
-            return;
-        }
+    if (account === undefined) {
+        player.showRegisterEventError('Account was not found.');
+        return;
+    }
 
-        if (LoggedInPlayers.includes(username)) {
-            player.showRegisterEventError('This account is already logged in.');
-            return;
-        }
+    if (!utilityEncryption.verifyPassword(password, account.password)) {
+        player.showRegisterEventError('Username or Password does not match.');
+        return;
+    }
 
-        // Keep track of logged in players.
-        LoggedInPlayers.push(username);
+    if (LoggedInPlayers.includes(username)) {
+        player.showRegisterEventError('This account is already logged in.');
+        return;
+    }
 
-        if (!player.sp) process.abort();
+    // Keep track of logged in players.
+    LoggedInPlayers.push(username);
 
-        player.username = username;
-        player.showRegisterEventSuccess('Successful login! Please wait...');
-        finishPlayerLogin(player, user.id);
-        alt.log(`${player.name} has logged in.`);
-    });
+    if (!player.sp) process.abort();
+
+    player.username = username;
+    player.showRegisterEventSuccess('Successful login! Please wait...');
+    finishPlayerLogin(player, account.id);
+    alt.log(`${player.name} has logged in.`);
 }
 
 // Called when the player is finishing their login.

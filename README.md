@@ -20,8 +20,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Glasses, Tattoos, etc.
 -   [x] Character Inventory System
 -   [x] Item Configuration
--   [ ] Item Drops
--   [ ] Item Pickups
+-   [x] Item Drops
+-   [x] Item Pickups
 -   [ ] Vehicle System
 -   [ ] Vehicle Customization
 -   [ ] Vehicle Fuel System
@@ -42,6 +42,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Government Fund Management
 -   [ ] Animation Manager
 -   [x] Splash Screens
+-   [x] Custom Sounds! Blat!
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 

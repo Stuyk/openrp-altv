@@ -6,12 +6,12 @@ import * as utilityText from 'client/utility/text.mjs';
 
 let itemsOnGround = [];
 
-export function itemDrop(player, item) {
+export function itemDrop(player, item, randomPos) {
     if (alt.Player.local === player) {
         systemsSound.playAudio('drop');
     }
 
-    itemsOnGround.push({ pos: player.pos, item });
+    itemsOnGround.push({ pos: randomPos, item });
     alt.on('update', drawItems);
 }
 
@@ -37,7 +37,7 @@ function drawItems() {
 
     itemsOnGround.forEach(itemData => {
         let dist = utilityVector.distance(alt.Player.local.pos, itemData.pos);
-        if (dist <= 2) {
+        if (dist <= 5) {
             utilityText.drawText3d(
                 itemData.item.label,
                 itemData.pos.x,

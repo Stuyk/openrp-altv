@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 
 alt.log(`Loaded: panels->atm.mjs`);
 

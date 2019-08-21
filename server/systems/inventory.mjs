@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
+import * as utilityVector from '../utility/vector.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: systems->inventory.mjs');
@@ -15,6 +16,11 @@ alt.on('item:Consume', (player, itemObject) => {
         if (configurationItems.Items[key].label !== itemObject.label) return;
 
         const itemTemplate = configurationItems.Items[key];
+
+        if (itemTemplate.sound !== undefined) {
+            player.playAudio(itemTemplate.sound);
+        }
+
         alt.emit(
             itemTemplate.eventcall,
             player,
@@ -31,6 +37,11 @@ alt.on('item:Use', (player, itemObject) => {
         if (configurationItems.Items[key].label !== itemObject.label) return;
 
         const itemTemplate = configurationItems.Items[key];
+
+        if (itemTemplate.sound !== undefined) {
+            player.playAudio(itemTemplate.sound);
+        }
+
         alt.emit(
             itemTemplate.eventcall,
             player,
@@ -95,7 +106,9 @@ export function drop(player, hash) {
 
     if (!player.subItemByHash(hash, 1)) return;
 
-    alt.emitClient(null, 'inventory:ItemDrop', player, item);
+    let randomPos = utilityVector.randPosAround(player.pos, 5);
+
+    alt.emitClient(null, 'inventory:ItemDrop', player, item, randomPos);
 }
 
 export function destroy(player, hash) {
@@ -106,6 +119,8 @@ export function pickup(player, hash) {
     alt.emitClient(null, 'inventory:ItemPickup', hash);
 
     if (!ItemDrops.has(hash)) return;
+
+    player.playAudio('pickup');
 
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);

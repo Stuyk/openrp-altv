@@ -39,23 +39,7 @@ const facialFeatures = {
         max: 45,
         increment: 1,
         func: updatePlayerFace
-    }, // 4
-    ExtraFace: {
-        label: 'Extra Face',
-        value: 0,
-        min: 0,
-        max: 45,
-        increment: 1,
-        func: updatePlayerFace
-    }, // 5
-    ExtraSkin: {
-        label: 'Extra Skin',
-        value: 0,
-        min: 0,
-        max: 45,
-        increment: 1,
-        func: updatePlayerFace
-    }, // 6
+    },
     FaceMix: {
         label: 'Face Mix',
         value: 0,
@@ -71,15 +55,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         func: updatePlayerFace
-    }, // 8
-    ExtraMix: {
-        label: 'Third Mix',
-        value: 0,
-        min: 0,
-        max: 1,
-        increment: 0.1,
-        func: updatePlayerFace
-    }, // 9
+    },
     Hair: {
         label: 'Hair',
         value: 0,
@@ -671,14 +647,11 @@ const dataGroups = {
     ],
     Face: [
         facialFeatures['FatherFace'],
-        facialFeatures['FatherSkin'],
         facialFeatures['MotherFace'],
+        facialFeatures['FatherSkin'],
         facialFeatures['MotherSkin'],
-        facialFeatures['ExtraFace'],
-        facialFeatures['ExtraSkin'],
         facialFeatures['FaceMix'],
-        facialFeatures['SkinMix'],
-        facialFeatures['ExtraMix']
+        facialFeatures['SkinMix']
     ]
 };
 

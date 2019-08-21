@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
+import * as configurationClothing from '../configuration/clothing.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: utility->player.mjs');
@@ -127,8 +128,18 @@ export function setupPlayerFunctions(player) {
 
         if (data['Sex'].value === 0) {
             player.model = 'mp_f_freemode_01';
+            if (player.isNewPlayer) {
+                player.saveClothing(
+                    JSON.stringify(configurationClothing.DefaultOutfits.Female)
+                );
+            }
         } else {
             player.model = 'mp_m_freemode_01';
+            if (player.isNewPlayer) {
+                player.saveClothing(
+                    JSON.stringify(configurationClothing.DefaultOutfits.Male)
+                );
+            }
         }
 
         player.data.face = valueJSON;
@@ -320,6 +331,7 @@ export function setupPlayerFunctions(player) {
         player.data.clothing = dataJSON;
         player.setSyncedMeta('clothing', dataJSON);
         player.saveField(player.data.id, 'clothing', dataJSON);
+        player.syncClothing(dataJSON);
     };
 
     // =================================
@@ -333,6 +345,7 @@ export function setupPlayerFunctions(player) {
     };
 
     // =================================
+    // INVENTORY
     // Add an item to a player.
     player.syncInventory = () => {
         player.inventory = JSON.parse(player.data.inventory);
@@ -451,5 +464,11 @@ export function setupPlayerFunctions(player) {
     player.updateInventory = () => {
         player.setSyncedMeta('inventory', JSON.stringify(player.inventory));
         alt.emitClient(player, 'inventory:FetchItems');
+    };
+
+    // =================================
+    // SOUND
+    player.playAudio = soundName => {
+        alt.emitClient(player, 'sound:PlayAudio', soundName);
     };
 }

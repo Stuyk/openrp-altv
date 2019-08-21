@@ -41,13 +41,13 @@ export function applyFacialData(jsonData) {
         localPlayer,
         parsedData['FatherFace'].value,
         parsedData['MotherFace'].value,
-        parsedData['ExtraFace'].value,
+        0,
         parsedData['FatherSkin'].value,
         parsedData['MotherSkin'].value,
-        parsedData['ExtraSkin'].value,
+        0,
         parsedData['FaceMix'].value,
         parsedData['SkinMix'].value,
-        parsedData['ExtraMix'].value,
+        0,
         false
     );
 

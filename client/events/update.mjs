@@ -53,7 +53,7 @@ function drawPlayerNames() {
         scale = scale * fov;
 
         // Scale Limiters
-        if (scale > 0.8) scale = 0.8;
+        if (scale > 0.5) scale = 0.5;
 
         if (scale < 0.25) scale = 0.25;
 

@@ -112,6 +112,7 @@ function existingCharacter(player, data) {
     // Check if the player has a face.
     if (data.face === null) {
         player.model = 'mp_f_freemode_01';
+        player.isNewPlayer = true;
         customizersFace.showFace(player, lastPos);
     } else {
         player.applyFace(data.face);

@@ -10,6 +10,7 @@ import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as characterClothing from 'client/character/clothing.mjs';
 import * as customizersClothing from 'client/customizers/clothing.mjs';
 import * as systemsInventory from 'client/systems/inventory.mjs';
+import * as systemsSound from 'client/systems/sound.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -83,3 +84,7 @@ alt.onServer('inventory:FetchItems', panelsInventory.fetchItems);
 alt.onServer('inventory:ItemDrop', systemsInventory.itemDrop);
 // Pickup Item
 alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);
+
+// =======================================================
+// Sound
+alt.onServer('sound:PlayAudio', systemsSound.playAudio);

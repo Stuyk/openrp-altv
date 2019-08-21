@@ -8,8 +8,24 @@ export const Items = {
         sellable: true,
         message: 'You eat the granola the bar. It tastes great.',
         quantity: 0,
+        sound: 'eat',
         props: {
             health: 5
+        }
+    },
+    Coffee: {
+        label: 'Coffee',
+        stackable: true,
+        consumeable: true,
+        useitem: false,
+        eventcall: 'itemeffects:Consume',
+        sellable: true,
+        message: 'You drink the hot coffee.',
+        quantity: 0,
+        sound: 'drink',
+        props: {
+            health: 5,
+            armor: 5
         }
     },
     Soda: {
@@ -21,6 +37,7 @@ export const Items = {
         sellable: true,
         message: 'You drink the soda.',
         quantity: 0,
+        sound: 'drink',
         props: {
             health: 3
         }

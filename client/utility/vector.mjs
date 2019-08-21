@@ -14,3 +14,12 @@ export function distance(vector1, vector2) {
             Math.pow(vector1.z - vector2.z, 2)
     );
 }
+
+// Get a random position based around.
+export function randPosAround(pos, range) {
+    return {
+        x: pos.x + Math.random() * (range * 2) - range,
+        y: pos.y + Math.random() * (range * 2) - range,
+        z: pos.z
+    };
+}

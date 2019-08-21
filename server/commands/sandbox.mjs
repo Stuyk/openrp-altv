@@ -53,6 +53,11 @@ chat.registerCmd('additem', player => {
     player.addItem(itemTemplate, 5);
 });
 
+chat.registerCmd('getdrink', player => {
+    let itemTemplate = configurationItems.Items['Coffee'];
+    player.addItem(itemTemplate, 5);
+});
+
 chat.registerCmd('subitem', player => {
     let itemTemplate = configurationItems.Items['GranolaBar'];
     let result = player.subItem(itemTemplate, 1);

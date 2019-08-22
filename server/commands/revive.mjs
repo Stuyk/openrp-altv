@@ -26,6 +26,8 @@ chat.registerCmd('revive', player => {
             2000
         );
 
+        alt.emitClient(player, 'respawn:ClearPedBloodDamage');
+
         player.revivePos = undefined;
         player.reviveTime = undefined;
         player.revive = false;

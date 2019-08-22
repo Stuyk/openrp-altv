@@ -117,6 +117,12 @@ export function showDialogue() {
     alt.on('update', onUpdateEventCharacterCustomizer);
 }
 
+export function clearPedBloodDamage() {
+    native.clearPedBloodDamage(
+        alt.Player.local.scriptID,
+    );
+}
+
 // Player Sex Updates, for model changes.
 function updateSex(value) {
     if (value === 0) {

@@ -33,6 +33,11 @@ alt.onServer('register:ShowLogin', registration.showLogin);
 alt.onServer('register:CloseDialogue', registration.closeDialogue);
 
 // =======================================================
+// PLAYER RESPAWN
+// Reset the characters blood
+alt.onServer('respawn:ClearPedBloodDamage', customizersCharacter.clearPedBloodDamage);
+
+// =======================================================
 // CHARACTER FACE CUSTOMIZER
 // Shows the face customizer overlay.
 alt.onServer('face:ShowDialogue', customizersCharacter.showDialogue);

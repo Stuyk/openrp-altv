@@ -55,15 +55,15 @@ export function existingAccount(player, username, password) {
 
 // Called when the player is finishing their login.
 export function finishPlayerLogin(player, databaseID) {
+    // Close the registration dialogue.
+    player.closeRegisterDialogue();
+
     // Fade the screen out in 1 second, then fade back after 2 seconds in 1 second.
-    player.screenFadeOutFadeIn(200, 2000);
+    player.screenFadeOut(500);
 
     player.guid = databaseID;
 
     db.fetchByIds(player.guid, 'Character', results => {
-        // Close the registration dialogue.
-        player.closeRegisterDialogue();
-
         // Existing Character
         if (Array.isArray(results) && results.length >= 1) {
             existingCharacter(player, results[0]);
@@ -134,6 +134,8 @@ function existingCharacter(player, data) {
     player.data = data;
     player.syncInventory();
     player.setSyncedMeta('loggedin', true);
+    player.screenFadeIn(1000);
+    player.syncVehicles();
 }
 
 export function removeLoggedInPlayer(username) {

@@ -72,3 +72,7 @@ chat.registerCmd('items', player => {
 chat.registerCmd('consume', (player, arg) => {
     player.consumeItem(player.inventory[arg[0]].hash);
 });
+
+chat.registerCmd('addveh', (player, arg) => {
+    player.addVehicle(arg[0], player.pos, new alt.Vector3(0, 0, 0));
+});

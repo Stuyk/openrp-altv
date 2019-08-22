@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as configurationClothing from '../configuration/clothing.mjs';
+import * as configurationPlayer from '../configuration/player.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: utility->player.mjs');
@@ -484,4 +485,49 @@ export function setupPlayerFunctions(player) {
             flag
         );
     };
+
+    // =================================
+    // Vehicles
+    player.syncVehicles = () => {
+        db.fetchAllByField('guid', player.data.id, 'Vehicle', vehicles => {
+            if (vehicles === undefined) return;
+
+            if (vehicles.length <= 0) return;
+
+            vehicles.forEach(veh => {
+                alt.emit('vehicles:SpawnVehicle', player, veh);
+            });
+        });
+    };
+
+    player.addVehicle = (model, pos, rot) => {
+        if (Array.isArray(player.vehicles)) {
+            if (
+                player.vehicles.length >=
+                configurationPlayer.PlayerDefaults.maxvehicles
+            ) {
+                player.sendMessage(
+                    `You are not allowed to have any additional vehicles.`
+                );
+                return;
+            }
+        }
+
+        db.insertData(
+            {
+                guid: player.data.id,
+                position: JSON.stringify(pos),
+                rotation: JSON.stringify(rot),
+                model
+            },
+            'Vehicle',
+            veh => {
+                alt.emit('vehicles:SpawnVehicle', player, veh);
+            }
+        );
+    };
+
+    player.addExistingVehicle = vehicledata => {};
+
+    player.deleteVehicle = vehicledata => {};
 }

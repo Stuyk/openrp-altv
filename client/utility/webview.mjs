@@ -11,13 +11,16 @@ export class WebView {
 
   events = [];
   ready = false;
+  disableControls = true;
 
-  constructor(page, showCursor = true) {
+  constructor(page, showCursor = true, disableControls = true) {
     if (!pages[page]) {
       return 'Error - Invalid page';
     }
 
     this.page = page;
+    this.disableControls = disableControls;
+    
     if (panelsPanelStatus.isAnyPanelOpen()) return;
     alt.emit('panel:SetStatus', this.page, true);
     
@@ -28,9 +31,14 @@ export class WebView {
     this.view.on('close', this.close.bind(null, this));
     this.view.on('ready', this.dialogReady.bind(this));
     alt.on('update', this.disableControls);
-    alt.toggleGameControls(false);
+
+    if (this.disableControls) {
+      alt.toggleGameControls(false);
+    }
   }
 
+  // This is called to add webview function calls, it stores them in a class array allowing us
+  // to dynamically loop through them and clean them up on webview close.
   on(name, func) {
     this.events.push({
       name,
@@ -40,6 +48,7 @@ export class WebView {
     this.view.on(name, func.bind(this));
   }
 
+  // This calls webview.emit()
   emit(ref, name, value) {
     ref.view.emit(name, value);
   }

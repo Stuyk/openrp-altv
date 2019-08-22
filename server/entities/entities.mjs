@@ -72,3 +72,38 @@ export const Character = new orm.EntitySchema({
         }
     }
 });
+
+export const Vehicle = new orm.EntitySchema({
+    name: 'Vehicle',
+    columns: {
+        id: {
+            primary: true,
+            type: 'int',
+            generated: true
+        },
+        // Who owns this vehicle.
+        guid: {
+            type: 'int'
+        },
+        // The vehicle model.
+        model: {
+            type: 'varchar'
+        },
+        health: {
+            type: 'varchar',
+            nullable: true
+        },
+        position: {
+            type: 'varchar',
+            nullable: true
+        },
+        rotation: {
+            type: 'varchar',
+            nullable: true
+        },
+        stats: {
+            type: 'varchar',
+            nullable: true
+        }
+    }
+});

@@ -1,31 +1,21 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
+import * as cache from '../cache/cache.mjs';
 
 const db = new SQL();
 
 console.log('Loaded: character->name.mjs');
 
 export function setRoleplayName(player, roleplayName) {
-    db.selectData('Character', ['name'], results => {
-        if (results === undefined) {
-            player.data.name = roleplayName;
-            player.save();
-            player.closeRoleplayNameDialogue();
-            player.setSyncedMeta('name', player.data.name);
-            return;
-        }
+    if (cache.isNameUsed(roleplayName)) {
+        player.showRoleplayNameTaken();
+        return;
+    }
 
-        var result = results.find(
-            dbData => dbData.name.toLowerCase() === roleplayName.toLowerCase()
-        );
+    // Cache the name.
+    cache.cacheName(roleplayName);
 
-        if (result !== undefined) {
-            player.showRoleplayNameTaken();
-            return;
-        }
-
-        // Sets and saves the player's roleplay name.
-        player.saveRoleplayName(roleplayName);
-        player.closeRoleplayNameDialogue();
-    });
+    // Sets and saves the player's roleplay name.
+    player.saveRoleplayName(roleplayName);
+    player.closeRoleplayNameDialogue();
 }

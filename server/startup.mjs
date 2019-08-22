@@ -26,6 +26,7 @@ alt.on('ConnectionComplete', () => {
     import('./events/playerConnect.mjs');
     import('./events/playerDisconnect.mjs');
     import('./events/playerDeath.mjs');
+    import('./events/consoleCommand.mjs');
     import('./events/entityEnterColshape.mjs');
     import('./events/entityLeaveColshape.mjs');
     import('./events/playerLeftVehicle.mjs');

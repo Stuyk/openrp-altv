@@ -14,8 +14,9 @@ let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
 
 // Setup the player clothing customizer.
 export function showDialogue() {
-    let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
+    let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
     let pPos = alt.Player.local.pos;
 
     webView = new alt.WebView(path);
@@ -205,6 +206,7 @@ function updateComponent(componentId, drawable, texture, isProp) {
 }
 
 export function closeDialogue() {
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
     // On Update Function
     alt.off('update', onUpdateCustomizer);
 

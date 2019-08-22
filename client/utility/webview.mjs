@@ -4,11 +4,13 @@ import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 
 export const pages = {
   inventory: 'http://resources/orp/client/html/inventory/index.html',
+  atm: 'http://resources/orp/client/html/atm/index.html',
 }
 
 export class WebView {
 
   events = [];
+  ready = false;
 
   constructor(page, showCursor = true) {
     if (!pages[page]) {
@@ -23,7 +25,8 @@ export class WebView {
     this.view.focus();
     alt.showCursor(showCursor);
 
-    this.view.on('close', this.close.bind(this));
+    this.view.on('close', this.close.bind(null, this));
+    this.view.on('ready', this.dialogReady.bind(this));
     alt.on('update', this.disableControls);
     alt.toggleGameControls(false);
   }
@@ -34,29 +37,36 @@ export class WebView {
       func,
     });
 
-    this.view.on(name, func);
+    this.view.on(name, func.bind(this));
   }
 
-  emit(name) {
-    this.view.emit(name);
+  emit(ref, name, value) {
+    ref.view.emit(name, value);
   }
 
-  close() {
-    this.view.off('close', this.close);
+  // This function requires a reference to the class instance
+  // For internal calls, we bind `this` into the first argument slot
+  // For external calls, we pass our WebView class reference
+  close(ref) {
+    ref.view.off('close', ref.close);
 
-    if (this.events.length) {
-      this.events.forEach(e => {
-        this.view.off(e.name, e.func);
+    if (ref.events.length) {
+      ref.events.forEach(e => {
+        ref.view.off(e.name, e.func);
       });
     }
 
-    this.view.unfocus();
-    this.view.destroy();
-    this.view = undefined;
+    ref.view.unfocus();
+    ref.view.destroy();
+    ref.view = undefined;
     alt.showCursor(false);
-    alt.off('update', this.disableControls);
+    alt.off('update', ref.disableControls);
     alt.toggleGameControls(true);
-    alt.emit('panel:SetStatus', this.page, false);
+    alt.emit('panel:SetStatus', ref.page, false);
+  }
+
+  dialogReady() {
+    this.ready = true;
   }
 
   disableControls() {

@@ -1,7 +1,6 @@
 import * as alt from 'alt';
 
 alt.on('consoleCommand', (command, argA, argB, argC) => {
-  alt.log(`${command} ${argA} ${argB} ${argC}`);
 
   if (command === 'kick') {
     const players = alt.getPlayersByName(argA);
@@ -10,4 +9,5 @@ alt.on('consoleCommand', (command, argA, argB, argC) => {
       players[0].kick();
     }
   }
+
 });

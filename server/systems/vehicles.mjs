@@ -27,7 +27,7 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
     }
 
     let vehicle = new alt.Vehicle(
-        alt.hash(veh.model),
+        veh.model,
         pos.x,
         pos.y,
         pos.z,

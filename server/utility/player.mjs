@@ -513,12 +513,18 @@ export function setupPlayerFunctions(player) {
             }
         }
 
-        db.insertData(
+        // Spawn a reference vehicle. Then destroy it.
+        let tempVeh = new alt.Vehicle(model, 0, 0, 0, 0, 0, 0);
+        let health = tempVeh.getHealthDataBase64();
+        tempVeh.destroy();
+
+        db.upsertData(
             {
                 guid: player.data.id,
                 position: JSON.stringify(pos),
                 rotation: JSON.stringify(rot),
-                model
+                model,
+                health
             },
             'Vehicle',
             veh => {

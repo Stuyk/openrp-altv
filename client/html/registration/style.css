@@ -13,3 +13,7 @@ body {
 .small-alert {
     font-size: 9px !important;
 }
+
+#passwordtwo, #alert, #alertSuccess {
+    display: none;
+}

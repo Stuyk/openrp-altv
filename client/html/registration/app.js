@@ -1,10 +1,3 @@
-// General Setup for the Page
-$(() => {
-    $('#passwordtwo').hide();
-    $('#alert').hide();
-    $('#alertSuccess').hide();
-});
-
 $('#username').keypress(e => {
     if (e.key === 'Enter') {
         $('#password').focus();

@@ -1,73 +1,45 @@
 import * as alt from 'alt';
-import * as native from 'natives';
-import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
+import { WebView } from 'client/utility/webview.mjs';
 
 alt.log(`Loaded: panels->atm.mjs`);
 
-const pagePath = `http://resources/orp/client/html/atm/index.html`;
-let webView = undefined;
-let viewReady = false;
+let webview;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
-    if (panelsPanelStatus.isAnyPanelOpen()) return;
-
-    alt.emit('panel:SetStatus', 'atm', true);
-
-    // Show the ATM Dialogue
-    webView = new alt.WebView(pagePath);
-    webView.focus();
-    alt.showCursor(true);
-    alt.toggleGameControls(false);
-
-    webView.on('withdraw', withdrawBalance);
-    webView.on('deposit', depositBalance);
-    webView.on('close', closeDialogue);
-    webView.on('ready', dialogueReady);
+    webview = new WebView('atm');
+    webview.on('withdraw', withdrawBalance);
+    webview.on('deposit', depositBalance);
 }
 
-// Close the Dialogue for the ATM menu.
 export function closeDialogue() {
-    webView.off('withdraw', withdrawBalance);
-    webView.off('deposit', depositBalance);
-    webView.off('close', closeDialogue);
-    webView.off('ready', dialogueReady);
-    webView.unfocus();
-    webView.destroy();
-    alt.showCursor(false);
-    alt.toggleGameControls(true);
-    viewReady = false;
-
-    alt.emit('panel:SetStatus', 'atm', false);
-}
-
-// When the Dialogue is ready toggle this boolean.
-function dialogueReady() {
-    viewReady = true;
+    // This won't work because this is undefined inside the class :/
+    // Need to figure out how to store the class reference globally so you can re-access it to call close
+    webview.close(webview);
 }
 
 // Update the cash value on the Webview.
 export function updateCash(value) {
-    if (webView === undefined) return;
+    if (webview.view === undefined) return;
 
-    if (viewReady) {
-        webView.emit('setCash', value);
+    if (webview.ready) {
+        webview.emit(webview, 'setCash', value);
     } else {
         alt.setTimeout(() => {
-            webView.emit('setCash', value);
+            webview.emit(webview, 'setCash', value);
         }, 1000);
     }
 }
 
 // Show the bank value for the atm menu.
 export function updateBank(value) {
-    if (webView === undefined) return;
+    if (webview.view === undefined) return;
 
-    if (viewReady) {
-        webView.emit('setBank', value);
+    if (webview.ready) {
+        webview.emit(webview, 'setBank', value);
     } else {
         alt.setTimeout(() => {
-            webView.emit('setBank', value);
+            webview.emit(webview, 'setBank', value);
         }, 1000);
     }
 }
@@ -84,9 +56,9 @@ function depositBalance(value) {
 
 // Show a success message on the ATM.
 export function showSuccess(msg) {
-    if (webView === undefined) return;
+    if (webview.view === undefined) return;
 
     alt.log(msg);
 
-    webView.emit('showSuccess', msg);
+    webview.emit(webview, 'showSuccess', msg);
 }

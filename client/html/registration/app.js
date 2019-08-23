@@ -1,8 +1,25 @@
-// General Setup for the Page
-$(() => {
-    $('#passwordtwo').hide();
-    $('#alert').hide();
-    $('#alertSuccess').hide();
+$('#username').keypress(e => {
+    if (e.key === 'Enter') {
+        $('#password').focus();
+    }
+});
+
+$('#password').keypress(e => {
+    if (e.key === 'Enter') {
+        if (selection === 0) {
+            $('#submit').click();
+        }
+
+        if (selection === 1) {
+            $('#passwordtwo').focus();
+        }
+    }
+});
+
+$('#passwordtwo').keypress(e => {
+    if (e.key === 'Enter') {
+        $('#submit').click();
+    }
 });
 
 var selection = 0;
@@ -26,7 +43,6 @@ $('button').on('click', e => {
     }
 
     if (e.target.id === 'submit') {
-        console.log('submitting');
         $('#submit').prop('disabled', true);
 
         var username = $('#username').val();

@@ -3,6 +3,8 @@ import * as native from 'natives';
 import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as chat from 'chat';
 
+alt.log('Loaded: client->events->keyup.mjs');
+
 let keybinds = {};
 
 // Setup Keybinds

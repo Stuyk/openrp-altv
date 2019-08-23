@@ -89,10 +89,6 @@ export const Vehicle = new orm.EntitySchema({
         model: {
             type: 'varchar'
         },
-        health: {
-            type: 'varchar',
-            nullable: true
-        },
         position: {
             type: 'varchar',
             nullable: true

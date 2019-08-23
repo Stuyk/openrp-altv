@@ -12,6 +12,7 @@ import * as customizersClothing from 'client/customizers/clothing.mjs';
 import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as systemsSound from 'client/systems/sound.mjs';
 import * as systemsAnimation from 'client/systems/animation.mjs';
+import * as systemsVehicles from 'client/systems/vehicles.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -35,7 +36,10 @@ alt.onServer('register:CloseDialogue', registration.closeDialogue);
 // =======================================================
 // PLAYER RESPAWN
 // Reset the characters blood
-alt.onServer('respawn:ClearPedBloodDamage', customizersCharacter.clearPedBloodDamage);
+alt.onServer(
+    'respawn:ClearPedBloodDamage',
+    customizersCharacter.clearPedBloodDamage
+);
 
 // =======================================================
 // CHARACTER FACE CUSTOMIZER
@@ -99,3 +103,11 @@ alt.onServer('sound:PlayAudio', systemsSound.playAudio);
 // Animation
 // playAnimation(dictionary, name, durationInMS, flag)
 alt.onServer('animation:PlayAnimation', systemsAnimation.playAnimation);
+
+// =======================================================
+// Vehicle
+alt.onServer('vehicle:CloseDoor', systemsVehicles.closeDoor);
+alt.onServer('vehicle:OpenDoor', systemsVehicles.openDoor);
+alt.onServer('vehicle:ShutAllDoors', systemsVehicles.shutAllDoors);
+alt.onServer('vehicle:EngineOn', systemsVehicles.engineOn);
+alt.onServer('vehicle:EngineOff', systemsVehicles.engineOff);

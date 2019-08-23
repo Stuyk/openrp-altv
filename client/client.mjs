@@ -16,6 +16,8 @@ import * as systemsInteraction from 'client/systems/interaction.mjs';
 import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as clothing from 'client/customizers/clothing.mjs';
 
+import * as utilitySandbox from 'client/utility/sandbox.mjs';
+
 native.startAudioScene('FBI_HEIST_H5_MUTE_AMBIENCE_SCENE');
 
 alt.setTimeout(() => {

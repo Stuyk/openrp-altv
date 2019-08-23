@@ -118,9 +118,7 @@ export function showDialogue() {
 }
 
 export function clearPedBloodDamage() {
-    native.clearPedBloodDamage(
-        alt.Player.local.scriptID,
-    );
+    native.clearPedBloodDamage(alt.Player.local.scriptID);
 }
 
 // Player Sex Updates, for model changes.
@@ -317,19 +315,19 @@ function onUpdateEventCharacterCustomizer() {
     let cursorRelativePos = alt.getCursorPos().x;
 
     // Scroll to zoom in.
-    if (native.isDisabledControlJustPressed(0, 14)) {
-        if (cursorRelativePos < screenWidth / 2) return;
+    if (native.isDisabledControlPressed(0, 14)) {
+        if (cursorRelativePos < screenWidth / 4) return;
 
-        fov += 1;
+        fov += 2;
         if (fov >= 29) fov = 28;
         updateCamera();
     }
 
     // Scroll to zoom out
-    if (native.isDisabledControlJustPressed(0, 15)) {
-        if (cursorRelativePos < screenWidth - screenWidth / 2) return;
+    if (native.isDisabledControlPressed(0, 15)) {
+        if (cursorRelativePos < screenWidth / 4) return;
 
-        fov -= 1;
+        fov -= 2;
         if (fov <= 16) fov = 17;
         updateCamera();
     }

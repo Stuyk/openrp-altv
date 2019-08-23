@@ -11,6 +11,7 @@ let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
     0,
     0
 );
+let cameraHeight = 0;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
@@ -86,18 +87,18 @@ function onUpdateCustomizer() {
 
     // Scroll to zoom in.
     if (native.isDisabledControlPressed(0, 14)) {
-        if (cursorRelativePos < screenWidth / 2) return;
+        if (cursorRelativePos < screenWidth / 4) return;
 
-        fov += 0.1;
+        fov += 3;
         if (fov >= 100) fov = 100;
         updateCamera();
     }
 
     // Scroll to zoom out
     if (native.isDisabledControlPressed(0, 15)) {
-        if (cursorRelativePos < screenWidth - screenWidth / 2) return;
+        if (cursorRelativePos < screenWidth / 4) return;
 
-        fov -= 0.1;
+        fov -= 3;
         if (fov <= 30) fov = 30;
         updateCamera();
     }
@@ -142,9 +143,29 @@ function updateCamPos(isUp) {
     let coord = native.getCamCoord(characterCamera);
 
     if (isUp) {
-        native.setCamCoord(characterCamera, coord.x, coord.y, coord.z + 0.01);
+        cameraHeight += 0.01;
+        if (cameraHeight > 2) {
+            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
+        } else {
+            native.setCamCoord(
+                characterCamera,
+                coord.x,
+                coord.y,
+                coord.z + 0.01
+            );
+        }
     } else {
-        native.setCamCoord(characterCamera, coord.x, coord.y, coord.z - 0.01);
+        cameraHeight -= 0.01;
+        if (cameraHeight < -0.5) {
+            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
+        } else {
+            native.setCamCoord(
+                characterCamera,
+                coord.x,
+                coord.y,
+                coord.z - 0.01
+            );
+        }
     }
 
     native.renderScriptCams(true, false, 0, true, false);

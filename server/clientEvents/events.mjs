@@ -9,6 +9,7 @@ import * as utilityLocationHelper from '../utility/locationhelper.mjs';
 import * as characterName from '../character/name.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsInventory from '../systems/inventory.mjs';
+import * as systemsVehicles from '../systems/vehicles.mjs';
 import * as interactionAtms from '../interactions/atms.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 
@@ -64,6 +65,11 @@ alt.onClient('inventory:DestroyItem', systemsInventory.destroy);
 alt.onClient('inventory:UseItem', systemsInventory.use);
 alt.onClient('inventory:DropItem', systemsInventory.drop);
 alt.onClient('inventory:Pickup', systemsInventory.pickup);
+
+// Vehicle
+alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
+alt.onClient('vehicle:EngineOn', systemsVehicles.engineOn);
+alt.onClient('vehicle:EngineOff', systemsVehicles.engineOff);
 
 // Temporary:
 // teleport to waypoint stuff

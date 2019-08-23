@@ -23,6 +23,36 @@ export function setupVehicleFunctions(vehicle) {
         );
     };
 
+    vehicle.saveVehicleData = () => {
+        console.log('Saved Vehicle Data');
+
+        vehicle.saveField(
+            vehicle.data.id,
+            'position',
+            JSON.stringify(vehicle.pos)
+        );
+
+        vehicle.saveField(
+            vehicle.data.id,
+            'rotation',
+            JSON.stringify(vehicle.rot)
+        );
+
+        let vehicleData = {
+            appearance: vehicle.getAppearanceDataBase64(),
+            damageStatus: vehicle.getDamageStatusBase64(),
+            health: vehicle.getHealthDataBase64(),
+            lockState: vehicle.lockState,
+            scriptData: vehicle.getScriptDataBase64()
+        };
+
+        vehicle.saveField(
+            vehicle.data.id,
+            'stats',
+            JSON.stringify(vehicleData)
+        );
+    };
+
     // Save the position of the vehicle.
     vehicle.savePosition = () => {
         vehicle.saveField(
@@ -41,28 +71,16 @@ export function setupVehicleFunctions(vehicle) {
         );
     };
 
-    vehicle.saveHealth = () => {
-        vehicle.saveField(
-            vehicle.data.id,
-            'health',
-            vehicle.getHealthDataBase64()
-        );
-    };
-
-    // Update stats.
-    vehicle.saveStats = stats => {
-        vehicle.data.stats = JSON.stringify(stats);
-        vehicle.saveField(
-            vehicle.data.id,
-            'stats',
-            JSON.stringify(vehicle.data.stats)
-        );
-    };
-
     vehicle.despawnVehicle = () => {
-        vehicle.saveHealth();
-        vehicle.savePosition();
-        vehicle.saveRotation();
+        vehicle.saveVehicleData();
         vehicle.destroy();
+    };
+
+    vehicle.setEngineOn = () => {
+        alt.emitClient(null, 'vehicle:EngineOn', vehicle);
+    };
+
+    vehicle.setEngineOff = () => {
+        alt.emitClient(null, 'vehicle:EngineOff', vehicle);
     };
 }

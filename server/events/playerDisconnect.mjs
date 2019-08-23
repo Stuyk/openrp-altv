@@ -31,10 +31,4 @@ alt.on('playerDisconnect', (player, reason) => {
 
     // Remove the logged in user.
     registrationLogin.removeLoggedInPlayer(player.username);
-
-    if (player.vehicles !== undefined) {
-        player.vehicles.forEach(veh => {
-            veh.despawnVehicle();
-        });
-    }
 });

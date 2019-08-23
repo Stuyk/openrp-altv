@@ -35,11 +35,11 @@ export const Character = new orm.EntitySchema({
             nullable: true
         },
         face: {
-            type: 'varchar',
+            type: 'longtext',
             nullable: true
         },
         clothing: {
-            type: 'varchar',
+            type: 'longtext',
             nullable: true
         },
         lastposition: {

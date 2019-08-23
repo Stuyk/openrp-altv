@@ -67,7 +67,6 @@ $('button').on('click', e => {
         if (selection === 0) {
             // Existing Account
             // Send emit
-            console.log(remember);
             alt.emit('existingAccount', username, password, remember);
         } else {
             // Register Account

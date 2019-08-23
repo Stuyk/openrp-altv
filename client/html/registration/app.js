@@ -48,6 +48,7 @@ $('button').on('click', e => {
         var username = $('#username').val();
         var password = $('#password').val();
         var password2 = $('#passwordtwo').val();
+        var remember = $('#rememberMe')[0].checked;
 
         if (username.length <= 5) {
             showAlertMessage(
@@ -66,7 +67,8 @@ $('button').on('click', e => {
         if (selection === 0) {
             // Existing Account
             // Send emit
-            alt.emit('existingAccount', username, password);
+            console.log(remember);
+            alt.emit('existingAccount', username, password, remember);
         } else {
             // Register Account
             if (password !== password2) {
@@ -112,6 +114,7 @@ function goToLogin() {
         $('#pagetitle').removeClass('animated flipOutX');
         $('#pagetitle').addClass('animated flipInX');
         $('#pagetitle').html('Existing');
+        $('#rememberMeDiv').show();
     }, 300);
 }
 
@@ -128,6 +131,7 @@ function goToRegister() {
         $('#pagetitle').removeClass('animated flipOutX');
         $('#pagetitle').addClass('animated flipInX');
         $('#pagetitle').html('Register');
+        $('#rememberMeDiv').hide();
     }, 300);
 }
 
@@ -141,5 +145,16 @@ if ('alt' in window) {
         showAlertSuccessMessage(successMessage);
     });
 
+    alt.on('setUsername', username => {
+        $('#username').val(username);
+        $('#remember')[0].checked = true;
+        $('#password').focus();
+    });
+
     alt.on('goToLogin', goToLogin);
+
+    window.onload = function() {
+        $('#username').focus();
+        alt.emit("ready");
+    }
 }

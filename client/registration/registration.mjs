@@ -7,6 +7,8 @@ const urlForView = 'http://resources/orp/client/html/registration/index.html';
 let registerWebview = undefined;
 let loginCamera = undefined;
 
+let lastTriedUsername = null;
+
 /**
  * Show the login camera to the local player.
  * @param regCamCoord Coordinate of the login camera.
@@ -46,6 +48,12 @@ export function showDialogue(regCamCoord, regCamPointAtCoord) {
     native.renderScriptCams(true, false, 0, true, false);
     native.transitionToBlurred(1000);
 
+    registerWebview.on('ready', () => {
+        const lastUsername = alt.LocalStorage.get().get("lastUsername");
+        if (lastUsername != null)
+            registerWebview.emit('setUsername', lastUsername);
+    });
+
     // Called when a new user wants to register an account.
     registerWebview.on('registerAccount', registerAccount);
 
@@ -53,7 +61,9 @@ export function showDialogue(regCamCoord, regCamPointAtCoord) {
     registerWebview.on('existingAccount', existingAccount);
 }
 
-function existingAccount(username, password) {
+function existingAccount(username, password, remember) {
+    if (remember)
+        lastTriedUsername = username;
     alt.emitServer('register:ExistingAccount', username, password);
 }
 
@@ -89,6 +99,11 @@ export function showError(errorMessage) {
 // Send a success message when the login is successful.
 export function showSuccess(successMessage) {
     registerWebview.emit('success', successMessage);
+    if (lastTriedUsername != null) {
+        const cache = alt.LocalStorage.get();
+        cache.set('lastUsername', lastTriedUsername);
+        cache.save();
+    }
 }
 
 // Auto-switch to login panel.

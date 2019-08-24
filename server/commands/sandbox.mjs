@@ -76,3 +76,20 @@ chat.registerCmd('consume', (player, arg) => {
 chat.registerCmd('addveh', (player, arg) => {
     player.addVehicle(arg[0], player.pos, new alt.Vector3(0, 0, 0));
 });
+
+chat.registerCmd('tpto', (player, arg) => {
+
+    if (arg[0] == undefined || arg[0] == null) {
+        return player.sendMessage ('tpto [PlayerID]');
+    }
+
+    if (alt.Player.all[arg] == undefined || alt.Player.all[arg] == null ) {
+        return player.sendMessage('Player does not exist.');
+    }
+
+    let targetPos = alt.Player.all[arg].pos;
+    let targetName = alt.Player.all[arg].name;
+
+    player.pos = targetPos;
+    player.sendMessage(`You got teleported to ${targetName} position.`);
+});

@@ -8,19 +8,39 @@ chat.registerCmd('pos', player => {
     console.log(player.pos);
 });
 
-chat.registerCmd('veh', player => {
-    new alt.Vehicle(
-        'infernus',
-        player.pos.x,
-        player.pos.y,
-        player.pos.z,
-        0,
-        0,
-        0
-    );
-
-    console.log(alt.Vehicle.all.length);
+chat.registerCmd('veh', (player, args) => {
+    if (args.length == 0) {
+        chat.send(player, "/veh [carname]");
+        args[0] = 'Infernus'; // for dev purposes only |by eappels
+    }
+    SpawnVehicleInFrontOfPlayer(player, 3, args[0]);
 });
+
+async function SpawnVehicleInFrontOfPlayer(player, distance, vehiclename) {
+    var position = await getForwardVector(player);
+    var pos = {
+        x: player.pos.x + position.x * distance,
+        y: player.pos.y + position.y * distance,
+        z: player.pos.z + position.z * distance
+    }
+    new alt.Vehicle(vehiclename, pos.x, pos.y, pos.z, 0, 0, 0);
+}
+
+async function getForwardVector(player) {
+    var result = await ClientCallback(player, 'getForwardVector', []);
+    return result;
+}
+
+async function ClientCallback(player, clientEventName, argsArray) {
+    alt.emitClient(player, clientEventName, argsArray);    
+    let promise = new Promise((res, rej) => {
+        alt.onClient(clientEventName, (player, resultsArray) => {
+            res(resultsArray);
+        });
+    });    
+    var result = await promise;
+    return result;
+}
 
 chat.registerCmd('addcash', (player, value) => {
     let data = value * 1;

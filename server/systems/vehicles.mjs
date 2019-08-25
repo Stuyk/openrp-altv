@@ -157,3 +157,22 @@ export function engineOff(player) {
     player.vehicle.engineOn = false;
     player.vehicle.setEngineOff();
 }
+
+export function lockAllDoors(player, vehicle, doorID) {
+    if (!Array.isArray(player.vehicles)) return;
+
+    if (!player.vehicles.includes(vehicle)) {
+        player.sendMessage(`Can't lock a car you don't own.`);
+        return;
+    }
+
+    if (vehicle.lockState === 1) {
+        vehicle.lockState = 2;
+        vehicle.honkHorn(2, 100);
+        player.sendMessage('Vehicle was locked.');
+    } else {
+        vehicle.lockState = 1;
+        vehicle.honkHorn(1, 100);
+        player.sendMessage('Vehicle was unlocked.');
+    }
+}

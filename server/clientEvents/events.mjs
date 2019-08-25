@@ -70,6 +70,7 @@ alt.onClient('inventory:Pickup', systemsInventory.pickup);
 alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onClient('vehicle:EngineOn', systemsVehicles.engineOn);
 alt.onClient('vehicle:EngineOff', systemsVehicles.engineOff);
+alt.onClient('vehicle:LockAllDoors', systemsVehicles.lockAllDoors);
 
 // Temporary:
 // teleport to waypoint stuff

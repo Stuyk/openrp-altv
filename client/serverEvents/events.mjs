@@ -111,3 +111,4 @@ alt.onServer('vehicle:OpenDoor', systemsVehicles.openDoor);
 alt.onServer('vehicle:ShutAllDoors', systemsVehicles.shutAllDoors);
 alt.onServer('vehicle:EngineOn', systemsVehicles.engineOn);
 alt.onServer('vehicle:EngineOff', systemsVehicles.engineOff);
+alt.onServer('vehicle:HonkHorn', systemsVehicles.honkHorn);

@@ -5,35 +5,41 @@ import * as utilityText from 'client/utility/text.mjs';
 const vehicleDoorsToShow = [
     {
         name: 'handle_dside_f',
-        message: 'Open Door',
+        message: 'Door',
         id: 0,
         seat: 'seat_dside_f',
         seatID: -1
     },
     {
         name: 'handle_pside_f',
-        message: 'Open Door',
+        message: 'Door',
         id: 1,
         seat: 'seat_pside_f',
         seatID: 0
     },
     {
         name: 'handle_dside_r',
-        message: 'Open Door',
+        message: 'Door',
         id: 2,
         seat: 'seat_dside_r',
         seatID: 1
     },
     {
         name: 'handle_pside_r',
-        message: 'Open Door',
+        message: 'Door',
         id: 3,
         seat: 'seat_pside_r',
         seatID: 2
     },
-    { name: 'engine', message: 'Open Hood', id: 4 },
-    { name: 'boot', message: 'Open Trunk', id: 5 } // Why is it called a boot? Idk. Rockstar is fucking weird and called it a fucking boot. But it's a god damn trunk and that's why we don't listen to Rockstar.
+    { name: 'engine', message: 'Hood', id: 4 },
+    { name: 'boot', message: 'Trunk', id: 5 } // Why is it called a boot? Idk. Rockstar is fucking weird and called it a fucking boot. But it's a god damn trunk and that's why we don't listen to Rockstar.
 ];
+
+let closestVehicle;
+let closestPosition;
+let foundVehicle = false;
+let cooldown = false;
+let isPlayerTooFar = false;
 
 export function engineOn(vehicle) {
     native.setVehicleUndriveable(vehicle.scriptID, false);
@@ -75,30 +81,76 @@ export function shutAllDoors(vehicle) {
     native.setVehicleDoorsShut(vehicle.scriptID, false);
 }
 
-let closestVehicle;
-let cooldown = false;
-
+// Look for the closest vehicle to the player.
 alt.setInterval(() => {
+    // Get player position and forward vector.
     let pos = alt.Player.local.pos;
-    let foundOne = false;
+    let fv = native.getEntityForwardVector(alt.Player.local.scriptID);
 
-    alt.Vehicle.all.forEach(veh => {
-        if (distance(pos, veh.pos) <= 5) {
-            foundOne = true;
+    // Ray cast from top to bottom.
+    let found = false;
+    for (let i = 1; i < 5; i++) {
+        let posFront = {
+            x: pos.x + fv.x * 7,
+            y: pos.y + fv.y * 7,
+            z: pos.z - i * 0.1
+        };
 
-            if (closestVehicle === veh) return;
+        let testResult = native.startShapeTestRay(
+            pos.x,
+            pos.y,
+            pos.z,
+            posFront.x,
+            posFront.y,
+            posFront.z,
+            2,
+            alt.Player.local.scriptID,
+            0
+        );
 
-            closestVehicle = veh;
-            alt.on('update', drawVehicleText);
-            alt.log('Found Vehicle');
+        let [
+            _idk,
+            _hit,
+            _endCoords,
+            _surfaceNormal,
+            _entity
+        ] = native.getShapeTestResult(
+            testResult,
+            undefined,
+            undefined,
+            undefined,
+            undefined
+        );
+
+        if (_hit) {
+            found = true;
+            closestVehicle = alt.Vehicle.all.find(v => v.scriptID === _entity);
+            closestPosition = _endCoords;
+
+            if (distance(closestPosition, alt.Player.local.pos) > 2) {
+                isPlayerTooFar = true;
+            } else {
+                isPlayerTooFar = false;
+            }
+            break;
         }
-    });
-
-    if (!foundOne) {
-        closestVehicle = undefined;
-        alt.off('update', drawVehicleText);
     }
-}, 1000);
+
+    // int GET_SHAPE_TEST_RESULT(int rayHandle, BOOL *hit, Vector3 *endCoords, Vector3 *surfaceNormal, Entity *entityHit)
+
+    if (!found) {
+        alt.off('update', showVehicleOptions);
+        foundVehicle = false;
+        return;
+    }
+
+    // Ensure we don't create this update event twice for new reason.
+    if (foundVehicle) return;
+
+    // Turn on the showVehicleOptions draw.
+    foundVehicle = true;
+    alt.on('update', showVehicleOptions);
+}, 500);
 
 function distance(vector1, vector2) {
     if (vector1 === undefined || vector2 === undefined) {
@@ -112,9 +164,10 @@ function distance(vector1, vector2) {
     );
 }
 
-function drawVehicleText() {
-    if (!closestVehicle) return;
+function showVehicleOptions() {
+    if (!foundVehicle || !closestVehicle) return;
 
+    /*
     if (alt.Player.local.vehicle === closestVehicle) {
         if (
             alt.Player.local.scriptID !==
@@ -156,62 +209,21 @@ function drawVehicleText() {
         }
         return;
     }
+    */
 
-    const positions = [];
-    vehicleDoorsToShow.forEach(door => {
-        if (
-            door.id >= 4 &&
-            native.getVehicleClass(closestVehicle.scriptID) === 7
-        )
-            return;
+    const data = getVehicleDraw(closestVehicle);
 
-        if (closestVehicle.getMeta(door.name)) {
-            let doorPos = native.getWorldPositionOfEntityBone(
-                closestVehicle.scriptID,
-                native.getEntityBoneIndexByName(
-                    closestVehicle.scriptID,
-                    door.seat
-                )
-            );
+    if (data === undefined) return;
 
-            positions.push({
-                message: 'Sit',
-                pos: doorPos,
-                id: door.seatID,
-                isSeat: true
-            });
-        }
-
-        let pos = native.getWorldPositionOfEntityBone(
-            closestVehicle.scriptID,
-            native.getEntityBoneIndexByName(closestVehicle.scriptID, door.name)
-        );
-
-        positions.push({ message: door.message, pos, id: door.id });
-    });
-
-    let closestDistance;
-    let closest;
-    positions.forEach(data => {
-        let currDist = distance(alt.Player.local.pos, data.pos);
-
-        if (!closest) {
-            closest = data;
-            closestDistance = currDist;
-            return;
-        }
-
-        if (currDist < closestDistance) {
-            closest = data;
-            closestDistance = currDist;
-        }
-    });
-
+    if (isPlayerTooFar) {
+        data.message = 'Toggle Lock';
+    }
+    // Draw the Data we found.
     utilityText.drawText3d(
-        closest.message,
-        closest.pos.x,
-        closest.pos.y,
-        closest.pos.z,
+        data.message,
+        data.pos.x,
+        data.pos.y,
+        data.pos.z,
         0.4,
         4,
         255,
@@ -223,33 +235,145 @@ function drawVehicleText() {
         99
     );
 
-    native.beginTextCommandDisplayHelp('STRING');
-    native.addTextComponentSubstringPlayerName(
-        `Press ~INPUT_CONTEXT~ to ${closest.message}`
-    );
-    native.endTextCommandDisplayHelp(0, false, true, -1);
+    showHelpText(`Press ~INPUT_CONTEXT~ to ${data.message}`);
 
+    // When 'E' is pressed.
     if (native.isControlJustPressed(0, 38)) {
+        // Setup a Cooldown
         if (cooldown) return;
-
         cooldown = true;
 
-        if (closest.isSeat) {
+        if (data.isSeat) {
             native.taskEnterVehicle(
                 alt.Player.local.scriptID,
                 closestVehicle.scriptID,
-                5000,
-                closest.id,
+                1500,
+                data.id,
                 2.0,
                 1,
                 0
             );
+            alt.setTimeout(() => {
+                alt.emitServer(
+                    'vehicle:ToggleDoor',
+                    closestVehicle,
+                    data.doorID
+                );
+            }, 1500);
         } else {
-            alt.emitServer('vehicle:ToggleDoor', closestVehicle, closest.id);
+            if (!isPlayerTooFar) {
+                if (
+                    native.getVehicleDoorLockStatus(closestVehicle.scriptID) ===
+                    2
+                ) {
+                    native.clearPedTasksImmediately(alt.Player.local.scriptID);
+                } else {
+                    native.taskOpenVehicleDoor(
+                        alt.Player.local.scriptID,
+                        closestVehicle.scriptID,
+                        1500,
+                        data.id,
+                        1
+                    );
+
+                    alt.emitServer(
+                        'vehicle:ToggleDoor',
+                        closestVehicle,
+                        data.id
+                    );
+                }
+            } else {
+                alt.emitServer('vehicle:LockAllDoors', closestVehicle, data.id);
+            }
         }
 
         alt.setTimeout(() => {
             cooldown = false;
-        }, 100);
+        }, 150);
     }
+}
+
+export function honkHorn(veh, times, duration) {
+    let honkCount = 0;
+    let interval = alt.setInterval(() => {
+        native.startVehicleHorn(
+            veh.scriptID,
+            duration / 2,
+            native.getHashKey('HELDDOWN'),
+            false
+        );
+        honkCount += 1;
+
+        if (honkCount >= times) {
+            alt.clearInterval(interval);
+        }
+    }, duration);
+}
+
+function getVehicleDraw(veh) {
+    const vehClass = native.getVehicleClass(veh.scriptID);
+    const pPos = closestPosition;
+    let currentDoor;
+    let distanceToDoor = 20;
+
+    // Loop through each
+    for (let key in vehicleDoorsToShow) {
+        let doorID = vehicleDoorsToShow[key].id;
+        let doorName = vehicleDoorsToShow[key].name;
+        let seatID = vehicleDoorsToShow[key].seatID;
+        let seatName = vehicleDoorsToShow[key].seat;
+        let doorMessage = vehicleDoorsToShow[key].message;
+
+        // if the vehicle is super class & is a trunk or hood.
+        // Don't show options. They don't work right.
+        if (doorID >= 4 && vehClass === 7) continue;
+
+        // If the vehicle door is open.
+        // Don't handle TRUNKS for SEATS.
+        if (veh.getMeta(vehicleDoorsToShow[key].name) && doorID <= 3) {
+            let seatPos = getEntityBone(veh, seatName);
+            let seatDistance = distance(seatPos, pPos);
+
+            if (seatDistance < distanceToDoor) {
+                distanceToDoor = seatDistance;
+                currentDoor = {
+                    message: 'Sit',
+                    pos: seatPos,
+                    id: seatID,
+                    isSeat: true,
+                    dist: distanceToDoor,
+                    doorID
+                };
+            }
+        }
+
+        let doorPos = getEntityBone(veh, doorName);
+        let doorDistance = distance(doorPos, pPos);
+
+        if (doorDistance > distanceToDoor) continue;
+
+        distanceToDoor = doorDistance;
+        currentDoor = {
+            message: doorMessage,
+            pos: doorPos,
+            id: doorID,
+            dist: distanceToDoor
+        };
+        continue;
+    }
+
+    return currentDoor;
+}
+
+function getEntityBone(entity, bonename) {
+    return native.getWorldPositionOfEntityBone(
+        entity.scriptID,
+        native.getEntityBoneIndexByName(entity.scriptID, bonename)
+    );
+}
+
+function showHelpText(message) {
+    native.beginTextCommandDisplayHelp('STRING');
+    native.addTextComponentSubstringPlayerName(message);
+    native.endTextCommandDisplayHelp(0, false, true, -1);
 }

@@ -83,4 +83,8 @@ export function setupVehicleFunctions(vehicle) {
     vehicle.setEngineOff = () => {
         alt.emitClient(null, 'vehicle:EngineOff', vehicle);
     };
+
+    vehicle.honkHorn = (times, duration) => {
+        alt.emitClient(null, 'vehicle:HonkHorn', vehicle, times, duration);
+    };
 }

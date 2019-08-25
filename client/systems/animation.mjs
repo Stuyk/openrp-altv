@@ -22,7 +22,6 @@ export function playAnimation(dictionary, name, durationInMS, flag) {
     let res = loadAnim(dictionary);
 
     res.then(() => {
-        alt.log('triggered');
         native.taskPlayAnim(
             alt.Player.local.scriptID,
             dictionary,

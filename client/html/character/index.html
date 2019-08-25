@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 	<head>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
-		<link rel="stylesheet" href="./style.css">
-	  </head>
+		<link rel="stylesheet" href="../font.css">
+		<link rel="stylesheet" href="../base.css">
+		<link rel="stylesheet/less" type="text/css" href="style.less" />
+		<style>
+			#render {
+				display: none;
+			}
+		</style>
+	</head>
 	  
 	<body>
-	<div class="row  h-100">
-		<div class="col-3 block text-center pt-3 mostly-customized-scrollbar" style="background-color: rgba(0, 0, 0, 0.8) !important;">
-		<div id="populateButtons">
+		<div class='data-menu' id="render">
+
+		</div>
+		<script src="https://unpkg.com/preact"></script>
+		<script src="./app.js" type="text/javascript"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js" ></script>
 		
-		</div>
-		</div>
-		<div class="col-8 block" />
-	</div>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
-	<script src="./app.js" type="text/javascript"></script>
-</body>
+		<script>
+		  less.pageLoadFinished.then(() => document.querySelector('#render').style.display = 'block');
+		</script>
+	</body>
 </html>
 	  

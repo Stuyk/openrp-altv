@@ -6,6 +6,7 @@ import * as chat from 'chat';
 alt.log('Loaded: client->events->keyup.mjs');
 
 let keybinds = {};
+let cooldown = false;
 
 // Setup Keybinds
 let key = 'I'.charCodeAt(0);
@@ -16,7 +17,14 @@ alt.on('keyup', key => {
 
     if (chat.isChatOpen()) return;
 
+    if (cooldown) return;
+
     if (keybinds[key] !== undefined) {
+        cooldown = true;
         keybinds[key]();
+
+        alt.setTimeout(() => {
+            cooldown = false;
+        }, 200);
     }
 });

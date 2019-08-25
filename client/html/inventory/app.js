@@ -49,6 +49,7 @@ function drop(itemHash) {
 }
 
 function use(itemHash) {
+    console.log(itemHash);
     disableAllButtons();
     alt.emit('use', itemHash);
 }

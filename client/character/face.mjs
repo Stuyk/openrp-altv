@@ -51,6 +51,15 @@ export function applyFacialData(jsonData) {
         false
     );
 
+    native.clearPedDecorations(localPlayer);
+    if (parsedData['Overlay']) {
+        native.setPedDecoration(
+            localPlayer,
+            native.getHashKey(parsedData['Overlay'].collection),
+            native.getHashKey(parsedData['Overlay'].overlay)
+        );
+    }
+
     // Set Hair, Texture, Highlights, etc.
     native.setPedComponentVariation(
         localPlayer,

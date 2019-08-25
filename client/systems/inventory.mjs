@@ -60,21 +60,18 @@ function drawItems() {
             if (dist <= 1) {
                 native.beginTextCommandDisplayHelp('STRING');
                 native.addTextComponentSubstringPlayerName(
-                    `Press ~INPUT_CONTEXT~ to pick up the ${
-                        itemData.item.label
-                    }`
+                    `Press ~INPUT_CONTEXT~ to pick up the ${itemData.item.label}`
                 );
                 native.endTextCommandDisplayHelp(0, false, true, -1);
 
                 if (native.isControlJustReleased(0, 38)) {
                     if (pickingUpItem) return;
-
                     pickingUpItem = true;
                     alt.emitServer('inventory:Pickup', itemData.item.hash);
 
                     alt.setTimeout(() => {
                         pickingUpItem = false;
-                    }, 100);
+                    }, 500);
                 }
             }
         }

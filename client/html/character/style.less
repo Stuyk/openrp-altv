@@ -1,0 +1,104 @@
+@sidebarWidth: 320px;
+@tabHeight: 75px;
+@footerHeight: 50px;
+
+@dark: rgb(47, 51, 60);
+@interactive: rgb(102, 132, 228);
+
+.data-menu {
+    width: @sidebarWidth;
+    height: 100%;
+    float: right;
+    border-radius: 10px;
+    margin: 25px 50px 0 0;
+    color: white;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: @sidebarWidth;
+    grid-template-rows: @tabHeight 1fr @footerHeight;
+    height: 90%;
+}
+
+.tab {
+    width: 100%;
+    height: 75px;
+    background: @dark;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+
+    .title {
+        font-size: 18px;
+    }
+}
+
+.footer {
+    width: 100%;
+    height: 50px;
+    background: @interactive;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    text-align: center;
+    padding-top: 20px;
+    cursor: pointer;
+}
+
+/*********************************/
+/*********      MODS     *********/
+/*********************************/
+
+.mod-list {
+    overflow-y: auto;
+    background: rgba(47, 51, 60, 0.75);
+}
+
+.mod {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    grid-row-gap: 10px;
+    grid-template-areas:
+        'title count'
+        'switcher switcher';
+    padding: 20px;
+
+    .title {
+        grid-area: title;
+    }
+
+    .count {
+        grid-area: count;
+        text-align: right;
+    }
+}
+
+/********************************/
+/****      Item Switcher     ****/
+/********************************/
+
+.item-switcher {
+    grid-area: switcher;
+    width: 100%;
+    text-align: center;
+    background: fade(@dark, 75%);
+    border-radius: 15px;
+    padding: 5px;
+
+    display: flex;
+    justify-content: space-between;
+
+    button {
+        background: rgba(0, 0, 0, 0);
+        border: 0;
+        color: #feffff;
+    }
+}
+
+.scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+    background: @interactive;
+}

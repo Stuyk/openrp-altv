@@ -928,7 +928,6 @@ class App extends Component {
         faceData.forEach(item => {
             let key = item.label.split(' ').join('');
 
-            console.log(key);
             dataPairs[key] = {};
             dataPairs[key].value = item.value;
 
@@ -1053,8 +1052,6 @@ function updateHair(faceData, index) {
             ? hairOverlaysFemale[items[0]]
             : hairOverlaysMale[items[0]];
 
-    console.log(overlayData);
-
     alt.emit('updateHair', JSON.stringify(items), overlayData);
 }
 
@@ -1082,7 +1079,6 @@ function getByGroup(faceData, groupName) {
 
     for (let i = 0; i < faceData.length; i++) {
         if (faceData[i].group !== groupName) continue;
-        console.log(faceData[i].label);
         items.push(faceData[i].value);
     }
 

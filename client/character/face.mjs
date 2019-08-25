@@ -33,6 +33,8 @@ export function applyFacialData(jsonData) {
 
     const localPlayer = alt.Player.local.scriptID;
 
+    alt.log(jsonData);
+
     // Set all to zero to prevent bugs.
     native.setPedHeadBlendData(localPlayer, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
 
@@ -51,11 +53,14 @@ export function applyFacialData(jsonData) {
         false
     );
 
-    native.setPedDecoration(
-        localPlayer,
-        native.getHashKey('multiplayer_overlays'),
-        native.getHashKey('NG_M_Hair_001')
-    );
+    native.clearPedDecorations(localPlayer);
+    if (parsedData['Overlay']) {
+        native.setPedDecoration(
+            localPlayer,
+            native.getHashKey(parsedData['Overlay'].collection),
+            native.getHashKey(parsedData['Overlay'].overlay)
+        );
+    }
 
     // Set Hair, Texture, Highlights, etc.
     native.setPedComponentVariation(

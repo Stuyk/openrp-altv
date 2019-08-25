@@ -789,12 +789,9 @@ class App extends Component {
     }
 
     componentDidMount() {
-        // Take the map; and re-map to a list.
-        for (let key in facialFeatures) {
-            this.setState({
-                faceData: [...this.state.faceData, facialFeatures[key]]
-            });
-        }
+        this.setState({
+            faceData: [...this.state.faceData, ...Object.values(facialFeatures)]
+        });
 
         this.setState({ message: 'Done! ' });
     }
@@ -804,14 +801,6 @@ class App extends Component {
 
         faceData[index].max = styleCount;
         this.setState({ faceData });
-    }
-
-    updateHairTextures(textures) {
-        /*
-        let faceData = [...this.state.faceData];
-        let index = faceData.findIndex(x => x.label === 'Hair Texture');
-        faceData[index].max = textures;
-        */
     }
 
     setItemValue(index, increment) {
@@ -851,6 +840,35 @@ class App extends Component {
         this.updateHairValues();
     }
 
+    submitChanges() {
+        let faceData = [...this.state.faceData];
+        const dataPairs = {};
+
+        faceData.forEach(item => {
+            let key = item.label.split(' ').join('');
+
+            console.log(key);
+            dataPairs[key] = {};
+            dataPairs[key].value = item.value;
+
+            if (item.id !== undefined) {
+                dataPairs[key].id = item.id;
+            }
+        });
+
+        let hairOverlay =
+            dataPairs['Sex'].value === 0
+                ? hairOverlaysFemale[dataPairs['Hair'].value]
+                : hairOverlaysFemale[dataPairs['Hair'].value];
+
+        if (hairOverlay) {
+            dataPairs['Overlay'] = hairOverlay;
+        }
+
+        let items = JSON.stringify(dataPairs);
+        alt.emit('setPlayerFacialData', items);
+    }
+
     updateHairValues() {
         if (countChanged) {
             countChanged = false;
@@ -885,6 +903,9 @@ class App extends Component {
             h(FaceList, {
                 faceData: this.state.faceData,
                 setItemValue: this.setItemValue.bind(this)
+            }),
+            h(SubmitButton, {
+                submitChanges: this.submitChanges.bind(this)
             })
         );
         // Render HTML / Components and Shit Here
@@ -915,6 +936,18 @@ const FaceItem = ({ index, item, setItemValue }) => {
         h('button', { onclick: this.left.bind(this), class: 'button' }, '<<'),
         h('span', { class: 'item-values' }, `[${item.value}/${item.max}]`),
         h('button', { onclick: this.right.bind(this), class: 'button' }, '>>')
+    );
+};
+
+const SubmitButton = ({ submitChanges }) => {
+    return h(
+        'div',
+        { class: 'button-group' },
+        h(
+            'button',
+            { onclick: submitChanges.bind(this), class: 'button' },
+            'Submit'
+        )
     );
 };
 
@@ -970,25 +1003,6 @@ function getByGroup(faceData, groupName) {
     }
 
     return items;
-}
-
-function submitChanges() {
-    console.log('Fuck :D');
-    /*
-    const dataPairs = {};
-
-    Object.keys(facialFeatures).forEach(key => {
-        dataPairs[key] = {};
-        dataPairs[key].value = facialFeatures[key].value;
-
-        if (facialFeatures[key].id !== undefined) {
-            dataPairs[key].id = facialFeatures[key].id;
-        }
-    });
-
-    let playerFacialData = JSON.stringify(dataPairs);
-    alt.emit('setPlayerFacialData', playerFacialData);
-    */
 }
 
 if ('alt' in window) {

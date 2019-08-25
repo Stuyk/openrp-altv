@@ -2,14 +2,20 @@ html,
 body {
     min-height: 100vh;
     height: 100vh;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: 'Circular';
 }
 
 body {
     margin: 0;
     padding: 0;
     background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.left-box {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 25vw;
 }
 
 .mostly-customized-scrollbar {

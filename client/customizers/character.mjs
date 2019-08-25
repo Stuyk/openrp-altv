@@ -113,6 +113,12 @@ export function showDialogue() {
     // Update Hair Color Choices for Buttons
     updateHairColorChoices();
 
+    native.setPedDecoration(
+        modPed,
+        native.getHashKey('mpbeach_overlays'),
+        native.getHashKey('fm_hair_fuzz')
+    );
+
     // Halt controls, add zoom in zoom out, and rotation.
     alt.on('update', onUpdateEventCharacterCustomizer);
 }
@@ -149,23 +155,18 @@ function updatePlayerFace(valuesAsJSON) {
 }
 
 // Player Face Decor, SunDamage, Makeup, Lipstick, etc.
-function updateFaceDecor(dataAsJSON) {
+function updateFaceDecor(id, colorType, dataAsJSON) {
     let results = JSON.parse(dataAsJSON);
-    native.setPedHeadOverlay(
-        modPed,
-        results[0].id,
-        results[0].value,
-        results[1].value
-    );
+    native.setPedHeadOverlay(modPed, id, results[0], results[1]);
 
     // Only if one color is present.
     if (results.length > 2 && results.length <= 3) {
         native.setPedHeadOverlayColor(
             modPed,
-            results[0].id,
-            results[2].colorType,
-            results[2].value,
-            results[2].value
+            id,
+            colorType,
+            results[2],
+            results[2]
         );
     }
 
@@ -173,10 +174,10 @@ function updateFaceDecor(dataAsJSON) {
     if (results.length > 3) {
         native.setPedHeadOverlayColor(
             modPed,
-            results[0].id,
-            results[2].colorType,
-            results[2].value,
-            results[3].value
+            id,
+            colorType,
+            results[2],
+            results[3]
         );
     }
 }
@@ -187,28 +188,32 @@ function updateFaceFeature(id, value) {
 
 // Set the hair style, color, texture, etc. from the webview.
 // 'Hair', HairColor', 'HairHighlights', 'HairTexture'
-function updateHair(dataAsJSON) {
+function updateHair(dataAsJSON, overlayData) {
     let results = JSON.parse(dataAsJSON);
 
-    if (lastHair !== results[0].value) {
-        lastHair = results[0].value;
+    if (lastHair !== results[0]) {
+        lastHair = results[0];
 
         let hairTextureVariations = native.getNumberOfPedTextureVariations(
             modPed,
             2,
-            results[0].value
+            results[0]
         );
         webView.emit('setHairTextureVariations', hairTextureVariations);
     }
 
-    native.setPedComponentVariation(
-        modPed,
-        2,
-        results[0].value,
-        results[3].value,
-        2
-    );
-    native.setPedHairColor(modPed, results[1].value, results[2].value);
+    native.clearPedDecorations(modPed);
+    if (overlayData) {
+        native.setPedDecoration(
+            modPed,
+            native.getHashKey(overlayData.collection),
+            native.getHashKey(overlayData.overlay)
+        );
+    }
+
+    native.setPedComponentVariation(modPed, 2, results[0], results[3], 2);
+    native.setPedHairColor(modPed, results[1], results[2]);
+    updateHairColorChoices();
 }
 
 // Set the eye color from the webview.
@@ -230,6 +235,13 @@ function resetCamera(modelToUse) {
         0,
         false,
         false
+    );
+
+    // Set Hair Fuzz
+    native.setPedDecoration(
+        modPed,
+        native.getHashKey('mpbeach_overlays'),
+        native.getHashKey('fm_hair_fuzz')
     );
 
     // Set the head blend data to 0 to prevent weird hair texture glitches. Thanks Matspyder

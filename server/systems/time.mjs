@@ -2,7 +2,7 @@ import * as alt from 'alt';
 
 setInterval(() => {
     alt.Player.all.forEach(player => {
-        let date = new Date();
+        /*let date = new Date();
         player.setDateTime(
             date.getDay(),
             date.getMonth(),
@@ -11,5 +11,8 @@ setInterval(() => {
             date.getMinutes(),
             date.getSeconds()
         );
+        */
+
+        player.setDateTime(25, 25, 2019, 12, 0, 0);
     });
-}, 10000);
+}, 100000);

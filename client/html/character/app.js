@@ -1,4 +1,136 @@
-// List of all the facial features and functions that they need to use.
+const faceGroups = {
+    Freckles: ['Freckles', 'FrecklesOpacity'],
+    Lipstick: [
+        'Lipstick',
+        'LipstickOpacity',
+        'LipstickColor',
+        'LipstickColor2'
+    ],
+    SunDamage: ['SunDamage', 'SunDamageOpacity'],
+    Complexion: ['Complexion', 'ComplexionOpacity'],
+    Blush: ['Blush', 'BlushOpacity', 'BlushColor'],
+    Makeup: ['Makeup', 'MakeupOpacity', 'MakeupColor', 'MakeupColor2'],
+    Age: ['Age', 'AgeOpacity'],
+    Eyebrows: [
+        'Eyebrows',
+        'EyebrowsOpacity',
+        'EyebrowsColor',
+        'EyebrowsColor2'
+    ],
+    FacialHair: [
+        'FacialHair',
+        'FacialHairOpacity',
+        'FacialHairColor',
+        'FacialHairColor2'
+    ],
+    Blemishes: ['Blemish', 'BlemishOpacity'],
+    Hair: ['Hair', 'HairColor', 'HairHighlights', 'HairTexture'],
+    Face: [
+        'FatherFace',
+        'MotherFace',
+        'FatherSkin',
+        'MotherSkin',
+        'FaceMix',
+        'SkinMix'
+    ]
+};
+
+const hairOverlaysMale = {
+    0: { collection: 'mpbeach_overlays', overlay: 'FM_Hair_Fuzz' },
+    1: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_001' },
+    2: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_002' },
+    3: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_003' },
+    4: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_004' },
+    5: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_005' },
+    6: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_006' },
+    7: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_007' },
+    8: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_008' },
+    9: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_009' },
+    10: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_013' },
+    11: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_002' },
+    12: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_011' },
+    13: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_012' },
+    14: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_014' },
+    15: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_015' },
+    16: { collection: 'multiplayer_overlays', overlay: 'NGBea_M_Hair_000' },
+    17: { collection: 'multiplayer_overlays', overlay: 'NGBea_M_Hair_001' },
+    18: { collection: 'multiplayer_overlays', overlay: 'NGBus_M_Hair_000' },
+    19: { collection: 'multiplayer_overlays', overlay: 'NGBus_M_Hair_001' },
+    20: { collection: 'multiplayer_overlays', overlay: 'NGHip_M_Hair_000' },
+    21: { collection: 'multiplayer_overlays', overlay: 'NGHip_M_Hair_001' },
+    22: { collection: 'multiplayer_overlays', overlay: 'NGInd_M_Hair_000' },
+    24: { collection: 'mplowrider_overlays', overlay: 'LR_M_Hair_000' },
+    25: { collection: 'mplowrider_overlays', overlay: 'LR_M_Hair_001' },
+    26: { collection: 'mplowrider_overlays', overlay: 'LR_M_Hair_002' },
+    27: { collection: 'mplowrider_overlays', overlay: 'LR_M_Hair_003' },
+    28: { collection: 'mplowrider2_overlays', overlay: 'LR_M_Hair_004' },
+    29: { collection: 'mplowrider2_overlays', overlay: 'LR_M_Hair_005' },
+    30: { collection: 'mplowrider2_overlays', overlay: 'LR_M_Hair_006' },
+    31: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_000_M' },
+    32: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_001_M' },
+    33: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_002_M' },
+    34: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_003_M' },
+    35: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_004_M' },
+    36: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_005_M' },
+    72: {
+        collection: 'mpgunrunning_overlays',
+        overlay: 'MP_Gunrunning_Hair_M_000_M'
+    },
+    73: {
+        collection: 'mpgunrunning_overlays',
+        overlay: 'MP_Gunrunning_Hair_M_001_M'
+    }
+};
+
+const hairOverlaysFemale = {
+    0: { collection: 'mpbeach_overlays', overlay: 'FM_Hair_Fuzz' },
+    1: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_001' },
+    2: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_002' },
+    3: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_003' },
+    4: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_004' },
+    5: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_005' },
+    6: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_006' },
+    7: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_007' },
+    8: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_008' },
+    9: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_009' },
+    10: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_010' },
+    11: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_011' },
+    12: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_012' },
+    13: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_013' },
+    14: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_014' },
+    15: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_015' },
+    16: { collection: 'multiplayer_overlays', overlay: 'NGBea_F_Hair_000' },
+    17: { collection: 'multiplayer_overlays', overlay: 'NGBea_F_Hair_001' },
+    18: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_007' },
+    19: { collection: 'multiplayer_overlays', overlay: 'NGBus_F_Hair_000' },
+    20: { collection: 'multiplayer_overlays', overlay: 'NGBus_F_Hair_001' },
+    21: { collection: 'multiplayer_overlays', overlay: 'NGBea_F_Hair_001' },
+    22: { collection: 'multiplayer_overlays', overlay: 'NGHip_F_Hair_000' },
+    23: { collection: 'multiplayer_overlays', overlay: 'NGInd_F_Hair_000' },
+    25: { collection: 'mplowrider_overlays', overlay: 'LR_F_Hair_000' },
+    26: { collection: 'mplowrider_overlays', overlay: 'LR_F_Hair_001' },
+    27: { collection: 'mplowrider_overlays', overlay: 'LR_F_Hair_002' },
+    28: { collection: 'mplowrider2_overlays', overlay: 'LR_F_Hair_003' },
+    29: { collection: 'mplowrider2_overlays', overlay: 'LR_F_Hair_003' },
+    30: { collection: 'mplowrider2_overlays', overlay: 'LR_F_Hair_004' },
+    31: { collection: 'mplowrider2_overlays', overlay: 'LR_F_Hair_006' },
+    32: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_000_F' },
+    33: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_001_F' },
+    34: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_002_F' },
+    35: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_003_F' },
+    36: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_003' },
+    37: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_006_F' },
+    38: { collection: 'mpbiker_overlays', overlay: 'MP_Biker_Hair_004_F' },
+    76: {
+        collection: 'mpgunrunning_overlays',
+        overlay: 'MP_Gunrunning_Hair_F_000_F'
+    },
+    77: {
+        collection: 'mpgunrunning_overlays',
+        overlay: 'MP_Gunrunning_Hair_F_001_F'
+    }
+};
+
 const facialFeatures = {
     Sex: {
         label: 'Sex',
@@ -14,7 +146,8 @@ const facialFeatures = {
         min: 0,
         max: 45,
         increment: 1,
-        func: updatePlayerFace
+        func: updatePlayerFace,
+        group: faceGroups['Face']
     }, // 1
     FatherSkin: {
         label: 'Father Skin',
@@ -22,7 +155,8 @@ const facialFeatures = {
         min: 0,
         max: 45,
         increment: 1,
-        func: updatePlayerFace
+        func: updatePlayerFace,
+        group: faceGroups['Face']
     }, // 2
     MotherFace: {
         label: 'Mother Face',
@@ -30,7 +164,8 @@ const facialFeatures = {
         min: 0,
         max: 45,
         increment: 1,
-        func: updatePlayerFace
+        func: updatePlayerFace,
+        group: faceGroups['Face']
     }, // 3
     MotherSkin: {
         label: 'Mother Skin',
@@ -38,7 +173,8 @@ const facialFeatures = {
         min: 0,
         max: 45,
         increment: 1,
-        func: updatePlayerFace
+        func: updatePlayerFace,
+        group: faceGroups['Face']
     },
     FaceMix: {
         label: 'Face Mix',
@@ -46,7 +182,8 @@ const facialFeatures = {
         min: 0,
         max: 1,
         increment: 0.1,
-        func: updatePlayerFace
+        func: updatePlayerFace,
+        group: faceGroups['Face']
     }, // 7
     SkinMix: {
         label: 'Skin Mix',
@@ -54,7 +191,8 @@ const facialFeatures = {
         min: 0,
         max: 1,
         increment: 0.1,
-        func: updatePlayerFace
+        func: updatePlayerFace,
+        group: faceGroups['Face']
     },
     Hair: {
         label: 'Hair',
@@ -63,7 +201,8 @@ const facialFeatures = {
         max: 78,
         increment: 1,
         id: 2,
-        func: updateHair
+        func: updateHair,
+        group: faceGroups['Hair']
     }, // 10
     HairColor: {
         label: 'Hair Color',
@@ -72,7 +211,8 @@ const facialFeatures = {
         max: 78,
         id: 2,
         increment: 1,
-        func: updateHair
+        func: updateHair,
+        group: faceGroups['Hair']
     }, // 11
     HairHighlights: {
         label: 'Hair Highlights',
@@ -81,16 +221,18 @@ const facialFeatures = {
         max: 78,
         id: 2,
         increment: 1,
-        func: updateHair
+        func: updateHair,
+        group: faceGroups['Hair']
     }, // 12
     HairTexture: {
-        label: 'Hairs Texture',
+        label: 'Hair Texture',
         value: 0,
         min: 0,
         max: 0,
         id: 2,
         increment: 1,
-        func: updateHair
+        func: updateHair,
+        group: faceGroups['Hair']
     }, // 13
     EyesColor: {
         label: 'Eyes Color',
@@ -309,7 +451,8 @@ const facialFeatures = {
         increment: 1,
         id: 0,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Blemishes']
     }, // 35
     BlemishOpacity: {
         label: 'Blemish Opacity',
@@ -319,7 +462,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 0,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Blemishes']
     },
     FacialHair: {
         label: 'Facial Hair',
@@ -329,7 +473,8 @@ const facialFeatures = {
         increment: 1,
         id: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['FacialHair']
     }, // 37, 2
     FacialHairOpacity: {
         label: 'Facial Hair Opacity',
@@ -339,7 +484,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['FacialHair']
     },
     FacialHairColor: {
         label: 'Facial Hair Color',
@@ -350,7 +496,8 @@ const facialFeatures = {
         id: 1,
         colorType: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['FacialHair']
     },
     FacialHairColor2: {
         label: 'Facial Hair Color 2',
@@ -360,7 +507,8 @@ const facialFeatures = {
         increment: 1,
         id: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['FacialHair']
     },
     Eyebrows: {
         label: 'Eyebrows',
@@ -370,7 +518,8 @@ const facialFeatures = {
         increment: 1,
         id: 2,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Eyebrows']
     }, // 41
     EyebrowsOpacity: {
         label: 'Eyebrows Opacity',
@@ -380,7 +529,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 2,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Eyebrows']
     },
     EyebrowsColor: {
         label: 'Eyebrows Color',
@@ -391,7 +541,8 @@ const facialFeatures = {
         id: 2,
         colorType: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Eyebrows']
     },
     EyebrowsColor2: {
         label: 'Eyebrows Color 2',
@@ -401,7 +552,8 @@ const facialFeatures = {
         increment: 1,
         id: 2,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Eyebrows']
     },
     Age: {
         label: 'Age',
@@ -411,7 +563,8 @@ const facialFeatures = {
         increment: 1,
         id: 3,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Age']
     }, // 45
     AgeOpacity: {
         label: 'Age Opacity',
@@ -421,7 +574,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 3,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Age']
     },
     Makeup: {
         label: 'Makeup',
@@ -431,7 +585,8 @@ const facialFeatures = {
         increment: 1,
         id: 4,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Makeup']
     }, // 47
     MakeupOpacity: {
         label: 'Makeup Opacity',
@@ -441,7 +596,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 4,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Makeup']
     },
     MakeupColor: {
         label: 'Makeup Color',
@@ -452,7 +608,8 @@ const facialFeatures = {
         id: 4,
         colorType: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Makeup']
     },
     MakeupColor2: {
         label: 'Makeup Color 2',
@@ -462,7 +619,8 @@ const facialFeatures = {
         increment: 1,
         id: 4,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Makeup']
     },
     Blush: {
         label: 'Blush',
@@ -472,7 +630,8 @@ const facialFeatures = {
         increment: 1,
         id: 5,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Blush']
     }, // 51
     BlushOpacity: {
         label: 'Blush Opacity',
@@ -482,7 +641,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 5,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Blush']
     },
     BlushColor: {
         label: 'Blush Color',
@@ -493,7 +653,8 @@ const facialFeatures = {
         id: 5,
         colorType: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Blush']
     },
     Complexion: {
         label: 'Complexion',
@@ -503,7 +664,8 @@ const facialFeatures = {
         increment: 1,
         id: 6,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Complexion']
     }, // 54
     ComplexionOpacity: {
         label: 'Complexion Opacity',
@@ -513,7 +675,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 6,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Complexion']
     },
     SunDamage: {
         label: 'Sun Damage',
@@ -523,7 +686,8 @@ const facialFeatures = {
         increment: 1,
         id: 7,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['SunDamage']
     }, // 56
     SunDamageOpacity: {
         label: 'Sun Damage Opacity',
@@ -533,7 +697,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 7,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['SunDamage']
     },
     Lipstick: {
         label: 'Lipstick',
@@ -543,7 +708,8 @@ const facialFeatures = {
         increment: 1,
         id: 8,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Lipstick']
     }, // 58, 22
     LipstickOpacity: {
         label: 'Lipstick Opacity',
@@ -553,7 +719,8 @@ const facialFeatures = {
         increment: 0.1,
         id: 8,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Lipstick']
     },
     LipstickColor: {
         label: 'Lipstick Color',
@@ -564,7 +731,8 @@ const facialFeatures = {
         id: 8,
         colorType: 1,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Lipstick']
     },
     LipstickColor2: {
         label: 'Lipstick Color 2',
@@ -574,7 +742,8 @@ const facialFeatures = {
         increment: 1,
         id: 8,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Lipstick']
     },
     Freckles: {
         label: 'Freckles',
@@ -584,7 +753,8 @@ const facialFeatures = {
         increment: 1,
         id: 9,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Freckles']
     }, // 62, 26
     FrecklesOpacity: {
         label: 'Freckles Opacity',
@@ -594,100 +764,252 @@ const facialFeatures = {
         increment: 0.1,
         id: 9,
         func: updateFaceDecor,
-        isFacialDecor: true
+        isFacialDecor: true,
+        group: faceGroups['Freckles']
     }
 };
 
-const dataGroups = {
-    Freckles: [facialFeatures['Freckles'], facialFeatures['FrecklesOpacity']],
-    Lipstick: [
-        facialFeatures['Lipstick'],
-        facialFeatures['LipstickOpacity'],
-        facialFeatures['LipstickColor'],
-        facialFeatures['LipstickColor2']
-    ],
-    SunDamage: [
-        facialFeatures['SunDamage'],
-        facialFeatures['SunDamageOpacity']
-    ],
-    Complexion: [
-        facialFeatures['Complexion'],
-        facialFeatures['ComplexionOpacity']
-    ],
-    Blush: [
-        facialFeatures['Blush'],
-        facialFeatures['BlushOpacity'],
-        facialFeatures['BlushColor']
-    ],
-    Makeup: [
-        facialFeatures['Makeup'],
-        facialFeatures['MakeupOpacity'],
-        facialFeatures['MakeupColor'],
-        facialFeatures['MakeupColor2']
-    ],
-    Age: [facialFeatures['Age'], facialFeatures['AgeOpacity']],
-    Eyebrows: [
-        facialFeatures['Eyebrows'],
-        facialFeatures['EyebrowsOpacity'],
-        facialFeatures['EyebrowsColor'],
-        facialFeatures['EyebrowsColor2']
-    ],
-    FacialHair: [
-        facialFeatures['FacialHair'],
-        facialFeatures['FacialHairOpacity'],
-        facialFeatures['FacialHairColor'],
-        facialFeatures['FacialHairColor2']
-    ],
-    Blemishes: [facialFeatures['Blemish'], facialFeatures['BlemishOpacity']],
-    Hair: [
-        facialFeatures['Hair'],
-        facialFeatures['HairColor'],
-        facialFeatures['HairHighlights'],
-        facialFeatures['HairTexture']
-    ],
-    Face: [
-        facialFeatures['FatherFace'],
-        facialFeatures['MotherFace'],
-        facialFeatures['FatherSkin'],
-        facialFeatures['MotherSkin'],
-        facialFeatures['FaceMix'],
-        facialFeatures['SkinMix']
-    ]
-};
+// Create Element, Render, Component, etc.
+const { createElement, render, Component } = preact;
+const h = createElement;
+let countChanged = false;
+let colorsCount = 0;
+let stylesCount = 0;
+let texturesCount = 0;
 
-// Setup buttons programatically for usage.
-$(() => {
-    for (let key in facialFeatures) {
-        $('#populateButtons').append(
-            `<div id="group-${key}" class="btn-group w-100 p-2 pl-3 pr-3" role="group"></div>`
-        );
-
-        // Decrease Value Button
-        $(`#group-${key}`).append(
-            `<button type="button" class="btn btn-sm btn-secondary" onclick="changeValue('${key}', false);">&lt;</button>`
-        );
-
-        // Label Text
-        $(`#group-${key}`).append(
-            `<button type="button" id="button-${key}" class="btn btn-sm btn-block btn-secondary" disabled>${
-                facialFeatures[key].label
-            } <span class="badge badge-secondary">[${
-                facialFeatures[key].value
-            }/${facialFeatures[key].max}]</span></button>`
-        );
-
-        // Increase Value Button
-        $(`#group-${key}`).append(
-            `<button type="button" class="btn btn-sm btn-secondary" onclick="changeValue('${key}', true);">&gt;</button>`
-        );
+// The main rendering function.
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            message: 'loading...',
+            hairChanged: false,
+            faceData: []
+        };
     }
 
-    // Submit Changes Button
-    $('#populateButtons').append(
-        `<div class="btn-group w-100 p-2 pl-3 pr-3" role="group"><button type="button" class="btn btn-sm btn-block btn-primary" onclick="submitChanges();">Submit Changes</button></div>`
+    componentDidMount() {
+        // Take the map; and re-map to a list.
+        for (let key in facialFeatures) {
+            this.setState({
+                faceData: [...this.state.faceData, facialFeatures[key]]
+            });
+        }
+
+        this.setState({ message: 'Done! ' });
+    }
+
+    updateHairStyles(styleCount, colorCount) {
+        let faceData = [...this.state.faceData];
+
+        faceData[index].max = styleCount;
+        this.setState({ faceData });
+    }
+
+    updateHairTextures(textures) {
+        /*
+        let faceData = [...this.state.faceData];
+        let index = faceData.findIndex(x => x.label === 'Hair Texture');
+        faceData[index].max = textures;
+        */
+    }
+
+    setItemValue(index, increment) {
+        // Make a copy of the state.
+        let faceData = [...this.state.faceData];
+
+        // Modify the state.
+        if (increment) {
+            // Increase Face Data Increment
+            faceData[index].value += faceData[index].increment;
+
+            if (faceData[index].value > faceData[index].max) {
+                faceData[index].value = faceData[index].min;
+            }
+        } else {
+            // Subtract Face Data Increment
+            faceData[index].value -= faceData[index].increment;
+
+            if (faceData[index].value < faceData[index].min) {
+                faceData[index].value = faceData[index].max;
+            }
+        }
+
+        let hairChanged = false;
+
+        if (faceData[index].label === 'Hair') hairChanged = true;
+
+        // Normalize decimals for the value.
+        faceData[index].value = faceData[index].value.toFixed(2) * 1;
+
+        // Execute the paired function.
+        faceData[index].func(faceData, index);
+
+        // Set the faceData to itself.
+        this.setState({ faceData, hairChanged });
+
+        this.updateHairValues();
+    }
+
+    updateHairValues() {
+        if (countChanged) {
+            countChanged = false;
+
+            let faceData = [...this.state.faceData];
+            faceData.forEach(item => {
+                if (!item.label.includes('Color')) return;
+                item.max = colorsCount;
+            });
+
+            // Update Hair Max Values if Necessary
+            let hairIndex = faceData.findIndex(x => x.label === 'Hair');
+            faceData[hairIndex].max = stylesCount;
+
+            if (this.state.hairChanged) {
+                let textureIndex = faceData.findIndex(
+                    x => x.label === 'Hair Texture'
+                );
+                faceData[textureIndex].max = texturesCount;
+                faceData[textureIndex].value = 0;
+            }
+
+            this.setState({ faceData, hairChanged: false });
+        }
+    }
+
+    // render to the HTML template.
+    render(props, state) {
+        return h(
+            'ul',
+            { id: 'app' },
+            h(FaceList, {
+                faceData: this.state.faceData,
+                setItemValue: this.setItemValue.bind(this)
+            })
+        );
+        // Render HTML / Components and Shit Here
+    }
+}
+
+// Render the APP Class from the RENDER function inside of it.
+const FaceList = ({ faceData, setItemValue }) => {
+    const itemList = faceData.map((item, index) =>
+        h(FaceItem, { index, item, setItemValue })
     );
-});
 
+    return h('div', null, itemList);
+};
+
+// Items to Display in a Group
+const FaceItem = ({ index, item, setItemValue }) => {
+    left = e => {
+        setItemValue(index, false);
+    };
+    right = e => {
+        setItemValue(index, true);
+    };
+    return h(
+        'div',
+        { class: 'button-group' },
+        h('p', { class: 'item-label' }, `${item.label}`),
+        h('button', { onclick: this.left.bind(this), class: 'button' }, '<<'),
+        h('span', { class: 'item-values' }, `[${item.value}/${item.max}]`),
+        h('button', { onclick: this.right.bind(this), class: 'button' }, '>>')
+    );
+};
+
+// Render the above component
+render(h(App), document.querySelector('#render'));
+
+function updateSex(faceData, index) {
+    // Update the Sex of a Player
+    alt.emit('updateSex', faceData[index].value);
+}
+
+function updatePlayerFace(faceData, index) {
+    let items = getByGroup(faceData, faceData[index].group);
+    alt.emit('updatePlayerFace', JSON.stringify(items));
+}
+
+function updateHair(faceData, index) {
+    let items = getByGroup(faceData, faceData[index].group);
+    let overlayData =
+        faceData[0].value === 0
+            ? hairOverlaysFemale[items[0]]
+            : hairOverlaysMale[items[0]];
+
+    alt.emit('updateHair', JSON.stringify(items), overlayData);
+}
+
+function updateEyes(faceData, index) {
+    alt.emit('updateEyes', faceData[index].value);
+}
+
+// Updates Fine Details of the Face.
+function updateFaceFeature(faceData, index) {
+    alt.emit('updateFaceFeature', faceData[index].id, faceData[index].value);
+}
+
+function updateFaceDecor(faceData, index) {
+    let items = getByGroup(faceData, faceData[index].group);
+    alt.emit(
+        'updateFaceDecor',
+        faceData[index].id,
+        faceData[index].colorType,
+        JSON.stringify(items)
+    );
+}
+
+function getByGroup(faceData, groupName) {
+    const items = [];
+
+    for (let i = 0; i < faceData.length; i++) {
+        if (faceData[i].group !== groupName) continue;
+
+        items.push(faceData[i].value);
+    }
+
+    return items;
+}
+
+function submitChanges() {
+    console.log('Fuck :D');
+    /*
+    const dataPairs = {};
+
+    Object.keys(facialFeatures).forEach(key => {
+        dataPairs[key] = {};
+        dataPairs[key].value = facialFeatures[key].value;
+
+        if (facialFeatures[key].id !== undefined) {
+            dataPairs[key].id = facialFeatures[key].id;
+        }
+    });
+
+    let playerFacialData = JSON.stringify(dataPairs);
+    alt.emit('setPlayerFacialData', playerFacialData);
+    */
+}
+
+if ('alt' in window) {
+    // Grab the Style Variations
+    alt.on('stylesUpdate', (styles, colors) => {
+        console.log(styles);
+        console.log(colors);
+        stylesCount = styles;
+        colorsCount = colors;
+        countChanged = true;
+    });
+
+    alt.on('setHairTextureVariations', textures => {
+        console.log(textures);
+        texturesCount = textures;
+        countChanged = true;
+    });
+}
+
+/*
+// List of all the facial features and functions that they need to use.
 // Called when the player is submitting the values from above.
 function submitChanges() {
     const dataPairs = {};
@@ -704,138 +1026,4 @@ function submitChanges() {
     let playerFacialData = JSON.stringify(dataPairs);
     alt.emit('setPlayerFacialData', playerFacialData);
 }
-
-// Updates the local facial values registered in this WebView
-function changeValue(key, increment) {
-    if (increment) {
-        facialFeatures[key].value += facialFeatures[key].increment;
-    } else {
-        facialFeatures[key].value -= facialFeatures[key].increment;
-    }
-
-    // If we go above max, roll back around to min
-    if (facialFeatures[key].value > facialFeatures[key].max) {
-        facialFeatures[key].value = facialFeatures[key].min;
-    }
-
-    // If we go below min, roll back up to max
-    if (facialFeatures[key].value < facialFeatures[key].min) {
-        facialFeatures[key].value = facialFeatures[key].max;
-    }
-
-    if (facialFeatures[key].increment === 0.1) {
-        facialFeatures[key].value =
-            Number.parseFloat(facialFeatures[key].value).toFixed(2) * 1;
-    }
-
-    // Update the Value of the Key Pressed
-    $(`#button-${key}`).html(
-        `${facialFeatures[key].label} <span class="badge badge-secondary">[${
-            facialFeatures[key].value
-        }/${facialFeatures[key].max}]</span>`
-    );
-
-    // Call the function tied to the object element.
-    facialFeatures[key].func(key);
-}
-
-// Change the player model / sex.
-function updateSex(key) {
-    alt.emit('updateSex', facialFeatures[key].value);
-}
-
-// Change the head blend data.
-function updatePlayerFace(key) {
-    let values = [];
-
-    dataGroups['Face'].forEach(element => {
-        values.push(element.value);
-    });
-
-    alt.emit('updatePlayerFace', JSON.stringify(values));
-}
-
-// Update the face decor; ie. blemish, sundamage, facial hair, etc.
-function updateFaceDecor(key) {
-    let result = getGroupByKey(key);
-
-    if (result === undefined) return;
-
-    alt.emit('updateFaceDecor', JSON.stringify(result));
-}
-
-// Update the face features such as nosewidth, height, etc.
-function updateFaceFeature(key) {
-    alt.emit(
-        'updateFaceFeature',
-        facialFeatures[key].id,
-        facialFeatures[key].value
-    );
-}
-
-// Update the hair for the player.
-function updateHair(key) {
-    let result = getGroupByKey(key);
-
-    if (result === undefined) return;
-
-    alt.emit('updateHair', JSON.stringify(result));
-}
-
-// Update the eyes for the player.
-function updateEyes(key) {
-    alt.emit('updateEyes', facialFeatures[key].value);
-}
-
-/**
- * Returns undefined or the group of elements to pass.
- * @param {keyFromButton} key
- */
-function getGroupByKey(key) {
-    let labelUsed = facialFeatures[key].label;
-
-    let dataGroupKey = undefined;
-
-    for (let data in dataGroups) {
-        let foundData = dataGroups[data].find(dat => dat.label === labelUsed);
-        if (foundData === undefined) continue;
-
-        dataGroupKey = data;
-        break;
-    }
-
-    if (dataGroupKey === undefined) return undefined;
-
-    return dataGroups[dataGroupKey];
-}
-
-if ('alt' in window) {
-    // Grab the Style Variations
-
-    alt.on('stylesUpdate', (hairStyles, hairColors) => {
-        facialFeatures['Hair'].max = hairStyles;
-
-        Object.keys(facialFeatures).forEach(element => {
-            if (facialFeatures[element].label.toLowerCase().includes('color')) {
-                facialFeatures[element].max = hairColors;
-                $(`#button-${element}`).html(`
-				${facialFeatures[element].label} <span class="badge badge-secondary">[${
-                    facialFeatures[element].value
-                }/${facialFeatures[element].max}]</span>`);
-            }
-        });
-    });
-
-    // Called when the player changes their hair so we can setup new hair texture variations.
-    alt.on('setHairTextureVariations', hairTextureVariations => {
-        console.log(hairTextureVariations);
-
-        facialFeatures['HairTexture'].max = hairTextureVariations;
-        facialFeatures['HairTexture'].value = 0;
-
-        $(`#button-HairTexture`).html(`
-			${facialFeatures['HairTexture'].label} <span class="badge badge-secondary">[${
-            facialFeatures['HairTexture'].value
-        }/${facialFeatures['HairTexture'].max}]</span>`);
-    });
-}
+*/

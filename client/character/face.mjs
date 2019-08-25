@@ -51,6 +51,12 @@ export function applyFacialData(jsonData) {
         false
     );
 
+    native.setPedDecoration(
+        localPlayer,
+        native.getHashKey('multiplayer_overlays'),
+        native.getHashKey('NG_M_Hair_001')
+    );
+
     // Set Hair, Texture, Highlights, etc.
     native.setPedComponentVariation(
         localPlayer,

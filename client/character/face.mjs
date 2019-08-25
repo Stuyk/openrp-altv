@@ -31,14 +31,27 @@ const faceFeatureNames = [
 export function applyFacialData(jsonData) {
     const parsedData = JSON.parse(jsonData);
 
-    const localPlayer = alt.Player.local.scriptID;
-
     // Set all to zero to prevent bugs.
-    native.setPedHeadBlendData(localPlayer, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
+    native.setPedHeadBlendData(
+        alt.Player.local.scriptID,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false
+    );
+
+    native.clearPedBloodDamage(alt.Player.local.scriptID);
+    native.clearPedDecorations(alt.Player.local.scriptID);
 
     // Setup Player Face Outright
     native.setPedHeadBlendData(
-        localPlayer,
+        alt.Player.local.scriptID,
         parsedData['FatherFace'].value,
         parsedData['MotherFace'].value,
         0,
@@ -51,37 +64,16 @@ export function applyFacialData(jsonData) {
         false
     );
 
-    native.clearPedDecorations(localPlayer);
-    if (parsedData['Overlay']) {
-        native.setPedDecoration(
-            localPlayer,
-            native.getHashKey(parsedData['Overlay'].collection),
-            native.getHashKey(parsedData['Overlay'].overlay)
-        );
-    }
-
-    // Set Hair, Texture, Highlights, etc.
-    native.setPedComponentVariation(
-        localPlayer,
-        2,
-        parsedData['Hair'].value,
-        parsedData['HairTexture'].value,
-        2
-    );
-
-    native.setPedHairColor(
-        localPlayer,
-        parsedData['HairColor'].value,
-        parsedData['HairHighlights'].value
-    );
-
     // Set Eye Color
-    native.setPedEyeColor(localPlayer, parsedData['EyesColor'].value);
+    native.setPedEyeColor(
+        alt.Player.local.scriptID,
+        parsedData['EyesColor'].value
+    );
 
     // Facial Features - 0 to 19
     faceFeatureNames.forEach((faceFeature, index) => {
         native.setPedFaceFeature(
-            localPlayer,
+            alt.Player.local.scriptID,
             index,
             parsedData[faceFeature].value
         );
@@ -89,7 +81,7 @@ export function applyFacialData(jsonData) {
 
     // Ped Overlay Features
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         0,
         parsedData['Blemish'].value,
         parsedData['BlemishOpacity'].value
@@ -97,13 +89,13 @@ export function applyFacialData(jsonData) {
 
     // Facial Hair
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         1,
         parsedData['FacialHair'].value,
         parsedData['FacialHairOpacity'].value
     );
     native.setPedHeadOverlayColor(
-        localPlayer,
+        alt.Player.local.scriptID,
         1,
         1,
         parsedData['FacialHairColor'].value,
@@ -112,14 +104,14 @@ export function applyFacialData(jsonData) {
 
     // Eyebrows
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         2,
         1,
         parsedData['Eyebrows'].value,
         parsedData['EyebrowsOpacity'].value
     );
     native.setPedHeadOverlayColor(
-        localPlayer,
+        alt.Player.local.scriptID,
         2,
         1,
         parsedData['EyebrowsColor'].value,
@@ -128,7 +120,7 @@ export function applyFacialData(jsonData) {
 
     // Ageing
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         3,
         parsedData['Age'].value,
         parsedData['AgeOpacity'].value
@@ -136,13 +128,13 @@ export function applyFacialData(jsonData) {
 
     // Makeup
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         4,
         parsedData['Makeup'].value,
         parsedData['MakeupOpacity'].value
     );
     native.setPedHeadOverlayColor(
-        localPlayer,
+        alt.Player.local.scriptID,
         4,
         2,
         parsedData['MakeupColor'].value,
@@ -151,13 +143,13 @@ export function applyFacialData(jsonData) {
 
     // Blush
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         5,
         parsedData['Blush'].value,
         parsedData['BlushOpacity'].value
     );
     native.setPedHeadOverlayColor(
-        localPlayer,
+        alt.Player.local.scriptID,
         5,
         2,
         parsedData['BlushColor'].value,
@@ -166,7 +158,7 @@ export function applyFacialData(jsonData) {
 
     // Complexion
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         6,
         parsedData['Complexion'].value,
         parsedData['ComplexionOpacity'].value
@@ -174,7 +166,7 @@ export function applyFacialData(jsonData) {
 
     // SunDamage
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         7,
         parsedData['SunDamage'].value,
         parsedData['SunDamageOpacity'].value
@@ -182,14 +174,14 @@ export function applyFacialData(jsonData) {
 
     // Lipstick
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         8,
         parsedData['Lipstick'].value,
         parsedData['LipstickOpacity'].value
     );
 
     native.setPedHeadOverlayColor(
-        localPlayer,
+        alt.Player.local.scriptID,
         8,
         2,
         parsedData['LipstickColor'].value,
@@ -198,9 +190,31 @@ export function applyFacialData(jsonData) {
 
     // Freckles
     native.setPedHeadOverlay(
-        localPlayer,
+        alt.Player.local.scriptID,
         9,
         parsedData['Freckles'].value,
         parsedData['FrecklesOpacity'].value
     );
+
+    // Set Hair, Texture, Highlights, etc.
+    native.setPedComponentVariation(
+        alt.Player.local.scriptID,
+        2,
+        parsedData['Hair'].value,
+        parsedData['HairTexture'].value,
+        2
+    );
+
+    native.setPedHairColor(
+        alt.Player.local.scriptID,
+        parsedData['HairColor'].value,
+        parsedData['HairHighlights'].value
+    );
+
+    if (parsedData['Overlay']) {
+        const coll = native.getHashKey(parsedData['Overlay'].collection);
+        const over = native.getHashKey(parsedData['Overlay'].overlay);
+        native.clearPedDecorations(alt.Player.local.scriptID);
+        native.setPedDecoration(alt.Player.local.scriptID, coll, over);
+    }
 }

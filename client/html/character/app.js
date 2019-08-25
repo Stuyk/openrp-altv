@@ -940,7 +940,7 @@ class App extends Component {
         let hairOverlay =
             dataPairs['Sex'].value === 0
                 ? hairOverlaysFemale[dataPairs['Hair'].value]
-                : hairOverlaysFemale[dataPairs['Hair'].value];
+                : hairOverlaysMale[dataPairs['Hair'].value];
 
         if (hairOverlay) {
             dataPairs['Overlay'] = hairOverlay;
@@ -1052,6 +1052,8 @@ function updateHair(faceData, index) {
         faceData[0].value === 0
             ? hairOverlaysFemale[items[0]]
             : hairOverlaysMale[items[0]];
+
+    console.log(overlayData);
 
     alt.emit('updateHair', JSON.stringify(items), overlayData);
 }

@@ -67,7 +67,7 @@ export function setupPlayerFunctions(player) {
     // Clear player blood
     player.clearBlood = () => {
         alt.emitClient(player, 'respawn:ClearPedBloodDamage');
-    }
+    };
 
     // Show Error Message
     player.showRegisterEventError = msg => {

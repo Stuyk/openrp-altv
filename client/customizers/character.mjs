@@ -121,6 +121,10 @@ export function showDialogue() {
 
     // Halt controls, add zoom in zoom out, and rotation.
     alt.on('update', onUpdateEventCharacterCustomizer);
+
+    alt.setTimeout(() => {
+        webView.emit('sexUpdated', 0);
+    }, 1000);
 }
 
 export function clearPedBloodDamage() {
@@ -131,8 +135,10 @@ export function clearPedBloodDamage() {
 function updateSex(value) {
     if (value === 0) {
         resetCamera(native.getHashKey('mp_f_freemode_01'));
+        webView.emit('sexUpdated', 0);
     } else {
         resetCamera(native.getHashKey('mp_m_freemode_01'));
+        webView.emit('sexUpdated', 1);
     }
 }
 
@@ -142,9 +148,9 @@ function updatePlayerFace(valuesAsJSON) {
     native.setPedHeadBlendData(
         modPed,
         values[0],
-        values[1],
-        0,
         values[2],
+        0,
+        values[1],
         values[3],
         0,
         values[4],
@@ -328,7 +334,7 @@ function onUpdateEventCharacterCustomizer() {
 
     // Scroll to zoom in.
     if (native.isDisabledControlPressed(0, 14)) {
-        if (cursorRelativePos < screenWidth / 4) return;
+        if (cursorRelativePos > screenWidth - screenWidth / 4) return;
 
         fov += 2;
         if (fov >= 29) fov = 28;
@@ -337,7 +343,7 @@ function onUpdateEventCharacterCustomizer() {
 
     // Scroll to zoom out
     if (native.isDisabledControlPressed(0, 15)) {
-        if (cursorRelativePos < screenWidth / 4) return;
+        if (cursorRelativePos > screenWidth - screenWidth / 4) return;
 
         fov -= 2;
         if (fov <= 16) fov = 17;
@@ -349,11 +355,11 @@ function onUpdateEventCharacterCustomizer() {
         let heading = native.getEntityHeading(modPed);
 
         if (cursorRelativePos < screenWidth / 2) {
-            cursorRelativePos = -0.5;
+            cursorRelativePos = -1;
         }
 
         if (cursorRelativePos > screenWidth - screenWidth / 2) {
-            cursorRelativePos = 0.5;
+            cursorRelativePos = 1;
         }
 
         native.setEntityHeading(modPed, heading + cursorRelativePos);

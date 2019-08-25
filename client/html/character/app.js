@@ -202,7 +202,9 @@ const facialFeatures = {
         increment: 1,
         id: 2,
         func: updateHair,
-        group: faceGroups['Hair']
+        group: faceGroups['Hair'],
+        femaleBlacklist: [24],
+        maleBlacklist: [23]
     }, // 10
     HairColor: {
         label: 'Hair Color',
@@ -350,6 +352,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 10,
+
         func: updateFaceFeature,
         isFaceFeature: true
     }, // 25
@@ -772,10 +775,6 @@ const facialFeatures = {
 // Create Element, Render, Component, etc.
 const { createElement, render, Component } = preact;
 const h = createElement;
-let countChanged = false;
-let colorsCount = 0;
-let stylesCount = 0;
-let texturesCount = 0;
 
 // The main rendering function.
 class App extends Component {
@@ -793,14 +792,67 @@ class App extends Component {
             faceData: [...this.state.faceData, ...Object.values(facialFeatures)]
         });
 
+        if ('alt' in window) {
+            // Grab the Style Variations
+            alt.on('stylesUpdate', this.handleStyleUpdates.bind(this));
+            alt.on(
+                'setHairTextureVariations',
+                this.setHairTextureVariations.bind(this)
+            );
+            alt.on('sexUpdated', this.sexUpdated.bind(this));
+        }
+
         this.setState({ message: 'Done! ' });
     }
 
-    updateHairStyles(styleCount, colorCount) {
+    sexUpdated(id) {
         let faceData = [...this.state.faceData];
 
-        faceData[index].max = styleCount;
+        let faceValue = id === 0 ? 45 : 0;
+
+        let motherFaceIndex = faceData.findIndex(
+            x => x.label === 'Mother Face'
+        );
+        faceData[motherFaceIndex].value = faceValue;
+
+        let fatherFaceIndex = faceData.findIndex(
+            x => x.label === 'Father Face'
+        );
+        faceData[fatherFaceIndex].value = faceValue;
+        faceData[fatherFaceIndex].func(faceData, fatherFaceIndex);
+
+        let hairIndex = faceData.findIndex(x => x.label === 'Hair');
+        faceData[hairIndex].func(faceData, hairIndex);
+
         this.setState({ faceData });
+    }
+
+    handleStyleUpdates(styles, colors) {
+        let faceData = [...this.state.faceData];
+
+        faceData.forEach(item => {
+            if (!item.label.includes('Color')) return;
+            item.max = colors - 1;
+        });
+
+        // Update Hair Max Values if Necessary
+        let hairIndex = faceData.findIndex(x => x.label === 'Hair');
+        faceData[hairIndex].max = styles - 1;
+        this.setState({ faceData });
+    }
+
+    setHairTextureVariations(textures) {
+        let faceData = [...this.state.faceData];
+
+        if (this.state.hairChanged) {
+            let textureIndex = faceData.findIndex(
+                x => x.label === 'Hair Texture'
+            );
+            faceData[textureIndex].max = textures - 1;
+            faceData[textureIndex].value = 0;
+        }
+
+        this.setState({ faceData, hairChanged: false });
     }
 
     setItemValue(index, increment) {
@@ -824,9 +876,40 @@ class App extends Component {
             }
         }
 
+        // Hair Updates
         let hairChanged = false;
+        if (faceData[index].label === 'Hair') {
+            hairChanged = true;
+            let sex = faceData.find(x => x.label === 'Sex');
 
-        if (faceData[index].label === 'Hair') hairChanged = true;
+            if (sex.value === 0) {
+                // If the value is blacklisted.
+                if (
+                    faceData[index].femaleBlacklist.includes(
+                        faceData[index].value
+                    )
+                ) {
+                    if (increment) {
+                        faceData[index].value += 1;
+                    } else {
+                        faceData[index].value -= 1;
+                    }
+                }
+            } else {
+                // If the value is blacklisted.
+                if (
+                    faceData[index].maleBlacklist.includes(
+                        faceData[index].value
+                    )
+                ) {
+                    if (increment) {
+                        faceData[index].value += 1;
+                    } else {
+                        faceData[index].value -= 1;
+                    }
+                }
+            }
+        }
 
         // Normalize decimals for the value.
         faceData[index].value = faceData[index].value.toFixed(2) * 1;
@@ -836,8 +919,6 @@ class App extends Component {
 
         // Set the faceData to itself.
         this.setState({ faceData, hairChanged });
-
-        this.updateHairValues();
     }
 
     submitChanges() {
@@ -869,42 +950,26 @@ class App extends Component {
         alt.emit('setPlayerFacialData', items);
     }
 
-    updateHairValues() {
-        if (countChanged) {
-            countChanged = false;
-
-            let faceData = [...this.state.faceData];
-            faceData.forEach(item => {
-                if (!item.label.includes('Color')) return;
-                item.max = colorsCount;
-            });
-
-            // Update Hair Max Values if Necessary
-            let hairIndex = faceData.findIndex(x => x.label === 'Hair');
-            faceData[hairIndex].max = stylesCount;
-
-            if (this.state.hairChanged) {
-                let textureIndex = faceData.findIndex(
-                    x => x.label === 'Hair Texture'
-                );
-                faceData[textureIndex].max = texturesCount;
-                faceData[textureIndex].value = 0;
-            }
-
-            this.setState({ faceData, hairChanged: false });
-        }
-    }
-
     // render to the HTML template.
     render(props, state) {
         return h(
-            'ul',
+            'div',
             { id: 'app' },
-            h(FaceList, {
-                faceData: this.state.faceData,
-                setItemValue: this.setItemValue.bind(this)
-            }),
+            h(
+                'div',
+                { class: 'tab' },
+                h('h1', { class: 'title' }, 'Player Customization')
+            ),
+            h(
+                'div',
+                { class: 'mod-list scroll' },
+                h(FaceList, {
+                    faceData: this.state.faceData,
+                    setItemValue: this.setItemValue.bind(this)
+                })
+            ),
             h(SubmitButton, {
+                class: 'footer',
                 submitChanges: this.submitChanges.bind(this)
             })
         );
@@ -931,23 +996,40 @@ const FaceItem = ({ index, item, setItemValue }) => {
     };
     return h(
         'div',
-        { class: 'button-group' },
-        h('p', { class: 'item-label' }, `${item.label}`),
-        h('button', { onclick: this.left.bind(this), class: 'button' }, '<<'),
-        h('span', { class: 'item-values' }, `[${item.value}/${item.max}]`),
-        h('button', { onclick: this.right.bind(this), class: 'button' }, '>>')
+        { class: 'mod' },
+        h('div', { class: 'title' }, `${item.label}`),
+        h('div', { class: 'count' }, `${item.value}/${item.max}`),
+        h(
+            'div',
+            { class: 'item-switcher' },
+
+            h(
+                'button',
+                {
+                    class: 'left',
+                    onclick: this.left.bind(this),
+                    class: 'button'
+                },
+                '<'
+            ),
+            h(
+                'button',
+                {
+                    class: 'right',
+                    onclick: this.right.bind(this),
+                    class: 'button'
+                },
+                '>'
+            )
+        )
     );
 };
 
 const SubmitButton = ({ submitChanges }) => {
     return h(
         'div',
-        { class: 'button-group' },
-        h(
-            'button',
-            { onclick: submitChanges.bind(this), class: 'button' },
-            'Submit'
-        )
+        { class: 'footer', onclick: submitChanges.bind(this) },
+        'Submit'
     );
 };
 
@@ -998,46 +1080,9 @@ function getByGroup(faceData, groupName) {
 
     for (let i = 0; i < faceData.length; i++) {
         if (faceData[i].group !== groupName) continue;
-
+        console.log(faceData[i].label);
         items.push(faceData[i].value);
     }
 
     return items;
 }
-
-if ('alt' in window) {
-    // Grab the Style Variations
-    alt.on('stylesUpdate', (styles, colors) => {
-        console.log(styles);
-        console.log(colors);
-        stylesCount = styles;
-        colorsCount = colors;
-        countChanged = true;
-    });
-
-    alt.on('setHairTextureVariations', textures => {
-        console.log(textures);
-        texturesCount = textures;
-        countChanged = true;
-    });
-}
-
-/*
-// List of all the facial features and functions that they need to use.
-// Called when the player is submitting the values from above.
-function submitChanges() {
-    const dataPairs = {};
-
-    Object.keys(facialFeatures).forEach(key => {
-        dataPairs[key] = {};
-        dataPairs[key].value = facialFeatures[key].value;
-
-        if (facialFeatures[key].id !== undefined) {
-            dataPairs[key].id = facialFeatures[key].id;
-        }
-    });
-
-    let playerFacialData = JSON.stringify(dataPairs);
-    alt.emit('setPlayerFacialData', playerFacialData);
-}
-*/

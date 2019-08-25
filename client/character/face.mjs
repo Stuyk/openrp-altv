@@ -33,8 +33,6 @@ export function applyFacialData(jsonData) {
 
     const localPlayer = alt.Player.local.scriptID;
 
-    alt.log(jsonData);
-
     // Set all to zero to prevent bugs.
     native.setPedHeadBlendData(localPlayer, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
 

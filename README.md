@@ -127,6 +127,7 @@ After you need to install the following packages from command prompt or power sh
 ```
 npm install typeorm
 npm install sjcl
+npm install pg
 ```
 
 Great; now you have all the prerequisites.

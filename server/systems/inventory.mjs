@@ -80,7 +80,6 @@ alt.on('inventory:SubItem', (player, index, quantity) => {
 
     player.data.inventory = JSON.stringify(player.inventory);
     player.saveField(player.data.id, 'inventory', player.data.inventory);
-    player.setSyncedMeta('inventory', player.data.inventory);
     player.updateInventory();
 });
 
@@ -93,7 +92,9 @@ alt.on('inventory:AddItem', (player, index, quantity) => {
 });
 
 export function use(player, hash) {
-    var item = player.inventory.find(x => x.hash === hash);
+    console.log('USING ITEM: ' + hash);
+
+    let item = player.inventory.find(x => x.hash === hash);
 
     if (item === undefined) {
         player.updateInventory();
@@ -121,8 +122,12 @@ export function drop(player, hash) {
     if (!player.subItemByHash(hash, 1)) return;
 
     // Regenerate new hash for each dropped item.
-    let newHash = JSON.stringify({ hash, clonedItem });
+    let newHash = utilityEncryption.generateHash(
+        JSON.stringify({ hash, clonedItem })
+    );
     clonedItem.hash = newHash;
+
+    console.log('Dropping ' + newHash);
 
     // Setup the dropped item.
     ItemDrops.set(newHash, clonedItem);
@@ -137,15 +142,20 @@ export function destroy(player, hash) {
 }
 
 export function pickup(player, hash) {
-    alt.emitClient(null, 'inventory:ItemPickup', hash);
+    if (player.pickingUpItem) return;
 
     if (!ItemDrops.has(hash)) return;
 
-    player.playAudio('pickup');
-    player.playAnimation('random@mugging4', 'pickup_low', 1200, 33);
+    player.pickingUpItem = true;
+    console.log('Picking up' + hash);
 
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);
+
+    alt.emitClient(null, 'inventory:ItemPickup', hash);
+
+    player.playAudio('pickup');
+    player.playAnimation('random@mugging4', 'pickup_low', 1200, 33);
 
     Object.keys(configurationItems.Items).forEach(key => {
         if (configurationItems.Items[key].label !== item.label) return;
@@ -155,4 +165,6 @@ export function pickup(player, hash) {
 
         player.addItem(clonedTemplate, 1);
     });
+
+    player.pickingUpItem = false;
 }

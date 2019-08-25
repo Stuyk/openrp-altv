@@ -1,0 +1,9 @@
+html,
+body {
+    height: 100%;
+    font-family: 'Circular';
+}
+
+html {
+    overflow: hidden;
+}

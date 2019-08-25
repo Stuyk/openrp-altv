@@ -15,6 +15,8 @@ let cameraHeight = 0;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
+    if (webView) return;
+
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
     let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
@@ -239,6 +241,7 @@ export function closeDialogue() {
 
     webView.unfocus();
     webView.destroy();
+    webView = undefined;
 
     characterCamera = undefined;
     native.destroyAllCams(true);

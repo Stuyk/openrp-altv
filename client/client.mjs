@@ -14,6 +14,8 @@ import * as eventsKeyup from 'client/events/keyup.mjs';
 
 import * as systemsInteraction from 'client/systems/interaction.mjs';
 import * as systemsInventory from 'client/systems/inventory.mjs';
+import * as systemsClothing from 'client/systems/clothing.mjs';
+
 import * as clothing from 'client/customizers/clothing.mjs';
 
 import * as utilitySandbox from 'client/utility/sandbox.mjs';

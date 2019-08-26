@@ -136,6 +136,7 @@ function existingCharacter(player, data) {
     player.setSyncedMeta('loggedin', true);
     player.screenFadeIn(1000);
     player.syncVehicles();
+    player.syncMoney();
 }
 
 export function removeLoggedInPlayer(username) {

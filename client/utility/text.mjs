@@ -48,7 +48,8 @@ export function drawText2d(
     a,
     useOutline = true,
     useDropShadow = true,
-    layer = 0
+    layer = 0,
+    align = 0
 ) {
     native.setUiLayer(layer);
     native.beginTextCommandDisplayText('STRING');
@@ -58,6 +59,7 @@ export function drawText2d(
     native.setTextWrap(0.0, 1.0);
     native.setTextCentre(true);
     native.setTextColour(r, g, b, a);
+    native.setTextJustification(align);
 
     if (useOutline) native.setTextOutline();
 

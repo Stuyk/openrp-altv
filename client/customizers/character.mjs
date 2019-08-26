@@ -35,8 +35,11 @@ export function showDialogue() {
         0
     );
 
+    let offsetPoint = { ...cameraPoint };
+    offsetPoint.x += 10;
+
     // Setup a temporary teleport, and turn off the radar.
-    alt.emitServer('temporaryTeleport', cameraPoint);
+    alt.emitServer('temporaryTeleport', offsetPoint);
     native.displayRadar(false);
 
     // Request these models if they're not already loaded.

@@ -170,6 +170,11 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Money Functions
     // Remove cash from the player.
+    player.syncMoney = () => {
+        player.setSyncedMeta('bank', player.data.bank);
+        player.setSyncedMeta('cash', player.data.cash);
+    };
+
     player.subCash = value => {
         let absValue = Math.abs(parseFloat(value)) * 1;
 
@@ -178,6 +183,7 @@ export function setupPlayerFunctions(player) {
         player.data.cash -= absValue;
         player.data.cash = Number.parseFloat(player.data.cash).toFixed(2) * 1;
         player.saveField(player.data.id, 'cash', player.data.cash);
+        player.syncMoney();
         return true;
     };
 
@@ -192,6 +198,7 @@ export function setupPlayerFunctions(player) {
         player.data.cash += absValue;
         player.data.cash = Number.parseFloat(player.data.cash).toFixed(2) * 1;
         player.saveField(player.data.id, 'cash', player.data.cash);
+        player.syncMoney();
         return true;
     };
 
@@ -206,6 +213,7 @@ export function setupPlayerFunctions(player) {
         player.data.bank += absValue;
         player.data.bank = Number.parseFloat(player.data.bank).toFixed(2) * 1;
         player.saveField(player.data.id, 'bank', player.data.bank);
+        player.syncMoney();
         return true;
     };
 
@@ -218,6 +226,7 @@ export function setupPlayerFunctions(player) {
         player.data.bank -= absValue;
         player.data.bank = Number.parseFloat(player.data.bank).toFixed(2) * 1;
         player.saveField(player.data.id, 'bank', player.data.bank);
+        player.syncMoney();
         return true;
     };
 
@@ -253,16 +262,17 @@ export function setupPlayerFunctions(player) {
 
         if (taxType === 0) {
             let cashTaxAmount = cash * percentage;
-            cash -= cashTaxAmount;
-            player.data.cash = Number.parseFloat(cash).toFixed(2) * 1;
-            player.saveField(player.data.id, 'cash', player.data.cash);
-            player.sendMessage(`You were taxed: $${cashTaxAmount}`);
+            player.subCash(cashTaxAmount);
+            player.sendMessage(
+                `You were taxed: $${cashTaxAmount.toFixed(2) * 1}`
+            );
         } else {
             let bankTaxAmount = bank * percentage;
-            bank -= bankTaxAmount;
-            player.data.bank = Number.parseFloat(bank).toFixed(2) * 1;
+            player.subBank(bankTaxAmount);
             player.saveField(player.data.id, 'bank', player.data.bank);
-            player.sendMessage(`You were taxed: $${bankTaxAmount}`);
+            player.sendMessage(
+                `You were taxed: $${bankTaxAmount.toFixed(2) * 1}`
+            );
         }
 
         player.sendMessage(`Reason: ${reason}`);

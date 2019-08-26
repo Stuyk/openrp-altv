@@ -20,6 +20,8 @@ import * as clothing from 'client/customizers/clothing.mjs';
 
 import * as utilitySandbox from 'client/utility/sandbox.mjs';
 
+import * as hud from 'client/hud/hud.mjs';
+
 native.startAudioScene('FBI_HEIST_H5_MUTE_AMBIENCE_SCENE');
 
 alt.setTimeout(() => {

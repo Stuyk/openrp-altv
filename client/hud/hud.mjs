@@ -81,52 +81,6 @@ alt.on('update', () => {
 
     if (panelsPanelStatus.isAnyPanelOpen()) return;
 
-    native.setUiLayer(99);
-    // Right
-    native.drawRect(
-        minimap.x + minimap.width,
-        minimap.bottom_y - minimap.height / 2,
-        0.003,
-        minimap.height,
-        255,
-        255,
-        255,
-        255
-    );
-    // Left
-    native.drawRect(
-        minimap.x,
-        minimap.bottom_y - minimap.height / 2,
-        0.003,
-        minimap.height,
-        255,
-        255,
-        255,
-        255
-    );
-    // Bottom
-    native.drawRect(
-        minimap.x + minimap.width / 2,
-        minimap.bottom_y,
-        minimap.width,
-        0.0045,
-        255,
-        255,
-        255,
-        255
-    );
-    // Top
-    native.drawRect(
-        minimap.x + minimap.width / 2,
-        minimap.bottom_y - minimap.height,
-        minimap.width,
-        0.0045,
-        255,
-        255,
-        255,
-        255
-    );
-
     hudToDraw.forEach((hudElem, index) => {
         if (!hudElem.meta) {
             utilityText.drawText2d(

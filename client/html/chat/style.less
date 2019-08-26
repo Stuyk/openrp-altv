@@ -1,0 +1,53 @@
+html,
+body {
+    height: auto;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.chatbox {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow-y: scroll;
+    max-height: 45vh;
+    max-width: 35vw;
+}
+
+#messages {
+    background-color: rgba(255, 0, 0, 0.2);
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+#chat-input {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    color: white;
+    height: 4vh;
+    box-shadow: inset 0px 0px 0px 2px black;
+    padding: 0 1vw; // Padding
+    margin: 0;
+    bottom: 0;
+    border: none;
+    width: 43vw; // Subtract padding from element
+    overflow: hidden;
+}
+
+#chat-input:focus {
+    outline: none;
+}
+
+.msg {
+    margin-bottom: 1vh;
+    background: rgba(0, 0, 30, 0.2);
+    padding: 0.5vw;
+    color: white;
+    width: auto; // Taking Padding * 2 into account.
+}

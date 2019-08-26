@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import * as utilityText from 'client/utility/text.mjs';
+import { QuickInteract } from 'client/systems/quickinteract.mjs';
 
 const vehicleDoorsToShow = [
     {
@@ -34,12 +35,6 @@ const vehicleDoorsToShow = [
     { name: 'engine', message: 'Hood', id: 4 },
     { name: 'boot', message: 'Trunk', id: 5 } // Why is it called a boot? Idk. Rockstar is fucking weird and called it a fucking boot. But it's a god damn trunk and that's why we don't listen to Rockstar.
 ];
-
-let closestVehicle;
-let closestPosition;
-let foundVehicle = false;
-let cooldown = false;
-let isPlayerTooFar = false;
 
 export function engineOn(vehicle) {
     native.setVehicleUndriveable(vehicle.scriptID, false);
@@ -81,6 +76,259 @@ export function shutAllDoors(vehicle) {
     native.setVehicleDoorsShut(vehicle.scriptID, false);
 }
 
+// Disable seat shuffle.
+alt.on('update', disableSeatShuffle);
+
+const keysBinds = [
+    { key: 'Vehicle', message: 'Interactions', func: undefined },
+    { key: '1', message: 'Driver Seat', func: enterDriverFront },
+    { key: '2', message: 'Passenger Seat', func: enterPassengerFront },
+    { key: '3', message: 'Driver Rear Seat', func: enterDriverRear },
+    { key: '4', message: 'Passenger Rear Seat', func: enterPassengerRear },
+    { key: 'Z', message: 'Toggle Trunk', func: toggleTrunk },
+    { key: 'X', message: 'Toggle Hood', func: toggleHood }
+];
+
+new QuickInteract(38, keysBinds, 2);
+
+function toggleTrunk(veh) {
+    if (veh.getMeta('trunk')) {
+        veh.setMeta('trunk', false);
+        native.setVehicleDoorShut(veh.scriptID, 5, false);
+        return;
+    }
+
+    veh.setMeta('trunk', true);
+    native.setVehicleDoorOpen(veh.scriptID, 5, false, false);
+}
+
+function toggleHood(veh) {
+    if (veh.getMeta('hood')) {
+        veh.setMeta('hood', false);
+        native.setVehicleDoorShut(veh.scriptID, 4, false);
+        return;
+    }
+
+    veh.setMeta('hood', true);
+    native.setVehicleDoorOpen(veh.scriptID, 4, false, false);
+}
+
+function enterDriverFront(veh) {
+    native.taskEnterVehicle(
+        alt.Player.local.scriptID,
+        veh.scriptID,
+        2000,
+        -1,
+        2,
+        1,
+        0
+    );
+
+    alt.Player.local.setMeta('seat', -1);
+}
+
+function enterDriverRear(veh) {
+    native.taskEnterVehicle(
+        alt.Player.local.scriptID,
+        veh.scriptID,
+        2000,
+        1,
+        2,
+        1,
+        0
+    );
+
+    alt.Player.local.setMeta('seat', -1);
+}
+
+function enterPassengerFront(veh) {
+    native.taskEnterVehicle(
+        alt.Player.local.scriptID,
+        veh.scriptID,
+        2000,
+        0,
+        2,
+        1,
+        0
+    );
+
+    alt.Player.local.setMeta('seat', 0);
+}
+
+function enterPassengerRear(veh) {
+    native.taskEnterVehicle(
+        alt.Player.local.scriptID,
+        veh.scriptID,
+        2000,
+        2,
+        2,
+        1,
+        0
+    );
+
+    alt.Player.local.setMeta('seat', 2);
+}
+
+function disableSeatShuffle() {
+    if (!native.isPedInAnyVehicle(alt.Player.local.scriptID, undefined)) return;
+    let vehicle = native.getVehiclePedIsIn(
+        alt.Player.local.scriptID,
+        undefined
+    );
+
+    let passenger = native.getPedInVehicleSeat(vehicle, 0);
+
+    if (!native.getIsTaskActive(passenger, 165)) return;
+
+    if (native.isVehicleSeatFree(vehicle, -1)) {
+        if (passenger === alt.Player.local.scriptID) {
+            native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle, 0);
+        }
+    }
+}
+
+/*
+let labelDraw;
+let keysSetup = false;
+let currentVehicle = undefined;
+let pressingInteract = false;
+
+alt.setInterval(() => {
+    // Get player position and forward vector.
+    let pos = alt.Player.local.pos;
+    let fv = native.getEntityForwardVector(alt.Player.local.scriptID);
+
+    // Ray cast from top to bottom.
+    for (let i = 1; i < 5; i++) {
+        let posFront = {
+            x: pos.x + fv.x * 7,
+            y: pos.y + fv.y * 7,
+            z: pos.z - i * 0.1
+        };
+
+        let testResult = native.startShapeTestRay(
+            pos.x,
+            pos.y,
+            pos.z,
+            posFront.x,
+            posFront.y,
+            posFront.z,
+            2,
+            alt.Player.local.scriptID,
+            0
+        );
+
+        let [
+            _idk,
+            _hit,
+            _endCoords,
+            _surfaceNormal,
+            _entity
+        ] = native.getShapeTestResult(
+            testResult,
+            undefined,
+            undefined,
+            undefined,
+            undefined
+        );
+
+        if (_hit) {
+            currentVehicle = alt.Vehicle.all.find(v => v.scriptID === _entity);
+            break;
+        }
+    }
+
+    if (currentVehicle === undefined) {
+        if (labelDraw !== undefined) {
+            alt.clearInterval(labelDraw);
+        }
+        labelDraw = undefined;
+        return;
+    }
+
+    if (labelDraw !== undefined) return;
+
+    labelDraw = alt.setInterval(() => {
+        native.beginTextCommandDisplayHelp('STRING');
+        native.addTextComponentSubstringPlayerName(
+            '~INPUT_CONTEXT~ to Interact'
+        );
+        native.endTextCommandDisplayHelp(0, false, true, -1);
+        native.disableControlAction(0, 38, true);
+
+        // Press to open the menu.
+        if (native.isDisabledControlPressed(0, 38)) {
+            if (!keysSetup) {
+                keysSetup = true;
+                alt.on('keyup', setupKeys);
+            }
+
+            native.disableAllControlActions(0);
+            drawMenuItems();
+            pressingInteract = true;
+        }
+        // When menu is let go of
+        if (native.isDisabledControlJustReleased(0, 38)) {
+            pressingInteract = false;
+            keysSetup = false;
+            alt.off('keyup', setupKeys);
+        }
+    }, 0);
+}, 500);
+
+function setupKeys(key) {
+    // Loop through keys.
+    interactOptions.forEach(ele => {
+        if (key !== ele.key.charCodeAt(0)) return;
+        ele.func(currentVehicle);
+    });
+}
+
+function toggleTrunk(veh) {
+    if (veh.getMeta('trunk')) {
+        veh.setMeta('trunk', false);
+        native.setVehicleDoorShut(veh.scriptID, 5, false);
+        return;
+    }
+
+    veh.setMeta('trunk', true);
+    native.setVehicleDoorOpen(veh.scriptID, 5, false, false);
+}
+
+function toggleHood(veh) {
+    if (veh.getMeta('trunk')) {
+        veh.setMeta('trunk', false);
+        native.setVehicleDoorShut(veh.scriptID, 4, false);
+        return;
+    }
+
+    veh.setMeta('trunk', true);
+    native.setVehicleDoorOpen(veh.scriptID, 4, false, false);
+}
+
+function drawMenuItems() {
+    interactOptions.forEach((ele, index) => {
+        const lineHeight = native.getTextScaleHeight(0.4, 4);
+
+        utilityText.drawText2d(
+            `${ele.key} -> ${ele.type}`,
+            0.25,
+            0.25 + lineHeight * index, // Offset based on index.
+            0.4,
+            4,
+            255,
+            255,
+            255,
+            255,
+            true,
+            true,
+            99
+        );
+    });
+}
+
+
+/*
 // Look for the closest vehicle to the player.
 alt.setInterval(() => {
     // Get player position and forward vector.
@@ -166,50 +414,6 @@ function distance(vector1, vector2) {
 
 function showVehicleOptions() {
     if (!foundVehicle || !closestVehicle) return;
-
-    /*
-    if (alt.Player.local.vehicle === closestVehicle) {
-        if (
-            alt.Player.local.scriptID !==
-            native.getPedInVehicleSeat(closestVehicle.scriptID, -1)
-        )
-            return;
-
-        if (!native.getIsVehicleEngineRunning(closestVehicle.scriptID)) {
-            native.beginTextCommandDisplayHelp('STRING');
-            native.addTextComponentSubstringPlayerName(
-                `Press ~INPUT_CONTEXT~ to turn your engine on and off.`
-            );
-            native.endTextCommandDisplayHelp(0, false, true, -1);
-
-            if (native.isControlJustPressed(0, 38)) {
-                if (cooldown) return;
-
-                cooldown = true;
-                alt.emitServer('vehicle:EngineOn');
-
-                alt.setTimeout(() => {
-                    cooldown = false;
-                }, 100);
-            }
-
-            return;
-        }
-
-        if (native.isControlJustPressed(0, 38)) {
-            if (cooldown) return;
-
-            alt.log('pressed');
-            cooldown = true;
-            alt.emitServer('vehicle:EngineOff');
-
-            alt.setTimeout(() => {
-                cooldown = false;
-            }, 100);
-        }
-        return;
-    }
-    */
 
     const data = getVehicleDraw(closestVehicle);
 
@@ -377,3 +581,4 @@ function showHelpText(message) {
     native.addTextComponentSubstringPlayerName(message);
     native.endTextCommandDisplayHelp(0, false, true, -1);
 }
+*/

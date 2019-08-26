@@ -36,10 +36,7 @@ alt.onServer('register:CloseDialogue', registration.closeDialogue);
 // =======================================================
 // PLAYER RESPAWN
 // Reset the characters blood
-alt.onServer(
-    'respawn:ClearPedBloodDamage',
-    customizersCharacter.clearPedBloodDamage
-);
+alt.onServer('respawn:ClearPedBloodDamage', customizersCharacter.clearPedBloodDamage);
 
 // =======================================================
 // CHARACTER FACE CUSTOMIZER

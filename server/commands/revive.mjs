@@ -1,7 +1,8 @@
 import * as alt from 'alt';
-import * as chat from 'chat';
+//import * as chat from 'chat';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
 
+/*
 chat.registerCmd('revive', player => {
     if (!player.data.dead) return;
 
@@ -39,3 +40,4 @@ chat.registerCmd('revive', player => {
         player.sendMessage('You have been revived.');
     }, 20000);
 });
+*/

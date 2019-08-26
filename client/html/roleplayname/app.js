@@ -3,9 +3,7 @@ $(() => {
     $('#alert').hide();
 });
 
-const regex = new RegExp(
-    '^(([A-Z][a-z]+)(([ _][A-Z][a-z]+)|([ _][A-z]+[ _][A-Z][a-z]+)))$'
-);
+const regex = new RegExp('^(([A-Z][a-z]+)(([ _][A-Z][a-z]+)|([ _][A-z]+[ _][A-Z][a-z]+)))$');
 
 $('button').on('click', e => {
     $('#alert').hide();

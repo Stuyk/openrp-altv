@@ -1,7 +1,10 @@
+/* eslint-disable no-undef */
 const { createElement, render, Component } = preact;
 const h = createElement;
 
-let appendData;
+let appendMessageSpecial;
+let appendMessage;
+let clearChatBox;
 
 // The main rendering function.
 class App extends Component {
@@ -10,18 +13,20 @@ class App extends Component {
         this.lastMessage = preact.createRef();
         this.messagesBlock = preact.createRef();
         this.state = {
-            messages: []
+            messages: [{ message: 'Chat has loaded successfully.' }]
         };
 
-        appendData = msg => {
+        appendMessageSpecial = msg => {
             this.appendMessage(msg);
         };
 
-        for (let i = 0; i < 2; i++) {
-            this.appendMessage(
-                'this is a really long message and I really want you tos ee it.'
-            );
-        }
+        appendMessage = msg => {
+            this.appendMessage({ message: msg });
+        };
+
+        clearChatBox = () => {
+            this.clearChatBox();
+        };
     }
 
     componentDidUpdate() {
@@ -40,7 +45,11 @@ class App extends Component {
         this.setState({ messages });
     }
 
-    render(props, state) {
+    clearChatBox() {
+        this.setState({ messages: [] });
+    }
+
+    render() {
         return h(
             'div',
             null,
@@ -52,11 +61,7 @@ class App extends Component {
             h(
                 'div',
                 { id: 'chat-input-wrapper' },
-                h(
-                    'input',
-                    { id: 'chat-input', type: 'text', maxlength: '255' },
-                    'test'
-                )
+                h('input', { id: 'chat-input', type: 'text', maxlength: '255' }, 'test')
             )
         );
         // Render HTML / Components and Shit Here
@@ -64,15 +69,31 @@ class App extends Component {
 }
 
 const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
-    const msgs = messages.map((msg, index) => {
+    const msgs = messages.map((msgData, index) => {
         if (messages.length - 1 === index) {
             return h(
                 'div',
-                { class: 'msg', id: 'lastmsg', ref: lastMessageRef },
-                msg
+                {
+                    class: 'msg',
+                    id: 'lastmsg',
+                    ref: lastMessageRef
+                },
+                msgData.message
             );
         }
-        return h('div', { class: 'msg' }, msg);
+
+        if (msgData.style !== undefined) {
+            return h(
+                'div',
+                {
+                    class: 'msg',
+                    style: msgData.style
+                },
+                msgData.message
+            );
+        }
+
+        return h('div', { class: 'msg' }, msgData.message);
     });
 
     return h('div', { id: 'messages', ref: messagesBlockRef }, msgs);
@@ -80,6 +101,42 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
 
 render(h(App), document.querySelector('#render'));
 
-setInterval(() => {
-    appendData('Hello World! ' + Math.random(0, 999999999));
-}, 250);
+// eslint-disable-next-line no-unused-vars
+function ready() {
+    document.getElementById('chat-input').focus();
+
+    document.addEventListener('keyup', e => {
+        // Enter
+        if (e.key === 'Enter') {
+            let input = document.querySelector('#chat-input');
+            input.classList.add('hidden');
+            if (input.value.length <= 0) {
+                alt.emit('routeMessage');
+            } else {
+                alt.emit('routeMessage', input.value);
+            }
+            input.value = '';
+        }
+
+        // Escape
+        if (e.key === 'Escape') {
+            let input = document.querySelector('#chat-input');
+            input.classList.add('hidden');
+            input.value = '';
+            alt.emit('routeMessage');
+        }
+    });
+
+    const showChatInput = () => {
+        document.getElementById('chat-input').classList.remove('hidden');
+        document.getElementById('chat-input').focus();
+    };
+
+    if ('alt' in window) {
+        alt.on('showChatInput', showChatInput);
+        alt.on('appendMessage', appendMessage);
+        alt.on('appendMessageSpecial', appendMessageSpecial); // Preformated Objects
+        //alt.on('appendMessageClickable'); // Soon ^tm;
+        alt.on('clearChatBox', clearChatBox);
+    }
+}

@@ -1,9 +1,10 @@
 import * as alt from 'alt';
-import * as chat from 'chat';
+//import * as chat from 'chat';
 import * as configurationItems from '../configuration/items.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
+/*
 chat.registerCmd('pos', player => {
     console.log(player.pos);
 });
@@ -113,3 +114,4 @@ chat.registerCmd('tpto', (player, arg) => {
     player.pos = targetPos;
     player.sendMessage(`You got teleported to ${targetName} position.`);
 });
+*/

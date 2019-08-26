@@ -44,15 +44,7 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
         rot = new alt.Vector3(0, 0, 0);
     }
 
-    let vehicle = new alt.Vehicle(
-        veh.model,
-        pos.x,
-        pos.y,
-        pos.z,
-        rot.x,
-        rot.y,
-        rot.z
-    );
+    let vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
 
     // Setup extended functions for the new vehicle.
     utilityVehicle.setupVehicleFunctions(vehicle);
@@ -158,7 +150,7 @@ export function engineOff(player) {
     player.vehicle.setEngineOff();
 }
 
-export function lockAllDoors(player, vehicle, doorID) {
+export function lockAllDoors(player, vehicle) {
     if (!Array.isArray(player.vehicles)) return;
 
     if (!player.vehicles.includes(vehicle)) {

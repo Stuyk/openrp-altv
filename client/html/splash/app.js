@@ -8,25 +8,13 @@ setTimeout(() => {
         fade -= 0.01;
         if (fade <= 0) {
             fade = 0;
-            $('body').attr(
-                'style',
-                `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`
-            );
-            $('html').attr(
-                'style',
-                `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`
-            );
+            $('body').attr('style', `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`);
+            $('html').attr('style', `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`);
             clearInterval(interval);
             alt.emit('done');
         } else {
-            $('body').attr(
-                'style',
-                `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`
-            );
-            $('html').attr(
-                'style',
-                `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`
-            );
+            $('body').attr('style', `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`);
+            $('html').attr('style', `background-color: rgba(0, 0, 0, ${fade}) !important; opacity: ${fade} !important`);
         }
     }, 15);
 }, 3000);

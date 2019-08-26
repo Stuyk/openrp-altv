@@ -2,7 +2,7 @@ import * as alt from 'alt';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 
-alt.on('playerDeath', (target, killer, weapon) => {
+alt.on('playerDeath', target => {
     if (target.reviving) return;
 
     target.reviving = false;

@@ -25,9 +25,7 @@ let timeout = false;
 // Interval to check if a user is in a shop.
 alt.setInterval(() => {
     // Get the current interior of the user.
-    const currInterior = native.getInteriorFromEntity(
-        alt.Player.local.scriptID
-    );
+    const currInterior = native.getInteriorFromEntity(alt.Player.local.scriptID);
 
     // Check if the shop list includes this interior.
     // If it does not; turn off the update function.

@@ -41,9 +41,7 @@ export function newAccount(player, username, password) {
         // Add account to cache
         cache.cacheAccount(res.username, res.id, passHashSalt);
 
-        player.showRegisterEventSuccess(
-            'New account was registered successfully.'
-        );
+        player.showRegisterEventSuccess('New account was registered successfully.');
 
         player.showRegisterLogin();
     });

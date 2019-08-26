@@ -3,7 +3,7 @@ import * as registrationLogin from '../registration/login.mjs';
 
 console.log('Loaded: events->playerDisconnect.mjs');
 
-alt.on('playerDisconnect', (player, reason) => {
+alt.on('playerDisconnect', player => {
     // If the player isn't logged in; don't do anything else.
     if (player.guid === undefined) {
         alt.log(`${player.name} has disconnected.`);

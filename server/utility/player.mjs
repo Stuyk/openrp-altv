@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as configurationClothing from '../configuration/clothing.mjs';
@@ -20,7 +21,7 @@ export function setupPlayerFunctions(player) {
     player.save = () => {
         if (!player.sp) process.abort();
 
-        db.upsertData(player.data, 'Character', res => {
+        db.upsertData(player.data, 'Character', () => {
             if (player.data.name === null) {
                 console.log(`${player.name} was saved.`);
             } else {
@@ -33,12 +34,7 @@ export function setupPlayerFunctions(player) {
     player.saveField = (id, fieldName, fieldValue) => {
         if (!player.sp) process.abort();
 
-        db.updatePartialData(
-            id,
-            { [fieldName]: fieldValue },
-            'Character',
-            () => {}
-        );
+        db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
     };
 
     // ====================================
@@ -56,12 +52,7 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Registration Webview Related Events
     player.showRegisterDialogue = (regCamCoord, regCamPointAtCoord) => {
-        alt.emitClient(
-            player,
-            'register:ShowDialogue',
-            regCamCoord,
-            regCamPointAtCoord
-        );
+        alt.emitClient(player, 'register:ShowDialogue', regCamCoord, regCamPointAtCoord);
     };
 
     // Clear player blood
@@ -263,16 +254,12 @@ export function setupPlayerFunctions(player) {
         if (taxType === 0) {
             let cashTaxAmount = cash * percentage;
             player.subCash(cashTaxAmount);
-            player.sendMessage(
-                `You were taxed: $${cashTaxAmount.toFixed(2) * 1}`
-            );
+            player.sendMessage(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
         } else {
             let bankTaxAmount = bank * percentage;
             player.subBank(bankTaxAmount);
             player.saveField(player.data.id, 'bank', player.data.bank);
-            player.sendMessage(
-                `You were taxed: $${bankTaxAmount.toFixed(2) * 1}`
-            );
+            player.sendMessage(`You were taxed: $${bankTaxAmount.toFixed(2) * 1}`);
         }
 
         player.sendMessage(`Reason: ${reason}`);
@@ -281,14 +268,7 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Load Blip for client.
     player.createBlip = (pos, blipType, blipColor, labelName) => {
-        alt.emitClient(
-            player,
-            'blip:CreateBlip',
-            pos,
-            blipType,
-            blipColor,
-            labelName
-        );
+        alt.emitClient(player, 'blip:CreateBlip', pos, blipType, blipColor, labelName);
     };
 
     // ====================================
@@ -378,9 +358,7 @@ export function setupPlayerFunctions(player) {
         // If the item is stackable; check if the player has it.
         if (itemTemplate.stackable && !isUnique) {
             // Find stackable item index.
-            let index = player.inventory.findIndex(
-                x => x.label === itemClone.label
-            );
+            let index = player.inventory.findIndex(x => x.label === itemClone.label);
 
             // The item exists.
             if (index > -1) {
@@ -402,9 +380,7 @@ export function setupPlayerFunctions(player) {
 
     // Remove an item from a player.
     player.subItem = (itemTemplate, quantity) => {
-        let index = player.inventory.findIndex(
-            x => x.label === itemTemplate.label
-        );
+        let index = player.inventory.findIndex(x => x.label === itemTemplate.label);
 
         if (index <= -1) return false;
 
@@ -518,8 +494,7 @@ export function setupPlayerFunctions(player) {
     player.addVehicle = (model, pos, rot) => {
         if (Array.isArray(player.vehicles)) {
             if (
-                player.vehicles.length >=
-                configurationPlayer.PlayerDefaults.maxvehicles
+                player.vehicles.length >= configurationPlayer.PlayerDefaults.maxvehicles
             ) {
                 player.sendMessage(
                     `You are not allowed to have any additional vehicles.`
@@ -547,8 +522,4 @@ export function setupPlayerFunctions(player) {
             }
         );
     };
-
-    player.addExistingVehicle = vehicledata => {};
-
-    player.deleteVehicle = vehicledata => {};
 }

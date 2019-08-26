@@ -52,7 +52,7 @@ $(`#close`).on('click', () => {
 });
 
 document.onkeydown = function(evt) {
-    const keys = [ 'w', 'a', 's', 'd' ];
+    const keys = ['w', 'a', 's', 'd'];
     evt = evt || window.event;
     if (keys.includes(evt.key)) {
         alt.emit('close');

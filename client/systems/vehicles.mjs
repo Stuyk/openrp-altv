@@ -1,6 +1,5 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as utilityText from 'client/utility/text.mjs';
 import { QuickInteract } from 'client/systems/quickinteract.mjs';
 
 const vehicleDoorsToShow = [
@@ -114,67 +113,32 @@ function toggleHood(veh) {
 }
 
 function enterDriverFront(veh) {
-    native.taskEnterVehicle(
-        alt.Player.local.scriptID,
-        veh.scriptID,
-        2000,
-        -1,
-        2,
-        1,
-        0
-    );
+    native.taskEnterVehicle(alt.Player.local.scriptID, veh.scriptID, 2000, -1, 2, 1, 0);
 
     alt.Player.local.setMeta('seat', -1);
 }
 
 function enterDriverRear(veh) {
-    native.taskEnterVehicle(
-        alt.Player.local.scriptID,
-        veh.scriptID,
-        2000,
-        1,
-        2,
-        1,
-        0
-    );
+    native.taskEnterVehicle(alt.Player.local.scriptID, veh.scriptID, 2000, 1, 2, 1, 0);
 
     alt.Player.local.setMeta('seat', -1);
 }
 
 function enterPassengerFront(veh) {
-    native.taskEnterVehicle(
-        alt.Player.local.scriptID,
-        veh.scriptID,
-        2000,
-        0,
-        2,
-        1,
-        0
-    );
+    native.taskEnterVehicle(alt.Player.local.scriptID, veh.scriptID, 2000, 0, 2, 1, 0);
 
     alt.Player.local.setMeta('seat', 0);
 }
 
 function enterPassengerRear(veh) {
-    native.taskEnterVehicle(
-        alt.Player.local.scriptID,
-        veh.scriptID,
-        2000,
-        2,
-        2,
-        1,
-        0
-    );
+    native.taskEnterVehicle(alt.Player.local.scriptID, veh.scriptID, 2000, 2, 2, 1, 0);
 
     alt.Player.local.setMeta('seat', 2);
 }
 
 function disableSeatShuffle() {
     if (!native.isPedInAnyVehicle(alt.Player.local.scriptID, undefined)) return;
-    let vehicle = native.getVehiclePedIsIn(
-        alt.Player.local.scriptID,
-        undefined
-    );
+    let vehicle = native.getVehiclePedIsIn(alt.Player.local.scriptID, undefined);
 
     let passenger = native.getPedInVehicleSeat(vehicle, 0);
 

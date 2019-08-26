@@ -39,7 +39,7 @@ export function playAnimation(dictionary, name, durationInMS, flag) {
 }
 
 async function loadAnim(dict) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         native.requestAnimDict(dict);
 
         let inter = alt.setInterval(() => {

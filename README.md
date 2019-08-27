@@ -24,6 +24,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Item Drops
 -   [x] Item Pickups
 -   [x] Vehicle System
+-   [ ] Job System Helper
+-   [ ] Example Job Configuration
 -   [ ] Vehicle Customization
 -   [ ] Vehicle Fuel System
 -   [x] Nametags / Character Names
@@ -37,6 +39,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Faction System
 -   [ ] Basic Anticheat
 -   [x] Time Sync
+-   [x] Weather Sync
 -   [x] Interaction System
 -   [x] Player Death Handling
 -   [x] Taxation

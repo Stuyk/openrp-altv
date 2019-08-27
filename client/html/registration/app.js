@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 $('#username').keypress(e => {
     if (e.key === 'Enter') {
         $('#password').focus();
@@ -142,7 +143,7 @@ if ('alt' in window) {
 
     alt.on('setUsername', username => {
         $('#username').val(username);
-        $('#remember')[0].checked = true;
+        $('#rememberMe')[0].checked = true;
         $('#password').focus();
     });
 

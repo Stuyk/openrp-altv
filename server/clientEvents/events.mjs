@@ -10,6 +10,7 @@ import * as characterName from '../character/name.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
+import * as systemsJob from '../systems/job.mjs';
 import * as interactionAtms from '../interactions/atms.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 import * as chat from '../chat/chat.mjs';
@@ -69,6 +70,9 @@ alt.onClient('vehicle:LockAllDoors', systemsVehicles.lockAllDoors);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);
+
+// Job
+alt.onClient('job:TestObjective', systemsJob.testObjective);
 
 // Temporary:
 // teleport to waypoint stuff

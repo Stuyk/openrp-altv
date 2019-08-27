@@ -3,6 +3,7 @@ import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as configurationClothing from '../configuration/clothing.mjs';
 import * as configurationPlayer from '../configuration/player.mjs';
+import * as systemsTime from '../systems/time.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: utility->player.mjs');
@@ -41,6 +42,12 @@ export function setupPlayerFunctions(player) {
     // Chat
     player.send = msg => {
         alt.emitClient(player, 'chat:Send', msg);
+    };
+
+    // ====================================
+    // Weather & Time
+    player.updateTime = () => {
+        systemsTime.setTimeForNewPlayer(player);
     };
 
     // ====================================
@@ -525,5 +532,21 @@ export function setupPlayerFunctions(player) {
                 alt.emit('vehicles:SpawnVehicle', player, veh);
             }
         );
+    };
+
+    // ===================
+    // Job Handling
+    player.syncJobPoint = (currentPoint, emitSync = false) => {
+        player.setSyncedMeta('jobpoint', currentPoint);
+        if (!emitSync) return;
+
+        alt.emitClient(player, 'job:Sync');
+    };
+
+    player.syncJob = (jobJSON, emitSync = false) => {
+        player.setSyncedMeta('job', jobJSON);
+        if (!emitSync) return;
+
+        alt.emitClient(player, 'job:Sync');
     };
 }

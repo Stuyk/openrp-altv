@@ -8,8 +8,9 @@ export const interactions = [];
 // Interactions act as a way for a user to simply press 'E'
 // The event is then relayed to server-side and checks for an index.
 // When the index is found the class executes the interaction.
+// IndexValue is for special use cases. Such as jobs.
 export class Interaction {
-    constructor(position, type, serverEventName, radius, height, message) {
+    constructor(position, type, serverEventName, radius, height, message, indexValue) {
         this.pos = position;
         this.type = type;
         this.serverEventName = serverEventName;
@@ -21,6 +22,7 @@ export class Interaction {
             height
         );
         this.message = message;
+        this.indexValue = indexValue;
 
         // Add to the interactions list.
         interactions.push(this);
@@ -33,7 +35,7 @@ export class Interaction {
             return;
         }
 
-        alt.emit(this.serverEventName, player);
+        alt.emit(this.serverEventName, player, this.indexValue);
     }
 }
 

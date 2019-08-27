@@ -138,6 +138,7 @@ function existingCharacter(player, data) {
     player.screenFadeIn(1000);
     player.syncVehicles();
     player.syncMoney();
+    player.updateTime();
 }
 
 export function removeLoggedInPlayer(username) {

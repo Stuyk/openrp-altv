@@ -18,8 +18,8 @@ export function toggleDialogue() {
         isActive = true;
         webView.focus();
         webView.emit('showChatInput');
-        alt.showCursor(true);
         alt.toggleGameControls(false);
+        alt.showCursor(true);
     }
 }
 
@@ -30,9 +30,12 @@ export function send(msg) {
 function routeMessage(msg) {
     alt.emit('panel:SetStatus', 'chat', false);
     alt.toggleGameControls(true);
-    alt.showCursor(false);
     webView.unfocus();
     isActive = false;
+
+    try {
+        alt.showCursor(false);
+    } catch (err) {}
 
     if (!msg) return;
     if (msg.length <= 0) return;

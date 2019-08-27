@@ -49,9 +49,8 @@ export function showDialogue(regCamCoord, regCamPointAtCoord) {
     native.transitionToBlurred(1000);
 
     registerWebview.on('ready', () => {
-        const lastUsername = alt.LocalStorage.get().get("lastUsername");
-        if (lastUsername != null)
-            registerWebview.emit('setUsername', lastUsername);
+        const lastUsername = alt.LocalStorage.get().get('lastUsername');
+        if (lastUsername != null) registerWebview.emit('setUsername', lastUsername);
     });
 
     // Called when a new user wants to register an account.
@@ -62,8 +61,7 @@ export function showDialogue(regCamCoord, regCamPointAtCoord) {
 }
 
 function existingAccount(username, password, remember) {
-    if (remember)
-        lastTriedUsername = username;
+    if (remember) lastTriedUsername = username;
     alt.emitServer('register:ExistingAccount', username, password);
 }
 

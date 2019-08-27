@@ -1,22 +1,13 @@
+/* eslint-disable no-undef */
 const faceGroups = {
     Freckles: ['Freckles', 'FrecklesOpacity'],
-    Lipstick: [
-        'Lipstick',
-        'LipstickOpacity',
-        'LipstickColor',
-        'LipstickColor2'
-    ],
+    Lipstick: ['Lipstick', 'LipstickOpacity', 'LipstickColor', 'LipstickColor2'],
     SunDamage: ['SunDamage', 'SunDamageOpacity'],
     Complexion: ['Complexion', 'ComplexionOpacity'],
     Blush: ['Blush', 'BlushOpacity', 'BlushColor'],
     Makeup: ['Makeup', 'MakeupOpacity', 'MakeupColor', 'MakeupColor2'],
     Age: ['Age', 'AgeOpacity'],
-    Eyebrows: [
-        'Eyebrows',
-        'EyebrowsOpacity',
-        'EyebrowsColor',
-        'EyebrowsColor2'
-    ],
+    Eyebrows: ['Eyebrows', 'EyebrowsOpacity', 'EyebrowsColor', 'EyebrowsColor2'],
     FacialHair: [
         'FacialHair',
         'FacialHairOpacity',
@@ -25,14 +16,7 @@ const faceGroups = {
     ],
     Blemishes: ['Blemish', 'BlemishOpacity'],
     Hair: ['Hair', 'HairColor', 'HairHighlights', 'HairTexture'],
-    Face: [
-        'FatherFace',
-        'MotherFace',
-        'FatherSkin',
-        'MotherSkin',
-        'FaceMix',
-        'SkinMix'
-    ]
+    Face: ['FatherFace', 'MotherFace', 'FatherSkin', 'MotherSkin', 'FaceMix', 'SkinMix']
 };
 
 const hairOverlaysMale = {
@@ -795,10 +779,7 @@ class App extends Component {
         if ('alt' in window) {
             // Grab the Style Variations
             alt.on('stylesUpdate', this.handleStyleUpdates.bind(this));
-            alt.on(
-                'setHairTextureVariations',
-                this.setHairTextureVariations.bind(this)
-            );
+            alt.on('setHairTextureVariations', this.setHairTextureVariations.bind(this));
             alt.on('sexUpdated', this.sexUpdated.bind(this));
         }
 
@@ -810,14 +791,10 @@ class App extends Component {
 
         let faceValue = id === 0 ? 45 : 0;
 
-        let motherFaceIndex = faceData.findIndex(
-            x => x.label === 'Mother Face'
-        );
+        let motherFaceIndex = faceData.findIndex(x => x.label === 'Mother Face');
         faceData[motherFaceIndex].value = faceValue;
 
-        let fatherFaceIndex = faceData.findIndex(
-            x => x.label === 'Father Face'
-        );
+        let fatherFaceIndex = faceData.findIndex(x => x.label === 'Father Face');
         faceData[fatherFaceIndex].value = faceValue;
         faceData[fatherFaceIndex].func(faceData, fatherFaceIndex);
 
@@ -845,9 +822,7 @@ class App extends Component {
         let faceData = [...this.state.faceData];
 
         if (this.state.hairChanged) {
-            let textureIndex = faceData.findIndex(
-                x => x.label === 'Hair Texture'
-            );
+            let textureIndex = faceData.findIndex(x => x.label === 'Hair Texture');
             faceData[textureIndex].max = textures - 1;
             faceData[textureIndex].value = 0;
         }
@@ -884,11 +859,7 @@ class App extends Component {
 
             if (sex.value === 0) {
                 // If the value is blacklisted.
-                if (
-                    faceData[index].femaleBlacklist.includes(
-                        faceData[index].value
-                    )
-                ) {
+                if (faceData[index].femaleBlacklist.includes(faceData[index].value)) {
                     if (increment) {
                         faceData[index].value += 1;
                     } else {
@@ -897,11 +868,7 @@ class App extends Component {
                 }
             } else {
                 // If the value is blacklisted.
-                if (
-                    faceData[index].maleBlacklist.includes(
-                        faceData[index].value
-                    )
-                ) {
+                if (faceData[index].maleBlacklist.includes(faceData[index].value)) {
                     if (increment) {
                         faceData[index].value += 1;
                     } else {
@@ -950,7 +917,7 @@ class App extends Component {
     }
 
     // render to the HTML template.
-    render(props, state) {
+    render() {
         return h(
             'div',
             { id: 'app' },
@@ -987,10 +954,10 @@ const FaceList = ({ faceData, setItemValue }) => {
 
 // Items to Display in a Group
 const FaceItem = ({ index, item, setItemValue }) => {
-    left = e => {
+    left = () => {
         setItemValue(index, false);
     };
-    right = e => {
+    right = () => {
         setItemValue(index, true);
     };
     return h(
@@ -1005,18 +972,16 @@ const FaceItem = ({ index, item, setItemValue }) => {
             h(
                 'button',
                 {
-                    class: 'left',
-                    onclick: this.left.bind(this),
-                    class: 'button'
+                    class: 'left button',
+                    onclick: this.left.bind(this)
                 },
                 '<'
             ),
             h(
                 'button',
                 {
-                    class: 'right',
-                    onclick: this.right.bind(this),
-                    class: 'button'
+                    class: 'right button',
+                    onclick: this.right.bind(this)
                 },
                 '>'
             )
@@ -1025,11 +990,7 @@ const FaceItem = ({ index, item, setItemValue }) => {
 };
 
 const SubmitButton = ({ submitChanges }) => {
-    return h(
-        'div',
-        { class: 'footer', onclick: submitChanges.bind(this) },
-        'Submit'
-    );
+    return h('div', { class: 'footer', onclick: submitChanges.bind(this) }, 'Submit');
 };
 
 // Render the above component

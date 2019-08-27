@@ -65,10 +65,7 @@ export function applyFacialData(jsonData) {
     );
 
     // Set Eye Color
-    native.setPedEyeColor(
-        alt.Player.local.scriptID,
-        parsedData['EyesColor'].value
-    );
+    native.setPedEyeColor(alt.Player.local.scriptID, parsedData['EyesColor'].value);
 
     // Facial Features - 0 to 19
     faceFeatureNames.forEach((faceFeature, index) => {

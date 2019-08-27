@@ -1,9 +1,6 @@
 import * as alt from 'alt';
-import * as chat from 'chat';
-import {
-    RegisterCamPoint,
-    RegisterCamDirection
-} from '../configuration/coordinates.mjs';
+//import * as chat from 'chat';
+import { RegisterCamPoint, RegisterCamDirection } from '../configuration/coordinates.mjs';
 import * as utilityPlayer from '../utility/player.mjs';
 import * as interactionsAtms from '../interactions/atms.mjs';
 import * as interactionsClothing from '../interactions/clothing.mjs';
@@ -20,7 +17,7 @@ alt.on('playerConnect', player => {
     player.pos = RegisterCamPoint;
 
     // Setup chat functionality from Chat-Extended
-    chat.setupPlayer(player);
+    //chat.setupPlayer(player);
 
     // Setup extended functions for player
     utilityPlayer.setupPlayerFunctions(player);

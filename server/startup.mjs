@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import * as chat from 'chat';
+//import * as chat from 'chat';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character, Vehicle } from './entities/entities.mjs'; // Schemas for Database
 import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration

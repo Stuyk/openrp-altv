@@ -2,7 +2,7 @@ import * as alt from 'alt';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 
-alt.on('playerDeath', (target, killer, weapon) => {
+alt.on('playerDeath', target => {
     if (target.reviving) return;
 
     target.reviving = false;
@@ -27,5 +27,5 @@ alt.on('playerDeath', (target, killer, weapon) => {
     target.revivePos = closestHospital;
     target.saveLocation(closestHospital);
     target.saveDead(true);
-    target.sendMessage('Type /revive to revive at the nearest hospital.');
+    target.send('Type /revive to revive at the nearest hospital.');
 });

@@ -7,10 +7,9 @@ const path = 'http://resources/orp/client/html/clothing/index.html';
 let webView = undefined;
 let characterCamera = undefined;
 let fov = 90;
-let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
-    0,
-    0
-);
+
+// eslint-disable-next-line no-unused-vars
+let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(0, 0);
 let cameraHeight = 0;
 
 // Setup the player clothing customizer.
@@ -117,10 +116,7 @@ function onUpdateCustomizer() {
             cursorRelativePos = 1.5;
         }
 
-        native.setEntityHeading(
-            alt.Player.local.scriptID,
-            heading + cursorRelativePos
-        );
+        native.setEntityHeading(alt.Player.local.scriptID, heading + cursorRelativePos);
     }
 
     // W - Up
@@ -149,24 +145,14 @@ function updateCamPos(isUp) {
         if (cameraHeight > 2) {
             native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
         } else {
-            native.setCamCoord(
-                characterCamera,
-                coord.x,
-                coord.y,
-                coord.z + 0.01
-            );
+            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z + 0.01);
         }
     } else {
         cameraHeight -= 0.01;
         if (cameraHeight < -0.5) {
             native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
         } else {
-            native.setCamCoord(
-                characterCamera,
-                coord.x,
-                coord.y,
-                coord.z - 0.01
-            );
+            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z - 0.01);
         }
     }
 

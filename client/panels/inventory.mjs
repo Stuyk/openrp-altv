@@ -16,9 +16,7 @@ export function showDialogue() {
 
     if (panelsPanelStatus.isAnyPanelOpen()) return;
 
-    webview = new alt.WebView(
-        'http://resources/orp/client/html/inventory/index.html'
-    );
+    webview = new alt.WebView('http://resources/orp/client/html/inventory/index.html');
 
     alt.emit('panel:SetStatus', 'inventory', true);
     webview.focus();

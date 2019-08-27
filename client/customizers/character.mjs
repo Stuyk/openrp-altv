@@ -19,10 +19,9 @@ let webView = undefined; // Used for the HTML View.
 let characterCamera = undefined; // Used for the Camera Manipulation
 let modPed = undefined; // The pedestrian we create.
 let fov = 28; // The FOV we change with scroll wheel.
-let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
-    0,
-    0
-); // Get the current screen resolution the user is using.
+
+// eslint-disable-next-line no-unused-vars
+let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(0, 0); // Get the current screen resolution the user is using.
 let lastHair = 0; // Get the last hair the player set.
 
 // Load the character customizer, freeze controls, create camera, and ped.
@@ -30,10 +29,7 @@ export function showDialogue() {
     if (modPed !== undefined) return;
 
     // Reload Active Res for Reference
-    [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(
-        0,
-        0
-    );
+    [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(0, 0);
 
     let offsetPoint = { ...cameraPoint };
     offsetPoint.x += 10;
@@ -65,9 +61,7 @@ export function showDialogue() {
     native.setEntityAlpha(alt.Player.local.scriptID, 0, false);
 
     // Load the WebView
-    webView = new alt.WebView(
-        'http://resources/orp/client/html/character/index.html'
-    );
+    webView = new alt.WebView('http://resources/orp/client/html/character/index.html');
 
     webView.focus();
     alt.showCursor(true);
@@ -170,24 +164,12 @@ function updateFaceDecor(id, colorType, dataAsJSON) {
 
     // Only if one color is present.
     if (results.length > 2 && results.length <= 3) {
-        native.setPedHeadOverlayColor(
-            modPed,
-            id,
-            colorType,
-            results[2],
-            results[2]
-        );
+        native.setPedHeadOverlayColor(modPed, id, colorType, results[2], results[2]);
     }
 
     // If two colors are present.
     if (results.length > 3) {
-        native.setPedHeadOverlayColor(
-            modPed,
-            id,
-            colorType,
-            results[2],
-            results[3]
-        );
+        native.setPedHeadOverlayColor(modPed, id, colorType, results[2], results[3]);
     }
 }
 

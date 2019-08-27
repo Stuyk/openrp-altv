@@ -13,6 +13,6 @@ alt.on('itemeffects:Consume', (player, props, message) => {
     }
 
     if (message !== undefined && message !== null) {
-        player.sendMessage(message);
+        player.send(message);
     }
 });

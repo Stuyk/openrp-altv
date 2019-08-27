@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as alt from 'alt';
 import * as native from 'natives';
 

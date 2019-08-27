@@ -1,6 +1,7 @@
 html,
 body {
     height: auto;
+    margin: 0;
 }
 
 html {
@@ -12,31 +13,34 @@ body::-webkit-scrollbar {
 }
 
 .chatbox {
-    background-color: rgba(0, 0, 0, 0.5);
+    background: transparent;
     position: relative;
     overflow-y: scroll;
     max-height: 45vh;
     max-width: 35vw;
+    margin-top: 5vh;
 }
 
 #messages {
-    background-color: rgba(255, 0, 0, 0.2);
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
 }
 
 #chat-input {
-    background-color: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.75);
     position: fixed;
     color: white;
+    text-shadow: 1px 1px rgba(0, 0, 0);
+    box-shadow: inset 0px 0px 0px 1px black;
     height: 4vh;
-    box-shadow: inset 0px 0px 0px 2px black;
-    padding: 0 1vw; // Padding
+    font-family: 'Circular';
+    font-size: 1.5vh;
+    padding: 0 0.5vw; // Padding
     margin: 0;
-    bottom: 0;
+    bottom: 45.9vh;
     border: none;
-    width: 43vw; // Subtract padding from element
+    width: 35vw;
     overflow: hidden;
 }
 
@@ -45,9 +49,21 @@ body::-webkit-scrollbar {
 }
 
 .msg {
-    margin-bottom: 1vh;
-    background: rgba(0, 0, 30, 0.2);
     padding: 0.5vw;
     color: white;
-    width: auto; // Taking Padding * 2 into account.
+    text-shadow: 1px 1px rgba(0, 0, 0);
+    font-family: 'Circular';
+    max-width: 32vw;
+    overflow-wrap: break-word;
+    transition: 0.3s;
+}
+
+.msg:hover {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+    opacity: 0.75;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
 }

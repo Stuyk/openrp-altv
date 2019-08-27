@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const clothing = {
     Head: {
         label: 'Head',
@@ -208,11 +209,7 @@ $(() => {
 
         // Label Text
         $(`#group-${key}`).append(
-            `<button type="button" id="button-${key}" class="btn btn-sm btn-block btn-secondary" disabled>${
-                clothing[key].label
-            } <span class="badge badge-secondary">[${clothing[key].value}|${
-                clothing[key].max
-            }]</span></button>`
+            `<button type="button" id="button-${key}" class="btn btn-sm btn-block btn-secondary" disabled>${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span></button>`
         );
 
         // Increase Value Button
@@ -242,6 +239,7 @@ $(() => {
 });
 
 // Updates the local facial values registered in this WebView
+// eslint-disable-next-line no-unused-vars
 function changeValue(key, increment) {
     if (increment) {
         clothing[key].value += 1;
@@ -260,24 +258,16 @@ function changeValue(key, increment) {
     }
 
     if (clothing[key].increment === 0.1) {
-        clothing[key].value =
-            Number.parseFloat(clothing[key].value).toFixed(2) * 1;
+        clothing[key].value = Number.parseFloat(clothing[key].value).toFixed(2) * 1;
     }
 
     // Update the Value of the Key Pressed
     $(`#button-${key}`).html(
-        `${clothing[key].label} <span class="badge badge-secondary">[${
-            clothing[key].value
-        }|${clothing[key].max}]</span>`
+        `${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span>`
     );
 
     if (!clothing[key].label.includes('Texture')) {
-        alt.emit(
-            'requestComponentData',
-            key,
-            clothing[key].id,
-            clothing[key].value
-        );
+        alt.emit('requestComponentData', key, clothing[key].id, clothing[key].value);
     }
 
     // Call the function tied to the object element.
@@ -291,17 +281,11 @@ function updateMinMax(key, res) {
     clothing[`${key}Texture`].max = res.textures;
 
     $(`#button-${key}`).html(
-        `${clothing[key].label} <span class="badge badge-secondary">[${
-            clothing[key].value
-        }|${clothing[key].max}]</span>`
+        `${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span>`
     );
 
     $(`#button-${key}Texture`).html(
-        `${
-            clothing[`${key}Texture`].label
-        } <span class="badge badge-secondary">[${
-            clothing[`${key}Texture`].value
-        }|${clothing[`${key}Texture`].max}]</span>`
+        `${clothing[`${key}Texture`].label} <span class="badge badge-secondary">[${clothing[`${key}Texture`].value}|${clothing[`${key}Texture`].max}]</span>`
     );
 }
 
@@ -320,6 +304,7 @@ function pushChanges(key) {
     );
 }
 
+// eslint-disable-next-line no-unused-vars
 function submitChanges() {
     const data = {};
 
@@ -366,17 +351,11 @@ function updateClothes(key, data) {
     clothing[`${key}Texture`].value = data.texture;
 
     $(`#button-${key}`).html(
-        `${clothing[key].label} <span class="badge badge-secondary">[${
-            clothing[key].value
-        }|${clothing[key].max}]</span>`
+        `${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span>`
     );
 
     $(`#button-${key}Texture`).html(
-        `${
-            clothing[`${key}Texture`].label
-        } <span class="badge badge-secondary">[${
-            clothing[`${key}Texture`].value
-        }|${clothing[`${key}Texture`].max}]</span>`
+        `${clothing[`${key}Texture`].label} <span class="badge badge-secondary">[${clothing[`${key}Texture`].value}|${clothing[`${key}Texture`].max}]</span>`
     );
 }
 

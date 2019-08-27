@@ -2,11 +2,7 @@ import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import * as utilityEncryption from '../utility/encryption.mjs';
-import SQL from '../../../postgres-wrapper/database.mjs';
-
 console.log('Loaded: systems->inventory.mjs');
-
-const db = new SQL();
 
 // hash, itemdata
 let ItemDrops = new Map();
@@ -35,12 +31,7 @@ alt.on('item:Consume', (player, itemObject) => {
             );
         }
 
-        alt.emit(
-            itemTemplate.eventcall,
-            player,
-            itemObject.props,
-            itemTemplate.message
-        );
+        alt.emit(itemTemplate.eventcall, player, itemObject.props, itemTemplate.message);
         return;
     });
 });
@@ -56,12 +47,7 @@ alt.on('item:Use', (player, itemObject) => {
             player.playAudio(itemTemplate.sound);
         }
 
-        alt.emit(
-            itemTemplate.eventcall,
-            player,
-            itemObject.props,
-            itemTemplate.message
-        );
+        alt.emit(itemTemplate.eventcall, player, itemObject.props, itemTemplate.message);
         return;
     });
 });
@@ -122,9 +108,7 @@ export function drop(player, hash) {
     if (!player.subItemByHash(hash, 1)) return;
 
     // Regenerate new hash for each dropped item.
-    let newHash = utilityEncryption.generateHash(
-        JSON.stringify({ hash, clonedItem })
-    );
+    let newHash = utilityEncryption.generateHash(JSON.stringify({ hash, clonedItem }));
     clonedItem.hash = newHash;
 
     console.log('Dropping ' + newHash);

@@ -10,13 +10,13 @@ export const pages = {
 };
 
 export class WebView {
-    events = [];
-    ready = false;
-
     constructor(page, showCursor = true) {
         if (!pages[page]) {
             throw new Error('Invalid Page');
         }
+
+        this.events = [];
+        this.ready = false;
 
         this.page = page;
         if (panelsPanelStatus.isAnyPanelOpen()) return;

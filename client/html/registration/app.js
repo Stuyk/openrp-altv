@@ -51,16 +51,12 @@ $('button').on('click', e => {
         var remember = $('#rememberMe')[0].checked;
 
         if (username.length <= 5) {
-            showAlertMessage(
-                'Username must be greater than or equal to 6 characters.'
-            );
+            showAlertMessage('Username must be greater than or equal to 6 characters.');
             return;
         }
 
         if (password.length <= 5) {
-            showAlertMessage(
-                'Password must be greater than or equal to 6 characters.'
-            );
+            showAlertMessage('Password must be greater than or equal to 6 characters.');
             return;
         }
 
@@ -154,6 +150,6 @@ if ('alt' in window) {
 
     window.onload = function() {
         $('#username').focus();
-        alt.emit("ready");
-    }
+        alt.emit('ready');
+    };
 }

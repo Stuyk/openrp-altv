@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import * as chat from 'chat';
+import * as chat from '../chat/chat.mjs';
 import * as configurationItems from '../configuration/items.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
@@ -10,7 +10,7 @@ chat.registerCmd('pos', player => {
 
 chat.registerCmd('veh', (player, args) => {
     if (args.length == 0) {
-        chat.send(player, "/veh [carname]");
+        player.send(player, '/veh [carname]');
         args[0] = 'Infernus'; // for dev purposes only |by eappels
     }
     SpawnVehicleInFrontOfPlayer(player, 3, args[0]);
@@ -22,7 +22,7 @@ async function SpawnVehicleInFrontOfPlayer(player, distance, vehiclename) {
         x: player.pos.x + position.x * distance,
         y: player.pos.y + position.y * distance,
         z: player.pos.z + position.z * distance
-    }
+    };
     new alt.Vehicle(vehiclename, pos.x, pos.y, pos.z, 0, 0, 0);
 }
 
@@ -32,12 +32,12 @@ async function getForwardVector(player) {
 }
 
 async function ClientCallback(player, clientEventName, argsArray) {
-    alt.emitClient(player, clientEventName, argsArray);    
-    let promise = new Promise((res, rej) => {
+    alt.emitClient(player, clientEventName, argsArray);
+    let promise = new Promise(res => {
         alt.onClient(clientEventName, (player, resultsArray) => {
             res(resultsArray);
         });
-    });    
+    });
     var result = await promise;
     return result;
 }
@@ -81,11 +81,12 @@ chat.registerCmd('getdrink', player => {
 chat.registerCmd('subitem', player => {
     let itemTemplate = configurationItems.Items['GranolaBar'];
     let result = player.subItem(itemTemplate, 1);
+    console.log(result);
 });
 
 chat.registerCmd('items', player => {
     player.inventory.forEach((item, index) => {
-        player.sendMessage(`[${index}] ${item.label} x${item.quantity}`);
+        player.send(`[${index}] ${item.label} x${item.quantity}`);
     });
 });
 
@@ -98,18 +99,17 @@ chat.registerCmd('addveh', (player, arg) => {
 });
 
 chat.registerCmd('tpto', (player, arg) => {
-
     if (arg[0] == undefined || arg[0] == null) {
-        return player.sendMessage ('tpto [PlayerID]');
+        return player.send('tpto [PlayerID]');
     }
 
-    if (alt.Player.all[arg] == undefined || alt.Player.all[arg] == null ) {
-        return player.sendMessage('Player does not exist.');
+    if (alt.Player.all[arg] == undefined || alt.Player.all[arg] == null) {
+        return player.send('Player does not exist.');
     }
 
     let targetPos = alt.Player.all[arg].pos;
     let targetName = alt.Player.all[arg].name;
 
     player.pos = targetPos;
-    player.sendMessage(`You got teleported to ${targetName} position.`);
+    player.send(`You got teleported to ${targetName} position.`);
 });

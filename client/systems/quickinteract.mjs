@@ -189,13 +189,10 @@ function getEntityFromRaycast(flag, ignorePlayer) {
         }
 
         // Get the Result
-        let [
-            _,
-            _hit,
-            _endCoords,
-            _surfaceNormal,
-            _entity
-        ] = native.getShapeTestResult(ray);
+        // eslint-disable-next-line no-unused-vars
+        let [_, _hit, _endCoords, _surfaceNormal, _entity] = native.getShapeTestResult(
+            ray
+        );
 
         // Check if the entity was hit.
         if (_hit) {

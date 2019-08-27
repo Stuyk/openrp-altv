@@ -1,4 +1,3 @@
-import * as native from 'natives';
 import * as alt from 'alt';
 
 alt.log('Loaded: blips->bliphelper.mjs');

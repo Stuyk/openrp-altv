@@ -4,10 +4,7 @@ let isActive = false;
 let webView;
 
 export function toggleDialogue() {
-    alt.log('called Chat');
-
     if (webView === undefined) {
-        alt.log('setup webview');
         webView = new alt.WebView('http://resources/orp/client/html/chat/index.html');
         webView.on('routeMessage', routeMessage);
         webView.focus();
@@ -15,13 +12,16 @@ export function toggleDialogue() {
     }
 
     if (!isActive) {
-        alt.log('setting to active');
         isActive = true;
         webView.focus();
         webView.emit('showChatInput');
         alt.showCursor(true);
         alt.toggleGameControls(false);
     }
+}
+
+export function send(msg) {
+    webView.emit('appendMessage', msg);
 }
 
 function routeMessage(msg) {
@@ -33,7 +33,5 @@ function routeMessage(msg) {
     if (!msg) return;
     if (msg.length <= 0) return;
 
-    alt.log(msg);
-    alt.emitServer('routeMessage', msg);
-    webView.emit('appendMessage', msg);
+    alt.emitServer('chat:RouteMessage', msg);
 }

@@ -28,18 +28,19 @@ body::-webkit-scrollbar {
 }
 
 #chat-input {
-    background-color: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.75);
     position: fixed;
     color: white;
+    text-shadow: 1px 1px rgba(0, 0, 0);
+    box-shadow: inset 0px 0px 0px 1px black;
     height: 4vh;
-    box-shadow: inset 0px 1px 0px 0px rgba(0, 0, 0, 0.3);
     font-family: 'Circular';
     font-size: 1.5vh;
     padding: 0 0.5vw; // Padding
     margin: 0;
-    bottom: 0vh;
+    bottom: 45.9vh;
     border: none;
-    width: 100vw;
+    width: 35vw;
     overflow: hidden;
 }
 
@@ -48,14 +49,9 @@ body::-webkit-scrollbar {
 }
 
 .msg {
-    margin-bottom: 1vh;
     padding: 0.5vw;
-    background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.5),
-        rgba(0, 0, 0, 0) 75%
-    );
     color: white;
+    text-shadow: 1px 1px rgba(0, 0, 0);
     font-family: 'Circular';
     max-width: 32vw;
     overflow-wrap: break-word;
@@ -63,12 +59,8 @@ body::-webkit-scrollbar {
 }
 
 .msg:hover {
-    font-weight: bold;
-    background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.3),
-        rgba(0, 0, 0, 0) 75%
-    );
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+    opacity: 0.75;
     cursor: pointer;
 }
 

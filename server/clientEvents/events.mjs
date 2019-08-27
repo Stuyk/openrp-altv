@@ -12,6 +12,7 @@ import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
 import * as interactionAtms from '../interactions/atms.mjs';
 import * as characterClothing from '../character/clothing.mjs';
+import * as chat from '../chat/chat.mjs';
 
 // On load; send a message.
 console.log('Loaded: clientEvents->events.mjs');
@@ -37,10 +38,7 @@ alt.onClient('face:ShowDialogue', customizersFace.showFace);
 // ====================================================
 // Utility
 // Go To Last Location
-alt.onClient(
-    'utility:GoToLastLocation',
-    utilityLocationHelper.goToLastLocation
-);
+alt.onClient('utility:GoToLastLocation', utilityLocationHelper.goToLastLocation);
 
 // ====================================================
 // Registration
@@ -48,10 +46,7 @@ alt.onClient(
 alt.onClient('character:SetRoleplayName', characterName.setRoleplayName);
 
 // Interaction Stuff
-alt.onClient(
-    'interaction:Exec',
-    systemsInteraction.attemptToExecuteInteraction
-);
+alt.onClient('interaction:Exec', systemsInteraction.attemptToExecuteInteraction);
 
 // Atm Handler
 alt.onClient('atm:Withdraw', interactionAtms.withdraw);
@@ -71,6 +66,9 @@ alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onClient('vehicle:EngineOn', systemsVehicles.engineOn);
 alt.onClient('vehicle:EngineOff', systemsVehicles.engineOff);
 alt.onClient('vehicle:LockAllDoors', systemsVehicles.lockAllDoors);
+
+// Chat
+alt.onClient('chat:RouteMessage', chat.routeMessage);
 
 // Temporary:
 // teleport to waypoint stuff

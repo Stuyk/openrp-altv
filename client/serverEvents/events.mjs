@@ -13,6 +13,7 @@ import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as systemsSound from 'client/systems/sound.mjs';
 import * as systemsAnimation from 'client/systems/animation.mjs';
 import * as systemsVehicles from 'client/systems/vehicles.mjs';
+import * as panelsChat from 'client/panels/chat.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
@@ -108,3 +109,7 @@ alt.onServer('vehicle:OpenDoor', systemsVehicles.openDoor);
 alt.onServer('vehicle:ShutAllDoors', systemsVehicles.shutAllDoors);
 alt.onServer('vehicle:EngineOn', systemsVehicles.engineOn);
 alt.onServer('vehicle:EngineOff', systemsVehicles.engineOff);
+
+// ==
+// Chat
+alt.onServer('chat:Send', panelsChat.send);

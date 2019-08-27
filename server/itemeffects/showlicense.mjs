@@ -2,8 +2,8 @@ import * as alt from 'alt';
 
 console.log('Loaded: itemeffects->showlicense.mjs');
 
-alt.on('itemeffects:ShowLicense', (player, itemData, message) => {
-    player.sendMessage('You show your license.');
+alt.on('itemeffects:ShowLicense', (player, itemData) => {
+    player.send('You show your license.');
 
-    player.sendMessage(`${JSON.stringify(itemData)}`);
+    player.send(`${JSON.stringify(itemData)}`);
 });

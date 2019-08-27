@@ -98,11 +98,11 @@ export function toggleDoor(player, vehicle, id) {
         if (!Array.isArray(player.vehicles)) return;
 
         if (!player.vehicles.includes(vehicle)) {
-            player.sendMessage('This is not your vehicle.');
+            player.send('This is not your vehicle.');
             return;
         }
 
-        player.sendMessage('Your vehicle is now unlocked.');
+        player.send('Your vehicle is now unlocked.');
         vehicle.lockState = 1;
         return;
     }
@@ -128,7 +128,7 @@ export function engineOn(player) {
     if (!Array.isArray(player.vehicles)) return;
 
     if (!player.vehicles.includes(player.vehicle)) {
-        player.sendMessage('This is not your vehicle.');
+        player.send('This is not your vehicle.');
         return;
     }
 
@@ -142,7 +142,7 @@ export function engineOff(player) {
     if (!Array.isArray(player.vehicles)) return;
 
     if (!player.vehicles.includes(player.vehicle)) {
-        player.sendMessage('This is not your vehicle.');
+        player.send('This is not your vehicle.');
         return;
     }
 
@@ -154,17 +154,17 @@ export function lockAllDoors(player, vehicle) {
     if (!Array.isArray(player.vehicles)) return;
 
     if (!player.vehicles.includes(vehicle)) {
-        player.sendMessage(`Can't lock a car you don't own.`);
+        player.send(`Can't lock a car you don't own.`);
         return;
     }
 
     if (vehicle.lockState === 1) {
         vehicle.lockState = 2;
         vehicle.honkHorn(2, 100);
-        player.sendMessage('Vehicle was locked.');
+        player.send('Vehicle was locked.');
     } else {
         vehicle.lockState = 1;
         vehicle.honkHorn(1, 100);
-        player.sendMessage('Vehicle was unlocked.');
+        player.send('Vehicle was unlocked.');
     }
 }

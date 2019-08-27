@@ -38,6 +38,12 @@ export function setupPlayerFunctions(player) {
     };
 
     // ====================================
+    // Chat
+    player.send = msg => {
+        alt.emitClient(player, 'chat:Send', msg);
+    };
+
+    // ====================================
     // Save Last Location
     player.saveLocation = pos => {
         player.data.lastposition = pos;
@@ -254,15 +260,15 @@ export function setupPlayerFunctions(player) {
         if (taxType === 0) {
             let cashTaxAmount = cash * percentage;
             player.subCash(cashTaxAmount);
-            player.sendMessage(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
+            player.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
         } else {
             let bankTaxAmount = bank * percentage;
             player.subBank(bankTaxAmount);
             player.saveField(player.data.id, 'bank', player.data.bank);
-            player.sendMessage(`You were taxed: $${bankTaxAmount.toFixed(2) * 1}`);
+            player.send(`You were taxed: $${bankTaxAmount.toFixed(2) * 1}`);
         }
 
-        player.sendMessage(`Reason: ${reason}`);
+        player.send(`Reason: ${reason}`);
     };
 
     // ====================================
@@ -414,7 +420,7 @@ export function setupPlayerFunctions(player) {
 
         if (index <= -1) return false;
 
-        player.sendMessage(`${player.inventory[index].label} was destroyed.`);
+        player.send(`${player.inventory[index].label} was destroyed.`);
         player.subItemByHash(itemHash, 1);
         return true;
     };
@@ -496,9 +502,7 @@ export function setupPlayerFunctions(player) {
             if (
                 player.vehicles.length >= configurationPlayer.PlayerDefaults.maxvehicles
             ) {
-                player.sendMessage(
-                    `You are not allowed to have any additional vehicles.`
-                );
+                player.send(`You are not allowed to have any additional vehicles.`);
                 return;
             }
         }

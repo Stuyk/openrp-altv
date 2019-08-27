@@ -53,14 +53,14 @@ function handleMessage(player, msg) {
     if (player.data === undefined) return;
 
     if (player.data.name === null) {
-        alt.emitClient(player, 'chooseRoleplayName');
+        player.showRoleplayNameDialogue();
         return;
     }
 
     var playersInRange = vector.getPlayersInRange(player.pos, ChatConfig.maxChatRange);
-    const sender = player.data.name;
+    const sender = player.data.name.replace('_', ' ');
 
     for (var i = 0; i < playersInRange.length; i++) {
-        playersInRange[i].send(`${sender}: ${msg}`);
+        playersInRange[i].send(`${sender} says: ${msg}`);
     }
 }

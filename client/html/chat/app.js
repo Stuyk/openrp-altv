@@ -129,7 +129,7 @@ class App extends Component {
                 h(
                     'input',
                     {
-                        class: 'animated fadeIn',
+                        class: 'animated fadeIn hidden',
                         id: 'chat-input',
                         type: 'text',
                         maxlength: '255'

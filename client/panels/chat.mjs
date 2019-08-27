@@ -1,17 +1,20 @@
 import * as alt from 'alt';
-
+import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 let isActive = false;
-let webView;
+let webView = new alt.WebView('http://resources/orp/client/html/chat/index.html');
+webView.on('routeMessage', routeMessage);
 
 export function toggleDialogue() {
     if (webView === undefined) {
-        webView = new alt.WebView('http://resources/orp/client/html/chat/index.html');
         webView.on('routeMessage', routeMessage);
         webView.focus();
         webView.unfocus();
     }
 
+    if (panelsPanelStatus.isAnyPanelOpen()) return;
+
     if (!isActive) {
+        alt.emit('panel:SetStatus', 'chat', true);
         isActive = true;
         webView.focus();
         webView.emit('showChatInput');
@@ -25,6 +28,7 @@ export function send(msg) {
 }
 
 function routeMessage(msg) {
+    alt.emit('panel:SetStatus', 'chat', false);
     alt.toggleGameControls(true);
     alt.showCursor(false);
     webView.unfocus();

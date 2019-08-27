@@ -11,9 +11,7 @@ if (!fs.existsSync('./resources/orp/terms-and-conditions.json')) {
         'Please read the terms and conditions and modify accordingly under terms-and-conditions.json'
     );
 } else {
-    const data = fs
-        .readFileSync('./resources/orp/terms-and-conditions.json')
-        .toString();
+    const data = fs.readFileSync('./resources/orp/terms-and-conditions.json').toString();
     const parsed = JSON.parse(data);
     if (!parsed.do_you_agree)
         throw new Error(

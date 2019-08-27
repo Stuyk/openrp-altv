@@ -336,7 +336,6 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 10,
-
         func: updateFaceFeature,
         isFaceFeature: true
     }, // 25
@@ -459,6 +458,7 @@ const facialFeatures = {
         max: 28,
         increment: 1,
         id: 1,
+        colorType: 1,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['FacialHair']
@@ -470,6 +470,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 1,
+        colorType: 1,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['FacialHair']
@@ -493,6 +494,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 1,
+        colorType: 1,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['FacialHair']
@@ -504,6 +506,7 @@ const facialFeatures = {
         max: 33,
         increment: 1,
         id: 2,
+        colorType: 1,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Eyebrows']
@@ -515,6 +518,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 2,
+        colorType: 1,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Eyebrows']
@@ -538,6 +542,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 2,
+        colorType: 1,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Eyebrows']
@@ -571,6 +576,7 @@ const facialFeatures = {
         max: 74,
         increment: 1,
         id: 4,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Makeup']
@@ -582,6 +588,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 4,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Makeup']
@@ -593,7 +600,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 4,
-        colorType: 1,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Makeup']
@@ -605,6 +612,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 4,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Makeup']
@@ -616,6 +624,7 @@ const facialFeatures = {
         max: 6,
         increment: 1,
         id: 5,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Blush']
@@ -627,6 +636,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 5,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Blush']
@@ -638,7 +648,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 5,
-        colorType: 1,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Blush']
@@ -694,6 +704,7 @@ const facialFeatures = {
         max: 9,
         increment: 1,
         id: 8,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Lipstick']
@@ -705,6 +716,7 @@ const facialFeatures = {
         max: 1,
         increment: 0.1,
         id: 8,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Lipstick']
@@ -716,7 +728,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 8,
-        colorType: 1,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Lipstick']
@@ -728,6 +740,7 @@ const facialFeatures = {
         max: 1,
         increment: 1,
         id: 8,
+        colorType: 2,
         func: updateFaceDecor,
         isFacialDecor: true,
         group: faceGroups['Lipstick']
@@ -830,25 +843,29 @@ class App extends Component {
         this.setState({ faceData, hairChanged: false });
     }
 
-    setItemValue(index, increment) {
+    setItemValue(index, increment, sliderValue) {
         // Make a copy of the state.
         let faceData = [...this.state.faceData];
 
         // Modify the state.
-        if (increment) {
-            // Increase Face Data Increment
-            faceData[index].value += faceData[index].increment;
+        if (increment !== undefined) {
+            if (increment) {
+                // Increase Face Data Increment
+                faceData[index].value += faceData[index].increment;
 
-            if (faceData[index].value > faceData[index].max) {
-                faceData[index].value = faceData[index].min;
+                if (faceData[index].value > faceData[index].max) {
+                    faceData[index].value = faceData[index].min;
+                }
+            } else {
+                // Subtract Face Data Increment
+                faceData[index].value -= faceData[index].increment;
+
+                if (faceData[index].value < faceData[index].min) {
+                    faceData[index].value = faceData[index].max;
+                }
             }
         } else {
-            // Subtract Face Data Increment
-            faceData[index].value -= faceData[index].increment;
-
-            if (faceData[index].value < faceData[index].min) {
-                faceData[index].value = faceData[index].max;
-            }
+            faceData[index].value = sliderValue;
         }
 
         // Hair Updates
@@ -879,7 +896,7 @@ class App extends Component {
         }
 
         // Normalize decimals for the value.
-        faceData[index].value = faceData[index].value.toFixed(2) * 1;
+        faceData[index].value = parseFloat(faceData[index].value).toFixed(2) * 1;
 
         // Execute the paired function.
         faceData[index].func(faceData, index);
@@ -960,6 +977,11 @@ const FaceItem = ({ index, item, setItemValue }) => {
     right = () => {
         setItemValue(index, true);
     };
+    change = () => {
+        let sliderValue = document.getElementById(`${item.label.split(' ').join('')}`)
+            .value;
+        setItemValue(index, undefined, sliderValue);
+    };
     return h(
         'div',
         { class: 'mod' },
@@ -977,6 +999,15 @@ const FaceItem = ({ index, item, setItemValue }) => {
                 },
                 '<'
             ),
+            h('input', {
+                id: `${item.label.split(' ').join('')}`,
+                type: 'range',
+                min: item.min,
+                max: item.max,
+                step: item.increment,
+                value: item.value,
+                oninput: this.change.bind(this)
+            }),
             h(
                 'button',
                 {

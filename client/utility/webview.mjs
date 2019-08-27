@@ -65,7 +65,9 @@ export class WebView {
         ref.view.unfocus();
         ref.view.destroy();
         ref.view = undefined;
-        alt.showCursor(false);
+        try {
+            alt.showCursor(false);
+        } catch (err) {}
         alt.off('update', ref.disableControls);
         alt.toggleGameControls(true);
         alt.emit('panel:SetStatus', ref.page, false);

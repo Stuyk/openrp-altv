@@ -1,23 +1,44 @@
 import * as alt from 'alt';
+
+// Registration
 import * as registration from 'client/registration/registration.mjs';
-import * as customizersCharacter from 'client/customizers/character.mjs';
-import * as characterFace from 'client/character/face.mjs';
-import * as utilityScreenFades from 'client/utility/screenfades.mjs';
-import * as panelsName from 'client/panels/name.mjs';
+
+// Blips
 import * as blipsBlipHelper from 'client/blips/bliphelper.mjs';
-import * as panelsAtm from 'client/panels/atm.mjs';
-import * as panelsInventory from 'client/panels/inventory.mjs';
+
+// Character
 import * as characterClothing from 'client/character/clothing.mjs';
+import * as characterFace from 'client/character/face.mjs';
+
+// Customizers
 import * as customizersClothing from 'client/customizers/clothing.mjs';
+import * as customizersCharacter from 'client/customizers/character.mjs';
+
+// Systems
 import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as systemsSound from 'client/systems/sound.mjs';
 import * as systemsAnimation from 'client/systems/animation.mjs';
 import * as systemsVehicles from 'client/systems/vehicles.mjs';
 import * as systemsJob from 'client/systems/job.mjs';
+
+// Panels
 import * as panelsChat from 'client/panels/chat.mjs';
+import * as panelsAtm from 'client/panels/atm.mjs';
+import * as panelsName from 'client/panels/name.mjs';
+import * as panelsInventory from 'client/panels/inventory.mjs';
+
+// Utility
+import * as utilityScreenFades from 'client/utility/screenfades.mjs';
 
 alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 
+// =============================================
+// Quick Summary:
+// This file looks this way because this is the only
+// solution that won't over-engineer our imports.
+// Importing each individual file this way; allows us
+// to easily import a majority of code without importing
+// nearly as many files in various other places.
 // =============================================
 // REGISTRATION / LOGIN
 // Called when the player first joins the server,

@@ -3,6 +3,7 @@ import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as configurationClothing from '../configuration/clothing.mjs';
 import * as configurationPlayer from '../configuration/player.mjs';
+import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsTime from '../systems/time.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
@@ -60,6 +61,12 @@ export function setupPlayerFunctions(player) {
     player.saveDead = value => {
         player.data.dead = value;
         player.saveField(player.data.id, 'dead', value);
+    };
+
+    // ====================================
+    // Sync Interaction Blips
+    player.syncInteractionBlips = () => {
+        systemsInteraction.syncBlips(player);
     };
 
     // ====================================

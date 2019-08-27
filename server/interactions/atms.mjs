@@ -16,7 +16,7 @@ for (let i = 0; i < configurationAtms.Locations.length; i++) {
     pos.z -= 1;
 
     // position, type, serverEventName, radius, height
-    let res = new systemsInteraction.Interaction(
+    let interaction = new systemsInteraction.Interaction(
         pos,
         'atm', // type
         'atm:ShowDialogue', // The event to call when the player presses 'E'.
@@ -25,15 +25,8 @@ for (let i = 0; i < configurationAtms.Locations.length; i++) {
         'to use the ATM.'
     );
 
-    atms.push(res);
-}
-
-// We go through the atm list; create a blip for each one.
-// This is called when the player joins the server.
-export function synchronizeBlips(player) {
-    atms.forEach(element => {
-        player.createBlip(element.pos, 108, 2, 'ATM');
-    });
+    interaction.addBlip(108, 2, 'ATM');
+    atms.push(interaction);
 }
 
 // Called when the player wants to make a withdrawl from the ATM.

@@ -35,7 +35,9 @@ export function closeDialogue() {
     webView.off('setname', setRoleplayName);
     webView.unfocus();
     webView.destroy();
-    alt.showCursor(false);
+    try {
+        alt.showCursor(false);
+    } catch (err) {}
     alt.toggleGameControls(true);
 }
 

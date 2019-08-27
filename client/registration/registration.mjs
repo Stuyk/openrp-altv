@@ -6,8 +6,12 @@ alt.log('Loaded: client->registration->registration.mjs');
 const urlForView = 'http://resources/orp/client/html/registration/index.html';
 let registerWebview = undefined;
 let loginCamera = undefined;
-
 let lastTriedUsername = null;
+
+native.doScreenFadeOut(0);
+alt.setTimeout(() => {
+    native.doScreenFadeIn(5000);
+}, 7500);
 
 /**
  * Show the login camera to the local player.

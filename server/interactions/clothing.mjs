@@ -1,5 +1,4 @@
 import * as alt from 'alt';
-import * as systemsInteraction from '../systems/interaction.mjs';
 import * as configurationClothing from '../configuration/clothing.mjs';
 
 console.log('Loaded: interactions->clothing.mjs');
@@ -18,11 +17,6 @@ alt.on('clothing:ShowDialogue', player => {
 // This is called when the player joins the server.
 export function synchronizeBlips(player) {
     for (let i = 0; i < configurationClothing.Locations.length; i++) {
-        player.createBlip(
-            configurationClothing.Locations[i],
-            73,
-            8,
-            'Clothing Store'
-        );
+        player.createBlip(configurationClothing.Locations[i], 73, 8, 'Clothing Store');
     }
 }

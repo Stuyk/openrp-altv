@@ -28,6 +28,16 @@ export class Interaction {
         interactions.push(this);
     }
 
+    // Add a blip
+    addBlip(sprite, color, label) {
+        this.blip = {
+            position: this.pos,
+            sprite: sprite,
+            color: color,
+            label: label
+        };
+    }
+
     // Call the server event from anywhere on the server-side.
     exec(player) {
         if (utilityVector.distance(player.pos, this.pos) > this.radius) {
@@ -37,6 +47,14 @@ export class Interaction {
 
         alt.emit(this.serverEventName, player, this.indexValue);
     }
+}
+
+// Synchronize Blips
+export function syncBlips(player) {
+    interactions.forEach(i => {
+        if (!i.blip) return;
+        player.createBlip(i.blip.position, i.blip.sprite, i.blip.color, i.blip.label);
+    });
 }
 
 // Forward the event for the colshape they just entered.

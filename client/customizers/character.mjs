@@ -160,6 +160,7 @@ function updatePlayerFace(valuesAsJSON) {
 // Player Face Decor, SunDamage, Makeup, Lipstick, etc.
 function updateFaceDecor(id, colorType, dataAsJSON) {
     let results = JSON.parse(dataAsJSON);
+    alt.log(colorType);
     native.setPedHeadOverlay(modPed, id, results[0], results[1]);
 
     // Only if one color is present.

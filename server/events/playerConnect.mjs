@@ -27,6 +27,5 @@ alt.on('playerConnect', player => {
     player.showRegisterDialogue(RegisterCamPoint, RegisterCamDirection);
 
     // Setup Interactions
-    interactionsAtms.synchronizeBlips(player);
     interactionsClothing.synchronizeBlips(player);
 });

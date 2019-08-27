@@ -7,7 +7,16 @@ const jobs = configurationJob.Configuration;
 
 jobs.forEach((job, index) => {
     //position, type, serverEventName, radius, height, message, indexValue)
-    new Interaction(job.start, 'job', 'job:StartJob', 3, 2, job.name, index);
+    let interact = new Interaction(
+        job.start,
+        'job',
+        'job:StartJob',
+        3,
+        2,
+        job.name,
+        index
+    );
+    interact.addBlip(job.blipSprite, job.blipColor, job.name);
 });
 
 /* The way these jobs work....

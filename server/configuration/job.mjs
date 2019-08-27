@@ -2,6 +2,8 @@ export const Configuration = [
     // Test Job
     {
         name: 'Test Job',
+        blipSprite: 79,
+        blipColor: 2,
         start: {
             x: 786.3692626953125,
             y: -278.8483581542969,

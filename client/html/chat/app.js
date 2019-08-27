@@ -230,10 +230,10 @@ function ready() {
     };
 
     if ('alt' in window) {
-        alt.on('showChatInput', showChatInput);
-        alt.on('appendMessage', appendMessage);
+        alt.on('showChatInput', showChatInput); // Show the input.
+        alt.on('appendMessage', appendMessage); // Non Formatted Messages
         alt.on('appendMessageSpecial', appendMessageSpecial); // Preformated Objects
         //alt.on('appendMessageClickable'); // Soon ^tm;
-        alt.on('clearChatBox', clearChatBox);
+        alt.on('clearChatBox', clearChatBox); // Clears the chat box.
     }
 }

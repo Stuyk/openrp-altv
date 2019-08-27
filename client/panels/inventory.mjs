@@ -66,7 +66,9 @@ function close() {
     webview.off('fetchItems', fetchItems);
     webview.off('close', close);
     webview.destroy();
-    alt.showCursor(false);
+    try {
+        alt.showCursor(false);
+    } catch (err) {}
     alt.toggleGameControls(true);
     alt.off('update', disableControls);
     alt.emit('panel:SetStatus', 'inventory', false);

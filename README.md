@@ -45,6 +45,14 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Animation Manager
 -   [x] Splash Screens
 -   [x] Custom Sounds! Blat!
+-   [x] Custom Chat
+-   [x] Custom Chat Commands
+-   [x] Custom Chat Colors
+-   [ ] Custom Chat Notification Functions / Clickables
+-   [ ] Custom Chat is Repositionable?
+-   [x] Roleplay Commands (/me, /do, /b, /cc)
+-   [x] Ranged Chat
+-   [ ] Voice Chat
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 
@@ -55,8 +63,6 @@ If you don't have NodeJS; please go install it.
 The file structure below is the **required** structure you must use for this game mode. You must follow it exactly for this resource to work.
 
 -   Grab the latest version of the alt:V server files. They must be clean. No resources.
-
--   Download [Chat-Extended](https://github.com/team-stuyk-alt-v/altV-Chat-Extended) and rename the resource to `chat` and place it inside of your `resources` folder. Open up `server.mjs` inside of `chat` and change `cancelAllChat` to `true`. This enables ranged chat for this resource. Directly inside you should have `resource.cfg` if done correctly.
 
 -   Download [Postgres-Wrapper](https://github.com/team-stuyk-alt-v/altV-Postgres-Wrapper) this is the Postgres SQL helper that was written to make database usage easy. Extract it and put this into a folder called `postgres-wrapper`. Directly inside you should have `resource.cfg` if done correctly.
 
@@ -96,11 +102,6 @@ export const DatabaseInfo = {
 ```yaml
 altVServerFolder/
 └── resources/
-|   ├── chat/
-|   |   ├── index.mjs
-|   |   ├── client.mjs
-|   |   ├── resource.cfg
-|   |   └── html/
 |   ├── orp/
 |   |   ├── server/
 |   |   ├── client/

@@ -1,6 +1,3 @@
-import * as alt from 'alt';
-import * as chatChat from '../chat/chat.mjs';
-
 // On load; send a message.
 console.log('Loaded: serverEvents->serverEventRouting.mjs');
 

@@ -41,6 +41,7 @@ alt.on('ConnectionComplete', () => {
     // Sandbox Commands
     import('./commands/sandbox.mjs');
     import('./commands/revive.mjs');
+    import('./commands/roleplay.mjs');
 
     // Systems
     import('./systems/vehicles.mjs');

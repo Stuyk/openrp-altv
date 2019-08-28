@@ -847,6 +847,11 @@ class App extends Component {
         // Make a copy of the state.
         let faceData = [...this.state.faceData];
 
+        // Play ticky noises :)
+        var audio = new Audio('../sound/sounds/tick.ogg');
+        audio.volume = 0.35;
+        audio.play();
+
         // Modify the state.
         if (increment !== undefined) {
             if (increment) {
@@ -997,7 +1002,7 @@ const FaceItem = ({ index, item, setItemValue }) => {
                     class: 'left button',
                     onclick: this.left.bind(this)
                 },
-                '<'
+                '-'
             ),
             h('input', {
                 id: `${item.label.split(' ').join('')}`,
@@ -1014,7 +1019,7 @@ const FaceItem = ({ index, item, setItemValue }) => {
                     class: 'right button',
                     onclick: this.right.bind(this)
                 },
-                '>'
+                '+'
             )
         )
     );

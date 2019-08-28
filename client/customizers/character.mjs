@@ -27,6 +27,7 @@ let lastHair = 0; // Get the last hair the player set.
 // Load the character customizer, freeze controls, create camera, and ped.
 export function showDialogue() {
     if (modPed !== undefined) return;
+    alt.emit('panel:SetStatus', 'character', true);
 
     // Reload Active Res for Reference
     [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(0, 0);
@@ -53,6 +54,8 @@ export function showDialogue() {
         false,
         false
     );
+
+    native.setPedComponentVariation(modPed, 6, 1, 0, 0);
 
     // Set the head blend data to 0 to prevent texture issues.
     native.setPedHeadBlendData(modPed, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
@@ -81,7 +84,7 @@ export function showDialogue() {
     );
 
     // Point camera at entity; with no offset.
-    native.pointCamAtPedBone(characterCamera, modPed, 31086, 0, 0, 0, false);
+    native.pointCamAtPedBone(characterCamera, modPed, 31086, 0.1, 0, 0, false);
 
     // Render the now setup camera; to the player.
     native.renderScriptCams(true, false, 0, true, false);
@@ -229,6 +232,9 @@ function resetCamera(modelToUse) {
         false
     );
 
+    // Lower User
+    native.setPedComponentVariation(modPed, 6, 1, 0, 0);
+
     // Set Hair Fuzz
     native.setPedDecoration(
         modPed,
@@ -242,7 +248,7 @@ function resetCamera(modelToUse) {
     updateHairColorChoices();
 
     // Point camera at entity; with no offset.
-    native.pointCamAtPedBone(characterCamera, modPed, 31086, 0, 0, 0, false);
+    native.pointCamAtPedBone(characterCamera, modPed, 31086, 0.1, 0, 0, false);
 
     // Render the now setup camera; to the player.
     native.renderScriptCams(true, false, 0, true, false);
@@ -266,6 +272,7 @@ function updateCamera() {
 
 function setPlayerFacialData(facialDataJSON) {
     alt.emitServer('face:SetFacialData', facialDataJSON);
+    alt.emit('panel:SetStatus', 'character', false);
 
     // Remove the CharacterCamera
     characterCamera = undefined;
@@ -320,7 +327,7 @@ function onUpdateEventCharacterCustomizer() {
 
     // Scroll to zoom in.
     if (native.isDisabledControlPressed(0, 14)) {
-        if (cursorRelativePos > screenWidth - screenWidth / 4) return;
+        if (cursorRelativePos < screenWidth / 4) return;
 
         fov += 2;
         if (fov >= 29) fov = 28;
@@ -329,7 +336,7 @@ function onUpdateEventCharacterCustomizer() {
 
     // Scroll to zoom out
     if (native.isDisabledControlPressed(0, 15)) {
-        if (cursorRelativePos > screenWidth - screenWidth / 4) return;
+        if (cursorRelativePos < screenWidth / 4) return;
 
         fov -= 2;
         if (fov <= 16) fov = 17;

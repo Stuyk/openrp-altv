@@ -5,115 +5,208 @@ import * as utilityMarker from 'client/utility/marker.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
 
-const validTypes = [
+const objectiveTypes = [
     { name: 'point', func: pointType },
     { name: 'capture', func: captureType },
     { name: 'retreive', func: retrieveType },
-    { name: 'dropoff', func: dropOffType }
+    { name: 'dropoff', func: dropOffType },
+    { name: 'hack', func: hackType }
 ];
+
+const callbackTypes = [{ name: 'hack', func: hackCallback }];
+
+const jobFunctions = {
+    'job:Start': { func: jobStart }, // Start a Job
+    'job:Clear': { func: jobClear }, // Clear a Job
+    'job:Update': { func: jobUpdate }, // Update the Job Progress
+    'job:Progress': { func: jobProgress }, // Progress to Next Job Point
+    'job:Callback': { func: jobCallback }
+};
+
+let currentJob;
+let currentPointIndex;
 let currentPoint;
+let currentBlip;
+let currentObjective;
+let currentProgress = 0;
+let pause = false;
+
 let currentInterval;
 let isUpdateActive;
 
-export function sync() {
-    const current = JSON.parse(alt.Player.local.getSyncedMeta('job'));
-    const point = alt.Player.local.getSyncedMeta('jobpoint');
+alt.on('syncedMetaChange', (entity, key, value) => {
+    if (entity !== alt.Player.local) return; // Local Player Only
 
-    // Clearing the current point.
-    if (currentPoint) {
-        currentPoint.blip.destroy();
-        currentPoint = undefined;
+    // Call the job function for the synced meta change.
+    if (jobFunctions[key] !== undefined) {
+        jobFunctions[key].func(value);
     }
+});
 
-    // Clearing the current check objective interval.
-    // Turn off the update function for a moment.
-    if (currentInterval !== undefined) {
-        alt.log(currentInterval);
-        alt.clearInterval(currentInterval);
-        alt.off('update', drawObjectiveInfo);
-        currentInterval = undefined;
-        isUpdateActive = false;
-    }
+// This means to start an interval an and update method.
+// Store the data above.
+function jobStart() {
+    // Clear Current Job Info
+    jobClear();
 
-    if (current === null || current === undefined) return;
+    // Get Current Job Info
+    currentJob = JSON.parse(alt.Player.local.getSyncedMeta('job:Job'));
+    currentPointIndex = alt.Player.local.getSyncedMeta('job:PointIndex'); // Always a number.
 
-    // Getting the point data.
-    let pointData = current.points[point];
+    // Store Point Info
+    currentPoint = currentJob.points[currentPointIndex];
+    parseJobInfo(currentPoint);
 
-    // Checking if the provided point type is valid.
-    if (validTypes.includes(x => x.name === pointData.type) === undefined) {
-        throw new Error('Invalid job point type. Please use lowercase.');
-    }
+    // Turn on the Interval
+    currentInterval = alt.setInterval(checkPoint, 100);
 
-    // Setup new blip for point.
-    const blip = new alt.PointBlip(
-        pointData.position.x,
-        pointData.position.y,
-        pointData.position.z
-    );
-    blip.shortRange = false;
-    blip.sprite = pointData.blipSprite;
-    blip.color = pointData.blipColor;
-    blip.name = pointData.name;
-
-    // Setting current point data.
-    currentPoint = {
-        position: pointData.position,
-        func: validTypes.find(x => x.name === pointData.type).func,
-        blip
-    };
-
-    // Turning on the interval
-    currentInterval = alt.setInterval(checkObjective, 500);
+    // Turn on the Update
+    isUpdateActive = true;
+    alt.on('update', drawPointInfo);
 }
 
-function checkObjective() {
-    // Establish the Draw Object Info Update
-    if (!isUpdateActive) {
-        isUpdateActive = true;
-        alt.on('update', drawObjectiveInfo);
+function jobClear() {
+    // Set current job/point info to undefined.
+    currentJob = undefined;
+    currentPoint = undefined;
+    currentPointIndex = undefined;
+    currentObjective = undefined;
+
+    // Destroy Current Blip
+    if (currentBlip !== undefined) {
+        currentBlip.destroy();
+        currentBlip = undefined;
     }
 
-    let isObjectiveComplete = currentPoint.func();
-    if (!isObjectiveComplete) return;
+    // Clear Existing Interval
+    if (currentInterval !== undefined) {
+        alt.clearInterval(currentInterval);
+        currentInterval = undefined;
+    }
 
+    // Clear Current Update Function
+    if (isUpdateActive) {
+        alt.off('update', drawPointInfo);
+        isUpdateActive = false;
+    }
+}
+
+// Called to update the current job info.
+function jobUpdate() {
+    pause = true;
+    currentJob = JSON.parse(alt.Player.local.getSyncedMeta('job:Job'));
+    currentPointIndex = alt.Player.local.getSyncedMeta('job:PointIndex');
+    currentPoint = currentJob.points[currentPointIndex];
+    parseJobInfo(currentPoint);
+    pause = false;
+}
+
+// Called to progress to the next job point.
+function jobProgress(value) {
+    currentProgress = value;
+    alt.log(value);
+}
+
+function jobCallback(value) {
+    //  { type: obj.type, callback: callbackname }
+    const info = JSON.parse(value);
+    const type = callbackTypes.find(x => x.name === info.type);
+    type.func(info.callback);
+}
+
+function parseJobInfo(currentPoint) {
+    // Current Objective Function
+    currentObjective = objectiveTypes.find(x => x.name === currentPoint.type).func;
+
+    if (currentBlip !== undefined) {
+        currentBlip.destroy();
+        currentBlip = undefined;
+    }
+
+    // Create Point Blip
+    currentBlip = new alt.PointBlip(
+        currentPoint.position.x,
+        currentPoint.position.y,
+        currentPoint.position.z
+    );
+    currentBlip.shortRange = false;
+    currentBlip.sprite = currentPoint.blipSprite;
+    currentBlip.color = currentPoint.blipColor;
+    currentBlip.name = currentPoint.name;
+}
+
+// How should this work?
+// Call the objective based on point type.
+// If the point type returns true;
+// Use the TestObjective event.
+// TestObjective will relay back down update Objective Info
+function checkPoint() {
+    if (pause) return;
+    if (currentObjective === undefined) return;
+    let isTestReady = currentObjective();
+    if (!isTestReady) return;
     alt.emitServer('job:TestObjective');
 }
 
-function drawObjectiveInfo() {
+// Draw HUD Elements / Markers for the user.
+function drawPointInfo() {
+    if (pause) return;
     if (currentPoint === undefined) return;
 
-    utilityMarker.drawMarker(
-        1,
-        currentPoint.position,
-        new alt.Vector3(0, 0, 0),
-        new alt.Vector3(0, 0, 0),
-        new alt.Vector3(3, 3, 3),
-        0,
-        255,
-        0,
-        100
-    );
-}
+    let dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
 
-function pointType() {
-    alt.log('Checking point type');
-
-    if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) <= 3) {
-        return true;
+    // Draw Marker
+    if (dist <= 75) {
+        utilityMarker.drawMarker(
+            currentPoint.markerType,
+            currentPoint.position,
+            new alt.Vector3(0, 0, 0),
+            new alt.Vector3(0, 0, 0),
+            new alt.Vector3(currentPoint.range, currentPoint.range, currentPoint.range),
+            currentPoint.markerColor.r,
+            currentPoint.markerColor.g,
+            currentPoint.markerColor.b,
+            currentPoint.markerColor.a
+        );
     }
 
+    // Draw Specific to Range
+    if (dist <= currentPoint.range) {
+        //
+    }
+}
+
+// When a player enters a point's range.
+function pointType() {
+    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
+    if (dist <= currentPoint.range) return true;
     return false;
 }
 
+// Drops off a retrieved 'object' that is 'stored' on the player.
 function dropOffType() {
     //
 }
 
+// Retrieves an 'object' and stores it on the player.
 function retrieveType() {
     //
 }
 
+// Must stand inside a point and do something for 'x' seconds.
 function captureType() {
-    //
+    if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) >= 3)
+        return false;
+    return true;
+}
+
+// When pressing 'E' do whatever.
+function hackType() {
+    if (!native.isControlPressed(0, 38)) return false;
+    return true;
+}
+
+function hackCallback(callbackname) {
+    // have to provide the name again; otherwise callback isn't turned off.
+    alt.emitServer(callbackname, callbackname, native.isControlPressed(0, 38));
 }

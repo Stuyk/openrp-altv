@@ -34,62 +34,206 @@ jobs.forEach((job, index) => {
  12. Cleanup job after finishing. 
  */
 
+const objectiveTypes = [
+    { name: 'point', func: pointType },
+    { name: 'capture', func: captureType },
+    { name: 'retreive', func: retrieveType },
+    { name: 'dropoff', func: dropOffType },
+    { name: 'hack', func: hackType }
+];
+
 alt.on('job:StartJob', (player, index) => {
     if (index === undefined) return;
 
+    // Finds the job we're attempting to start.
     let currentJob = jobs[index];
     if (!player.job) player.job = {};
 
-    if (player.job.active) {
-        player.send('Finish what you started.');
-        return;
-    }
+    // Setup the job information for server-side.
+    player.job.currentJob = currentJob;
+    player.job.currentPointIndex = 0;
+    player.job.currentPoint = currentJob.points[0];
+    player.send('Starting job.');
 
-    player.job.active = true;
-    player.job.current = currentJob;
-    player.job.point = 0;
-    player.job.position = currentJob.points[player.job.point].position;
-    player.syncJob(JSON.stringify(currentJob));
-    player.syncJobPoint(0, true); // The last parameter synchronizes to client-side.
-    player.send('Starting job!');
+    // Sync the meta.
+    syncMeta(player, 0, true);
 });
+
+function syncMeta(player, index, isStart) {
+    // Set Synced Meta
+    player.setSyncedMeta('job:Job', JSON.stringify(player.job.currentJob));
+    player.setSyncedMeta('job:PointIndex', index);
+
+    if (isStart) {
+        // New Job
+        player.setSyncedMeta('job:Start', Date.now());
+    } else {
+        // Existing Job
+        player.setSyncedMeta('job:Update', Date.now());
+    }
+}
+
+function clearJob(player) {
+    player.setSyncedMeta('job:Job', undefined);
+    player.setSyncedMeta('job:PointIndex', undefined);
+    player.setSyncedMeta('job:Clear', Date.now());
+    player.job = {};
+}
 
 // Us
 export function testObjective(player) {
-    if (player.job.isTesting) return;
-    if (!player.job.active) return;
+    // No Job Found; why are you testing?
+    if (player.job === undefined) return;
+    if (player.job.currentJob === undefined) return;
+    if (player.job.testing) return;
 
-    // Begin testing again.
-    player.job.isTesting = true;
+    // Prevent testing multiple times.
+    player.job.testing = true;
 
-    // Failed Distance Check
-    if (utilityVector.distance(player.pos, player.job.position) > 3) {
-        player.job.isTesting = false;
+    // Distance check first
+    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
+
+    // Incorrect distance for the user.
+    if (dist > player.job.currentPoint.range) {
+        player.job.testing = false;
         return;
     }
 
-    // Add Objective Reard
-    if (player.job.current.points[player.job.point].reward > 0) {
-        player.addCash(player.job.current.points[player.job.point].reward);
-    }
+    // Check if the objective type exists.
+    let objective = objectiveTypes.find(x => x.name === player.job.currentPoint.type);
 
-    // Increment the Job Point
-    player.send('Objective Complete');
-    player.job.point += 1;
-
-    // Check if a objective Exists
-    if (player.job.current.points[player.job.point] === undefined) {
-        player.send('Job Completed');
-        player.syncJob(null, false);
-        player.syncJobPoint(null, true);
-        player.job.active = false;
-        player.job.isTesting = false;
+    // Bad Objective
+    if (objective === undefined) {
+        console.error(
+            `ERROR => Invalid Job Objective Type: ${player.job.currentPoint.type}`
+        );
+        player.job.testing = false;
         return;
     }
 
-    // Go to the next objective.
-    player.job.position = player.job.current.points[player.job.point].position;
-    player.syncJobPoint(player.job.point, true);
-    player.send('Proceed to the next point.');
-    player.job.isTesting = false;
+    // Pass the player and distance to objective.
+    // Will process the rest in a bit.
+    objective
+        .func(player, dist, player.job.currentPoint)
+        .catch(res => {
+            if (!res) return;
+            player.job.deferredPromise = undefined;
+            player.job.testing = false;
+        })
+        .then(res => {
+            if (!res) return;
+            player.job.deferredPromise = undefined;
+            // Add reward before increment.
+            if (player.job.currentPoint.reward > 0) {
+                player.addCash(player.job.currentPoint.reward);
+            }
+
+            // Objective was successful; move to next.
+            player.job.currentPointIndex += 1;
+
+            // Update current point.
+            const index = player.job.currentPointIndex;
+            player.job.currentPoint = player.job.currentJob.points[index];
+
+            // The job is complete.
+            if (player.job.currentPoint === undefined) {
+                player.send('Job is complete.');
+                clearJob(player);
+                return;
+            }
+
+            // The job is still going...
+            syncMeta(player, index, false);
+            player.job.testing = false;
+            player.send('Proceed to next objective.');
+            return;
+        });
+}
+
+async function pointType(player, dist, obj) {
+    return new Promise((resolve, reject) => {
+        // Startup the async process.
+        if (dist > obj.range) {
+            return reject('done');
+        }
+        return resolve('done');
+    });
+}
+
+async function captureType(player, dist, obj) {
+    return new Promise((resolve, reject) => {
+        // Startup the async process.
+    });
+}
+
+async function hackType(player, dist, obj) {
+    // Send a call back down.
+    let callbackname = `${player.name}:${obj.type}`;
+    alt.onClient(callbackname, parseHackCallback);
+
+    // Setup Promise
+    player.job.def = defer();
+
+    // Set Synced Data
+    player.setSyncedMeta(
+        'job:Callback',
+        JSON.stringify({ type: obj.type, callback: callbackname })
+    );
+
+    return player.job.def.promise;
+}
+
+async function retrieveType(player, dist, obj) {
+    return new Promise((resolve, reject) => {
+        // Startup the async process.
+    });
+}
+
+async function dropOffType(player, dist, obj) {
+    return new Promise((resolve, reject) => {
+        // Startup the async process.
+    });
+}
+
+function defer() {
+    var deferred = {
+        promise: null,
+        resolve: null,
+        reject: null
+    };
+
+    deferred.promise = new Promise((resolve, reject) => {
+        deferred.resolve = resolve;
+        deferred.reject = reject;
+    });
+
+    return deferred;
+}
+
+function parseHackCallback(player, callbackname, value) {
+    alt.offClient(callbackname, parseHackCallback);
+
+    if (player.job.progress === undefined) player.job.progress = 0;
+
+    // Cooldown
+    if (player.job.cooldown) {
+        if (Date.now() < player.job.cooldown) {
+            return player.job.def.reject('Cooldown');
+        } else {
+            player.job.cooldown = Date.now() + 2000;
+        }
+    }
+
+    if (!player.job.cooldown) player.job.cooldown = Date.now() + 2000;
+
+    if (value) {
+        player.job.progress += 1;
+        player.setSyncedMeta('job:Progress', player.job.progress);
+
+        if (player.job.progress > player.job.currentPoint.progressMax) {
+            return player.job.def.resolve('Done');
+        }
+    }
+
+    player.job.def.reject('Not Done');
 }

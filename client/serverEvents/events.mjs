@@ -135,7 +135,3 @@ alt.onServer('vehicle:EngineOff', systemsVehicles.engineOff);
 // =======================================================
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
-
-// =======================================================
-// Job
-alt.onServer('job:Sync', systemsJob.sync);

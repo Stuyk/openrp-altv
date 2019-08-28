@@ -540,20 +540,4 @@ export function setupPlayerFunctions(player) {
             }
         );
     };
-
-    // ===================
-    // Job Handling
-    player.syncJobPoint = (currentPoint, emitSync = false) => {
-        player.setSyncedMeta('jobpoint', currentPoint);
-        if (!emitSync) return;
-
-        alt.emitClient(player, 'job:Sync');
-    };
-
-    player.syncJob = (jobJSON, emitSync = false) => {
-        player.setSyncedMeta('job', jobJSON);
-        if (!emitSync) return;
-
-        alt.emitClient(player, 'job:Sync');
-    };
 }

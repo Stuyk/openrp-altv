@@ -1,11 +1,11 @@
 import * as alt from 'alt';
 import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 let isActive = false;
-let webView = new alt.WebView('http://resources/orp/client/html/chat/index.html');
-webView.on('routeMessage', routeMessage);
+let webView;
 
 export function toggleDialogue() {
     if (webView === undefined) {
+        webView = new alt.WebView('http://resources/orp/client/html/chat/index.html');
         webView.on('routeMessage', routeMessage);
         webView.focus();
         webView.unfocus();
@@ -24,6 +24,8 @@ export function toggleDialogue() {
 }
 
 export function send(msg) {
+    if (webView === undefined) return;
+
     webView.emit('appendMessage', msg);
 }
 

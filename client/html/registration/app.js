@@ -1,156 +1,290 @@
-/* eslint-disable no-undef */
-$('#username').keypress(e => {
-    if (e.key === 'Enter') {
-        $('#password').focus();
-    }
-});
+const { createElement, render, Component } = preact;
+const h = createElement;
 
-$('#password').keypress(e => {
-    if (e.key === 'Enter') {
-        if (selection === 0) {
-            $('#submit').click();
+// The main rendering function.
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            register: 0,
+            fadeOut: 0,
+            feedback: 'Welcome Home',
+            username: '',
+            password1: '',
+            password2: '',
+            valid: false,
+            isWaiting: false
+        };
+
+        this.wrapper = preact.createRef();
+        this.username = preact.createRef();
+    }
+
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('error', errorName => {
+                this.updateFeedback(errorName);
+                this.setState({ isWaiting: false });
+            });
+
+            alt.on('success', successMessage => {
+                this.updateFeedback(successMessage);
+            });
+
+            alt.on('setUsername', username => {
+                this.setState({ username });
+                setTimeout(() => {
+                    this.username.current.value = this.state.username;
+                }, 500);
+            });
+
+            alt.on('goToLogin', () => {
+                this.setState({ register: 0, isWaiting: false });
+            });
         }
 
-        if (selection === 1) {
-            $('#passwordtwo').focus();
-        }
-    }
-});
-
-$('#passwordtwo').keypress(e => {
-    if (e.key === 'Enter') {
-        $('#submit').click();
-    }
-});
-
-var selection = 0;
-// 0 - Existing
-// 1 - Register
-
-// Called when any button is clicked.
-$('button').on('click', e => {
-    $('#alert').hide();
-    $('#alertSuccess').hide();
-    changeButtonFocus(e.target.id);
-
-    if (e.target.id === 'existing') {
-        goToLogin();
-        return;
-    }
-
-    if (e.target.id === 'register') {
-        goToRegister();
-        return;
-    }
-
-    if (e.target.id === 'submit') {
-        $('#submit').prop('disabled', true);
-
-        var username = $('#username').val();
-        var password = $('#password').val();
-        var password2 = $('#passwordtwo').val();
-        var remember = $('#rememberMe')[0].checked;
-
-        if (username.length <= 5) {
-            showAlertMessage('Username must be greater than or equal to 6 characters.');
-            return;
-        }
-
-        if (password.length <= 5) {
-            showAlertMessage('Password must be greater than or equal to 6 characters.');
-            return;
-        }
-
-        if (selection === 0) {
-            // Existing Account
-            // Send emit
-            alt.emit('existingAccount', username, password, remember);
-        } else {
-            // Register Account
-            if (password !== password2) {
-                showAlertMessage('Passwords do not match.');
-                return;
+        setTimeout(() => {
+            if ('alt' in window) {
+                alt.emit('ready');
             }
-
-            alt.emit('registerAccount', username, password);
-        }
-        return;
+            this.username.current.focus();
+        }, 500);
     }
-});
 
-// Change the button focus from one to another.
-function changeButtonFocus(id) {
-    $(`#${id}`).addClass('btn-primary');
-    $(`#${id}`).removeClass('btn-secondary');
+    updateFeedback(msg) {
+        this.setState({ feedback: msg });
+    }
+
+    validData(e) {
+        if (e.target.id === 'username') {
+            this.setState({ username: e.target.value });
+        }
+
+        if (e.target.id === 'password1') {
+            this.setState({ password1: e.target.value });
+        }
+
+        if (e.target.id === 'password2') {
+            this.setState({ password2: e.target.value });
+        }
+
+        if (this.state.username.length <= 5) {
+            this.setState({
+                feedback: 'Username must be greater than 5 characters.',
+                valid: false
+            });
+
+            return;
+        }
+
+        if (this.state.password1.length <= 5) {
+            this.setState({
+                feedback: 'Password must be greater than 5 characters.',
+                valid: false
+            });
+            return;
+        }
+
+        if (this.state.register === 1 && this.state.password1 !== this.state.password2) {
+            this.setState({ feedback: 'Passwords do not match.', valid: false });
+            return;
+        }
+
+        if (this.state.username.length >= 6 && this.state.password1.length >= 6) {
+            this.setState({ valid: true });
+        } else {
+            this.setState({ valid: false });
+        }
+
+        this.setState({ feedback: 'Ready to go!' });
+    }
+
+    setRegister() {
+        this.setState({ fadeOut: 1 });
+
+        setTimeout(() => {
+            this.setState({ register: 1, fadeOut: 0 });
+        }, 1000);
+    }
+
+    setLogin() {
+        this.setState({ fadeOut: 1 });
+
+        setTimeout(() => {
+            this.setState({ register: 0, fadeOut: 0 });
+        }, 1000);
+    }
+
+    submitData() {
+        this.setState({ isWaiting: true });
+
+        if ('alt' in window) {
+            if (this.state.register === 1) {
+                alt.emit('registerAccount', this.state.username, this.state.password1);
+            } else {
+                alt.emit(
+                    'existingAccount',
+                    this.state.username,
+                    this.state.password1,
+                    true
+                );
+            }
+        }
+    }
+
+    render() {
+        return h(
+            'div',
+            {
+                id: 'app',
+                class: this.state.isWaiting
+                    ? 'none animated fadeOut'
+                    : 'regular animated fadeIn'
+            },
+            h('div', { class: 'header' }, h('div', { class: 'logo' }, 'Open:RP')),
+            h(
+                'div',
+                { class: 'animated flash container' },
+                h('p', { class: 'center', id: 'feedback' }, this.state.feedback)
+            ),
+            h(
+                'div',
+                {
+                    ref: this.wrapper,
+                    class: this.state.fadeOut
+                        ? 'animated fadeOut innerwrapper'
+                        : 'animated fadeIn innerwrapper'
+                },
+                // New Account?
+                this.state.register === 0 &&
+                    h(
+                        'div',
+                        { class: 'container' },
+                        h(
+                            'div',
+                            { class: 'right' },
+                            h(
+                                'button',
+                                { onclick: this.setRegister.bind(this) },
+                                'New Account >'
+                            )
+                        )
+                    ),
+                this.state.register === 1 &&
+                    h(
+                        'div',
+                        { class: 'container' },
+                        h(
+                            'div',
+                            { class: 'right' },
+                            h(
+                                'button',
+                                { onclick: this.setLogin.bind(this) },
+                                'Existing Account >'
+                            )
+                        )
+                    ),
+
+                // Login
+                h(
+                    'div',
+                    { class: 'container' },
+                    h(
+                        'div',
+                        {
+                            class: 'content'
+                        },
+                        h('p', {}, 'Login'),
+                        h('input', {
+                            type: 'text',
+                            name: 'username',
+                            placeholder: 'username',
+                            autocomplete: 'off',
+                            oninput: this.validData.bind(this),
+                            id: 'username',
+                            ref: this.username,
+                            class: this.state.username.length >= 6 ? 'green' : 'red'
+                        })
+                    )
+                ),
+                // Password
+                h(
+                    'div',
+                    { class: 'container' },
+                    h(
+                        'div',
+                        {
+                            class: 'content'
+                        },
+                        h('p', {}, 'Pass'),
+                        h('input', {
+                            type: 'password',
+                            name: 'password',
+                            placeholder: 'password',
+                            oninput: this.validData.bind(this),
+                            id: 'password1',
+                            class:
+                                (this.state.register &&
+                                    (this.state.password1.length >= 6 &&
+                                        this.state.password2.length >= 6 &&
+                                        this.state.password1 === this.state.password2)) ||
+                                (!this.state.register && this.state.password1.length >= 6)
+                                    ? 'green'
+                                    : 'red'
+                        })
+                    )
+                ),
+                this.state.register === 1
+                    ? h(
+                          'div',
+                          {
+                              class: 'container'
+                          },
+                          h(
+                              'div',
+                              { class: 'content' },
+                              h('p', {}, ''),
+                              h('input', {
+                                  type: 'password',
+                                  name: 'password',
+                                  placeholder: 'password confirmation',
+                                  oninput: this.validData.bind(this),
+                                  id: 'password2',
+                                  class:
+                                      this.state.register &&
+                                      (this.state.password1.length >= 6 &&
+                                          this.state.password2.length >= 6 &&
+                                          this.state.password1 === this.state.password2)
+                                          ? 'green'
+                                          : 'red'
+                              })
+                          )
+                      )
+                    : h('div', { class: 'container' }),
+                h(
+                    'div',
+                    {
+                        class: 'container'
+                    },
+                    h(
+                        'div',
+                        { class: 'center' },
+                        h(
+                            'button',
+                            {
+                                onclick: this.submitData.bind(this),
+                                disabled: !this.state.valid,
+                                class: this.state.valid ? 'green' : 'red'
+                            },
+                            'Submit'
+                        )
+                    )
+                )
+            )
+        );
+
+        // Render HTML / Components and Shit Here
+    }
 }
 
-// Show an Alert Message
-function showAlertMessage(message) {
-    $('#submit').prop('disabled', false);
-    $('#alert').html(`Error: ${message}`);
-    $('#alert').show();
-}
-
-// Show a Success Message
-function showAlertSuccessMessage(message) {
-    $('#submit').prop('disabled', false);
-    $('#alertSuccess').html(`Success! ${message}`);
-    $('#alertSuccess').show();
-}
-
-// Navigate to the Login Menu
-function goToLogin() {
-    selection = 0;
-    changeButtonFocus('existing');
-    $('#pagetitle').addClass('animated flipOutX');
-    $('#register').removeClass('btn-primary');
-    $('#register').addClass('btn-secondary');
-    setTimeout(() => {
-        $('#passwordtwo').slideUp(200);
-        $('#pagetitle').removeClass('animated flipOutX');
-        $('#pagetitle').addClass('animated flipInX');
-        $('#pagetitle').html('Existing');
-        $('#rememberMeDiv').show();
-    }, 300);
-}
-
-// Navigate to the Register Menu
-function goToRegister() {
-    selection = 1;
-    changeButtonFocus('register');
-    $('#pagetitle').addClass('animated flipOutX');
-    $('#existing').removeClass('btn-primary');
-    $('#existing').addClass('btn-secondary');
-
-    setTimeout(() => {
-        $('#passwordtwo').slideDown(200);
-        $('#pagetitle').removeClass('animated flipOutX');
-        $('#pagetitle').addClass('animated flipInX');
-        $('#pagetitle').html('Register');
-        $('#rememberMeDiv').hide();
-    }, 300);
-}
-
-// Alt Events
-if ('alt' in window) {
-    alt.on('error', errorName => {
-        showAlertMessage(errorName);
-    });
-
-    alt.on('success', successMessage => {
-        showAlertSuccessMessage(successMessage);
-    });
-
-    alt.on('setUsername', username => {
-        $('#username').val(username);
-        $('#rememberMe')[0].checked = true;
-        $('#password').focus();
-    });
-
-    alt.on('goToLogin', goToLogin);
-
-    window.onload = function() {
-        $('#username').focus();
-        alt.emit('ready');
-    };
-}
+render(h(App), document.querySelector('#render'));

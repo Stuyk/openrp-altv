@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import * as chat from 'client/panels/chat.mjs';
 
 alt.log('Loaded: client->registration->registration.mjs');
 
@@ -25,6 +26,8 @@ export function showDialogue(regCamCoord, regCamPointAtCoord) {
     alt.showCursor(true); // Show the cursor / mouse.
     alt.toggleGameControls(false); // Turn off player controls.
     native.displayRadar(false); // Turn off radar.
+
+    alt.emit('panel:SetStatus', 'registration', true);
 
     // Setup the login camera.
     loginCamera = native.createCamWithParams(
@@ -85,12 +88,13 @@ export function closeDialogue() {
     registerWebview.unfocus();
     registerWebview.off('registerAccount', registerAccount);
     registerWebview.off('existingAccount', existingAccount);
-
     registerWebview.destroy();
     alt.offServer('register:ShowDialogue', showDialogue);
     alt.offServer('register:ShowError', showError);
     alt.offServer('register:ShowSuccess', showSuccess);
     alt.offServer('register:CloseDialogue', closeDialogue);
+    chat.toggleDialogue();
+    alt.emit('panel:SetStatus', 'registration', false);
 }
 
 // Send error message to the registerWebview.

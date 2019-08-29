@@ -19,38 +19,3 @@ if (!fs.existsSync('./resources/orp/terms-and-conditions.json')) {
         );
     import('./startup.mjs');
 }
-
-function defer() {
-    let deferred = {
-        promise: null,
-        reject: null,
-        resolve: null
-    };
-
-    deferred.promise = new Promise((resolve, reject) => {
-        deferred.reject = reject;
-        deferred.resolve = resolve;
-    });
-
-    return deferred;
-}
-
-let john = {};
-
-async function createDefer() {
-    let def = defer();
-    john.def = def;
-    return john.def.promise;
-}
-
-createDefer()
-    .then(res => {
-        console.log('yes');
-    })
-    .catch(res => {
-        console.log('reject');
-    });
-
-setTimeout(() => {
-    john.def.resolve();
-}, 2000);

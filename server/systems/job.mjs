@@ -104,92 +104,89 @@ export function testObjective(player) {
 
     // Bad Objective
     if (objective === undefined) {
-        console.error(
-            `ERROR => Invalid Job Objective Type: ${player.job.currentPoint.type}`
-        );
         player.job.testing = false;
         return;
     }
 
     // Pass the player and distance to objective.
     // Will process the rest in a bit.
-    objective
-        .func(player, dist, player.job.currentPoint)
-        .catch(res => {
-            if (!res) return;
-            player.job.deferredPromise = undefined;
+    objective.func(player, dist, player.job.currentPoint, completed => {
+        if (!completed) {
             player.job.testing = false;
-        })
-        .then(res => {
-            if (!res) return;
-            player.job.deferredPromise = undefined;
-            // Add reward before increment.
-            if (player.job.currentPoint.reward > 0) {
-                player.addCash(player.job.currentPoint.reward);
-            }
-
-            // Objective was successful; move to next.
-            player.job.currentPointIndex += 1;
-
-            // Update current point.
-            const index = player.job.currentPointIndex;
-            player.job.currentPoint = player.job.currentJob.points[index];
-
-            // The job is complete.
-            if (player.job.currentPoint === undefined) {
-                player.send('Job is complete.');
-                clearJob(player);
-                return;
-            }
-
-            // The job is still going...
-            syncMeta(player, index, false);
-            player.job.testing = false;
-            player.send('Proceed to next objective.');
             return;
-        });
-}
-
-async function pointType(player, dist, obj) {
-    return new Promise((resolve, reject) => {
-        // Startup the async process.
-        if (dist > obj.range) {
-            return reject('done');
         }
-        return resolve('done');
+
+        // Add reward before increment.
+        if (player.job.currentPoint.reward > 0) {
+            player.addCash(player.job.currentPoint.reward);
+        }
+
+        // Objective was successful; move to next.
+        player.job.currentPointIndex += 1;
+
+        // Update current point.
+        const index = player.job.currentPointIndex;
+        player.job.currentPoint = player.job.currentJob.points[index];
+
+        // The job is complete.
+        if (player.job.currentPoint === undefined) {
+            player.send('Job is complete.');
+            clearJob(player);
+            return;
+        }
+
+        // The job is still going...
+        syncMeta(player, index, false);
+        player.job.testing = false;
+        player.send('Proceed to next objective.');
+        return;
     });
 }
 
-async function captureType(player, dist, obj) {
+function pointType(player, dist, obj, callback) {
+    // Startup the async process.
+    if (dist > obj.range) {
+        return callback(false);
+    }
+    return callback(true);
+}
+
+function captureType(player, dist, obj, callback) {
     return new Promise((resolve, reject) => {
         // Startup the async process.
     });
 }
 
-async function hackType(player, dist, obj) {
-    // Send a call back down.
+function hackType(player, dist, obj, callback) {
+    // Setup Callback from Client
     let callbackname = `${player.name}:${obj.type}`;
-    alt.onClient(callbackname, parseHackCallback);
+    alt.onClient(callbackname, callbackHack);
 
     // Setup Promise
     player.job.def = defer();
 
-    // Set Synced Data
+    // Send Callback
     player.setSyncedMeta(
         'job:Callback',
         JSON.stringify({ type: obj.type, callback: callbackname })
     );
 
-    return player.job.def.promise;
+    player.job.def.promise
+        .then(res => {
+            callback(true);
+        })
+        .catch(res => {
+            callback(false);
+        });
 }
 
-async function retrieveType(player, dist, obj) {
+function retrieveType(player, dist, obj) {
     return new Promise((resolve, reject) => {
         // Startup the async process.
     });
 }
 
-async function dropOffType(player, dist, obj) {
+function dropOffType(player, dist, obj) {
     return new Promise((resolve, reject) => {
         // Startup the async process.
     });
@@ -210,15 +207,15 @@ function defer() {
     return deferred;
 }
 
-function parseHackCallback(player, callbackname, value) {
-    alt.offClient(callbackname, parseHackCallback);
+function callbackHack(player, callbackname, value) {
+    alt.offClient(callbackname, callbackHack);
 
     if (player.job.progress === undefined) player.job.progress = 0;
 
     // Cooldown
     if (player.job.cooldown) {
         if (Date.now() < player.job.cooldown) {
-            return player.job.def.reject('Cooldown');
+            return player.job.def.reject();
         } else {
             player.job.cooldown = Date.now() + 2000;
         }
@@ -231,9 +228,9 @@ function parseHackCallback(player, callbackname, value) {
         player.setSyncedMeta('job:Progress', player.job.progress);
 
         if (player.job.progress > player.job.currentPoint.progressMax) {
-            return player.job.def.resolve('Done');
+            return player.job.def.resolve();
         }
     }
 
-    player.job.def.reject('Not Done');
+    player.job.def.reject();
 }

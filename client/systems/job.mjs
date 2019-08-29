@@ -30,6 +30,7 @@ let currentBlip;
 let currentObjective;
 let currentProgress = 0;
 let pause = false;
+let cooldown = Date.now() + 2000;
 
 let currentInterval;
 let isUpdateActive;
@@ -202,6 +203,10 @@ function captureType() {
 
 // When pressing 'E' do whatever.
 function hackType() {
+    if (Date.now() < cooldown) return false;
+
+    cooldown = Date.now() + 2000;
+
     if (!native.isControlPressed(0, 38)) return false;
     return true;
 }

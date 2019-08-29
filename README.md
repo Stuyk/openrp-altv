@@ -67,6 +67,14 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 
+---
+
+### Licensing
+
+If you'd like to remove the splash screens at any point; we can negotiate at a price. However, you will be responsible for removing them and not me. Otherwise, just leave the splash screens alone. This is a free framework and the least you can do is give credit.
+
+---
+
 ### Installation
 
 If you don't have NodeJS; please go install it.

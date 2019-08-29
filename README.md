@@ -8,6 +8,10 @@ Remember to 🌟 this Github if you 💖 it.
 
 Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal functionality to get the base ground work for a roleplay gamemode started.
 
+[Official O:RP Discord](https://discord.gg/gVfJkcs)
+
+---
+
 **IMPORTANT** If you are not a developer; this may not be the project for you. There is some general configuration that needs to be done and understanding code is important.
 
 **Roadmap**

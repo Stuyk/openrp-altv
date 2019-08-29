@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as registrationLogin from '../registration/login.mjs';
+import * as systemsJob from '../systems/job.mjs';
 
 console.log('Loaded: events->playerDisconnect.mjs');
 
@@ -15,6 +16,9 @@ alt.on('playerDisconnect', player => {
         alt.log(`${player.name} has disconnected.`);
         return;
     }
+
+    // Clear Job Data
+    systemsJob.clearJob(player);
 
     // Save players last location dependent on what they're doing.
     if (player.lastLocation !== undefined) {

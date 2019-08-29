@@ -540,4 +540,14 @@ export function setupPlayerFunctions(player) {
             }
         );
     };
+
+    // =================
+    // Vehicle Funcs
+    player.eject = () => {
+        alt.emitClient(player, 'vehicle:Eject');
+    };
+
+    player.ejectSlowly = () => {
+        alt.emitClient(player, 'vehicle:Eject', true);
+    };
 }

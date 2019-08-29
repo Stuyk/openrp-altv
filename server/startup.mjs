@@ -30,6 +30,7 @@ alt.on('ConnectionComplete', () => {
     import('./events/entityEnterColshape.mjs');
     import('./events/entityLeaveColshape.mjs');
     import('./events/playerLeftVehicle.mjs');
+    import('./events/playerEnteredVehicle.mjs');
 
     // Custom Client Events / Custom Server Events
     import('./serverEvents/events.mjs');

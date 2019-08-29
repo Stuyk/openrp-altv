@@ -29,21 +29,34 @@ jobs.forEach((job, index) => {
  7. JobPoint is the current index of the target point in points in the configuration.
  8. Player visits the point; it has a TYPE.
  9. Depending on the TYPE it will invoke various functions on the server.
- 10. After visiting all points in the list; the job is considered complete.
- 11. Rewards are distributed on an per-objective basis.
- 12. Cleanup job after finishing. 
+ 10. These functions are also checked on client-side first.
+ 11. After visiting all points in the list; the job is considered complete.
+ 12. Rewards are distributed on an per-objective basis.
+ 13. Cleanup job after finishing. 
  */
 
 const objectiveTypes = [
+    // On Foot Point
     { name: 'point', func: pointType },
+    // Capture Point on Foot
     { name: 'capture', func: captureType },
+    // Retrieve Item on Foot Type
     { name: 'retreive', func: retrieveType },
+    // Drop Off Item on Foot Type
     { name: 'dropoff', func: dropOffType },
-    { name: 'hack', func: hackType }
+    // Hold 'E' to do something.
+    { name: 'hack', func: hackType },
+    // Drive to a point.
+    { name: 'drivepoint', func: drivepointType },
+    // Spawn a job Vehicle.
+    { name: 'spawnvehicle', func: spawnVehicleType },
+    // Drop off a Vehicle.
+    { name: 'vehicledrop', func: vehicleDropType }
 ];
 
 alt.on('job:StartJob', (player, index) => {
     if (index === undefined) return;
+    if (player.job !== undefined) clearJob(player);
 
     // Finds the job we're attempting to start.
     let currentJob = jobs[index];
@@ -63,6 +76,9 @@ function syncMeta(player, index, isStart) {
     // Set Synced Meta
     player.setSyncedMeta('job:Job', JSON.stringify(player.job.currentJob));
     player.setSyncedMeta('job:PointIndex', index);
+    player.setSyncedMeta('job:Progress', -1);
+    player.job.progress = -1;
+    player.job.cooldown = Date.now();
 
     if (isStart) {
         // New Job
@@ -73,14 +89,20 @@ function syncMeta(player, index, isStart) {
     }
 }
 
-function clearJob(player) {
+// Used to cleanup / clear the current job the player is doing.
+export function clearJob(player) {
+    // Destroy any current vehicles.
+    if (player.job.currentVehicle !== undefined && player.job.currentVehicle !== null) {
+        player.job.currentVehicle.destroy();
+    }
+
     player.setSyncedMeta('job:Job', undefined);
     player.setSyncedMeta('job:PointIndex', undefined);
     player.setSyncedMeta('job:Clear', Date.now());
     player.job = {};
 }
 
-// Us
+// Verify an Objective is Complete
 export function testObjective(player) {
     // No Job Found; why are you testing?
     if (player.job === undefined) return;
@@ -143,6 +165,7 @@ export function testObjective(player) {
     });
 }
 
+// Requires the user to be on foot.
 function pointType(player, dist, obj, callback) {
     // Startup the async process.
     if (dist > obj.range) {
@@ -151,10 +174,32 @@ function pointType(player, dist, obj, callback) {
     return callback(true);
 }
 
+// Requires the user to have a job vehicle.
+function drivepointType(player, dist, obj, callback) {
+    if (player.vehicle !== player.job.currentVehicle) callback(false);
+
+    if (dist > obj.range) {
+        return callback(false);
+    }
+    return callback(true);
+}
+
 function captureType(player, dist, obj, callback) {
-    return new Promise((resolve, reject) => {
-        // Startup the async process.
-    });
+    // Startup the async process.
+    if (dist > obj.range) return callback(false);
+
+    if (Date.now() < player.job.cooldown) return callback(false);
+
+    player.job.cooldown = Date.now() + 2000;
+
+    player.job.progress += 1;
+    player.setSyncedMeta('job:Progress', player.job.progress);
+
+    if (player.job.progress > obj.progressMax) {
+        return callback(true);
+    }
+
+    return callback(false);
 }
 
 function hackType(player, dist, obj, callback) {
@@ -172,10 +217,43 @@ function hackType(player, dist, obj, callback) {
     );
 
     player.job.def.promise
-        .then(res => {
+        .then(() => {
             callback(true);
         })
-        .catch(res => {
+        .catch(() => {
+            callback(false);
+        });
+}
+
+function spawnVehicleType(player, dist, obj, callback) {
+    if (dist > obj.range) return callback(false);
+
+    // Set the Car Type to Spawn
+    if (obj.vehicle === undefined) {
+        throw new Error('Vehicle is not defined for this objective.');
+    }
+
+    // Spawn Job Vehicle
+    player.job.vehicle = obj.vehicle;
+
+    // Setup Callback
+    let callbackname = `${player.name}:${obj.type}`;
+    alt.onClient(callbackname, callbackSpawnVehicle);
+
+    // Setup Promise
+    player.job.def = defer();
+
+    // Send Callback
+    player.setSyncedMeta(
+        'job:Callback',
+        JSON.stringify({ type: obj.type, callback: callbackname })
+    );
+
+    player.job.def.promise
+        .then(() => {
+            callback(true);
+        })
+        .catch(() => {
             callback(false);
         });
 }
@@ -190,6 +268,20 @@ function dropOffType(player, dist, obj) {
     return new Promise((resolve, reject) => {
         // Startup the async process.
     });
+}
+
+function vehicleDropType(player, dist, obj, callback) {
+    if (dist > obj.range) return callback(false);
+
+    if (player.job.currentVehicle !== player.vehicle) callback(false);
+
+    player.ejectSlowly();
+    setTimeout(() => {
+        player.job.currentVehicle.destroy();
+        player.job.currentVehicle = undefined;
+    }, 2500);
+
+    callback(true);
 }
 
 function defer() {
@@ -210,7 +302,7 @@ function defer() {
 function callbackHack(player, callbackname, value) {
     alt.offClient(callbackname, callbackHack);
 
-    if (player.job.progress === undefined) player.job.progress = 0;
+    if (player.job.progress === undefined) player.job.progress = -1;
 
     // Cooldown
     if (player.job.cooldown) {
@@ -233,4 +325,41 @@ function callbackHack(player, callbackname, value) {
     }
 
     player.job.def.reject();
+}
+
+function callbackSpawnVehicle(player, callbackname, value) {
+    alt.offClient(callbackname, callbackSpawnVehicle);
+
+    // Spawn the vehicle here.
+    /*
+        vehicle: {
+            model: 'cheetah',
+            lockState: 1, // 1 for unlocked. 2 for locked.
+            preventHijack: true
+        },
+    */
+    let forwardPos = {
+        x: player.pos.x + value.x * 3,
+        y: player.pos.y + value.y * 3,
+        z: player.pos.z
+    };
+
+    player.job.currentVehicle = new alt.Vehicle(
+        player.job.vehicle.model,
+        forwardPos.x,
+        forwardPos.y,
+        forwardPos.z,
+        0,
+        0,
+        0
+    );
+
+    player.job.currentVehicle.setSyncedMeta('job:Owner', player.data.name);
+    player.job.currentVehicle.lockState = player.job.vehicle.lockState;
+
+    if (player.job.vehicle.preventHijack) {
+        player.job.currentVehicle.preventHijack = true;
+    }
+
+    player.job.def.resolve();
 }

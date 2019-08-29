@@ -75,6 +75,22 @@ export function shutAllDoors(vehicle) {
     native.setVehicleDoorsShut(vehicle.scriptID, false);
 }
 
+export function eject(slowly) {
+    if (!slowly) {
+        native.taskLeaveVehicle(
+            alt.Player.local.scriptID,
+            alt.Player.local.vehicle.scriptID,
+            16
+        );
+    } else {
+        native.taskLeaveVehicle(
+            alt.Player.local.scriptID,
+            alt.Player.local.vehicle.scriptID,
+            1
+        );
+    }
+}
+
 // Disable seat shuffle.
 alt.on('update', disableSeatShuffle);
 

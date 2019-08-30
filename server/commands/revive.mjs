@@ -16,6 +16,8 @@ chat.registerCmd('revive', player => {
     player.send('Please wait; you will be revived in twenty seconds.');
 
     setTimeout(() => {
+        if (player === null || player === undefined) return;
+
         player.screenFadeOutFadeIn(1000, 5000);
         player.spawn(player.revivePos.x, player.revivePos.y, player.revivePos.z, 2000);
 

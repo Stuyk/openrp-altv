@@ -43,6 +43,8 @@ alt.on('ConnectionComplete', () => {
     import('./commands/sandbox.mjs');
     import('./commands/revive.mjs');
     import('./commands/roleplay.mjs');
+    import('./commands/taxi.mjs');
+    import('./commands/job.mjs');
 
     // Systems
     import('./systems/vehicles.mjs');

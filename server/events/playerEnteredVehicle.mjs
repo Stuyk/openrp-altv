@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as systemsJob from '../systems/job.mjs';
 
 alt.on('playerEnteredVehicle', (player, vehicle, seat) => {
     if (vehicle.preventHijack && seat === -1) {
@@ -6,5 +7,9 @@ alt.on('playerEnteredVehicle', (player, vehicle, seat) => {
             player.eject();
             player.send('{FF0000} This is a job vehicle. Hijacking is prevented.');
         }
+    }
+
+    if (systemsJob.isTarget(player, vehicle)) {
+        player.jobTarget = vehicle.job;
     }
 });

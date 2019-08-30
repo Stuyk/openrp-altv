@@ -25,7 +25,6 @@ alt.on('playerDeath', target => {
     });
 
     target.revivePos = closestHospital;
-    target.saveLocation(closestHospital);
     target.saveDead(true);
     target.send('Type /revive to revive at the nearest hospital.');
 });

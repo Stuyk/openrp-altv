@@ -17,8 +17,16 @@ alt.on('playerDisconnect', player => {
         return;
     }
 
+    // Has character data at this point.
+    clearTimeout(player.reviveTimeout);
+    clearTimeout(player.loginHealth);
+
     // Clear Job Data
-    systemsJob.clearJob(player);
+    if (player.jobOwner !== undefined && player.inJobVehicle) {
+        systemsJob.exitFee(player, player.jobOwner);
+    }
+
+    systemsJob.cancelJob(player);
 
     // Save players last location dependent on what they're doing.
     if (player.lastLocation !== undefined) {

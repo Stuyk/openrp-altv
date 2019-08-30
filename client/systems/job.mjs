@@ -15,7 +15,10 @@ const objectiveTypes = [
     { name: 'hack', func: hackType },
     { name: 'spawnvehicle', func: spawnvehicleType },
     { name: 'drivepoint', func: drivepointType },
-    { name: 'vehicledrop', func: vehicledropType }
+    { name: 'vehicledrop', func: vehicledropType },
+    { name: 'target', func: targetType },
+    { name: 'targetdrop', func: targetDropType },
+    { name: 'targetget', func: targetGetType }
 ];
 
 const callbackTypes = [
@@ -28,7 +31,8 @@ const jobFunctions = {
     'job:Clear': { func: jobClear }, // Clear a Job
     'job:Update': { func: jobUpdate }, // Update the Job Progress
     'job:Progress': { func: jobProgress }, // Progress to Next Job Point
-    'job:Callback': { func: jobCallback }
+    'job:Callback': { func: jobCallback }, // Used for native callbacks.
+    'job:Target': { func: jobTarget }
 };
 
 let currentJob;
@@ -37,6 +41,8 @@ let currentPoint;
 let currentBlip;
 let currentObjective;
 let currentProgress = 0;
+let currentTarget;
+let targetMessage = 'Wait for your task...';
 let pause = false;
 let cooldown = Date.now() + 2000;
 
@@ -52,8 +58,11 @@ alt.on('syncedMetaChange', (entity, key, value) => {
     }
 });
 
-// This means to start an interval an and update method.
-// Store the data above.
+/**
+ * Description:
+ * The first thing we do to start up
+ * the job process.
+ */
 function jobStart() {
     // Clear Current Job Info
     jobClear();
@@ -74,7 +83,11 @@ function jobStart() {
     alt.on('update', drawPointInfo);
 }
 
-function jobClear() {
+/**
+ * Description:
+ * Clear the player's current job.
+ */
+function jobClear(clearTarget) {
     alt.Player.local.inAnimation = false;
 
     // Set current job/point info to undefined.
@@ -82,6 +95,7 @@ function jobClear() {
     currentPoint = undefined;
     currentPointIndex = undefined;
     currentObjective = undefined;
+    targetMessage = '';
 
     // Destroy Current Blip
     if (currentBlip !== undefined) {
@@ -100,31 +114,81 @@ function jobClear() {
         alt.off('update', drawPointInfo);
         isUpdateActive = false;
     }
+
+    if (clearTarget) {
+        currentTarget = true;
+    }
 }
 
-// Called to update the current job info.
+/**
+ *  Description:
+ *  Invoked when there is a new objective.
+ *  This is used to work through the objectives
+ *  provided in the job configuration.
+ *
+ *  We pause before updating to prevent any
+ *  unwanted behavior.
+ */
 function jobUpdate() {
+    alt.log('Updating job.');
+
     pause = true;
     currentJob = JSON.parse(alt.Player.local.getSyncedMeta('job:Job'));
     currentPointIndex = alt.Player.local.getSyncedMeta('job:PointIndex');
     currentPoint = currentJob.points[currentPointIndex];
+
     parseJobInfo(currentPoint);
     alt.Player.local.inAnimation = false;
     pause = false;
 }
 
-// Called to progress to the next job point.
+/**
+ * Description:
+ * Used to update objective progression.
+ * Mostly used for displays and such.
+ * @param value
+ */
 function jobProgress(value) {
     currentProgress = value;
 }
 
+/**
+ * Description:
+ * Used to parse a job callback.
+ * @param value
+ */
 function jobCallback(value) {
-    //  { type: obj.type, callback: callbackname }
     const info = JSON.parse(value);
     const type = callbackTypes.find(x => x.name === info.type);
+
+    if (type === undefined) throw new Error('Failed to parse callback type in jobs.');
+
     type.func(info.callback);
 }
 
+/**
+ * Description:
+ * Parses the job target information.
+ * It sets up properties and targettable data.
+ * value = {
+ *      player, => Whoever the target is.
+ *      props => Whatever the server-side specified.
+ * }
+ * @param value
+ */
+function jobTarget(value) {
+    currentTarget = value;
+}
+
+/**
+ *  Description:
+ *  Parse the information for the current
+ *  point by pulling a function from the
+ *  above list.
+ *
+ *  Also creates blips.
+ * @param currentPoint
+ */
 function parseJobInfo(currentPoint) {
     // Current Objective Function
     currentObjective = objectiveTypes.find(x => x.name === currentPoint.type).func;
@@ -132,6 +196,17 @@ function parseJobInfo(currentPoint) {
     if (currentBlip !== undefined) {
         currentBlip.destroy();
         currentBlip = undefined;
+    }
+
+    // Prevent target type from creating.
+    if (currentPoint.type === 'target') {
+        targetMessage = 'Please wait for your next task...';
+        return;
+    }
+
+    // Don't do anything for the 'target' type.
+    if (currentPoint.type.includes('target')) {
+        return;
     }
 
     // Create Point Blip
@@ -146,50 +221,115 @@ function parseJobInfo(currentPoint) {
     currentBlip.name = currentPoint.name;
 }
 
-// How should this work?
-// Call the objective based on point type.
-// If the point type returns true;
-// Use the TestObjective event.
-// TestObjective will relay back down update Objective Info
+/**
+ *  Description:
+ *  Checks the current objective if available.
+ *  currentObjective is a function that is
+ *  updated constantly by some of the above
+ *  code. Once that objective is ready;
+ *  we do calls to it to check if
+ *  the objective is complete for a client.
+ */
 function checkPoint() {
     if (pause) return;
     if (currentObjective === undefined) return;
     let isTestReady = currentObjective();
     if (!isTestReady) return;
+    alt.emitServer('job:TestObjective');
+}
 
-    if (
-        currentPoint.anim !== undefined &&
-        !alt.Player.local.inAnimation &&
-        !alt.Player.local.vehicle
-    ) {
-        alt.Player.local.inAnimation = true;
+function playAnimation() {
+    if (currentPoint.anim === undefined) return;
+    let speed = native.getEntitySpeed(alt.Player.local.scriptID);
+    if (speed <= 1 && !alt.Player.local.vehicle) {
+        alt.Player.local.isAnimating = true;
         systemsAnimation.playAnimation(
             currentPoint.anim.dict,
             currentPoint.anim.name,
             currentPoint.anim.duration,
             currentPoint.anim.flag
         );
+    } else {
+        alt.Player.local.isAnimating = false;
     }
-
-    alt.emitServer('job:TestObjective');
 }
 
-// Draw HUD Elements / Markers for the user.
+/**
+ *  Description:
+ *  Draws HUD elements for the current objective.
+ */
 function drawPointInfo() {
     if (pause) return;
     if (currentPoint === undefined) return;
 
-    let dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    native.disableControlAction(0, 38, true);
-
-    if (alt.Player.local.inAnimation) {
-        for (let i = 32; i < 35; i++) {
-            if (native.isControlPressed(0, i)) {
-                alt.Player.local.inAnimation = false;
-                native.clearPedTasksImmediately(alt.Player.local.scriptID);
-            }
+    // target subtype for drawing
+    if (currentPoint.type.includes('target')) {
+        if (currentTarget === undefined) {
+            native.beginTextCommandDisplayHelp('STRING');
+            native.addTextComponentSubstringPlayerName(targetMessage);
+            native.endTextCommandDisplayHelp(0, false, true, -1);
+            return;
         }
+
+        // Draw Help Text for Target Types
+        native.beginTextCommandDisplayHelp('STRING');
+        native.addTextComponentSubstringPlayerName(currentPoint.message);
+        native.endTextCommandDisplayHelp(0, false, true, -1);
+
+        // Finds the Drop Off Point
+        if (currentPoint.type === 'targetdrop') {
+            let tPos = currentTarget.props.position;
+            if (!currentBlip) {
+                currentBlip = new alt.PointBlip(tPos.x, tPos.y, tPos.z);
+                currentBlip.sprite = 1;
+                currentBlip.color = 1;
+                currentBlip.shortRange = false;
+            } else {
+                currentBlip.position = [tPos.x, tPos.y, tPos.z];
+                utilityMarker.drawMarker(
+                    0,
+                    tPos,
+                    new alt.Vector3(0, 0, 0),
+                    new alt.Vector3(0, 0, 0),
+                    new alt.Vector3(1, 1, 1),
+                    255,
+                    0,
+                    0,
+                    150
+                );
+            }
+            return;
+        }
+
+        // Draws a marker above Target
+        if (currentPoint.type === 'targetget') {
+            let tPos = currentTarget.player.pos;
+            if (!currentBlip) {
+                currentBlip = new alt.PointBlip(tPos.x, tPos.y, tPos.z);
+                currentBlip.sprite = 1;
+                currentBlip.color = 1;
+                currentBlip.shortRange = false;
+            } else {
+                currentBlip.position = [tPos.x, tPos.y, tPos.z];
+                tPos.z += 3;
+                utilityMarker.drawMarker(
+                    0,
+                    tPos,
+                    new alt.Vector3(0, 0, 0),
+                    new alt.Vector3(0, 0, 0),
+                    new alt.Vector3(0.2, 0.2, 0.5),
+                    255,
+                    0,
+                    0,
+                    150
+                );
+            }
+            return;
+        }
+        return;
     }
+
+    let dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
 
     // Draw Marker
     if (dist <= 75) {
@@ -204,6 +344,13 @@ function drawPointInfo() {
             currentPoint.markerColor.b,
             currentPoint.markerColor.a
         );
+    }
+
+    // Draw Target Message
+    if (currentPoint.type === 'target' && targetMessage !== '') {
+        native.beginTextCommandDisplayHelp('STRING');
+        native.addTextComponentSubstringPlayerName(targetMessage);
+        native.endTextCommandDisplayHelp(0, false, true, -1);
     }
 
     // Draw Specific to Range
@@ -221,13 +368,140 @@ function drawPointInfo() {
     }
 }
 
-// When a player enters a point's range.
+/**
+ *  Description: Drive to Point on Foot.
+ */
 function pointType() {
     if (alt.Player.local.vehicle) return false;
+    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
+    if (dist <= currentPoint.range) return true;
+    return false;
+}
+
+/**
+ *  Description: Drive to a point.
+ */
+function drivepointType() {
+    if (!alt.Player.local.vehicle) return false;
 
     const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
     if (dist <= currentPoint.range) return true;
     return false;
+}
+
+/**
+ *  Description: Simply spawns a vehicle.
+ */
+function spawnvehicleType() {
+    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
+    if (dist <= currentPoint.range) return true;
+    return false;
+}
+
+/**
+ *  Description: Stand inside of a point for specific progression time.
+ */
+function captureType() {
+    if (Date.now() < cooldown) return false;
+
+    cooldown = Date.now() + 2000;
+    playAnimation();
+
+    if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) >= 3)
+        return false;
+    return true;
+}
+
+/**
+ *  Description: Hold 'E' to complete an objective.
+ */
+function hackType() {
+    if (Date.now() < cooldown) return false;
+
+    cooldown = Date.now() + 2000;
+    playAnimation();
+
+    if (!native.isDisabledControlPressed(0, 38)) return false;
+    return true;
+}
+
+/**
+ *  Description: Drop off a vehicle at a position.
+ */
+function vehicledropType() {
+    if (!alt.Player.local.vehicle) return false;
+
+    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
+    if (dist <= currentPoint.range) return true;
+    return false;
+}
+
+/**
+ *  Description: None. Always returns false.
+ */
+function targetType() {
+    return false;
+}
+
+function targetGetType() {
+    if (currentTarget === undefined) {
+        return false;
+    }
+
+    const dist = utilityVector.distance(alt.Player.local.pos, currentTarget.player.pos);
+    if (dist >= currentPoint.range) {
+        return false;
+    }
+
+    alt.log('Passed Distance');
+
+    if (!currentTarget.player.vehicle) {
+        return false;
+    }
+
+    alt.log('Passed Passenger Vehicle');
+
+    if (!alt.Player.local.vehicle) {
+        return false;
+    }
+
+    alt.log('Passed Player Vehicle');
+
+    if (currentTarget.player.vehicle.scriptID !== alt.Player.local.vehicle.scriptID) {
+        return false;
+    }
+
+    alt.log('Passed Same Vehicle');
+
+    return true;
+}
+
+function targetDropType() {
+    if (currentTarget === undefined) return false;
+
+    if (!currentTarget.player.vehicle) {
+        return false;
+    }
+
+    alt.log('Passed Passenger Vehicle');
+
+    if (!alt.Player.local.vehicle) {
+        return false;
+    }
+
+    alt.log('Passed Local Vehicle');
+
+    const dist = utilityVector.distance(
+        alt.Player.local.pos,
+        currentTarget.props.position
+    );
+    if (dist >= currentPoint.range) {
+        return false;
+    }
+
+    alt.log('Passed Distance');
+
+    return true;
 }
 
 // Drops off a retrieved 'object' that is 'stored' on the player.
@@ -240,54 +514,17 @@ function retrieveType() {
     //
 }
 
-// Requires the player to be in a vehicle.
-function drivepointType() {
-    if (!alt.Player.local.vehicle) return false;
-
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
-    return false;
-}
-
-function spawnvehicleType() {
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
-    return false;
-}
-
-// Must stand inside a point and do something for 'x' seconds.
-function captureType() {
-    if (Date.now() < cooldown) return false;
-
-    cooldown = Date.now() + 2000;
-
-    if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) >= 3)
-        return false;
-    return true;
-}
-
-// When pressing 'E' do whatever.
-function hackType() {
-    if (Date.now() < cooldown) return false;
-
-    cooldown = Date.now() + 2000;
-
-    if (!native.isDisabledControlPressed(0, 38)) return false;
-    return true;
-}
-
-function vehicledropType() {
-    if (!alt.Player.local.vehicle) return false;
-
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
-}
-
-// Forwarded to Server
+/**
+ *  Description: Calls back up to the server for a 'native' check.
+ * @param callbackname
+ */
 function hackCallback(callbackname) {
     alt.emitServer(callbackname, callbackname, native.isDisabledControlPressed(0, 38));
 }
-
+/**
+ *  Description: Calls back up to the server for a 'native' get.
+ * @param callbackname
+ */
 function spawnvehicleCallback(callbackname) {
     alt.emitServer(
         callbackname,

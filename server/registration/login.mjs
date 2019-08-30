@@ -99,8 +99,6 @@ function existingCharacter(player, data) {
     const lastPos = JSON.parse(data.lastposition);
     player.needsRoleplayName = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
-    player.health = data.health;
-    player.armour = data.armour;
 
     // Set player name.
     if (data.name !== null) {
@@ -122,6 +120,7 @@ function existingCharacter(player, data) {
         }
     }
 
+    // Fixes any 'string' issue that may arise.
     data.cash = data.cash * 1;
     data.bank = data.bank * 1;
 
@@ -129,7 +128,15 @@ function existingCharacter(player, data) {
         player.syncClothing(data.clothing);
     }
 
-    // Tax if PLAYER was dead on login.
+    // Make sure they spawn dead.
+    player.loginHealth = setTimeout(() => {
+        if (data.dead) {
+            player.health = 0;
+        } else {
+            player.health = data.health;
+            player.armour = data.armour;
+        }
+    }, 5000);
 
     // Setup data on the player.
     player.data = data;

@@ -277,6 +277,8 @@ function vehicleDropType(player, dist, obj, callback) {
 
     player.ejectSlowly();
     setTimeout(() => {
+        if (player === null || player === undefined) return;
+
         player.job.currentVehicle.destroy();
         player.job.currentVehicle = undefined;
     }, 2500);

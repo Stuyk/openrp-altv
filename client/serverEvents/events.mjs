@@ -132,6 +132,7 @@ alt.onServer('vehicle:ShutAllDoors', systemsVehicles.shutAllDoors);
 alt.onServer('vehicle:EngineOn', systemsVehicles.engineOn);
 alt.onServer('vehicle:EngineOff', systemsVehicles.engineOff);
 alt.onServer('vehicle:Eject', systemsVehicles.eject);
+alt.onServer('vehicle:Repair', systemsVehicles.repair);
 
 // =======================================================
 // Chat

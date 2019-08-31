@@ -15,28 +15,15 @@ export function setupVehicleFunctions(vehicle) {
 
     // Save only a specific field.
     vehicle.saveField = (id, fieldName, fieldValue) => {
-        db.updatePartialData(
-            id,
-            { [fieldName]: fieldValue },
-            'Vehicle',
-            () => {}
-        );
+        db.updatePartialData(id, { [fieldName]: fieldValue }, 'Vehicle', () => {});
     };
 
     vehicle.saveVehicleData = () => {
         console.log('Saved Vehicle Data');
 
-        vehicle.saveField(
-            vehicle.data.id,
-            'position',
-            JSON.stringify(vehicle.pos)
-        );
+        vehicle.saveField(vehicle.data.id, 'position', JSON.stringify(vehicle.pos));
 
-        vehicle.saveField(
-            vehicle.data.id,
-            'rotation',
-            JSON.stringify(vehicle.rot)
-        );
+        vehicle.saveField(vehicle.data.id, 'rotation', JSON.stringify(vehicle.rot));
 
         let vehicleData = {
             appearance: vehicle.getAppearanceDataBase64(),
@@ -46,29 +33,17 @@ export function setupVehicleFunctions(vehicle) {
             scriptData: vehicle.getScriptDataBase64()
         };
 
-        vehicle.saveField(
-            vehicle.data.id,
-            'stats',
-            JSON.stringify(vehicleData)
-        );
+        vehicle.saveField(vehicle.data.id, 'stats', JSON.stringify(vehicleData));
     };
 
     // Save the position of the vehicle.
     vehicle.savePosition = () => {
-        vehicle.saveField(
-            vehicle.data.id,
-            'position',
-            JSON.stringify(vehicle.pos)
-        );
+        vehicle.saveField(vehicle.data.id, 'position', JSON.stringify(vehicle.pos));
     };
 
     // Save the rotation of the vehicle.
     vehicle.saveRotation = () => {
-        vehicle.saveField(
-            vehicle.data.id,
-            'rotation',
-            JSON.stringify(vehicle.rot)
-        );
+        vehicle.saveField(vehicle.data.id, 'rotation', JSON.stringify(vehicle.rot));
     };
 
     vehicle.despawnVehicle = () => {
@@ -86,5 +61,9 @@ export function setupVehicleFunctions(vehicle) {
 
     vehicle.honkHorn = (times, duration) => {
         alt.emitClient(null, 'vehicle:HonkHorn', vehicle, times, duration);
+    };
+
+    vehicle.repair = () => {
+        alt.emitClient(null, 'vehicle:Repair', vehicle);
     };
 }

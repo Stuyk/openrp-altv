@@ -488,7 +488,7 @@ export function setupPlayerFunctions(player) {
     // Animation
     player.playAnimation = (dictionary, name, durationInMS, flag) => {
         alt.emitClient(
-            player,
+            null,
             'animation:PlayAnimation',
             dictionary,
             name,

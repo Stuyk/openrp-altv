@@ -91,6 +91,10 @@ export function eject(slowly) {
     }
 }
 
+export function repair(vehicle) {
+    native.setVehicleFixed(vehicle.scriptID);
+}
+
 // Disable seat shuffle.
 alt.on('update', disableSeatShuffle);
 

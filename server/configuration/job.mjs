@@ -46,6 +46,7 @@
 
 export const Configuration = [
     // Test Job
+    /*
     {
         name: 'Test Job',
         guid: '',
@@ -240,37 +241,42 @@ export const Configuration = [
             }
         ]
     },
-    // Test Job
+    */
     {
-        name: 'Test Job abc',
-        guid: '',
-        blipSprite: 80,
-        blipColor: 2,
+        name: 'Mechanic Shop',
+        guid: 'mechanic', // used for special scripts.
+        blipSprite: 566,
+        blipColor: 26,
         start: {
-            x: 768.1714477539062,
-            y: -248.5054931640625,
-            z: 65.113525390625
+            x: 537.7582397460938,
+            y: -182.4659423828125,
+            z: 54.4366455078125
         },
         points: [
             {
-                name: 'The Point Type',
-                type: 'point',
+                name: 'Retrieve Truck',
+                type: 'spawnvehicle',
                 reward: 0,
-                blipSprite: 1,
+                blipSprite: 225,
                 blipColor: 1,
+                vehicle: {
+                    model: 'rumpo',
+                    lockState: 1, // 1 for unlocked. 2 for locked.
+                    preventHijack: true
+                },
                 markerType: 1,
                 markerColor: {
-                    r: 0,
-                    g: 100,
-                    b: 255,
-                    a: 50
+                    r: 255,
+                    g: 0,
+                    b: 0,
+                    a: 150
                 },
                 position: {
-                    x: 766.2329711914062,
-                    y: -241.7934112548828,
-                    z: 65.113525390625
+                    x: 530.4395751953125,
+                    y: -189.11209106445312,
+                    z: 53.5941162109375
                 },
-                height: 0.5,
+                height: 0.75,
                 range: 2
             },
             {
@@ -278,50 +284,26 @@ export const Configuration = [
                 type: 'infinite'
             },
             {
-                name: 'The Point Type',
-                type: 'point',
-                reward: 0,
-                blipSprite: 1,
-                blipColor: 1,
-                markerType: 1,
-                markerColor: {
-                    r: 0,
-                    g: 100,
-                    b: 255,
-                    a: 50
-                },
-                position: {
-                    x: 771.072509765625,
-                    y: -234.3032989501953,
-                    z: 65.113525390625
-                },
-                height: 0.5,
-                range: 2
+                name: 'Wait for Mechanic request',
+                type: 'target',
+                message: 'Wait for your next customer...'
             },
             {
-                name: 'The Point Type',
-                type: 'point',
-                reward: 0,
-                blipSprite: 1,
-                blipColor: 1,
-                markerType: 1,
-                markerColor: {
-                    r: 0,
-                    g: 100,
-                    b: 255,
-                    a: 50
+                name: 'Repair',
+                type: 'targetrepair',
+                message: 'Use ~INPUT_CONTEXT~ to repair; after arrival.',
+                anim: {
+                    dict: 'anim@amb@business@weed@weed_inspecting_lo_med_hi@',
+                    name: 'weed_crouch_checkingleaves_idle_01_inspector',
+                    duration: -1,
+                    flag: 129
                 },
-                position: {
-                    x: 777.5208740234375,
-                    y: -241.4901123046875,
-                    z: 65.113525390625
-                },
-                height: 0.5,
-                range: 2
+                range: 7,
+                fare: true,
+                progressMax: 75
             }
         ]
     },
-    // Next Job Goes Here
     {
         name: 'Taxi Station',
         guid: 'taxi', // used for special scripts.
@@ -387,7 +369,7 @@ export const Configuration = [
                 type: 'infinite'
             },
             {
-                name: 'Wait for Taxi Request',
+                name: 'Wait for Taxi request',
                 type: 'target',
                 message: 'Wait for your next customer...'
             },

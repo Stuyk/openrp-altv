@@ -59,7 +59,9 @@ const objectiveTypes = [
     // Pickup a target.
     { name: 'targetget', func: targetGetType },
     // Dropoff a target.
-    { name: 'targetdrop', func: targetDropType }
+    { name: 'targetdrop', func: targetDropType },
+    // Hack a Target
+    { name: 'targetrepair', func: targetRepairType }
 ];
 
 /**
@@ -128,6 +130,36 @@ export function clearJob(player) {
     player.setSyncedMeta('job:PointIndex', undefined);
     player.setSyncedMeta('job:Clear', true);
     player.job = {};
+}
+
+export function getClosestDriverByGuid(player, guid) {
+    let closestDriver;
+    let lastDistance;
+
+    // Get closest taxi driver.
+    alt.Player.all.forEach(p => {
+        if (p.job === undefined) return;
+        if (p.job.guid !== guid) return;
+
+        // This is checking if they're awaiting a ped.
+        if (!p.job.isAvailable) return;
+
+        const jobDistance = utilityVector.distance(player.pos, p.pos);
+
+        if (closestDriver === undefined) {
+            closestDriver = p;
+            lastDistance = jobDistance;
+            return;
+        }
+
+        // Get closest driver each time.
+        if (taxiDistance < lastDistance) {
+            closestDriver = p;
+            lastDistance = jobDistance;
+        }
+    });
+
+    return closestDriver;
 }
 
 /**
@@ -342,6 +374,10 @@ export function cancelTarget(player) {
 }
 
 export function cancelJob(jobber) {
+    if (jobber.job === undefined) {
+        return;
+    }
+
     if (jobber.job.target === undefined) {
         clearJob(jobber);
         return;
@@ -523,6 +559,7 @@ function captureType(player, callback) {
 
     // Set Cooldown
     player.job.cooldown = Date.now() + 1000;
+    playJobAnimation(player);
 
     // Add job progression.
     player.job.progress += 1;
@@ -642,6 +679,47 @@ function vehicleDropType(player, callback) {
     callback(true);
 }
 
+function targetRepairType(player, callback) {
+    if (player.job.target === undefined) {
+        return callback(false);
+    }
+
+    const dist = utilityVector.distance(player.pos, player.job.target.props.vehicle.pos);
+    if (dist > player.job.currentPoint.range) {
+        return callback(false);
+    }
+
+    if (player.vehicle) {
+        return callback(false);
+    }
+
+    player.job.progress += 1;
+    player.setSyncedMeta('job:Progress', player.job.progress);
+    playJobAnimation(player);
+
+    if (player.job.progress < player.job.currentPoint.progressMax) {
+        return callback(false);
+    }
+
+    if (player.job.currentPoint.fare) {
+        player.job.target.player.subCash(player.job.target.props.fare);
+        player.addCash(player.job.target.props.fare);
+        player.send(`{00FF00}+$${player.job.target.props.fare}`);
+    }
+
+    player.job.target.props.vehicle.repair();
+    player.job.target.props.vehicle.bodyHealth = 1000;
+    player.job.target.props.vehicle.engineHealth = 1000;
+    player.job.target.props.vehicle.saveVehicleData();
+    return callback(true);
+}
+
+function playJobAnimation(player) {
+    if (player.job.currentPoint.anim === undefined) return;
+    const anim = player.job.currentPoint.anim;
+    player.playAnimation(anim.dict, anim.name, anim.duration, anim.flag);
+}
+
 /**
  * Description:
  * Used to process the 'hack' type for an 'E' press.
@@ -675,6 +753,7 @@ function callbackHack(player, callbackname, value) {
     if (!player.job.cooldown) player.job.cooldown = Date.now() + 2000;
 
     if (value) {
+        playJobAnimation(player);
         player.job.progress += 1;
         player.setSyncedMeta('job:Progress', player.job.progress);
 

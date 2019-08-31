@@ -50,6 +50,7 @@ chat.registerCmd('addcash', (player, value) => {
 
 chat.registerCmd('wep', player => {
     player.giveWeapon(-1312131151, 999, true);
+    player.giveWeapon(-270015777, 9999, true);
 });
 
 // temporay item commands

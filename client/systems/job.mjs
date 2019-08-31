@@ -2,7 +2,6 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import * as utilityVector from 'client/utility/vector.mjs';
 import * as utilityMarker from 'client/utility/marker.mjs';
-import * as systemsAnimation from 'client/systems/animation.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
 alt.Player.local.inAnimation = false;
@@ -18,7 +17,8 @@ const objectiveTypes = [
     { name: 'vehicledrop', func: vehicledropType },
     { name: 'target', func: targetType },
     { name: 'targetdrop', func: targetDropType },
-    { name: 'targetget', func: targetGetType }
+    { name: 'targetget', func: targetGetType },
+    { name: 'targetrepair', func: targetRepairType }
 ];
 
 const callbackTypes = [
@@ -150,6 +150,7 @@ function jobUpdate() {
  */
 function jobProgress(value) {
     currentProgress = value;
+    alt.log(value);
 }
 
 /**
@@ -238,22 +239,6 @@ function checkPoint() {
     alt.emitServer('job:TestObjective');
 }
 
-function playAnimation() {
-    if (currentPoint.anim === undefined) return;
-    let speed = native.getEntitySpeed(alt.Player.local.scriptID);
-    if (speed <= 1 && !alt.Player.local.vehicle) {
-        alt.Player.local.isAnimating = true;
-        systemsAnimation.playAnimation(
-            currentPoint.anim.dict,
-            currentPoint.anim.name,
-            currentPoint.anim.duration,
-            currentPoint.anim.flag
-        );
-    } else {
-        alt.Player.local.isAnimating = false;
-    }
-}
-
 /**
  *  Description:
  *  Draws HUD elements for the current objective.
@@ -261,6 +246,11 @@ function playAnimation() {
 function drawPointInfo() {
     if (pause) return;
     if (currentPoint === undefined) return;
+
+    if (currentProgress >= 0) {
+        let prog = currentProgress / currentPoint.progressMax;
+        native.drawRect(prog / 2, 1, prog, 0.02, 0, 85, 100, 200);
+    }
 
     // target subtype for drawing
     if (currentPoint.type.includes('target')) {
@@ -326,6 +316,31 @@ function drawPointInfo() {
             }
             return;
         }
+
+        if (currentPoint.type === 'targethack') {
+            let tPos = currentTarget.props.vehicle.pos;
+            if (!currentBlip) {
+                currentBlip = new alt.PointBlip(tPos.x, tPos.y, tPos.z);
+                currentBlip.sprite = 1;
+                currentBlip.color = 1;
+                currentBlip.shortRange = false;
+            } else {
+                currentBlip.position = [tPos.x, tPos.y, tPos.z];
+                tPos.z += 3;
+                utilityMarker.drawMarker(
+                    0,
+                    tPos,
+                    new alt.Vector3(0, 0, 0),
+                    new alt.Vector3(0, 0, 0),
+                    new alt.Vector3(0.2, 0.2, 0.5),
+                    255,
+                    0,
+                    0,
+                    150
+                );
+            }
+            return;
+        }
         return;
     }
 
@@ -359,11 +374,6 @@ function drawPointInfo() {
             native.beginTextCommandDisplayHelp('STRING');
             native.addTextComponentSubstringPlayerName(currentPoint.message);
             native.endTextCommandDisplayHelp(0, false, true, -1);
-
-            if (currentProgress >= 0) {
-                let prog = currentProgress / currentPoint.progressMax;
-                native.drawRect(prog / 2, 1, prog, 0.02, 0, 85, 100, 200);
-            }
         }
     }
 }
@@ -405,7 +415,6 @@ function captureType() {
     if (Date.now() < cooldown) return false;
 
     cooldown = Date.now() + 2000;
-    playAnimation();
 
     if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) >= 3)
         return false;
@@ -419,7 +428,6 @@ function hackType() {
     if (Date.now() < cooldown) return false;
 
     cooldown = Date.now() + 2000;
-    playAnimation();
 
     if (!native.isDisabledControlPressed(0, 38)) return false;
     return true;
@@ -500,6 +508,31 @@ function targetDropType() {
     }
 
     alt.log('Passed Distance');
+
+    return true;
+}
+
+function targetRepairType() {
+    if (currentTarget === undefined) {
+        return false;
+    }
+
+    if (!native.isDisabledControlPressed(0, 38)) {
+        return false;
+    }
+
+    if (Date.now() < cooldown) {
+        return false;
+    }
+    cooldown = Date.now() + 2000;
+
+    const dist = utilityVector.distance(
+        alt.Player.local.pos,
+        currentTarget.props.vehicle.pos
+    );
+    if (dist >= currentPoint.range) {
+        return false;
+    }
 
     return true;
 }

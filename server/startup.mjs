@@ -44,6 +44,7 @@ alt.on('ConnectionComplete', () => {
     import('./commands/revive.mjs');
     import('./commands/roleplay.mjs');
     import('./commands/taxi.mjs');
+    import('./commands/mechanic.mjs');
     import('./commands/job.mjs');
 
     // Systems

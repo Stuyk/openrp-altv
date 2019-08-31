@@ -39,35 +39,10 @@ chat.registerCmd('taxi', player => {
             return;
         }
 
-        let closestDriver;
-        let lastDistance;
-
-        // Get closest taxi driver.
-        alt.Player.all.forEach(p => {
-            if (p.job === undefined) return;
-            if (p.job.guid !== 'taxi') return;
-
-            // This is checking if they're awaiting a ped.
-            if (!p.job.isAvailable) return;
-
-            const taxiDistance = utilityVector.distance(player.pos, p.pos);
-
-            if (closestDriver === undefined) {
-                closestDriver = p;
-                lastDistance = taxiDistance;
-                return;
-            }
-
-            // Get closest driver each time.
-            if (taxiDistance < lastDistance) {
-                closestDriver = p;
-                lastDistance = taxiDistance;
-            }
-        });
+        let closestDriver = systemsJob.getClosestDriverByGuid(player, 'taxi');
 
         if (closestDriver === undefined) {
             player.send('No taxi driver is available at this time.');
-            player.def = undefined;
             return;
         }
 

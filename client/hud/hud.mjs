@@ -41,8 +41,7 @@ function getMinimapAnchor() {
 
     minimap.width = xscale * (res_x / (4 * aspect_ratio));
     minimap.height = yscale * (res_y / 5.674);
-    minimap.left_x =
-        xscale * (res_x * (safezone_x * (Math.abs(safezone - 1.0) * 10)));
+    minimap.left_x = xscale * (res_x * (safezone_x * (Math.abs(safezone - 1.0) * 10)));
     minimap.bottom_y =
         1.0 - yscale * (res_y * (safezone_y * (Math.abs(safezone - 1.0) * 10)));
     minimap.right_x = minimap.left_x + minimap.width;
@@ -57,7 +56,7 @@ function getMinimapAnchor() {
 
 alt.setInterval(() => {
     minimap = getMinimapAnchor();
-    isMetric = native.getProfileSetting(227) == 1;
+    isMetric = native.getProfileSetting(227);
     let [_unk, _street, _cross] = native.getStreetNameAtCoord(
         alt.Player.local.pos.x,
         alt.Player.local.pos.y,
@@ -140,12 +139,10 @@ alt.on('update', () => {
         );
 
         if (alt.Player.local.vehicle) {
-            let speed = native.getEntitySpeed(
-                alt.Player.local.vehicle.scriptID
-            );
-            let actualSpeed = `${(speed * (isMetric ? 3.6 : 2.236936)).toFixed(
-                2
-            )}${isMetric ? 'KM/H' : 'MPH'}`;
+            let speed = native.getEntitySpeed(alt.Player.local.vehicle.scriptID);
+            let actualSpeed = `${(speed * (isMetric ? 3.6 : 2.236936)).toFixed(2)}${
+                isMetric ? 'KM/H' : 'MPH'
+            }`;
             utilityText.drawText2d(
                 actualSpeed,
                 minimap.right_x + 0.02,

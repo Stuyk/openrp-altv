@@ -138,10 +138,14 @@ class App extends Component {
             {
                 id: 'app',
                 class: this.state.isWaiting
-                    ? 'none animated fadeOut'
-                    : 'regular animated fadeIn'
+                    ? 'none animated fadeOut faster'
+                    : 'regular animated fadeIn faster'
             },
-            h('div', { class: 'header' }, h('div', { class: 'logo' }, 'Open:RP')),
+            h(
+                'div',
+                { class: 'container' },
+                h('div', { class: 'center' }, h('div', { class: 'logo' }, 'Open:RP'))
+            ),
             h(
                 'div',
                 { class: 'animated flash container' },
@@ -270,16 +274,25 @@ class App extends Component {
                         'div',
                         { class: 'center' },
                         h(
-                            'button',
-                            {
-                                onclick: this.submitData.bind(this),
-                                disabled: !this.state.valid,
-                                class: this.state.valid ? 'green' : 'red'
-                            },
-                            'Submit'
+                            'div',
+                            { class: 'content' },
+                            h(
+                                'button',
+                                {
+                                    onclick: this.submitData.bind(this),
+                                    disabled: !this.state.valid,
+                                    class: this.state.valid ? 'green' : 'red'
+                                },
+                                'Submit'
+                            )
                         )
                     )
                 )
+            ),
+            h(
+                'div',
+                { class: 'footer' },
+                'https://www.twitch.tv/stuykgaming | https://github.com/team-stuyk-alt-v'
             )
         );
 

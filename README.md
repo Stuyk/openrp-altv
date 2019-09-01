@@ -46,14 +46,16 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Time Sync
 -   [x] Weather Sync
 -   [x] Interaction System
--   [ ] Interaction for Vehicles
+-   [x] Interaction for Vehicles
 -   [ ] Interaction for Players
--   [ ] Interaction for Objects
+-   [x] Interaction for Objects
 -   [x] Player Death Handling
 -   [x] Taxation
 -   [ ] Taxation goes to Government Fund
 -   [ ] Government Fund Management
 -   [x] Animation Manager
+-   [x] Context Menu of Animations
+-   [x] Animations for Sitting
 -   [x] Splash Screens
 -   [x] Custom Sounds! Blat!
 -   [x] Custom Chat

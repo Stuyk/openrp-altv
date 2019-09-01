@@ -75,6 +75,20 @@ If you'd like to remove the splash screens at any point; we can negotiate at a p
 
 ---
 
+### General Information and Hotkeys
+
+```
+
+z -------> Press and hold to reveal cursor.
+z + rmb -> Show Context Menu on User
+z + lmb -> Select Context Option
+e -------> Most clothing shops, jobs, etc. to interact.
+i -------> inventory
+
+```
+
+---
+
 ### Installation
 
 If you don't have NodeJS; please go install it.

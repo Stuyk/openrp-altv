@@ -2,23 +2,166 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from 'client/systems/context.mjs';
 
-const objectInteractions =
-    // Red Soda Machine
-    {
-        992069095: {
-            func: sodaMachine
-        }
+const chairs = [
+    'prop_bench_01a',
+    'prop_bench_01b',
+    'prop_bench_01c',
+    'prop_bench_02',
+    'prop_bench_03',
+    'prop_bench_04',
+    'prop_bench_05',
+    'prop_bench_06',
+    'prop_bench_05',
+    'prop_bench_08',
+    'prop_bench_09',
+    'prop_bench_10',
+    'prop_bench_11',
+    'prop_fib_3b_bench',
+    'prop_ld_bench01',
+    'prop_wait_bench_01',
+    'hei_prop_heist_off_chair',
+    'hei_prop_hei_skid_chair',
+    'prop_chair_01a',
+    'prop_chair_01b',
+    'prop_chair_02',
+    'prop_chair_03',
+    'prop_chair_04a',
+    'prop_chair_04b',
+    'prop_chair_05',
+    'prop_chair_06',
+    'prop_chair_05',
+    'prop_chair_08',
+    'prop_chair_09',
+    'prop_chair_10',
+    'prop_chateau_chair_01',
+    'prop_clown_chair',
+    'prop_cs_office_chair',
+    'prop_direct_chair_01',
+    'prop_direct_chair_02',
+    'prop_gc_chair02',
+    'prop_off_chair_01',
+    'prop_off_chair_03',
+    'prop_off_chair_04',
+    'prop_off_chair_04b',
+    'prop_off_chair_04_s',
+    'prop_off_chair_05',
+    'prop_old_deck_chair',
+    'prop_old_wood_chair',
+    'prop_rock_chair_01',
+    'prop_skid_chair_01',
+    'prop_skid_chair_02',
+    'prop_skid_chair_03',
+    'prop_sol_chair',
+    'prop_wheelchair_01',
+    'prop_wheelchair_01_s',
+    'p_armchair_01_s',
+    'p_clb_officechair_s',
+    'p_dinechair_01_s',
+    'p_ilev_p_easychair_s',
+    'p_soloffchair_s',
+    'p_yacht_chair_01_s',
+    'v_club_officechair',
+    'v_corp_bk_chair3',
+    'v_corp_cd_chair',
+    'v_corp_offchair',
+    'v_ilev_chair02_ped',
+    'v_ilev_hd_chair',
+    'v_ilev_p_easychair',
+    'v_ret_gc_chair03',
+    'prop_ld_farm_chair01',
+    'prop_table_04_chr',
+    'prop_table_05_chr',
+    'prop_table_06_chr',
+    'v_ilev_leath_chr',
+    'prop_table_01_chr_a',
+    'prop_table_01_chr_b',
+    'prop_table_02_chr',
+    'prop_table_03b_chr',
+    'prop_table_03_chr',
+    'prop_torture_ch_01',
+    'v_ilev_fh_dineeamesa',
+    'v_ilev_fh_kitchenstool',
+    'v_ilev_tort_stool',
+    'v_ilev_fh_kitchenstool',
+    'v_ilev_fh_kitchenstool',
+    'v_ilev_fh_kitchenstool',
+    'v_ilev_fh_kitchenstool',
+    'hei_prop_yah_seat_01',
+    'hei_prop_yah_seat_02',
+    'hei_prop_yah_seat_03',
+    'prop_waiting_seat_01',
+    'prop_yacht_seat_01',
+    'prop_yacht_seat_02',
+    'prop_yacht_seat_03',
+    'prop_hobo_seat_01',
+    'prop_rub_couch01',
+    'miss_rub_couch_01',
+    'prop_ld_farm_couch01',
+    'prop_ld_farm_couch02',
+    'prop_rub_couch02',
+    'prop_rub_couch03',
+    'prop_rub_couch04',
+    'p_lev_sofa_s',
+    'p_res_sofa_l_s',
+    'p_v_med_p_sofa_s',
+    'p_yacht_sofa_01_s',
+    'v_ilev_m_sofa',
+    'v_res_tre_sofa_s',
+    'v_tre_sofa_mess_a_s',
+    'v_tre_sofa_mess_b_s',
+    'v_tre_sofa_mess_c_s',
+    'prop_roller_car_01',
+    'prop_roller_car_02'
+];
+
+let objectInteractions = {
+    992069095: {
+        func: sodaMachine
+    },
+    4216340823: {
+        func: payPhone
+    },
+    2594689830: {
+        func: metroTicketMachine
+    },
+    1363150739: {
+        func: postalBox
+    },
+    218085040: {
+        func: dumpster
+    },
+    666561306: {
+        func: dumpster
+    },
+    3059710928: {
+        func: chair
+    },
+    4223549947: {
+        func: chair
+    }
+};
+
+chairs.forEach(item => {
+    objectInteractions[native.getHashKey(item)] = {
+        func: chair
     };
+});
+
+Object.keys(objectInteractions).forEach(key => {
+    alt.log(key);
+});
 
 alt.on('menu:Object', ent => {
     let model = native.getEntityModel(ent);
 
     // find interaction; and call it if necessary.
     let interaction = objectInteractions[model];
-    if (interaction === undefined) {
+    if (interaction === undefined || interaction.func === undefined) {
         unknown(ent);
         return;
     }
+
+    alt.log(JSON.stringify(interaction));
 
     interaction.func(ent);
 });
@@ -42,4 +185,137 @@ function sodaMachine(ent) {
             event: 'use:SodaMachine'
         }
     ]);
+}
+
+function payPhone(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'Payphone'
+        },
+        {
+            label: 'Use Phone',
+            isServer: true,
+            event: 'use:PayPhone'
+        }
+    ]);
+}
+
+function metroTicketMachine(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'Metro Ticket Machine'
+        },
+        {
+            label: 'Buy Ticket',
+            isServer: true,
+            event: 'use:MetroTicketMachine'
+        }
+    ]);
+}
+
+function postalBox(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'Postal Box'
+        },
+        {
+            label: 'Use',
+            isServer: true,
+            event: 'use:PostalBox'
+        }
+    ]);
+}
+
+function dumpster(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'Postal Box'
+        },
+        {
+            label: 'Hide',
+            isServer: true,
+            event: 'use:HideDumpster'
+        },
+        {
+            label: 'Search',
+            isServer: true,
+            event: 'use:SearchDumpster'
+        },
+        {
+            label: 'Leave',
+            isServer: true,
+            event: 'use:LeaveDumpster'
+        }
+    ]);
+}
+
+function chair(ent) {
+    let pos = native.getEntityCoords(ent, false);
+    let heading = native.getEntityHeading(ent) + 180.0;
+
+    if (alt.Player.local.sitting) {
+        alt.Player.local.sitting = false;
+        return;
+    }
+
+    native.taskStartScenarioAtPosition(
+        alt.Player.local.scriptID,
+        'PROP_HUMAN_SEAT_BENCH',
+        pos.x,
+        pos.y,
+        pos.z + 0.5,
+        heading,
+        -1,
+        true,
+        true
+    );
+
+    alt.Player.local.sitting = true;
+
+    alt.setTimeout(() => {
+        let pForward = native.getEntityForwardVector(alt.Player.local.scriptID);
+        let pPos = alt.Player.local.pos;
+
+        let newForward = {
+            x: pPos.x - pForward.x * 2,
+            y: pPos.y - pForward.y * 2,
+            z: pPos.z + 0.5
+        };
+
+        alt.Player.local.sitCam = native.createCamWithParams(
+            'DEFAULT_SCRIPTED_CAMERA',
+            newForward.x,
+            newForward.y,
+            newForward.z,
+            0,
+            0,
+            0,
+            90,
+            true,
+            0
+        );
+
+        native.pointCamAtEntity(
+            alt.Player.local.sitCam,
+            alt.Player.local.scriptID,
+            0,
+            0,
+            0,
+            false
+        );
+        native.renderScriptCams(true, false, 0, true, 0);
+
+        alt.on('keyup', clearSit);
+    }, 1000);
+}
+
+function clearSit(key) {
+    if (key === 'W'.charCodeAt(0)) {
+        alt.off('keyup', clearSit);
+        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+        native.clearPedSecondaryTask(alt.Player.local.scriptID);
+        native.destroyAllCams(false);
+        native.renderScriptCams(false, false, 0, false, 0);
+        alt.Player.local.sitting = false;
+    }
 }

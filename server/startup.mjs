@@ -35,6 +35,7 @@ alt.on('ConnectionComplete', () => {
     // Custom Client Events / Custom Server Events
     import('./serverEvents/events.mjs');
     import('./clientEvents/events.mjs');
+    import('./clientEvents/useEvents.mjs');
 
     // Interactions
     import('./interactions/atms.mjs');
@@ -52,6 +53,7 @@ alt.on('ConnectionComplete', () => {
     import('./systems/inventory.mjs');
     import('./systems/time.mjs');
     import('./systems/job.mjs');
+    import('./systems/use.mjs');
 
     // Import Item Effects
     import('./itemeffects/consume.mjs');

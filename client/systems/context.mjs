@@ -143,12 +143,16 @@ export class ContextMenu {
             if (native.isEntityAVehicle(this.entity)) {
                 let vehicle = alt.Vehicle.all.find(x => x.scriptID === this.entity);
                 alt.emitServer(item.event, vehicle, item.data);
+                return;
             }
 
             if (native.isEntityAPed(this.entity)) {
                 let ped = alt.Player.all.find(x => x.scriptID === this.entity);
                 alt.emitServer(item.event, ped, item.data);
+                return;
             }
+
+            alt.emitServer(item.event, item.data);
         } else {
             alt.emit(item.event, this.entity, item.data);
         }

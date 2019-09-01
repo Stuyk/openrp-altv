@@ -12,6 +12,7 @@ export function toggleDialogue() {
     }
 
     if (panelsPanelStatus.isAnyPanelOpen()) return;
+    if (!alt.gameControlsEnabled()) return;
 
     if (!isActive) {
         alt.emit('panel:SetStatus', 'chat', true);

@@ -9,7 +9,7 @@ alt.Player.local.inAnimation = false;
 const objectiveTypes = [
     { name: 'point', func: pointType },
     { name: 'capture', func: captureType },
-    { name: 'retreive', func: retrieveType },
+    { name: 'retrieve', func: retrieveType },
     { name: 'dropoff', func: dropOffType },
     { name: 'hack', func: hackType },
     { name: 'spawnvehicle', func: spawnvehicleType },

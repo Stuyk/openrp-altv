@@ -64,9 +64,9 @@ alt.onClient('inventory:Pickup', systemsInventory.pickup);
 
 // Vehicle
 alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
-alt.onClient('vehicle:EngineOn', systemsVehicles.engineOn);
-alt.onClient('vehicle:EngineOff', systemsVehicles.engineOff);
-alt.onClient('vehicle:LockAllDoors', systemsVehicles.lockAllDoors);
+alt.onClient('vehicle:ToggleLock', systemsVehicles.toggleLock);
+alt.onClient('vehicle:ToggleEngine', systemsVehicles.toggleEngine);
+alt.onClient('vehicle:SafetyLock', systemsVehicles.toggleSafetyLock);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);

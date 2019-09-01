@@ -2,10 +2,10 @@
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as customizersFace from '../customizers/face.mjs';
+import * as cache from '../cache/cache.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
 import { PlayerDefaults } from '../configuration/player.mjs';
-import * as cache from '../cache/cache.mjs';
 
 console.log('Loaded: registration->login.mjs');
 
@@ -147,6 +147,7 @@ function existingCharacter(player, data) {
     player.syncMoney();
     player.syncInteractionBlips();
     player.updateTime();
+    player.disableEngineControl();
 }
 
 export function removeLoggedInPlayer(username) {

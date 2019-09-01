@@ -51,7 +51,8 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
 
     // Set the data on the vehicle from the DB.
     vehicle.data = veh;
-    vehicle.setEngineOff();
+    vehicle.engineOn = false;
+    vehicle.lockState = 2;
 
     // Synchronize the Stats
     /*
@@ -92,79 +93,67 @@ setInterval(() => {
     }
 }, configurationVehicles.Configuration.saveTimeInMS);
 
+/*
+0 = Front Left Door
+1 = Front Right Door
+2 = Back Left Door
+3 = Back Right Door
+4 = Hood
+5 = Trunk
+6 = Back
+7 = Back2
+*/
+
 export function toggleDoor(player, vehicle, id) {
+    const dist = utilityVector.distance(player.pos, vehicle.pos);
+    if (dist > 5) return;
+
     if (vehicle.lockState === 2) {
-        // Doesn't own the car.
-        if (!Array.isArray(player.vehicles)) return;
-
         if (!player.vehicles.includes(vehicle)) {
-            player.send('This is not your vehicle.');
+            player.send('{FF0000} This vehicle does not belong to you.');
             return;
         }
 
+        player.send('{00FF00} Your vehicle was unlocked.');
+        vehicle.lockState = 1;
+    }
+
+    vehicle.toggleDoor(player, id);
+}
+
+export function toggleLock(player, vehicle) {
+    const dist = utilityVector.distance(player.pos, vehicle.pos);
+    if (dist > 5) return;
+
+    if (!player.vehicles.includes(vehicle)) return;
+
+    if (vehicle.lockState === 2) {
+        vehicle.lockState = 1; // Unlocked
         player.send('Your vehicle is now unlocked.');
-        vehicle.lockState = 1;
-        return;
-    }
-
-    let state = vehicle.getDoorState(id);
-    if (state === 0) {
-        alt.emitClient(null, 'vehicle:OpenDoor', vehicle, id);
     } else {
-        /*
-        if (id >= 4) {
-            alt.emitClient(null, 'vehicle:ShutAllDoors', vehicle);
-            return;
-        }
-        */
-
-        alt.emitClient(null, 'vehicle:CloseDoor', vehicle, id);
+        vehicle.lockState = 2; // Locked
+        player.send('Your vehicle is now locked.');
     }
 }
 
-export function engineOn(player) {
+export function toggleEngine(player, vehicle) {
     if (!player.vehicle) return;
 
-    if (!Array.isArray(player.vehicles)) return;
+    if (!player.vehicles.includes(vehicle)) return;
 
-    if (!player.vehicles.includes(player.vehicle)) {
-        player.send('This is not your vehicle.');
-        return;
-    }
-
-    player.vehicle.engineOn = true;
-    player.vehicle.setEngineOn();
+    vehicle.engineOn = !vehicle.engineOn;
 }
 
-export function engineOff(player) {
+export function toggleSafetyLock(player, vehicle) {
     if (!player.vehicle) return;
 
-    if (!Array.isArray(player.vehicles)) return;
+    if (!player.vehicles.includes(vehicle)) return;
 
-    if (!player.vehicles.includes(player.vehicle)) {
-        player.send('This is not your vehicle.');
-        return;
-    }
-
-    player.vehicle.engineOn = false;
-    player.vehicle.setEngineOff();
-}
-
-export function lockAllDoors(player, vehicle) {
-    if (!Array.isArray(player.vehicles)) return;
-
-    if (!player.vehicles.includes(vehicle)) {
-        player.send(`Can't lock a car you don't own.`);
-        return;
-    }
-
-    if (vehicle.lockState === 1) {
+    if (vehicle.lockState === 4) {
         vehicle.lockState = 2;
-        vehicle.honkHorn(2, 100);
-        player.send('Vehicle was locked.');
+        player.send('Safety Lock was turned off.');
     } else {
-        vehicle.lockState = 1;
-        vehicle.honkHorn(1, 100);
-        player.send('Vehicle was unlocked.');
+        vehicle.lockState = 4;
+        player.send('Safety Lock was turned on.');
     }
 }

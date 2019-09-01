@@ -51,19 +51,29 @@ export function setupVehicleFunctions(vehicle) {
         vehicle.destroy();
     };
 
-    vehicle.setEngineOn = () => {
-        alt.emitClient(null, 'vehicle:EngineOn', vehicle);
-    };
-
-    vehicle.setEngineOff = () => {
-        alt.emitClient(null, 'vehicle:EngineOff', vehicle);
-    };
-
     vehicle.honkHorn = (times, duration) => {
         alt.emitClient(null, 'vehicle:HonkHorn', vehicle, times, duration);
     };
 
     vehicle.repair = () => {
         alt.emitClient(null, 'vehicle:Repair', vehicle);
+    };
+
+    // 4
+    vehicle.toggleDoor = (player, id) => {
+        if (vehicle.doorStates === undefined) {
+            vehicle.doorStates = {
+                0: false,
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false
+            };
+        }
+
+        // Toggle
+        vehicle.doorStates[id] = !vehicle.doorStates[id];
+        alt.emitClient(player, 'vehicle:ToggleDoor', vehicle, id, vehicle.doorStates[id]);
     };
 }

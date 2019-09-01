@@ -126,13 +126,10 @@ alt.onServer('animation:PlayAnimation', systemsAnimation.playAnimation);
 
 // =======================================================
 // Vehicle
-alt.onServer('vehicle:CloseDoor', systemsVehicles.closeDoor);
-alt.onServer('vehicle:OpenDoor', systemsVehicles.openDoor);
-alt.onServer('vehicle:ShutAllDoors', systemsVehicles.shutAllDoors);
-alt.onServer('vehicle:EngineOn', systemsVehicles.engineOn);
-alt.onServer('vehicle:EngineOff', systemsVehicles.engineOff);
+alt.onServer('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onServer('vehicle:Eject', systemsVehicles.eject);
 alt.onServer('vehicle:Repair', systemsVehicles.repair);
+alt.onServer('vehicle:DisableEngineControl', systemsVehicles.disableEngineControl);
 
 // =======================================================
 // Chat

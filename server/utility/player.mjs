@@ -550,4 +550,8 @@ export function setupPlayerFunctions(player) {
     player.ejectSlowly = () => {
         alt.emitClient(player, 'vehicle:Eject', true);
     };
+
+    player.disableEngineControl = () => {
+        alt.emitClient(player, 'vehicle:DisableEngineControl');
+    };
 }

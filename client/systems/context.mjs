@@ -23,32 +23,24 @@ let interactionTypes = {
     }
 };
 
-class ContextMenu {
+export class ContextMenu {
     constructor(entity, options) {
         this.entity = entity;
         this.options = options;
         this.height = 0.04;
         this.width = 0.1;
-
-        /*
-            {label: 'Test', isServer: true, event: 'eventName'}
-        */
+        currentContext = this;
     }
-
-    /*
-    msg,x,y,scale,fontType,r,g,b,a,useOutline = true,useDropShadow = true,layer = 0,align = 0
-    */
 
     render() {
         if (this.options === undefined) return;
 
         let coords = native.getEntityCoords(this.entity, false);
-
         this.options.forEach((item, index) => {
             const [_visible, _x, _y] = native.getScreenCoordFromWorldCoord(
                 coords.x,
                 coords.y,
-                coords.z
+                coords.z + 2
             );
 
             if (!_visible) return;
@@ -98,7 +90,7 @@ class ContextMenu {
                 if (native.isDisabledControlJustPressed(0, 24)) {
                     if (Date.now() < cooldown) return;
 
-                    cooldown = Date.now() + 500;
+                    cooldown = Date.now() + 200;
                     this.execute(item);
                 }
             } else {
@@ -189,6 +181,7 @@ function useMenu() {
     native.disableControlAction(0, 25, true); // Right Mouse
     native.disableControlAction(0, 1, true);
     native.disableControlAction(0, 2, true);
+    native.disablePlayerFiring(alt.Player.local.scriptID, false);
 
     if (currentContext !== undefined) {
         currentContext.render();
@@ -208,7 +201,6 @@ function useMenu() {
     }
 
     if (utilityVector.distance(alt.Player.local.pos, _endCoords) > 5) return;
-
     native.setCursorSprite(3);
 
     // Right Clicking
@@ -216,6 +208,8 @@ function useMenu() {
         if (Date.now() < cooldown) return;
 
         cooldown = Date.now() + 500;
+        alt.log(`You clicked on entity: ${_entity}`);
+        alt.log(`Entity has model of ${native.getEntityModel(_entity)}`);
 
         const entityType = native.getEntityType(_entity);
         let interaction = interactionTypes[entityType];
@@ -228,101 +222,17 @@ function useMenu() {
 
 function none() {}
 
-function pedMenu(ent, coords) {}
-
-function objMenu(ent, coords) {
-    alt.log('obj');
-}
-
-const doorNames = [
-    'Driver Door',
-    'Passenger Door',
-    'Driver Rear Door',
-    'Passenger Back Door'
-];
-
-function vehMenu(ent) {
-    const name = native.getLabelText(
-        native.getDisplayNameFromVehicleModel(native.getEntityModel(ent))
-    );
-
-    if (alt.Player.local.vehicle) {
-        let vehClass = native.getVehicleClass(alt.Player.local.vehicle.scriptID);
-        let items = [
-            {
-                label: name
-            },
-            {
-                label: 'Toggle Lock',
-                isServer: true,
-                event: 'vehicle:ToggleLock'
-            },
-            {
-                label: 'Toggle Engine',
-                isServer: true,
-                event: 'vehicle:ToggleEngine'
-            },
-            {
-                label: 'Safety Lock',
-                isServer: true,
-                event: 'vehicle:SafetyLock'
-            }
-        ];
-
-        if (vehClass === 8) {
-            items.pop();
-        }
-
-        currentContext = new ContextMenu(ent, items);
+function pedMenu(ent, coords) {
+    if (ent === alt.Player.local.scriptID) {
+        alt.emit('menu:Player', ent);
         return;
     }
-
-    currentContext = new ContextMenu(ent, [
-        {
-            label: name
-        },
-        {
-            label: 'Toggle Lock',
-            isServer: true,
-            event: 'vehicle:ToggleLock'
-        },
-        {
-            label: 'Doors Menu',
-            isServer: false,
-            event: 'submenu:VehicleDoors'
-        }
-    ]);
 }
 
-alt.on('submenu:VehicleDoors', ent => {
-    const doorCount = native.getVehicleMaxNumberOfPassengers(ent) + 1;
+function objMenu(ent, coords) {
+    alt.emit('menu:Object', ent);
+}
 
-    let items = [
-        {
-            label: 'Door Control'
-        },
-        {
-            label: 'Trunk',
-            isServer: true,
-            event: 'vehicle:ToggleDoor',
-            data: 5
-        },
-        {
-            label: 'Hood',
-            isServer: true,
-            event: 'vehicle:ToggleDoor',
-            data: 4
-        }
-    ];
-
-    for (let i = 0; i < doorCount; i++) {
-        items.push({
-            label: doorNames[i],
-            isServer: true,
-            event: 'vehicle:ToggleDoor',
-            data: i
-        });
-    }
-
-    currentContext = new ContextMenu(ent, items);
-});
+function vehMenu(ent) {
+    alt.emit('menu:Vehicle', ent);
+}

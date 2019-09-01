@@ -18,3 +18,9 @@ import * as systemsCallbacks from 'client/systems/callbacks.mjs';
 import * as systemsContext from 'client/systems/context.mjs';
 import * as utilitySandbox from 'client/utility/sandbox.mjs';
 import * as hud from 'client/hud/hud.mjs';
+
+// Context
+import * as contextmenuObject from 'client/contextmenus/object.mjs';
+import * as contextmenuPed from 'client/contextmenus/ped.mjs';
+import * as contextmenuVehicle from 'client/contextmenus/vehicle.mjs';
+import * as contextmenuPlaye from 'client/contextmenus/player.mjs';

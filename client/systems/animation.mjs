@@ -18,10 +18,20 @@ import * as native from 'natives';
 	unk6_rot90 = 1024
 */
 
+alt.on('animation:Play', (ent, data) => {
+    playAnimation(data.dict, data.name, data.duration, data.flag);
+});
+
+alt.on('animation:Clear', ent => {
+    native.clearPedTasks(alt.Player.local.scriptID);
+    native.clearPedSecondaryTask(alt.Player.local.scriptID);
+});
+
 export function playAnimation(dictionary, name, durationInMS, flag) {
     let res = loadAnim(dictionary);
 
     res.then(() => {
+        alt.log('Playing Animation');
         native.taskPlayAnim(
             alt.Player.local.scriptID,
             dictionary,

@@ -49,6 +49,11 @@ alt.on('submenu:PlayerAnimations', ent => {
             event: 'submenu:Emote2'
         },
         {
+            label: 'Emote 3',
+            isServer: false,
+            event: 'submenu:Emote3'
+        },
+        {
             label: 'Assault',
             isServer: false,
             event: 'submenu:Assault'
@@ -250,6 +255,102 @@ alt.on('submenu:Emote2', ent => {
                 dict: 'amb@lo_res_idles@',
                 name: 'world_human_lean_male_foot_up_lo_res_base',
                 flag: 49,
+                duration: -1
+            }
+        }
+    ]);
+});
+
+alt.on('submenu:Emote3', ent => {
+    new ContextMenu(ent, [
+        {
+            label: 'Select'
+        },
+        {
+            label: 'Sit Male',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@world_human_picnic@male@base',
+                name: 'base',
+                flag: 1,
+                duration: -1
+            }
+        },
+        {
+            label: 'Sit Female',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@world_human_picnic@female@base',
+                name: 'base',
+                flag: 1,
+                duration: -1
+            }
+        },
+        {
+            label: 'Bum',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@world_human_bum_slumped@male@laying_on_left_side@base',
+                name: 'base',
+                flag: 2,
+                duration: -1
+            }
+        },
+        {
+            label: 'Sit Ups',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@world_human_sit_ups@male@base',
+                name: 'base',
+                flag: 1,
+                duration: -1
+            }
+        },
+        {
+            label: 'Push Ups',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@world_human_push_ups@male@base',
+                name: 'base',
+                flag: 1,
+                duration: -1
+            }
+        },
+        {
+            label: 'Yoga',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@world_human_yoga@male@base',
+                name: 'base_a',
+                flag: 1,
+                duration: -1
+            }
+        },
+        {
+            label: 'Squat',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@lo_res_idles@',
+                name: 'squat_lo_res_base',
+                flag: 2,
+                duration: -1
+            }
+        },
+        {
+            label: 'Lean on Wall',
+            isServer: false,
+            event: 'animation:Play',
+            data: {
+                dict: 'amb@lo_res_idles@',
+                name: 'world_human_lean_male_legs_crossed_lo_res_base',
+                flag: 2,
                 duration: -1
             }
         }

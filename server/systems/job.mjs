@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as configurationJob from '../configuration/job.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import { Interaction } from '../systems/interaction.mjs';
+import * as configurationItems from '../configuration/items.mjs';
 
 const jobs = configurationJob.Configuration;
 
@@ -49,6 +50,8 @@ const objectiveTypes = [
     { name: 'hack', func: hackType },
     // Drive to a point.
     { name: 'drivepoint', func: drivepointType },
+    // Drive and Capture a Point
+    { name: 'drivecapture', func: driveCaptureType },
     // Spawn a job Vehicle.
     { name: 'spawnvehicle', func: spawnVehicleType },
     // Drop off a Vehicle.
@@ -74,6 +77,40 @@ alt.on('job:StartJob', (player, index) => {
     // Finds the job we're attempting to start.
     let currentJob = jobs[index];
     if (!player.job) player.job = {};
+
+    // Has item requirements / or no items specifically.
+    if (currentJob.required !== undefined) {
+        let passed = true;
+        let failedItems = [];
+
+        currentJob.required.forEach(item => {
+            let isIn = item.inInventory;
+
+            if (isIn) {
+                if (!player.hasItem(item.name)) {
+                    passed = false;
+                    failedItems.push(item);
+                }
+            } else {
+                if (player.hasItem(item.name)) {
+                    passed = false;
+                    failedItems.push(item);
+                }
+            }
+        });
+
+        if (!passed) {
+            player.send(`The following is stopping you from doing this job.`);
+            failedItems.forEach(item => {
+                if (item.inInventory) {
+                    player.send(`Should have: ${item.name}`);
+                } else {
+                    player.send(`Should not have: ${item.name}`);
+                }
+            });
+            return;
+        }
+    }
 
     // Setup the job information for server-side.
     player.job.guid = currentJob.guid;
@@ -118,9 +155,15 @@ export function clearJob(player) {
     // Destroy any current vehicles.
     if (player.job !== undefined) {
         clearTimeout(player.job.timeout);
+        const currentVeh = player.job.currentVehicle;
+
+        let index = player.vehicles.findIndex(x => x === currentVeh);
+        if (index !== -1) {
+            player.vehicles.splice(index, 1);
+        }
 
         // Clear current vehicle.
-        const currentVeh = player.job.currentVehicle;
+
         if (currentVeh !== undefined && currentVeh !== null) {
             currentVeh.destroy();
         }
@@ -258,10 +301,26 @@ export function goToNext(player, goToInfinite) {
         player.job.isAvailable = true;
     }
 
+    if (nextPoint.type === 'rewarditem') {
+        Object.keys(configurationItems.Items).forEach(key => {
+            if (configurationItems.Items[key].label !== nextPoint.item) return;
+            let itemTemplate = configurationItems.Items[key];
+            player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
+            player.send(`You recieved: ${itemTemplate.label}`);
+        });
+
+        index += 1;
+        nextPoint = player.job.currentJob.points[index];
+    }
+
     // Finish Job if undefined point.
     if (nextPoint === undefined) {
-        clearJob(player);
         player.send('You have finished your job.');
+        try {
+            clearJob(player);
+        } catch (err) {
+            console.log(err);
+        }
         return;
     }
 
@@ -557,6 +616,51 @@ function captureType(player, callback) {
         return callback(false);
     }
 
+    if (player.vehicle) {
+        return callback(false);
+    }
+
+    // Set Cooldown
+    player.job.cooldown = Date.now() + 1000;
+    playJobAnimation(player);
+
+    // Add job progression.
+    player.job.progress += 1;
+    player.setSyncedMeta('job:Progress', player.job.progress);
+
+    // Check if the job progression meets the current...
+    // points 'progressMax' value.
+    if (player.job.progress >= player.job.currentPoint.progressMax) {
+        return callback(true);
+    }
+
+    // Otherwise; wait for more progression.
+    return callback(false);
+}
+
+/**
+ * Description:
+ * The 'drivecapture' type requires the user to drive...
+ * and stay parked in a specific area.
+ * fills up over time.
+ * @param player
+ * @param callback
+ */
+function driveCaptureType(player, callback) {
+    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
+    if (dist > player.job.currentPoint.range) {
+        return callback(false);
+    }
+
+    // Check Cooldown
+    if (Date.now() < player.job.cooldown) {
+        return callback(false);
+    }
+
+    if (!player.vehicle) {
+        return callback(false);
+    }
+
     // Set Cooldown
     player.job.cooldown = Date.now() + 1000;
     playJobAnimation(player);
@@ -672,6 +776,11 @@ function vehicleDropType(player, callback) {
 
     player.ejectSlowly();
     player.job.timeout = setTimeout(() => {
+        let index = player.vehicles.findIndex(x => x === player.job.currentVehicle);
+        if (index !== -1) {
+            player.vehicles.splice(index, 1);
+        }
+
         player.job.currentVehicle.destroy();
         player.job.currentVehicle = undefined;
     }, 2500);
@@ -801,6 +910,8 @@ function callbackSpawnVehicle(player, callbackname, value) {
 
     player.job.currentVehicle.setSyncedMeta('job:Owner', player.data.name);
     player.job.currentVehicle.lockState = player.job.vehicle.lockState;
+    player.job.currentVehicle.engineOn = true;
+    player.vehicles.push(player.job.currentVehicle);
 
     if (player.job.vehicle.preventHijack) {
         player.job.currentVehicle.preventHijack = true;

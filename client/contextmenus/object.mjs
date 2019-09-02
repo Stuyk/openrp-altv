@@ -118,7 +118,13 @@ let objectInteractions = {
     992069095: {
         func: sodaMachine
     },
+    1114264700: {
+        func: sodaMachine
+    },
     4216340823: {
+        func: payPhone
+    },
+    2191168601: {
         func: payPhone
     },
     2594689830: {

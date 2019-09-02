@@ -16,6 +16,7 @@ alt.on('playerLeftVehicle', (player, vehicle) => {
 
     // Not their vehicle.
     if (!player.vehicles.includes(vehicle)) return;
+    if (vehicle.data === undefined) return;
 
     vehicle.saveVehicleData();
 });

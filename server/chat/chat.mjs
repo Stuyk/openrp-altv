@@ -64,3 +64,15 @@ function handleMessage(player, msg) {
         playersInRange[i].send(`${sender} says: ${msg}`);
     }
 }
+
+export function actionMessage(player, msg) {
+    if (player.data.name === null) {
+        alt.emitClient(player, 'chooseRoleplayName');
+        return;
+    }
+
+    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxDoRange);
+    inRange.forEach(target => {
+        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
+    });
+}

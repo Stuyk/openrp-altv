@@ -103,6 +103,19 @@ export function drop(player, hash) {
 
     if (item === undefined) return;
 
+    let isDroppable = true;
+    Object.keys(configurationItems.Items).forEach(key => {
+        if (configurationItems.Items[key].label !== item.label) return;
+        isDroppable = configurationItems.Items[key].droppable;
+        console.log(isDroppable);
+    });
+
+    if (!isDroppable) {
+        player.send('You cannot drop that item.');
+        player.updateInventory();
+        return;
+    }
+
     // Generate a clone of the object.
     let clonedItem = { ...item };
     if (!player.subItemByHash(hash, 1)) return;

@@ -410,6 +410,13 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    player.hasItem = itemName => {
+        let item = player.inventory.find(x => x.label === itemName);
+
+        if (item === undefined) return false;
+        return true;
+    };
+
     player.subItemByHash = (itemHash, quantity) => {
         let index = player.inventory.findIndex(x => x.hash === itemHash);
 

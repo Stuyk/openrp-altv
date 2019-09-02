@@ -35,7 +35,7 @@ chat.registerCmd('do', (player, args) => {
     let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxDoRange);
     inRange.forEach(target => {
         target.send(
-            `{c5a5de}(( ${player.data.name.replace('_', ' ')} ))* ${args.join(' ')}`
+            `{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${args.join(' ')}`
         );
     });
 });

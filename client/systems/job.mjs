@@ -15,6 +15,7 @@ const objectiveTypes = [
     { name: 'spawnvehicle', func: spawnvehicleType },
     { name: 'drivepoint', func: drivepointType },
     { name: 'vehicledrop', func: vehicledropType },
+    { name: 'drivecapture', func: drivecaptureType },
     { name: 'target', func: targetType },
     { name: 'targetdrop', func: targetDropType },
     { name: 'targetget', func: targetGetType },
@@ -361,20 +362,10 @@ function drawPointInfo() {
         );
     }
 
-    // Draw Target Message
-    if (currentPoint.type === 'target' && targetMessage !== '') {
+    if (currentPoint.message) {
         native.beginTextCommandDisplayHelp('STRING');
-        native.addTextComponentSubstringPlayerName(targetMessage);
+        native.addTextComponentSubstringPlayerName(currentPoint.message);
         native.endTextCommandDisplayHelp(0, false, true, -1);
-    }
-
-    // Draw Specific to Range
-    if (dist <= currentPoint.range) {
-        if (currentPoint.message) {
-            native.beginTextCommandDisplayHelp('STRING');
-            native.addTextComponentSubstringPlayerName(currentPoint.message);
-            native.endTextCommandDisplayHelp(0, false, true, -1);
-        }
     }
 }
 
@@ -412,11 +403,25 @@ function spawnvehicleType() {
  *  Description: Stand inside of a point for specific progression time.
  */
 function captureType() {
+    if (alt.Player.local.vehicle) return false;
+
     if (Date.now() < cooldown) return false;
 
     cooldown = Date.now() + 2000;
 
     if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) >= 3)
+        return false;
+    return true;
+}
+
+function drivecaptureType() {
+    if (!alt.Player.local.vehicle) return false;
+
+    if (Date.now() < cooldown) return false;
+
+    cooldown = Date.now() + 2000;
+
+    if (utilityVector.distance(alt.Player.local.vehicle.pos, currentPoint.position) >= 3)
         return false;
     return true;
 }

@@ -261,6 +261,9 @@ function chair(ent) {
 
     if (alt.Player.local.sitting) {
         alt.Player.local.sitting = false;
+        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+        native.clearPedSecondaryTask(alt.Player.local.scriptID);
+        alt.Player.local.sitting = false;
         return;
     }
 
@@ -276,43 +279,9 @@ function chair(ent) {
         true
     );
 
+    native.setFollowPedCamViewMode(2);
     alt.Player.local.sitting = true;
-
-    alt.setTimeout(() => {
-        let pForward = native.getEntityForwardVector(alt.Player.local.scriptID);
-        let pPos = alt.Player.local.pos;
-
-        let newForward = {
-            x: pPos.x - pForward.x * 2,
-            y: pPos.y - pForward.y * 2,
-            z: pPos.z + 0.5
-        };
-
-        alt.Player.local.sitCam = native.createCamWithParams(
-            'DEFAULT_SCRIPTED_CAMERA',
-            newForward.x,
-            newForward.y,
-            newForward.z,
-            0,
-            0,
-            0,
-            90,
-            true,
-            0
-        );
-
-        native.pointCamAtEntity(
-            alt.Player.local.sitCam,
-            alt.Player.local.scriptID,
-            0,
-            0,
-            0,
-            false
-        );
-        native.renderScriptCams(true, false, 0, true, 0);
-
-        alt.on('keyup', clearSit);
-    }, 1000);
+    alt.on('keyup', clearSit);
 }
 
 function clearSit(key) {
@@ -320,8 +289,6 @@ function clearSit(key) {
         alt.off('keyup', clearSit);
         native.clearPedTasksImmediately(alt.Player.local.scriptID);
         native.clearPedSecondaryTask(alt.Player.local.scriptID);
-        native.destroyAllCams(false);
-        native.renderScriptCams(false, false, 0, false, 0);
         alt.Player.local.sitting = false;
     }
 }

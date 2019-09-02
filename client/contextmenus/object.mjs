@@ -260,7 +260,6 @@ function chair(ent) {
     let heading = native.getEntityHeading(ent) + 180.0;
 
     if (alt.Player.local.sitting) {
-        alt.Player.local.sitting = false;
         native.clearPedTasksImmediately(alt.Player.local.scriptID);
         native.clearPedSecondaryTask(alt.Player.local.scriptID);
         alt.Player.local.sitting = false;

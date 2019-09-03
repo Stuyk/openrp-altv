@@ -4,14 +4,13 @@ import * as alt from 'alt';
 import * as registrationRegister from '../registration/register.mjs';
 import * as registrationLogin from '../registration/login.mjs';
 import * as characterFace from '../character/face.mjs';
-import * as customizersFace from '../customizers/face.mjs';
 import * as utilityLocationHelper from '../utility/locationhelper.mjs';
 import * as characterName from '../character/name.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
 import * as systemsJob from '../systems/job.mjs';
-import * as interactionAtms from '../interactions/atms.mjs';
+import * as systemsAtm from '../systems/atm.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 import * as chat from '../chat/chat.mjs';
 
@@ -26,15 +25,10 @@ alt.onClient('register:NewAccount', registrationRegister.newAccount);
 // Called when a client attempts to Login to an account.
 alt.onClient('register:ExistingAccount', registrationLogin.existingAccount);
 
-alt.onClient('register:Ready', registrationLogin.ready);
-
 // ====================================================
 // Face
 // Set the player's facial data from the customizer.
 alt.onClient('face:SetFacialData', characterFace.setFacialData);
-
-// Request the facial customizer.
-alt.onClient('face:ShowDialogue', customizersFace.showFace);
 
 // ====================================================
 // Utility
@@ -50,8 +44,8 @@ alt.onClient('character:SetRoleplayName', characterName.setRoleplayName);
 alt.onClient('interaction:Exec', systemsInteraction.attemptToExecuteInteraction);
 
 // Atm Handler
-alt.onClient('atm:Withdraw', interactionAtms.withdraw);
-alt.onClient('atm:Deposit', interactionAtms.deposit);
+alt.onClient('atm:Withdraw', systemsAtm.withdraw);
+alt.onClient('atm:Deposit', systemsAtm.deposit);
 
 // Clothing Handler
 alt.onClient('clothing:SaveClothing', characterClothing.saveClothing);

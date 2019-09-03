@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
-import * as customizersFace from '../customizers/face.mjs';
 import * as cache from '../cache/cache.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
@@ -45,8 +44,6 @@ export function existingAccount(player, username, password) {
 
     // Keep track of logged in players.
     LoggedInPlayers.push(username);
-
-    if (!player.sp) process.abort();
 
     player.username = username;
     player.showRegisterEventSuccess('Successful login! Please wait...');
@@ -111,7 +108,7 @@ function existingCharacter(player, data) {
     if (data.face === null) {
         player.model = 'mp_f_freemode_01';
         player.isNewPlayer = true;
-        customizersFace.showFace(player, lastPos);
+        player.showFaceCustomizerDialogue(lastPos);
     } else {
         player.applyFace(data.face);
 
@@ -148,6 +145,7 @@ function existingCharacter(player, data) {
     player.syncInteractionBlips();
     player.updateTime();
     player.disableEngineControl();
+    player.dimension = 0;
 }
 
 export function removeLoggedInPlayer(username) {
@@ -157,8 +155,4 @@ export function removeLoggedInPlayer(username) {
 
     let removedUser = LoggedInPlayers.splice(res, 1);
     console.log(`${removedUser} was was logged out.`);
-}
-
-export function ready(player) {
-    player.sp = true;
 }

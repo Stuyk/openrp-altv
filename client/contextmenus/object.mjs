@@ -144,6 +144,18 @@ let objectInteractions = {
     },
     4223549947: {
         func: chair
+    },
+    2930269768: {
+        func: atm
+    },
+    3168729781: {
+        func: atm
+    },
+    3424098598: {
+        func: atm
+    },
+    506770882: {
+        func: atm
     }
 };
 
@@ -235,7 +247,7 @@ function postalBox(ent) {
 function dumpster(ent) {
     new ContextMenu(ent, [
         {
-            label: 'Postal Box'
+            label: 'Dumpster'
         },
         {
             label: 'Hide',
@@ -255,6 +267,19 @@ function dumpster(ent) {
     ]);
 }
 
+function atm(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'ATM'
+        },
+        {
+            label: 'Use',
+            isServer: true,
+            event: 'use:Atm'
+        }
+    ]);
+}
+
 function chair(ent) {
     let pos = native.getEntityCoords(ent, false);
     let heading = native.getEntityHeading(ent) + 180.0;
@@ -263,7 +288,6 @@ function chair(ent) {
         alt.Player.local.sitting = false;
         native.clearPedTasksImmediately(alt.Player.local.scriptID);
         native.clearPedSecondaryTask(alt.Player.local.scriptID);
-        alt.Player.local.sitting = false;
         return;
     }
 

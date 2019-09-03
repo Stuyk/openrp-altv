@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as customizersClothing from 'client/customizers/clothing.mjs';
+import * as panelsClothing from 'client/panels/clothing.mjs';
 
 const shops = [
     198145,
@@ -54,7 +54,7 @@ function shopKey() {
         if (timeout) return;
 
         timeout = true;
-        customizersClothing.showDialogue();
+        panelsClothing.showDialogue();
         alt.setTimeout(() => {
             timeout = false;
         }, 500);

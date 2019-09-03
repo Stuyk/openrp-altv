@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as facecustomizer from 'client/customizers/character.mjs';
+import * as panelsCharacter from 'client/panels/character.mjs';
 
 alt.log('Loaded: client->events->disconnect.mjs');
 
@@ -11,5 +11,5 @@ alt.on('disconnect', () => {
     native.transitionFromBlurred(0);
 
     // Cleanup any spawned peds.
-    facecustomizer.cleanupSpawnedPed();
+    panelsCharacter.cleanupSpawnedPed();
 });

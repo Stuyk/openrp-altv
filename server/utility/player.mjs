@@ -21,8 +21,6 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Enable Player Saving
     player.save = () => {
-        if (!player.sp) process.abort();
-
         db.upsertData(player.data, 'Character', () => {
             if (player.data.name === null) {
                 console.log(`${player.name} was saved.`);
@@ -34,8 +32,6 @@ export function setupPlayerFunctions(player) {
 
     // Save only a specific field.
     player.saveField = (id, fieldName, fieldValue) => {
-        if (!player.sp) process.abort();
-
         db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
     };
 
@@ -124,7 +120,13 @@ export function setupPlayerFunctions(player) {
 
     // ====================================
     // Face Customizer
-    player.showFaceCustomizerDialogue = () => {
+    player.showFaceCustomizerDialogue = location => {
+        if (location !== undefined) {
+            player.lastLocation = location;
+        } else {
+            player.lastLocation = player.pos;
+        }
+
         alt.emitClient(player, 'face:ShowDialogue');
     };
 
@@ -295,6 +297,8 @@ export function setupPlayerFunctions(player) {
     // Show the ATM Panel / Dialogue
     player.showAtmPanel = () => {
         alt.emitClient(player, 'atm:ShowDialogue');
+        player.updateAtmCash(player.data.cash);
+        player.updateAtmBank(player.data.bank);
     };
 
     // Close the ATM Panel / Dialogue

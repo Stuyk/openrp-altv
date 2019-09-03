@@ -3,7 +3,6 @@ import * as alt from 'alt';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character, Vehicle } from './entities/entities.mjs'; // Schemas for Database
 import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration
-import * as systemsInteraction from './systems/interaction.mjs';
 import * as cache from './cache/cache.mjs';
 
 // Setup Main Entities and Database Connection
@@ -33,12 +32,8 @@ alt.on('ConnectionComplete', () => {
     import('./events/playerEnteredVehicle.mjs');
 
     // Custom Client Events / Custom Server Events
-    import('./serverEvents/events.mjs');
     import('./clientEvents/events.mjs');
     import('./clientEvents/useEvents.mjs');
-
-    // Interactions
-    import('./interactions/atms.mjs');
 
     // Sandbox Commands
     import('./commands/sandbox.mjs');

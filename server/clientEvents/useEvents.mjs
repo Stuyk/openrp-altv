@@ -8,7 +8,8 @@ const events = {
     'use:PostalBox': systemsUse.postalBox,
     'use:HideDumpster': systemsUse.hideDumpster,
     'use:SearchDumpster': systemsUse.searchDumpster,
-    'use:LeaveDumpster': systemsUse.leaveDumpster
+    'use:LeaveDumpster': systemsUse.leaveDumpster,
+    'use:Atm': systemsUse.atm
 };
 
 Object.keys(events).forEach(key => {

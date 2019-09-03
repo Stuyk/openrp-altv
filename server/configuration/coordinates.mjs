@@ -11,10 +11,3 @@ export const RegisterCamPoint = {
     y: 1059.4945068359375,
     z: 327.6732177734375
 };
-
-// Where the login camera points
-export const RegisterCamDirection = {
-    x: -683.2615356445312,
-    y: 251.98681640625,
-    z: 81.3121337890625
-};

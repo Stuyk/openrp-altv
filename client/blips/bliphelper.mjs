@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import { Atms, Clothing } from 'client/locations/locations.mjs';
 
 alt.log('Loaded: blips->bliphelper.mjs');
 
@@ -11,3 +12,13 @@ export function createBlip(pos, type, color, label) {
     blip.color = color;
     blip.name = label;
 }
+
+// Load ATM Blips
+Atms.forEach(atm => {
+    createBlip(atm, 108, 2, 'ATM');
+});
+
+// Load Clothing Store Blips
+Clothing.forEach(clothing => {
+    createBlip(clothing, 73, 8, 'Clothing Store');
+});

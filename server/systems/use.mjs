@@ -41,3 +41,7 @@ export function leaveDumpster(player) {
 export function searchDumpster(player) {
     player.send('You find nobody inside.');
 }
+
+export function atm(player) {
+    player.showAtmPanel();
+}

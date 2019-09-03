@@ -1,18 +1,13 @@
 import * as alt from 'alt';
 
 // Registration
-import * as registration from 'client/registration/registration.mjs';
+import * as panelsRegistration from 'client/panels/registration.mjs';
 
 // Blips
 import * as blipsBlipHelper from 'client/blips/bliphelper.mjs';
 
 // Character
-import * as characterClothing from 'client/character/clothing.mjs';
-import * as characterFace from 'client/character/face.mjs';
-
-// Customizers
-import * as customizersClothing from 'client/customizers/clothing.mjs';
-import * as customizersCharacter from 'client/customizers/character.mjs';
+import * as systemsCharacter from 'client/systems/character.mjs';
 
 // Systems
 import * as systemsInventory from 'client/systems/inventory.mjs';
@@ -26,6 +21,8 @@ import * as panelsChat from 'client/panels/chat.mjs';
 import * as panelsAtm from 'client/panels/atm.mjs';
 import * as panelsName from 'client/panels/name.mjs';
 import * as panelsInventory from 'client/panels/inventory.mjs';
+import * as panelsClothing from 'client/panels/clothing.mjs';
+import * as panelsCharacter from 'client/panels/character.mjs';
 
 // Utility
 import * as utilityScreenFades from 'client/utility/screenfades.mjs';
@@ -44,32 +41,32 @@ alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
 // Called when the player first joins the server,
 // displays the login camera to the user.
 // Takes two parameters: (regCamCoord, regCamPointAtCoord)
-alt.onServer('register:ShowDialogue', registration.showDialogue);
+alt.onServer('register:ShowDialogue', panelsRegistration.showDialogue);
 
 // Called when there's an error/alert in the registration.
 // Params: msg
-alt.onServer('register:EmitEventError', registration.showError);
-alt.onServer('register:EmitEventSuccess', registration.showSuccess);
+alt.onServer('register:EmitEventError', panelsRegistration.showError);
+alt.onServer('register:EmitEventSuccess', panelsRegistration.showSuccess);
 // Params: NONE
-alt.onServer('register:ShowLogin', registration.showLogin);
+alt.onServer('register:ShowLogin', panelsRegistration.showLogin);
 
 // Finish the login; and disable un-necessary events.
-alt.onServer('register:CloseDialogue', registration.closeDialogue);
+alt.onServer('register:CloseDialogue', panelsRegistration.closeDialogue);
 
 // =======================================================
 // PLAYER RESPAWN
 // Reset the characters blood
-alt.onServer('respawn:ClearPedBloodDamage', customizersCharacter.clearPedBloodDamage);
+alt.onServer('respawn:ClearPedBloodDamage', panelsCharacter.clearPedBloodDamage);
 
 // =======================================================
 // CHARACTER FACE CUSTOMIZER
 // Shows the face customizer overlay.
-alt.onServer('face:ShowDialogue', customizersCharacter.showDialogue);
+alt.onServer('face:ShowDialogue', panelsCharacter.showDialogue);
 
 // =======================================================
 // CHARACTER SPECIFIC EVENTS
 // Parses the users face information and applies it to the ped.
-alt.onServer('face:ApplyFacialData', characterFace.applyFacialData);
+alt.onServer('face:ApplyFacialData', systemsCharacter.applyFacialData);
 
 // =======================================================
 // Screen Fade Effects, self explanatory; mostly takes millisecond parameters.
@@ -99,12 +96,12 @@ alt.onServer('atm:ShowSuccess', panelsAtm.showSuccess);
 
 // =======================================================
 // Clothing Events
-alt.onServer('clothing:ShowDialogue', customizersClothing.showDialogue);
-alt.onServer('clothing:CloseDialogue', customizersClothing.closeDialogue);
+alt.onServer('clothing:ShowDialogue', panelsClothing.showDialogue);
+alt.onServer('clothing:CloseDialogue', panelsClothing.closeDialogue);
 
 // =======================================================
 // Clothing Events
-alt.onServer('clothing:SyncClothing', characterClothing.syncClothing);
+alt.onServer('clothing:SyncClothing', systemsCharacter.syncClothing);
 
 // =======================================================
 // Inventory

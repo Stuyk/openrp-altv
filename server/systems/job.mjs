@@ -17,7 +17,6 @@ jobs.forEach((job, index) => {
         job.name,
         index
     );
-    console.log(interact);
     interact.addBlip(job.blipSprite, job.blipColor, job.name);
 });
 

@@ -11,12 +11,9 @@ let webview;
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Load Webview
-    const exists = webview === undefined ? false : true;
     webview = new View(url);
-    if (!exists) {
-        webview.on('atm:Withdraw', withdrawBalance);
-        webview.on('atm:Deposit', depositBalance);
-    }
+    webview.on('atm:Withdraw', withdrawBalance);
+    webview.on('atm:Deposit', depositBalance);
 }
 
 // Update the cash value on the Webview.

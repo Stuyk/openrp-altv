@@ -23,6 +23,12 @@ export class View {
         if (currentView.focused) return;
         if (isChatOpen) return;
 
+        if (currentView.view === undefined) {
+            currentView.view = new alt.WebView(url);
+            currentView.events = new Map();
+            currentView.on('close', currentView.close);
+        }
+
         currentView.view.url = url;
         currentView.view.isVisible = true;
         currentView.view.focus();
@@ -40,13 +46,18 @@ export class View {
     close() {
         if (!currentView.ready) return;
         currentView.focused = false;
-        currentView.view.url = 'http://resource/client/html/empty/index.html';
-        currentView.view.unfocus();
-        currentView.view.isVisible = false;
         currentView.ready = false;
         showCursor(false);
         alt.toggleGameControls(true);
         native.displayRadar(true);
+
+        Object.keys(currentView.events).forEach(key => {
+            currentView.view.off(key, currentView.events[key]);
+        });
+
+        currentView.view.off('close', currentView.close);
+        currentView.view.destroy();
+        currentView.view = undefined;
     }
 
     // Check if the view is focused.
@@ -57,8 +68,9 @@ export class View {
     // Bind on events, but don't turn off.
     on(name, func) {
         if (currentView.events.has(name)) return;
-        currentView.events.set(name, func);
-        currentView.view.on(name, func);
+        const boundFunction = func.bind(this);
+        currentView.events.set(name, boundFunction);
+        currentView.view.on(name, boundFunction);
     }
 
     emit(name, ...args) {

@@ -14,14 +14,11 @@ let camera = undefined;
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Setup Webview
-    const exists = webview === undefined ? false : true;
     webview = new View(url, false);
-    if (!exists) {
-        webview.on('clothing:RequestComponentData', requestComponentData);
-        webview.on('clothing:UpdateComponent', updateComponent);
-        webview.on('clothing:VerifyClothing', verifyClothing);
-        webview.on('clothing:GetPreviousClothes', getPreviousClothes);
-    }
+    webview.on('clothing:RequestComponentData', requestComponentData);
+    webview.on('clothing:UpdateComponent', updateComponent);
+    webview.on('clothing:VerifyClothing', verifyClothing);
+    webview.on('clothing:GetPreviousClothes', getPreviousClothes);
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 

@@ -34,17 +34,14 @@ let lastHair = 0; // Get the last hair the player set.
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Load the WebView
-    const exists = webview === undefined ? false : true;
     webview = new View(url, false);
-    if (!exists) {
-        webview.on('updateSex', updateSex);
-        webview.on('updatePlayerFace', updatePlayerFace);
-        webview.on('updateFaceDecor', updateFaceDecor);
-        webview.on('updateFaceFeature', updateFaceFeature);
-        webview.on('updateHair', updateHair);
-        webview.on('updateEyes', updateEyes);
-        webview.on('setPlayerFacialData', setPlayerFacialData);
-    }
+    webview.on('updateSex', updateSex);
+    webview.on('updatePlayerFace', updatePlayerFace);
+    webview.on('updateFaceDecor', updateFaceDecor);
+    webview.on('updateFaceFeature', updateFaceFeature);
+    webview.on('updateHair', updateHair);
+    webview.on('updateEyes', updateEyes);
+    webview.on('setPlayerFacialData', setPlayerFacialData);
 
     // Setup a temporary teleport.
     alt.emitServer('temporaryTeleport', offsetPoint);

@@ -13,16 +13,13 @@ let lastTriedUsername = null;
 let yaw = 0;
 
 export function showDialogue(regCamCoord) {
-    const exists = webview === undefined ? false : true;
     webview = new View(url);
-    if (!exists) {
-        webview.on('registerAccount', registerAccount);
-        webview.on('existingAccount', existingAccount);
-        webview.on('ready', () => {
-            const lastUsername = alt.LocalStorage.get().get('lastUsername');
-            if (lastUsername != null) webview.emit('setUsername', lastUsername);
-        });
-    }
+    webview.on('registerAccount', registerAccount);
+    webview.on('existingAccount', existingAccount);
+    webview.on('ready', () => {
+        const lastUsername = alt.LocalStorage.get().get('lastUsername');
+        if (lastUsername != null) webview.emit('setUsername', lastUsername);
+    });
 
     regCamCoord.z += 150;
     camera = new Camera(regCamCoord, 90);

@@ -26,6 +26,7 @@ export function toggleDialogue() {
     if (!isActive) {
         alt.emit('panel:SetStatus', 'chat', true);
         isActive = true;
+        alt.emit('chat:IsOpen', true);
         webview.focus();
         webview.emit('showChatInput');
         alt.toggleGameControls(false);
@@ -52,6 +53,7 @@ function routeMessage(msg) {
     alt.toggleGameControls(true);
     webview.unfocus();
     isActive = false;
+    alt.emit('chat:IsOpen', false);
 
     try {
         alt.showCursor(false);

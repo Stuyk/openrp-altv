@@ -15,19 +15,19 @@ let cameraHeight = 0;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
-    if (webview) return;
+    const exists = webview === undefined ? false : true;
+    webview = new View(url, false);
+    if (!exists) {
+        webview.on('clothing:RequestComponentData', requestComponentData);
+        webview.on('clothing:UpdateComponent', updateComponent);
+        webview.on('clothing:VerifyClothing', verifyClothing);
+        webview.on('clothing:GetPreviousClothes', getPreviousClothes);
+    }
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
     let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
     let pPos = alt.Player.local.pos;
-
-    // Turn on Webview Events
-    webview = new View(url, false);
-    webview.on('clothing:RequestComponentData', requestComponentData);
-    webview.on('clothing:UpdateComponent', updateComponent);
-    webview.on('clothing:VerifyClothing', verifyClothing);
-    webview.on('clothing:GetPreviousClothes', getPreviousClothes);
 
     pPos.x = pPos.x + forVec.x * 1.2;
     pPos.y = pPos.y + forVec.y * 1.2;

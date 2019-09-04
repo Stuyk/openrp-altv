@@ -16,11 +16,15 @@ export function showDialogue() {
         return;
     }
 
+    const exists = webview === undefined ? false : true;
     webview = new View(url);
-    webview.on('drop', drop);
-    webview.on('use', use);
-    webview.on('destroy', destroy);
-    webview.on('fetchItems', fetchItems);
+    if (!exists) {
+        webview.on('drop', drop);
+        webview.on('use', use);
+        webview.on('destroy', destroy);
+        webview.on('fetchItems', fetchItems);
+    }
+
     alt.on('update', disableControls);
 }
 

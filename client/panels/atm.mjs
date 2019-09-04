@@ -8,11 +8,12 @@ let webview;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
-    //webview = new WebView('atm');
+    const exists = webview === undefined ? false : true;
     webview = new View('http://resource/client/html/atm/index.html');
-    alt.log(JSON.stringify(webview));
-    webview.on('atm:Withdraw', withdrawBalance);
-    webview.on('atm:Deposit', depositBalance);
+    if (!exists) {
+        webview.on('atm:Withdraw', withdrawBalance);
+        webview.on('atm:Deposit', depositBalance);
+    }
 }
 
 // Update the cash value on the Webview.

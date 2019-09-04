@@ -40,9 +40,9 @@ export class View {
     close() {
         if (!currentView.ready) return;
         currentView.focused = false;
-        currentView.view.url = '';
-        currentView.view.isVisible = false;
+        currentView.view.url = 'http://resource/client/html/empty/index.html';
         currentView.view.unfocus();
+        currentView.view.isVisible = false;
         currentView.ready = false;
         showCursor(false);
         alt.toggleGameControls(true);

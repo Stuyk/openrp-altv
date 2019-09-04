@@ -226,7 +226,7 @@ $(() => {
     for (let key in clothing) {
         if (!clothing[key].label.includes('Texture')) {
             alt.emit(
-                'requestComponentData',
+                'clothing:RequestComponentData',
                 key,
                 clothing[key].id,
                 clothing[key].value,
@@ -235,7 +235,7 @@ $(() => {
         }
     }
 
-    alt.emit('getPreviousClothes');
+    alt.emit('clothing:GetPreviousClothes');
 });
 
 // Updates the local facial values registered in this WebView
@@ -267,14 +267,21 @@ function changeValue(key, increment) {
     );
 
     if (!clothing[key].label.includes('Texture')) {
-        alt.emit('requestComponentData', key, clothing[key].id, clothing[key].value);
+        alt.emit(
+            'clothing:RequestComponentData',
+            key,
+            clothing[key].id,
+            clothing[key].value
+        );
     }
 
     // Call the function tied to the object element.
     pushChanges(key);
 }
 
-function updateMinMax(key, res) {
+function updateMinMax(...args) {
+    let [key, res] = args;
+
     // {res.id, res.components, res.textures}
     clothing[key].max = res.components;
     clothing[`${key}Texture`].value = 0;
@@ -296,7 +303,7 @@ function pushChanges(key) {
 
     // componentID, drawable, texture
     alt.emit(
-        'updateComponent',
+        'clothing:UpdateComponent',
         clothing[key].id,
         clothing[key].value,
         clothing[`${key}Texture`].value,
@@ -334,7 +341,7 @@ function submitChanges() {
         }
     }
 
-    alt.emit('verifyClothing', JSON.stringify(data));
+    alt.emit('clothing:VerifyClothing', JSON.stringify(data));
 }
 
 function showError(msg) {
@@ -346,7 +353,8 @@ $('#closeModal').on('click', () => {
     $('#modal').hide();
 });
 
-function updateClothes(key, data) {
+function updateClothes(...args) {
+    let [key, data] = args;
     clothing[key].value = data.value;
     clothing[`${key}Texture`].value = data.texture;
 

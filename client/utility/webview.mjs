@@ -5,8 +5,8 @@ import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 alt.log('Loaded: client->utility->webview.mjs');
 
 export const pages = {
-    inventory: 'http://resources/orp/client/html/inventory/index.html',
-    atm: 'http://resources/orp/client/html/atm/index.html'
+    inventory: 'http://resource/client/html/inventory/index.html',
+    atm: 'http://resource/client/html/atm/index.html'
 };
 
 export class WebView {

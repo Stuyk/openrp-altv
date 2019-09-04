@@ -1,32 +1,26 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
+//import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 //import { WebView } from 'client/utility/webview.mjs';
+import { View } from 'client/utility/view.mjs';
 
 alt.log(`Loaded: panels->inventory.mjs`);
 
+const url = 'http://resource/client/html/inventory/index.html';
 let webview = undefined;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
-    if (webview) {
-        close();
+    if (webview !== undefined && webview.view.url === url) {
+        webview.close();
         return;
     }
 
-    if (panelsPanelStatus.isAnyPanelOpen()) return;
-
-    webview = new alt.WebView('http://resources/orp/client/html/inventory/index.html');
-
-    alt.emit('panel:SetStatus', 'inventory', true);
-    webview.focus();
+    webview = new View(url);
     webview.on('drop', drop);
     webview.on('use', use);
     webview.on('destroy', destroy);
     webview.on('fetchItems', fetchItems);
-    webview.on('close', close);
-
-    alt.showCursor(true);
     alt.on('update', disableControls);
 }
 
@@ -57,22 +51,6 @@ function use(hash) {
 function drop(hash) {
     alt.log('DROPPED');
     alt.emitServer('inventory:DropItem', hash);
-}
-
-function close() {
-    webview.off('drop', drop);
-    webview.off('use', use);
-    webview.off('destroy', destroy);
-    webview.off('fetchItems', fetchItems);
-    webview.off('close', close);
-    webview.destroy();
-    try {
-        alt.showCursor(false);
-    } catch (err) {}
-    alt.toggleGameControls(true);
-    alt.off('update', disableControls);
-    alt.emit('panel:SetStatus', 'inventory', false);
-    webview = undefined;
 }
 
 function disableControls() {

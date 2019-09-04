@@ -89,7 +89,6 @@ alt.onServer('blip:CreateBlip', blipsBlipHelper.createBlip);
 // =======================================================
 // ATM Events
 alt.onServer('atm:ShowDialogue', panelsAtm.showDialogue);
-alt.onServer('atm:CloseDialogue', panelsAtm.closeDialogue);
 alt.onServer('atm:UpdateCash', panelsAtm.updateCash);
 alt.onServer('atm:UpdateBank', panelsAtm.updateBank);
 alt.onServer('atm:ShowSuccess', panelsAtm.showSuccess);

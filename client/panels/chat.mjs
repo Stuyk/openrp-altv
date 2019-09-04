@@ -1,18 +1,18 @@
 import * as alt from 'alt';
-import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
+import { currentView } from 'client/utility/view.mjs';
+
 let isActive = false;
 let webView;
+let isViewHidden = false;
 
 export function toggleDialogue() {
     if (webView === undefined) {
-        webView = new alt.WebView('http://resources/orp/client/html/chat/index.html');
+        webView = new alt.WebView('http://resource/client/html/chat/index.html');
         webView.on('routeMessage', routeMessage);
-        webView.focus();
-        webView.unfocus();
+        return;
     }
 
-    if (panelsPanelStatus.isAnyPanelOpen()) return;
-    if (!alt.gameControlsEnabled()) return;
+    if (currentView.isFocused()) return;
 
     if (!isActive) {
         alt.emit('panel:SetStatus', 'chat', true);
@@ -30,6 +30,14 @@ export function send(msg) {
     webView.emit('appendMessage', msg);
 }
 
+export function hide(value) {
+    if (webView === undefined) return;
+
+    isViewHidden = value;
+
+    webView.emit('hide', value);
+}
+
 function routeMessage(msg) {
     alt.emit('panel:SetStatus', 'chat', false);
     alt.toggleGameControls(true);
@@ -45,3 +53,18 @@ function routeMessage(msg) {
 
     alt.emitServer('chat:RouteMessage', msg);
 }
+
+alt.on('hud:SetCash', cash => {
+    if (webView === undefined) return;
+    webView.emit('setCash', cash);
+});
+
+alt.on('hud:SetLocation', location => {
+    if (webView === undefined) return;
+    webView.emit('setLocation', location);
+});
+
+alt.on('hud:SetSpeed', speed => {
+    if (webView === undefined) return;
+    webView.emit('setSpeed', speed);
+});

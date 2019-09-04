@@ -1,10 +1,11 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import { View } from 'client/utility/view.mjs';
 
 alt.log('Loaded: client->customizers->clothing.mjs');
 
-const path = 'http://resources/orp/client/html/clothing/index.html';
-let webView = undefined;
+const url = 'http://resource/client/html/clothing/index.html';
+let webview;
 let characterCamera = undefined;
 let fov = 90;
 
@@ -14,15 +15,19 @@ let cameraHeight = 0;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
-    if (webView) return;
+    if (webview) return;
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
     let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
     let pPos = alt.Player.local.pos;
 
-    webView = new alt.WebView(path);
-    webView.focus();
+    // Turn on Webview Events
+    webview = new View(url, false);
+    webview.on('clothing:RequestComponentData', requestComponentData);
+    webview.on('clothing:UpdateComponent', updateComponent);
+    webview.on('clothing:VerifyClothing', verifyClothing);
+    webview.on('clothing:GetPreviousClothes', getPreviousClothes);
 
     pPos.x = pPos.x + forVec.x * 1.2;
     pPos.y = pPos.y + forVec.y * 1.2;
@@ -58,22 +63,20 @@ export function showDialogue() {
 
     // On Update Function
     alt.on('update', onUpdateCustomizer);
-
-    // Turn on Webview Events
-    webView.on('requestComponentData', requestComponentData);
-    webView.on('updateComponent', updateComponent);
-    webView.on('verifyClothing', verifyClothing);
-    webView.on('getPreviousClothes', getPreviousClothes);
 }
 
 function getPreviousClothes() {
     const clothingData = alt.Player.local.getSyncedMeta('clothing');
     if (clothingData === undefined || clothingData === null) return;
 
+    alt.log(clothingData);
+
     const data = JSON.parse(clothingData);
 
+    if (data === undefined) return;
+
     for (let key in data) {
-        webView.emit('updateClothes', key, data[key]);
+        webview.emit('updateClothes', key, data[key]);
     }
 }
 
@@ -172,7 +175,7 @@ function requestComponentData(key, id, value, isProp) {
             value
         );
 
-        webView.emit('updateMinMax', key, { id, components, textures });
+        webview.emit('updateMinMax', key, { id, components, textures });
     } else {
         let components = native.getNumberOfPedPropDrawableVariations(
             alt.Player.local.scriptID,
@@ -185,7 +188,7 @@ function requestComponentData(key, id, value, isProp) {
             value
         );
 
-        webView.emit('updateMinMax', key, { id, components, textures });
+        webview.emit('updateMinMax', key, { id, components, textures });
     }
 }
 
@@ -218,23 +221,9 @@ export function closeDialogue() {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     // On Update Function
     alt.off('update', onUpdateCustomizer);
-
-    // Turn on Webview Events
-    webView.off('requestComponentData', requestComponentData);
-    webView.off('updateComponent', updateComponent);
-    webView.off('verifyClothing', verifyClothing);
-    webView.off('getPreviousClothes', getPreviousClothes);
-
-    webView.unfocus();
-    webView.destroy();
-    webView = undefined;
-
+    webview.close();
     characterCamera = undefined;
     native.destroyAllCams(true);
-
-    native.displayRadar(true);
-
-    alt.showCursor(false);
     native.renderScriptCams(false, false, 0, false, false);
 }
 
@@ -263,7 +252,7 @@ function verifyClothing(jsonData) {
             );
 
             if (!isValid) {
-                webView.emit('showError', `Invalid combination for ${key}`);
+                webview.emit('showError', `Invalid combination for ${key}`);
                 cancelSave = true;
                 return;
             }
@@ -292,7 +281,7 @@ function verifyClothing(jsonData) {
             );
 
             if (!isValid) {
-                webView.emit('showError', `Invalid combination for ${key}`);
+                webview.emit('showError', `Invalid combination for ${key}`);
                 cancelSave = true;
                 return;
             }
@@ -303,6 +292,5 @@ function verifyClothing(jsonData) {
         return;
     }
 
-    alt.log('Emitted up');
     alt.emitServer('clothing:SaveClothing', jsonData);
 }

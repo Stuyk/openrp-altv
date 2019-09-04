@@ -41,7 +41,7 @@ body::-webkit-scrollbar {
     margin: 0;
     bottom: 45.9vh;
     border: none;
-    width: 35vw;
+    width: 25vw;
     overflow: hidden;
 }
 
@@ -67,4 +67,69 @@ body::-webkit-scrollbar {
 
 .hidden {
     display: none;
+}
+
+.hud {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    width: 10vw;
+    height: auto;
+    position: fixed;
+    top: 0.5vh;
+    right: 1.5vw;
+    text-align: center;
+
+    .element {
+        display: flex;
+        align-content: center;
+        justify-content: space-between;
+        margin-bottom: 1vh;
+        width: 100%;
+        height: auto;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 1vh;
+        color: white;
+        text-shadow: 1px 1px rgba(0, 0, 0, 1);
+        overflow-x: hidden;
+    }
+}
+
+.label {
+    font-family: 'Xolonium';
+    font-size: 12px;
+    text-transform: uppercase;
+    line-height: 2.25vh;
+    user-select: none;
+    width: 100%;
+}
+
+.money {
+    color: rgba(0, 255, 100, 255);
+    font-family: 'Circular';
+    text-align: center;
+}
+
+.location {
+    font-family: 'Circular';
+    font-size: 11px;
+}
+
+.progress {
+    border: 1px solid black;
+    height: 100%;
+    width: 50%;
+}
+
+.speed {
+    position: fixed;
+    bottom: 1vh;
+    width: 100%;
+    font-family: 'Circular';
+    color: white;
+    text-shadow: 1px 1px rgba(0, 0, 0, 1);
+    text-align: center;
 }

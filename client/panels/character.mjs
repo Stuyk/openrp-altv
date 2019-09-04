@@ -64,7 +64,7 @@ export function showDialogue() {
     native.setEntityAlpha(alt.Player.local.scriptID, 0, false);
 
     // Load the WebView
-    webView = new alt.WebView('http://resources/orp/client/html/character/index.html');
+    webView = new alt.WebView('http://resource/client/html/character/index.html');
 
     webView.focus();
     alt.showCursor(true);

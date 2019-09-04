@@ -1,12 +1,14 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { View } from 'client/utility/view.mjs';
+import { Camera } from 'client/utility/camera.mjs';
+import * as utilityVector from 'client/utility/vector.mjs';
 
 alt.log('Loaded: client->customizers->clothing.mjs');
 
 const url = 'http://resource/client/html/clothing/index.html';
 let webview;
-let characterCamera = undefined;
+let camera = undefined;
 let fov = 90;
 
 // eslint-disable-next-line no-unused-vars
@@ -26,43 +28,17 @@ export function showDialogue() {
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
-    let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
-    let pPos = alt.Player.local.pos;
+    let pPos = utilityVector.getForwardVector(alt.Player.local.scriptID, 1.2);
 
-    pPos.x = pPos.x + forVec.x * 1.2;
-    pPos.y = pPos.y + forVec.y * 1.2;
-    pPos.z = pPos.z + forVec.z * 1.2;
-
-    characterCamera = native.createCamWithParams(
-        'DEFAULT_SCRIPTED_CAMERA',
-        pPos.x,
-        pPos.y,
-        pPos.z,
-        0,
-        0,
-        0,
-        fov,
-        true,
-        0
-    );
-
-    native.pointCamAtCoord(
-        characterCamera,
-        alt.Player.local.pos.x,
-        alt.Player.local.pos.y,
-        alt.Player.local.pos.z
-    );
-
-    native.renderScriptCams(true, false, 0, true, false);
+    camera = new Camera(pPos, fov);
+    camera.pointAtCoord(alt.Player.local.pos);
+    camera.playerControlsEntity(alt.Player.local.scriptID);
 
     // Hide Radar
     native.displayRadar(false);
 
     // Show Cursor
     alt.showCursor(true);
-
-    // On Update Function
-    alt.on('update', onUpdateCustomizer);
 }
 
 function getPreviousClothes() {
@@ -78,88 +54,6 @@ function getPreviousClothes() {
     for (let key in data) {
         webview.emit('updateClothes', key, data[key]);
     }
-}
-
-// On Update Customizer
-function onUpdateCustomizer() {
-    if (characterCamera === undefined) return;
-
-    // Disable Controls for the Player
-    native.disableAllControlActions(0);
-    native.disableAllControlActions(1);
-    let cursorRelativePos = alt.getCursorPos().x;
-
-    // Scroll to zoom in.
-    if (native.isDisabledControlPressed(0, 14)) {
-        if (cursorRelativePos < screenWidth / 4) return;
-
-        fov += 3;
-        if (fov >= 100) fov = 100;
-        updateCamera();
-    }
-
-    // Scroll to zoom out
-    if (native.isDisabledControlPressed(0, 15)) {
-        if (cursorRelativePos < screenWidth / 4) return;
-
-        fov -= 3;
-        if (fov <= 30) fov = 30;
-        updateCamera();
-    }
-
-    // Right-Click Drag Rotation
-    if (native.isDisabledControlPressed(0, 25)) {
-        let heading = native.getEntityHeading(alt.Player.local.scriptID);
-
-        if (cursorRelativePos < screenWidth / 2) {
-            cursorRelativePos = -1.5;
-        }
-
-        if (cursorRelativePos > screenWidth - screenWidth / 2) {
-            cursorRelativePos = 1.5;
-        }
-
-        native.setEntityHeading(alt.Player.local.scriptID, heading + cursorRelativePos);
-    }
-
-    // W - Up
-    if (native.isDisabledControlPressed(0, 32)) {
-        updateCamPos(true);
-    }
-
-    // S - Down
-    if (native.isDisabledControlPressed(0, 33)) {
-        updateCamPos(false);
-    }
-}
-
-// Update Camera FOV
-function updateCamera() {
-    native.setCamFov(characterCamera, fov);
-    native.renderScriptCams(true, false, 0, true, false);
-}
-
-// Update Camera Position
-function updateCamPos(isUp) {
-    let coord = native.getCamCoord(characterCamera);
-
-    if (isUp) {
-        cameraHeight += 0.01;
-        if (cameraHeight > 2) {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
-        } else {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z + 0.01);
-        }
-    } else {
-        cameraHeight -= 0.01;
-        if (cameraHeight < -0.5) {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
-        } else {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z - 0.01);
-        }
-    }
-
-    native.renderScriptCams(true, false, 0, true, false);
 }
 
 function requestComponentData(key, id, value, isProp) {
@@ -219,12 +113,8 @@ function updateComponent(componentId, drawable, texture, isProp) {
 
 export function closeDialogue() {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
-    // On Update Function
-    alt.off('update', onUpdateCustomizer);
     webview.close();
-    characterCamera = undefined;
-    native.destroyAllCams(true);
-    native.renderScriptCams(false, false, 0, false, false);
+    camera.destroy();
 }
 
 // Verify the clothing is correct; before saving.

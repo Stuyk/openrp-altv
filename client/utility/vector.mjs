@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 
 alt.log('Loaded: utility->vector.mjs');
 
@@ -20,6 +21,16 @@ export function randPosAround(pos, range) {
     return {
         x: pos.x + Math.random() * (range * 2) - range,
         y: pos.y + Math.random() * (range * 2) - range,
+        z: pos.z
+    };
+}
+
+export function getForwardVector(entity, distance) {
+    const forward = native.getEntityForwardVector(entity);
+    const pos = native.getEntityCoords(entity, false);
+    return {
+        x: pos.x + forward.x * distance,
+        y: pos.y + forward.y * distance,
         z: pos.z
     };
 }

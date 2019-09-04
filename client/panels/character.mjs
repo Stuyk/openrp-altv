@@ -1,5 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import { View } from 'client/utility/view.mjs';
+import { Camera } from 'client/utility/camera.mjs';
 
 alt.log('Loaded: client->customizers->character.mjs');
 
@@ -16,7 +18,7 @@ const playerPoint = {
 };
 
 let webView = undefined; // Used for the HTML View.
-let characterCamera = undefined; // Used for the Camera Manipulation
+let camera = undefined; // Used for the Camera Manipulation
 let modPed = undefined; // The pedestrian we create.
 let fov = 28; // The FOV we change with scroll wheel.
 
@@ -70,24 +72,9 @@ export function showDialogue() {
     alt.showCursor(true);
 
     // Setup the ped camera point.
-    characterCamera = native.createCamWithParams(
-        'DEFAULT_SCRIPTED_CAMERA',
-        cameraPoint.x,
-        cameraPoint.y,
-        cameraPoint.z,
-        0,
-        0,
-        0,
-        fov,
-        true,
-        0
-    );
-
-    // Point camera at entity; with no offset.
-    native.pointCamAtPedBone(characterCamera, modPed, 31086, 0.1, 0, 0, false);
-
-    // Render the now setup camera; to the player.
-    native.renderScriptCams(true, false, 0, true, false);
+    camera = new Camera(cameraPoint, fov);
+    camera.pointAtBone(modPed, 31086, 0.1, 0, 0);
+    camera.playerControlsEntity(modPed, true);
 
     // Update Sex
     webView.on('updateSex', updateSex);
@@ -118,9 +105,6 @@ export function showDialogue() {
         native.getHashKey('mpbeach_overlays'),
         native.getHashKey('fm_hair_fuzz')
     );
-
-    // Halt controls, add zoom in zoom out, and rotation.
-    alt.on('update', onUpdateEventCharacterCustomizer);
 
     alt.setTimeout(() => {
         webView.emit('sexUpdated', 0);
@@ -247,11 +231,8 @@ function resetCamera(modelToUse) {
 
     updateHairColorChoices();
 
-    // Point camera at entity; with no offset.
-    native.pointCamAtPedBone(characterCamera, modPed, 31086, 0.1, 0, 0, false);
-
-    // Render the now setup camera; to the player.
-    native.renderScriptCams(true, false, 0, true, false);
+    camera.pointAtBone(modPed, 31086, 0.1, 0, 0);
+    camera.playerControlsEntity(modPed, true);
 }
 
 // Update the number of hair colors available.
@@ -264,18 +245,12 @@ function updateHairColorChoices() {
     webView.emit('stylesUpdate', hairStyles, hairColors);
 }
 
-// Update the Camera when the FOV changes.
-function updateCamera() {
-    native.setCamFov(characterCamera, fov);
-    native.renderScriptCams(true, false, 0, true, false);
-}
-
 function setPlayerFacialData(facialDataJSON) {
     alt.emitServer('face:SetFacialData', facialDataJSON);
     alt.emit('panel:SetStatus', 'character', false);
 
     // Remove the CharacterCamera
-    characterCamera = undefined;
+    camera.destroy();
 
     // Turn off webview events.
     webView.off('updateSex', updateSex);
@@ -290,14 +265,8 @@ function setPlayerFacialData(facialDataJSON) {
     // Destroy the webview.
     webView.destroy();
 
-    // Stop rendering the cameras.
-    native.renderScriptCams(false, false, 0, false, false);
-
     // Hide the player's model.
     native.setEntityAlpha(alt.Player.local.scriptID, 255, false);
-
-    // Destroy All Cameras
-    native.destroyAllCams(true);
 
     // Delete the ped.
     native.deletePed(modPed);
@@ -310,53 +279,8 @@ function setPlayerFacialData(facialDataJSON) {
     // Stop showing the cursor
     alt.showCursor(false);
 
-    // Turn off the update function.
-    alt.off('update', onUpdateEventCharacterCustomizer);
-
     // Request the last location.
     alt.emitServer('utility:GoToLastLocation');
-}
-
-function onUpdateEventCharacterCustomizer() {
-    if (characterCamera === undefined) return;
-
-    // Disable Controls for the Player
-    native.disableAllControlActions(0);
-    native.disableAllControlActions(1);
-    let cursorRelativePos = alt.getCursorPos().x;
-
-    // Scroll to zoom in.
-    if (native.isDisabledControlPressed(0, 14)) {
-        if (cursorRelativePos < screenWidth / 4) return;
-
-        fov += 2;
-        if (fov >= 29) fov = 28;
-        updateCamera();
-    }
-
-    // Scroll to zoom out
-    if (native.isDisabledControlPressed(0, 15)) {
-        if (cursorRelativePos < screenWidth / 4) return;
-
-        fov -= 2;
-        if (fov <= 16) fov = 17;
-        updateCamera();
-    }
-
-    // Right-Click Drag Rotation
-    if (native.isDisabledControlPressed(0, 25)) {
-        let heading = native.getEntityHeading(modPed);
-
-        if (cursorRelativePos < screenWidth / 2) {
-            cursorRelativePos = -1;
-        }
-
-        if (cursorRelativePos > screenWidth - screenWidth / 2) {
-            cursorRelativePos = 1;
-        }
-
-        native.setEntityHeading(modPed, heading + cursorRelativePos);
-    }
 }
 
 export function cleanupSpawnedPed() {

@@ -9,14 +9,11 @@ alt.log('Loaded: client->customizers->clothing.mjs');
 const url = 'http://resource/client/html/clothing/index.html';
 let webview;
 let camera = undefined;
-let fov = 90;
-
-// eslint-disable-next-line no-unused-vars
-let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(0, 0);
-let cameraHeight = 0;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
+    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+    // Setup Webview
     const exists = webview === undefined ? false : true;
     webview = new View(url, false);
     if (!exists) {
@@ -30,15 +27,9 @@ export function showDialogue() {
 
     let pPos = utilityVector.getForwardVector(alt.Player.local.scriptID, 1.2);
 
-    camera = new Camera(pPos, fov);
+    camera = new Camera(pPos, 90);
     camera.pointAtCoord(alt.Player.local.pos);
     camera.playerControlsEntity(alt.Player.local.scriptID);
-
-    // Hide Radar
-    native.displayRadar(false);
-
-    // Show Cursor
-    alt.showCursor(true);
 }
 
 function getPreviousClothes() {

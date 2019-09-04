@@ -4,7 +4,7 @@ import * as chat from 'client/panels/chat.mjs';
 import { View } from 'client/utility/view.mjs';
 import { Camera } from 'client/utility/camera.mjs';
 
-alt.log('Loaded: client->registration->registration.mjs');
+alt.log('Loaded: client->panels->registration.mjs');
 
 const url = 'http://resource/client/html/registration/index.html';
 let webview = undefined;

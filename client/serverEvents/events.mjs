@@ -27,7 +27,7 @@ import * as panelsCharacter from 'client/panels/character.mjs';
 // Utility
 import * as utilityScreenFades from 'client/utility/screenfades.mjs';
 
-alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
+alt.log('Loaded: client->serverEvents->events.mjs');
 
 // =============================================
 // Quick Summary:

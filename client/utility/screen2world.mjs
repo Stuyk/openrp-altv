@@ -1,6 +1,8 @@
 import * as native from 'natives';
 import * as alt from 'alt';
 
+alt.log('Loaded: client->utility->screen2world.mjs');
+
 function mulNumber(vector1, value) {
     var result = {};
     result.x = vector1.x * value;

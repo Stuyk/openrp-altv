@@ -2,8 +2,9 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { showCursor } from 'client/utility/cursor.mjs';
 
-export let currentView;
+alt.log('Loaded: client->utility->view.mjs');
 
+export let currentView;
 export class View {
     constructor(url, killControls = true) {
         if (currentView === undefined) {

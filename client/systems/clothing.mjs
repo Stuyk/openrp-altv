@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import * as panelsClothing from 'client/panels/clothing.mjs';
 
+alt.log('Loaded: client->systems->clothing.mjs');
+
 const shops = [
     198145,
     165633,

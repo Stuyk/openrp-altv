@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
-alt.log('Loaded: utility->vector.mjs');
+alt.log('Loaded: client->utility->vector.mjs');
 
 // Get the distance between two vectors.
 export function distance(vector1, vector2) {

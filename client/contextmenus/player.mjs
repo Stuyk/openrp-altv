@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from 'client/systems/context.mjs';
 
+alt.log('Loaded: client->contextmenus->player.mjs');
+
 /**
  * This has to be setup in a way that every player gets
  * default actions. Then additional submenus can be

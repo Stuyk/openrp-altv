@@ -59,9 +59,11 @@ function handleMessage(player, msg) {
 
     var playersInRange = vector.getPlayersInRange(player.pos, ChatConfig.maxChatRange);
     const sender = player.data.name.replace('_', ' ');
+    const message = `${sender} says: ${msg}`;
+    alt.log(message);
 
     for (var i = 0; i < playersInRange.length; i++) {
-        playersInRange[i].send(`${sender} says: ${msg}`);
+        playersInRange[i].send(message);
     }
 }
 

@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->systems->callbacks.mjs');
+
 const callbackTypes = {
     waypoint: { func: waypoint }
 };

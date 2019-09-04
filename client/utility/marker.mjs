@@ -1,4 +1,7 @@
+import * as alt from 'alt';
 import * as native from 'natives';
+
+alt.log('Loaded: client->utility->marker.mjs');
 
 export function drawMarker(type, pos, dir, rot, scale, r, g, b, alpha) {
     native.drawMarker(

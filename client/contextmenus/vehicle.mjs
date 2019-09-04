@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from 'client/systems/context.mjs';
 
+alt.log('Loaded: client->contextmenus->vehicle.mjs');
+
 const doorNames = [
     'Driver Door',
     'Passenger Door',

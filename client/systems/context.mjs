@@ -4,6 +4,8 @@ import * as utilityScreen2World from 'client/utility/screen2world.mjs';
 import * as utilityText from 'client/utility/text.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 
+alt.log('Loaded: client->systems->context.mjs');
+
 let drawCursor = false;
 let currentContext;
 let cooldown = Date.now();

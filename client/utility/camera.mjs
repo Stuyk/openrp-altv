@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->utility->camera.mjs');
+
 export class Camera {
     constructor(pos, fov) {
         const args = native.getActiveScreenResolution(0, 0);
@@ -91,8 +93,6 @@ export class Camera {
 
     // Call in update function.
     playerControls() {
-        if (this.target === undefined) return;
-
         native.disableAllControlActions(0);
         native.disableAllControlActions(1);
         let mX = alt.getCursorPos().x;
@@ -102,7 +102,6 @@ export class Camera {
         // Scroll to zoom in.
         if (native.isDisabledControlPressed(0, 14)) {
             if (mX < this.screenWidth / 4) return;
-
             fov += 3;
             if (fov >= 100) fov = 100;
             this.fov(fov);

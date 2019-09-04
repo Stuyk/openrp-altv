@@ -2,14 +2,17 @@ import * as alt from 'alt';
 //import { WebView } from 'client/utility/webview.mjs';
 import { View } from 'client/utility/view.mjs';
 
-alt.log(`Loaded: panels->atm.mjs`);
+alt.log(`Loaded: client->panels->atm.mjs`);
 
+const url = 'http://resource/client/html/atm/index.html';
 let webview;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
+    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+    // Load Webview
     const exists = webview === undefined ? false : true;
-    webview = new View('http://resource/client/html/atm/index.html');
+    webview = new View(url);
     if (!exists) {
         webview.on('atm:Withdraw', withdrawBalance);
         webview.on('atm:Deposit', depositBalance);

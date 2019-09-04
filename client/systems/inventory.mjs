@@ -4,6 +4,8 @@ import * as systemsSound from 'client/systems/sound.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 import * as utilityText from 'client/utility/text.mjs';
 
+alt.log('Loaded: client->systems->inventory.mjs');
+
 let itemsOnGround = [];
 let pickingUpItem = false;
 

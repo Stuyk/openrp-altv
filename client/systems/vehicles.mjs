@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->systems->vehicles.mjs');
+
 export function toggleDoor(vehicle, id, state) {
     if (state) {
         native.setVehicleDoorOpen(vehicle.scriptID, id, false, false);

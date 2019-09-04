@@ -1,14 +1,23 @@
 import * as alt from 'alt';
 import { currentView } from 'client/utility/view.mjs';
 
+alt.log('Loaded: client->panels->chat.mjs');
+
+const url = 'http://resource/client/html/chat/index.html';
 let isActive = false;
-let webView;
+let webview;
 let isViewHidden = false;
 
+/*
+Warning; this is meant to be a seperate webview.
+Do not use 'View' for this view. Chat needs to be
+decoupled from everything else.
+*/
+
 export function toggleDialogue() {
-    if (webView === undefined) {
-        webView = new alt.WebView('http://resource/client/html/chat/index.html');
-        webView.on('routeMessage', routeMessage);
+    if (webview === undefined) {
+        webview = new alt.WebView(url);
+        webview.on('routeMessage', routeMessage);
         return;
     }
 
@@ -17,31 +26,31 @@ export function toggleDialogue() {
     if (!isActive) {
         alt.emit('panel:SetStatus', 'chat', true);
         isActive = true;
-        webView.focus();
-        webView.emit('showChatInput');
+        webview.focus();
+        webview.emit('showChatInput');
         alt.toggleGameControls(false);
         alt.showCursor(true);
     }
 }
 
 export function send(msg) {
-    if (webView === undefined) return;
+    if (webview === undefined) return;
 
-    webView.emit('appendMessage', msg);
+    webview.emit('appendMessage', msg);
 }
 
 export function hide(value) {
-    if (webView === undefined) return;
+    if (webview === undefined) return;
 
     isViewHidden = value;
 
-    webView.emit('hide', value);
+    webview.emit('hide', value);
 }
 
 function routeMessage(msg) {
     alt.emit('panel:SetStatus', 'chat', false);
     alt.toggleGameControls(true);
-    webView.unfocus();
+    webview.unfocus();
     isActive = false;
 
     try {
@@ -55,16 +64,16 @@ function routeMessage(msg) {
 }
 
 alt.on('hud:SetCash', cash => {
-    if (webView === undefined) return;
-    webView.emit('setCash', cash);
+    if (webview === undefined) return;
+    webview.emit('setCash', cash);
 });
 
 alt.on('hud:SetLocation', location => {
-    if (webView === undefined) return;
-    webView.emit('setLocation', location);
+    if (webview === undefined) return;
+    webview.emit('setLocation', location);
 });
 
 alt.on('hud:SetSpeed', speed => {
-    if (webView === undefined) return;
-    webView.emit('setSpeed', speed);
+    if (webview === undefined) return;
+    webview.emit('setSpeed', speed);
 });

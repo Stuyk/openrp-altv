@@ -4,16 +4,20 @@ import * as native from 'natives';
 //import { WebView } from 'client/utility/webview.mjs';
 import { View } from 'client/utility/view.mjs';
 
-alt.log(`Loaded: panels->inventory.mjs`);
+alt.log(`Loaded: client->panels->inventory.mjs`);
 
 const url = 'http://resource/client/html/inventory/index.html';
 let webview = undefined;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
-    if (webview !== undefined && webview.view.url === url) {
-        webview.close();
-        return;
+    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+    // Load Webview
+    if (webview !== undefined && webview.view !== undefined) {
+        if (webview.view.url === url) {
+            webview.close();
+            return;
+        }
     }
 
     const exists = webview === undefined ? false : true;

@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import * as utilityText from 'client/utility/text.mjs';
 
+alt.log('Loaded: client->systems->quickinteract.mjs');
+
 /* What this needs to do:
  * Supports a list of keys the developer sends in.
  * The supported keys are function bound.

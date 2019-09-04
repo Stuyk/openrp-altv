@@ -32,7 +32,6 @@ export function repair(vehicle) {
 }
 
 export function disableEngineControl() {
-    alt.log('Disabling engine control....');
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
 }
 

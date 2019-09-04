@@ -14,7 +14,6 @@ import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as systemsSound from 'client/systems/sound.mjs';
 import * as systemsAnimation from 'client/systems/animation.mjs';
 import * as systemsVehicles from 'client/systems/vehicles.mjs';
-import * as systemsJob from 'client/systems/job.mjs';
 
 // Panels
 import * as panelsChat from 'client/panels/chat.mjs';

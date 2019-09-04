@@ -164,6 +164,8 @@ export class ContextMenu {
 alt.on('update', useMenu);
 
 function useMenu() {
+    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+
     if (native.isControlPressed(0, 20)) {
         drawCursor = true;
     }

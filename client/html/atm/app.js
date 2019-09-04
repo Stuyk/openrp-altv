@@ -52,19 +52,16 @@ $(`#close`).on('click', () => {
 });
 
 function showSuccess(message) {
-    console.log(message);
     $(`#alertSuccess`).show();
     $(`#alertSuccess`).html(`${message}`);
 }
 
 function setBankBalance(money) {
-    console.log(`bank from Webview: ${money}`);
     $('#bankbalance').html(`$${money}`);
     bankBalance = money;
 }
 
 function setCashBalance(money) {
-    console.log(`Cash from Webview: ${money}`);
     $('#cashbalance').html(`$${money}`);
     cashBalance = money;
 }

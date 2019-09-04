@@ -1,5 +1,7 @@
 import * as alt from 'alt';
 
+alt.log('Loaded: client->systems->weather.mjs');
+
 const weatherRotation = [
     0, // extra sunny
     1, // clear

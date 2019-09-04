@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->systems->animation.mjs');
+
 /*
 	Flags need to be added together for desired effects.
 	ie. Upper Body + Last Frame = 16 + 2 = 18 <-- This value.

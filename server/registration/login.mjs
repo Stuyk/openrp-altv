@@ -53,12 +53,8 @@ export function existingAccount(player, username, password) {
 
 // Called when the player is finishing their login.
 export function finishPlayerLogin(player, databaseID) {
-    // Close the registration dialogue.
     player.closeRegisterDialogue();
-
-    // Fade the screen out in 1 second, then fade back after 2 seconds in 1 second.
     player.screenFadeOut(500);
-
     player.guid = databaseID;
 
     db.fetchByIds(player.guid, 'Character', results => {
@@ -68,32 +64,31 @@ export function finishPlayerLogin(player, databaseID) {
             return;
         }
 
+        const currentTime = Date.now();
+
         // New Character
-        newCharacter(player);
-    });
-}
+        const data = {
+            id: player.guid,
+            lastposition: JSON.stringify(DefaultSpawn),
+            model: 'mp_m_freemode_01',
+            health: 200,
+            cash: PlayerDefaults.cash,
+            bank: PlayerDefaults.bank,
+            creation: currentTime,
+            lastlogin: currentTime
+        };
 
-// Called when a new character needs to be added to the database.
-function newCharacter(player) {
-    // Character does not exist.
-    const data = {
-        id: player.guid,
-        lastposition: JSON.stringify(DefaultSpawn),
-        model: 'mp_m_freemode_01',
-        health: 200,
-        cash: PlayerDefaults.cash,
-        bank: PlayerDefaults.bank
-    };
-
-    // Save the new Character data to the database and assign to the player.
-    db.upsertData(data, 'Character', data => {
-        existingCharacter(player, data);
+        // Save the new Character data to the database and assign to the player.
+        db.upsertData(data, 'Character', data => {
+            existingCharacter(player, data);
+        });
     });
 }
 
 // Called for any existing characters.
 function existingCharacter(player, data) {
     const lastPos = JSON.parse(data.lastposition);
+    player.setSyncedMeta('loggedin', true);
     player.needsRoleplayName = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
 
@@ -106,6 +101,7 @@ function existingCharacter(player, data) {
 
     // Check if the player has a face.
     if (data.face === null) {
+        console.log('No Face');
         player.model = 'mp_f_freemode_01';
         player.isNewPlayer = true;
         player.showFaceCustomizerDialogue(lastPos);
@@ -137,15 +133,16 @@ function existingCharacter(player, data) {
 
     // Setup data on the player.
     player.data = data;
+    player.dimension = 0;
+    player.startTime = Date.now(); // Used for time tracking
     player.syncInventory();
-    player.setSyncedMeta('loggedin', true);
     player.screenFadeIn(1000);
     player.syncVehicles();
     player.syncMoney();
     player.syncInteractionBlips();
     player.updateTime();
     player.disableEngineControl();
-    player.dimension = 0;
+    player.setLastLogin();
 }
 
 export function removeLoggedInPlayer(username) {

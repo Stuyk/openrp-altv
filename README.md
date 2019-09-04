@@ -69,6 +69,14 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Roleplay Commands (/me, /do, /b, /cc)
 -   [x] Ranged Chat
 -   [ ] Voice Chat
+-   [ ] Playing Hours Stats
+-   [ ] Skill System for Jobs
+-   [ ] Drug System
+-   [ ] Drugs for Health
+-   [ ] Drugs for Armor
+-   [ ] Drugs for Fast Running
+-   [ ] Drug Jobs 3 jobs for each type.
+-   [ ] Loyalty Program
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
 

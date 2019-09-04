@@ -25,7 +25,7 @@ $(`#withdraw`).on('click', () => {
         return;
     }
 
-    alt.emit('withdraw', withdrawAmount);
+    alt.emit('atm:Withdraw', withdrawAmount);
 });
 
 $(`#deposit`).on('click', () => {
@@ -44,35 +44,24 @@ $(`#deposit`).on('click', () => {
         return;
     }
 
-    alt.emit('deposit', depositAmount);
+    alt.emit('atm:Deposit', depositAmount);
 });
 
 $(`#close`).on('click', () => {
     alt.emit('close');
 });
 
-document.onkeydown = function(evt) {
-    const keys = ['w', 'a', 's', 'd'];
-    evt = evt || window.event;
-    if (keys.includes(evt.key)) {
-        alt.emit('close');
-    }
-};
-
 function showSuccess(message) {
-    console.log(message);
     $(`#alertSuccess`).show();
     $(`#alertSuccess`).html(`${message}`);
 }
 
 function setBankBalance(money) {
-    console.log(`bank from Webview: ${money}`);
     $('#bankbalance').html(`$${money}`);
     bankBalance = money;
 }
 
 function setCashBalance(money) {
-    console.log(`Cash from Webview: ${money}`);
     $('#cashbalance').html(`$${money}`);
     cashBalance = money;
 }

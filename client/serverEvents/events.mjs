@@ -14,7 +14,6 @@ import * as systemsInventory from 'client/systems/inventory.mjs';
 import * as systemsSound from 'client/systems/sound.mjs';
 import * as systemsAnimation from 'client/systems/animation.mjs';
 import * as systemsVehicles from 'client/systems/vehicles.mjs';
-import * as systemsJob from 'client/systems/job.mjs';
 
 // Panels
 import * as panelsChat from 'client/panels/chat.mjs';
@@ -27,7 +26,7 @@ import * as panelsCharacter from 'client/panels/character.mjs';
 // Utility
 import * as utilityScreenFades from 'client/utility/screenfades.mjs';
 
-alt.log('Loaded: client->serverEvents->serverEventRouting.mjs');
+alt.log('Loaded: client->serverEvents->events.mjs');
 
 // =============================================
 // Quick Summary:
@@ -89,7 +88,6 @@ alt.onServer('blip:CreateBlip', blipsBlipHelper.createBlip);
 // =======================================================
 // ATM Events
 alt.onServer('atm:ShowDialogue', panelsAtm.showDialogue);
-alt.onServer('atm:CloseDialogue', panelsAtm.closeDialogue);
 alt.onServer('atm:UpdateCash', panelsAtm.updateCash);
 alt.onServer('atm:UpdateBank', panelsAtm.updateBank);
 alt.onServer('atm:ShowSuccess', panelsAtm.showSuccess);

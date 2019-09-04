@@ -1,6 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.log('Loaded: client->systems->vehicles.mjs');
+
 export function toggleDoor(vehicle, id, state) {
     if (state) {
         native.setVehicleDoorOpen(vehicle.scriptID, id, false, false);
@@ -30,7 +32,6 @@ export function repair(vehicle) {
 }
 
 export function disableEngineControl() {
-    alt.log('Disabling engine control....');
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
 }
 

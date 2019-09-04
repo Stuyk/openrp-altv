@@ -4,6 +4,8 @@ import * as utilityScreen2World from 'client/utility/screen2world.mjs';
 import * as utilityText from 'client/utility/text.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 
+alt.log('Loaded: client->systems->context.mjs');
+
 let drawCursor = false;
 let currentContext;
 let cooldown = Date.now();
@@ -159,27 +161,22 @@ export class ContextMenu {
     }
 }
 
-// 0 is Nothing
-// 1 is Ped
-// 2 is Vehicle
-// 3 is Object
-alt.on('keydown', key => {
-    if (key !== 'Z'.charCodeAt(0)) return;
-
-    drawCursor = true;
-    alt.on('update', useMenu);
-});
-
-alt.on('keyup', key => {
-    if (key !== 'Z'.charCodeAt(0)) return;
-
-    drawCursor = false;
-    alt.off('update', useMenu);
-    currentContext = undefined;
-});
+alt.on('update', useMenu);
 
 function useMenu() {
+    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+
+    if (native.isControlPressed(0, 20)) {
+        drawCursor = true;
+    }
+
+    if (native.isControlJustReleased(0, 20)) {
+        drawCursor = false;
+        currentContext = undefined;
+    }
+
     if (!drawCursor) return;
+
     native.showCursorThisFrame();
     native.disableControlAction(0, 24, true); // Left Mouse
     native.disableControlAction(0, 25, true); // Right Mouse

@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
-alt.log('Loaded: utility->text.mjs');
+alt.log('Loaded: client->utility->text.mjs');
 
 export function drawText3d(
     msg,

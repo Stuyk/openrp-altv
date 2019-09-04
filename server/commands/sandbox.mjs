@@ -4,95 +4,57 @@ import * as configurationItems from '../configuration/items.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
+const sandboxhelp = [
+    //
+    '/pos, /b, /me, /do',
+    '/addveh (model)',
+    '/addcash (amount)',
+    '/wep (hash)',
+    '/face',
+    '/granola, /coffee',
+    '/tpto (rp-name)',
+    '/players',
+    'Z + Right-Click to Interact',
+    'I for Inventory'
+];
+
+chat.registerCmd('help', player => {
+    sandboxhelp.forEach(helper => {
+        player.send(`${helper}`);
+    });
+});
+
 chat.registerCmd('pos', player => {
     console.log(player.pos);
 });
 
-chat.registerCmd('veh', (player, args) => {
-    if (args.length == 0) {
-        player.send(player, '/veh [carname]');
-        args[0] = 'Infernus'; // for dev purposes only |by eappels
-    }
-    SpawnVehicleInFrontOfPlayer(player, 3, args[0]);
-});
-
-async function SpawnVehicleInFrontOfPlayer(player, distance, vehiclename) {
-    var position = await getForwardVector(player);
-    var pos = {
-        x: player.pos.x + position.x * distance,
-        y: player.pos.y + position.y * distance,
-        z: player.pos.z + position.z * distance
-    };
-    new alt.Vehicle(vehiclename, pos.x, pos.y, pos.z, 0, 0, 0);
-}
-
-async function getForwardVector(player) {
-    var result = await ClientCallback(player, 'getForwardVector', []);
-    return result;
-}
-
-async function ClientCallback(player, clientEventName, argsArray) {
-    alt.emitClient(player, clientEventName, argsArray);
-    let promise = new Promise(res => {
-        alt.onClient(clientEventName, (player, resultsArray) => {
-            res(resultsArray);
-        });
-    });
-    var result = await promise;
-    return result;
-}
-
 chat.registerCmd('addcash', (player, value) => {
     let data = value * 1;
-
+    if (value > 600000) return;
     player.addCash(data);
 });
 
-chat.registerCmd('wep', player => {
-    player.giveWeapon(-1312131151, 999, true);
-    player.giveWeapon(-270015777, 9999, true);
+chat.registerCmd('wep', (player, hash) => {
+    if (hash === undefined) {
+        player.send(`Hash; such as: -270015777`);
+        return;
+    }
+
+    player.giveWeapon(hash[0], 9999, true);
 });
 
-// temporay item commands
-chat.registerCmd('addlicense', player => {
-    let itemTemplate = configurationItems.Items['DriversLicense'];
-    let clonedTemplate = { ...itemTemplate }; // Clone the template.
-
-    clonedTemplate.props.name = player.data.name;
-    clonedTemplate.props.organdonor = true;
-    clonedTemplate.props.description = 'Looks pretty weird.';
-    player.addItem(clonedTemplate, 1, true);
+chat.registerCmd('face', player => {
+    player.showFaceCustomizerDialogue(player.pos);
 });
 
-chat.registerCmd('showlicense', player => {
-    let res = player.inventory.find(x => x.label === 'Drivers License');
-    player.useItem(res.hash);
-});
-
-chat.registerCmd('additem', player => {
+chat.registerCmd('granola', player => {
     let itemTemplate = configurationItems.Items['GranolaBar'];
     player.addItem(itemTemplate, 5);
 });
 
-chat.registerCmd('getdrink', player => {
+chat.registerCmd('coffee', player => {
     let itemTemplate = configurationItems.Items['Coffee'];
     player.addItem(itemTemplate, 5);
-});
-
-chat.registerCmd('subitem', player => {
-    let itemTemplate = configurationItems.Items['GranolaBar'];
-    let result = player.subItem(itemTemplate, 1);
-    console.log(result);
-});
-
-chat.registerCmd('items', player => {
-    player.inventory.forEach((item, index) => {
-        player.send(`[${index}] ${item.label} x${item.quantity}`);
-    });
-});
-
-chat.registerCmd('consume', (player, arg) => {
-    player.consumeItem(player.inventory[arg[0]].hash);
 });
 
 chat.registerCmd('addveh', (player, arg) => {
@@ -100,17 +62,23 @@ chat.registerCmd('addveh', (player, arg) => {
 });
 
 chat.registerCmd('tpto', (player, arg) => {
-    if (arg[0] == undefined || arg[0] == null) {
-        return player.send('tpto [PlayerID]');
+    if (arg === undefined) {
+        player.send('/tpto (roleplay_name)');
+        return;
     }
 
-    if (alt.Player.all[arg] == undefined || alt.Player.all[arg] == null) {
-        return player.send('Player does not exist.');
+    let target = alt.Player.all.find(x => x.data.name.includes(arg[0]));
+
+    if (target === undefined) {
+        player.send('User was not found.');
+        return;
     }
 
-    let targetPos = alt.Player.all[arg].pos;
-    let targetName = alt.Player.all[arg].name;
+    player.pos = target.pos;
+});
 
-    player.pos = targetPos;
-    player.send(`You got teleported to ${targetName} position.`);
+chat.registerCmd('players', player => {
+    alt.Player.all.forEach(t => {
+        player.send(`${t.data.name}`);
+    });
 });

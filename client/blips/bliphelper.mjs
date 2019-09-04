@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import { Atms, Clothing } from 'client/locations/locations.mjs';
 
-alt.log('Loaded: blips->bliphelper.mjs');
+alt.log('Loaded: client->blips->bliphelper.mjs');
 
 // Used to create blips for the player to see.
 export function createBlip(pos, type, color, label) {

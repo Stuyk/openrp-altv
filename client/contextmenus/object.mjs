@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from 'client/systems/context.mjs';
 
+alt.log('Loaded: client->contextmenus->object.mjs');
+
 const chairs = [
     'prop_bench_01a',
     'prop_bench_01b',
@@ -165,10 +167,6 @@ chairs.forEach(item => {
     };
 });
 
-Object.keys(objectInteractions).forEach(key => {
-    alt.log(key);
-});
-
 alt.on('menu:Object', ent => {
     let model = native.getEntityModel(ent);
 
@@ -178,8 +176,6 @@ alt.on('menu:Object', ent => {
         unknown(ent);
         return;
     }
-
-    alt.log(JSON.stringify(interaction));
 
     interaction.func(ent);
 });

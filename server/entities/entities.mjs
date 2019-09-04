@@ -31,19 +31,46 @@ export const Character = new orm.EntitySchema({
             generated: false
         },
         name: {
-            type: 'varchar',
-            nullable: true
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        creation: {
+            type: 'bigint',
+            default: Date.now()
+        },
+        lastlogin: {
+            type: 'bigint',
+            default: Date.now()
+        },
+        playingtime: {
+            type: 'int',
+            default: 0
+        },
+        upgradestotal: {
+            type: 'int',
+            default: 0
+        },
+        upgrades: {
+            type: 'int',
+            default: 0
         },
         face: {
-            type: 'varchar',
-            nullable: true
+            type: 'text',
+            nullable: true,
+            default: null
         },
         clothing: {
-            type: 'varchar',
-            nullable: true
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        inventory: {
+            type: 'text',
+            default: '[]'
         },
         lastposition: {
-            type: 'varchar',
+            type: 'text',
             nullable: true
         },
         health: {
@@ -65,10 +92,6 @@ export const Character = new orm.EntitySchema({
         dead: {
             type: 'bool',
             default: false
-        },
-        inventory: {
-            type: 'varchar',
-            default: '[]'
         }
     }
 });
@@ -87,18 +110,18 @@ export const Vehicle = new orm.EntitySchema({
         },
         // The vehicle model.
         model: {
-            type: 'varchar'
+            type: 'text'
         },
         position: {
-            type: 'varchar',
+            type: 'text',
             nullable: true
         },
         rotation: {
-            type: 'varchar',
+            type: 'text',
             nullable: true
         },
         stats: {
-            type: 'varchar',
+            type: 'text',
             nullable: true
         }
     }

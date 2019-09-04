@@ -1,162 +1,50 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import { View } from 'client/utility/view.mjs';
+import { Camera } from 'client/utility/camera.mjs';
+import * as utilityVector from 'client/utility/vector.mjs';
 
 alt.log('Loaded: client->customizers->clothing.mjs');
 
-const path = 'http://resources/orp/client/html/clothing/index.html';
-let webView = undefined;
-let characterCamera = undefined;
-let fov = 90;
-
-// eslint-disable-next-line no-unused-vars
-let [_dontCare, screenWidth, screenHeight] = native.getActiveScreenResolution(0, 0);
-let cameraHeight = 0;
+const url = 'http://resource/client/html/clothing/index.html';
+let webview;
+let camera = undefined;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
-    if (webView) return;
+    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+    // Setup Webview
+    const exists = webview === undefined ? false : true;
+    webview = new View(url, false);
+    if (!exists) {
+        webview.on('clothing:RequestComponentData', requestComponentData);
+        webview.on('clothing:UpdateComponent', updateComponent);
+        webview.on('clothing:VerifyClothing', verifyClothing);
+        webview.on('clothing:GetPreviousClothes', getPreviousClothes);
+    }
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
-    let forVec = native.getEntityForwardVector(alt.Player.local.scriptID);
-    let pPos = alt.Player.local.pos;
+    let pPos = utilityVector.getForwardVector(alt.Player.local.scriptID, 1.2);
 
-    webView = new alt.WebView(path);
-    webView.focus();
-
-    pPos.x = pPos.x + forVec.x * 1.2;
-    pPos.y = pPos.y + forVec.y * 1.2;
-    pPos.z = pPos.z + forVec.z * 1.2;
-
-    characterCamera = native.createCamWithParams(
-        'DEFAULT_SCRIPTED_CAMERA',
-        pPos.x,
-        pPos.y,
-        pPos.z,
-        0,
-        0,
-        0,
-        fov,
-        true,
-        0
-    );
-
-    native.pointCamAtCoord(
-        characterCamera,
-        alt.Player.local.pos.x,
-        alt.Player.local.pos.y,
-        alt.Player.local.pos.z
-    );
-
-    native.renderScriptCams(true, false, 0, true, false);
-
-    // Hide Radar
-    native.displayRadar(false);
-
-    // Show Cursor
-    alt.showCursor(true);
-
-    // On Update Function
-    alt.on('update', onUpdateCustomizer);
-
-    // Turn on Webview Events
-    webView.on('requestComponentData', requestComponentData);
-    webView.on('updateComponent', updateComponent);
-    webView.on('verifyClothing', verifyClothing);
-    webView.on('getPreviousClothes', getPreviousClothes);
+    camera = new Camera(pPos, 90);
+    camera.pointAtCoord(alt.Player.local.pos);
+    camera.playerControlsEntity(alt.Player.local.scriptID);
 }
 
 function getPreviousClothes() {
     const clothingData = alt.Player.local.getSyncedMeta('clothing');
     if (clothingData === undefined || clothingData === null) return;
 
+    alt.log(clothingData);
+
     const data = JSON.parse(clothingData);
 
+    if (data === undefined) return;
+
     for (let key in data) {
-        webView.emit('updateClothes', key, data[key]);
+        webview.emit('updateClothes', key, data[key]);
     }
-}
-
-// On Update Customizer
-function onUpdateCustomizer() {
-    if (characterCamera === undefined) return;
-
-    // Disable Controls for the Player
-    native.disableAllControlActions(0);
-    native.disableAllControlActions(1);
-    let cursorRelativePos = alt.getCursorPos().x;
-
-    // Scroll to zoom in.
-    if (native.isDisabledControlPressed(0, 14)) {
-        if (cursorRelativePos < screenWidth / 4) return;
-
-        fov += 3;
-        if (fov >= 100) fov = 100;
-        updateCamera();
-    }
-
-    // Scroll to zoom out
-    if (native.isDisabledControlPressed(0, 15)) {
-        if (cursorRelativePos < screenWidth / 4) return;
-
-        fov -= 3;
-        if (fov <= 30) fov = 30;
-        updateCamera();
-    }
-
-    // Right-Click Drag Rotation
-    if (native.isDisabledControlPressed(0, 25)) {
-        let heading = native.getEntityHeading(alt.Player.local.scriptID);
-
-        if (cursorRelativePos < screenWidth / 2) {
-            cursorRelativePos = -1.5;
-        }
-
-        if (cursorRelativePos > screenWidth - screenWidth / 2) {
-            cursorRelativePos = 1.5;
-        }
-
-        native.setEntityHeading(alt.Player.local.scriptID, heading + cursorRelativePos);
-    }
-
-    // W - Up
-    if (native.isDisabledControlPressed(0, 32)) {
-        updateCamPos(true);
-    }
-
-    // S - Down
-    if (native.isDisabledControlPressed(0, 33)) {
-        updateCamPos(false);
-    }
-}
-
-// Update Camera FOV
-function updateCamera() {
-    native.setCamFov(characterCamera, fov);
-    native.renderScriptCams(true, false, 0, true, false);
-}
-
-// Update Camera Position
-function updateCamPos(isUp) {
-    let coord = native.getCamCoord(characterCamera);
-
-    if (isUp) {
-        cameraHeight += 0.01;
-        if (cameraHeight > 2) {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
-        } else {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z + 0.01);
-        }
-    } else {
-        cameraHeight -= 0.01;
-        if (cameraHeight < -0.5) {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z);
-        } else {
-            native.setCamCoord(characterCamera, coord.x, coord.y, coord.z - 0.01);
-        }
-    }
-
-    native.renderScriptCams(true, false, 0, true, false);
 }
 
 function requestComponentData(key, id, value, isProp) {
@@ -172,7 +60,7 @@ function requestComponentData(key, id, value, isProp) {
             value
         );
 
-        webView.emit('updateMinMax', key, { id, components, textures });
+        webview.emit('updateMinMax', key, { id, components, textures });
     } else {
         let components = native.getNumberOfPedPropDrawableVariations(
             alt.Player.local.scriptID,
@@ -185,7 +73,7 @@ function requestComponentData(key, id, value, isProp) {
             value
         );
 
-        webView.emit('updateMinMax', key, { id, components, textures });
+        webview.emit('updateMinMax', key, { id, components, textures });
     }
 }
 
@@ -216,26 +104,8 @@ function updateComponent(componentId, drawable, texture, isProp) {
 
 export function closeDialogue() {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
-    // On Update Function
-    alt.off('update', onUpdateCustomizer);
-
-    // Turn on Webview Events
-    webView.off('requestComponentData', requestComponentData);
-    webView.off('updateComponent', updateComponent);
-    webView.off('verifyClothing', verifyClothing);
-    webView.off('getPreviousClothes', getPreviousClothes);
-
-    webView.unfocus();
-    webView.destroy();
-    webView = undefined;
-
-    characterCamera = undefined;
-    native.destroyAllCams(true);
-
-    native.displayRadar(true);
-
-    alt.showCursor(false);
-    native.renderScriptCams(false, false, 0, false, false);
+    webview.close();
+    camera.destroy();
 }
 
 // Verify the clothing is correct; before saving.
@@ -263,7 +133,7 @@ function verifyClothing(jsonData) {
             );
 
             if (!isValid) {
-                webView.emit('showError', `Invalid combination for ${key}`);
+                webview.emit('showError', `Invalid combination for ${key}`);
                 cancelSave = true;
                 return;
             }
@@ -292,7 +162,7 @@ function verifyClothing(jsonData) {
             );
 
             if (!isValid) {
-                webView.emit('showError', `Invalid combination for ${key}`);
+                webview.emit('showError', `Invalid combination for ${key}`);
                 cancelSave = true;
                 return;
             }
@@ -303,6 +173,5 @@ function verifyClothing(jsonData) {
         return;
     }
 
-    alt.log('Emitted up');
     alt.emitServer('clothing:SaveClothing', jsonData);
 }

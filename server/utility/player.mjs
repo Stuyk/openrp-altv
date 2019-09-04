@@ -5,6 +5,7 @@ import * as configurationClothing from '../configuration/clothing.mjs';
 import * as configurationPlayer from '../configuration/player.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsTime from '../systems/time.mjs';
+import * as utilityTime from '../utility/time.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: utility->player.mjs');
@@ -21,18 +22,41 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Enable Player Saving
     player.save = () => {
-        db.upsertData(player.data, 'Character', () => {
-            if (player.data.name === null) {
-                console.log(`${player.name} was saved.`);
-            } else {
-                console.log(`${player.data.name} was saved.`);
-            }
-        });
+        db.upsertData(player.data, 'Character', () => {});
     };
 
     // Save only a specific field.
     player.saveField = (id, fieldName, fieldValue) => {
         db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
+    };
+
+    // ====================================
+    // Playing Time
+    player.updatePlayingTime = () => {
+        const minutes = utilityTime.getPlayingTime(player.startTime, Date.now());
+        player.data.playingtime += Math.round(minutes);
+
+        if (minutes >= 0)
+            player.saveField(player.data.id, 'playingtime', player.data.playingtime);
+
+        player.startTime = Date.now();
+
+        const points = utilityTime.minutesToUpgradePoints(player.data.playingtime);
+        if (points <= 0) return;
+
+        player.data.upgradestotal = points;
+        player.saveField(player.data.id, 'upgradestotal', player.data.upgradestotal);
+    };
+
+    player.setLastLogin = () => {
+        setTimeout(() => {
+            const date = new Date(player.data.lastlogin * 1).toUTCString();
+            if (player === null) return;
+            player.send(`{FFFF00}Last Login: ${date}`);
+        }, 2500);
+
+        player.data.lastlogin = Date.now();
+        player.saveField(player.data.id, 'lastlogin', player.data.lastlogin);
     };
 
     // ====================================
@@ -297,8 +321,11 @@ export function setupPlayerFunctions(player) {
     // Show the ATM Panel / Dialogue
     player.showAtmPanel = () => {
         alt.emitClient(player, 'atm:ShowDialogue');
-        player.updateAtmCash(player.data.cash);
-        player.updateAtmBank(player.data.bank);
+        setTimeout(() => {
+            if (player === null) return;
+            player.updateAtmCash(player.data.cash);
+            player.updateAtmBank(player.data.bank);
+        }, 500);
     };
 
     // Close the ATM Panel / Dialogue

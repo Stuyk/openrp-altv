@@ -23,6 +23,9 @@ const tagOrComment = new RegExp(
 
 let appendMessageSpecial;
 let appendMessage;
+let appendTask;
+let setHide;
+let clearTask;
 let clearChatBox;
 
 function colorify(text) {
@@ -77,7 +80,12 @@ class App extends Component {
                     message: 'Created by Stuyk',
                     style: 'color: rgba(0, 255, 0, 0.5) !important;'
                 }
-            ]
+            ],
+            cash: `0`,
+            location: '',
+            task: '',
+            speed: '0 MPH',
+            hide: false
         };
 
         appendMessageSpecial = msg => {
@@ -92,6 +100,36 @@ class App extends Component {
         clearChatBox = () => {
             this.clearChatBox();
         };
+
+        appendTask = msg => {
+            this.appendTask(msg);
+        };
+
+        clearTask = () => {
+            this.clearTask();
+        };
+
+        setHide = value => {
+            this.hide(value);
+        };
+
+        if ('alt' in window) {
+            alt.on('setCash', this.setCash.bind(this));
+            alt.on('setLocation', this.setLocation.bind(this));
+            alt.on('setSpeed', this.setSpeed.bind(this));
+        }
+    }
+
+    setCash(cash) {
+        this.setState({ cash });
+    }
+
+    setSpeed(speed) {
+        this.setState({ speed });
+    }
+
+    setLocation(location) {
+        this.setState({ location });
     }
 
     componentDidUpdate() {
@@ -110,32 +148,64 @@ class App extends Component {
         this.setState({ messages });
     }
 
+    appendTask(msg) {
+        this.setState({ task: msg });
+    }
+
+    clearTask() {
+        this.setState({ task: '' });
+    }
+
     clearChatBox() {
         this.setState({ messages: [] });
     }
 
+    hide(value) {
+        this.setState({ hide: value });
+    }
+
     render() {
-        return h(
-            'div',
-            null,
-            h(Messages, {
-                messages: this.state.messages,
-                lastMessageRef: this.lastMessage,
-                messagesBlockRef: this.messagesBlock
-            }),
+        return (
+            !this.state.hide &&
             h(
                 'div',
-                { id: 'chat-input-wrapper' },
+                null,
+                h(Messages, {
+                    messages: this.state.messages,
+                    lastMessageRef: this.lastMessage,
+                    messagesBlockRef: this.messagesBlock
+                }),
                 h(
-                    'input',
-                    {
-                        class: 'animated fadeIn hidden',
-                        id: 'chat-input',
-                        type: 'text',
-                        maxlength: '255'
-                    },
-                    'test'
-                )
+                    'div',
+                    { id: 'chat-input-wrapper' },
+                    h(
+                        'input',
+                        {
+                            class: 'animated fadeIn hidden',
+                            id: 'chat-input',
+                            type: 'text',
+                            maxlength: '255'
+                        },
+                        'test'
+                    )
+                ),
+                h(
+                    'div',
+                    { class: 'hud' },
+                    h(
+                        'div',
+                        { class: 'element' },
+                        h('div', { class: 'label money' }, `$${this.state.cash}`)
+                    ),
+                    h(
+                        'div',
+                        { class: 'element' },
+                        h('div', { class: 'label location' }, `${this.state.location}`)
+                    ),
+                    this.state.task !== '' &&
+                        h('div', { class: 'element' }, `${this.state.task}`)
+                ),
+                h('div', { class: 'speed' }, `${this.state.speed}`)
             )
         );
         // Render HTML / Components and Shit Here
@@ -235,5 +305,15 @@ function ready() {
         alt.on('appendMessageSpecial', appendMessageSpecial); // Preformated Objects
         //alt.on('appendMessageClickable'); // Soon ^tm;
         alt.on('clearChatBox', clearChatBox); // Clears the chat box.
+        alt.on('hide', setHide);
+        alt.on('appendTask', appendTask);
     }
 }
+
+/*
+for (let i = 0; i < 25; i++) {
+    appendMessage('test');
+}
+
+document.getElementById('chat-input').classList.remove('hidden');
+*/

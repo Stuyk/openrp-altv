@@ -52,7 +52,7 @@ function shopKey() {
     );
     native.endTextCommandDisplayHelp(0, false, true, -1);
 
-    if (native.isControlJustReleased(0, 38)) {
+    if (native.isControlJustReleased(0, 38) && !alt.Player.local.vehicle) {
         if (timeout) return;
 
         timeout = true;

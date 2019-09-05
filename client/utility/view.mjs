@@ -37,7 +37,8 @@ export class View {
         showCursor(true);
         native.displayRadar(false);
         if (killControls) {
-            alt.toggleGameControls(false);
+            currentView.gameControls = this.toggleGameControls.bind(this);
+            alt.on('update', currentView.gameControls);
         }
         return currentView;
     }
@@ -48,7 +49,6 @@ export class View {
         currentView.focused = false;
         currentView.ready = false;
         showCursor(false);
-        alt.toggleGameControls(true);
         native.displayRadar(true);
 
         Object.keys(currentView.events).forEach(key => {
@@ -56,8 +56,10 @@ export class View {
         });
 
         currentView.view.off('close', currentView.close);
+        currentView.view.unfocus();
         currentView.view.destroy();
         currentView.view = undefined;
+        alt.off('update', currentView.gameControls);
     }
 
     // Check if the view is focused.
@@ -75,5 +77,10 @@ export class View {
 
     emit(name, ...args) {
         currentView.view.emit(name, ...args);
+    }
+
+    toggleGameControls() {
+        native.disableAllControlActions(0);
+        native.disableAllControlActions(1);
     }
 }

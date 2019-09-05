@@ -34,12 +34,8 @@ function getPreviousClothes() {
     if (clothingData === undefined || clothingData === null) return;
 
     const data = JSON.parse(clothingData);
-
     if (data === undefined) return;
-
-    for (let index in data) {
-        webview.emit('updateClothes', index, data[index]);
-    }
+    webview.emit('updateClothes', clothingData);
 }
 
 function requestComponentData(key, id, value, isProp) {

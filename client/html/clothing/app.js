@@ -244,13 +244,17 @@ class App extends Component {
     }
 
     updateClothes(...args) {
-        let [index, data] = args;
         let clothingData = [...this.state.clothingData];
+        const data = JSON.parse(args);
 
-        index = index * 1;
+        clothingData.forEach((item, index) => {
+            let dataIndex = data.findIndex(x => x.label === item.label);
 
-        clothingData[index].value = data.value;
-        clothingData[index + 1].value = data.texture;
+            if (dataIndex <= -1) return;
+
+            item.value = data[dataIndex].value;
+            clothingData[index + 1].value = data[dataIndex].texture;
+        });
 
         this.setState({ clothingData });
     }

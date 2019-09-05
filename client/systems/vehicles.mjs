@@ -35,6 +35,11 @@ export function disableEngineControl() {
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
 }
 
+export function startEngine(value) {
+    if (!alt.Player.local.vehicle) return;
+    native.setVehicleEngineOn(alt.Player.local.vehicle.scriptID, value, false, true);
+}
+
 // Disable seat shuffle.
 alt.on('update', disableSeatShuffle);
 

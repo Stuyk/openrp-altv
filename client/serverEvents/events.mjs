@@ -125,6 +125,7 @@ alt.onServer('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onServer('vehicle:Eject', systemsVehicles.eject);
 alt.onServer('vehicle:Repair', systemsVehicles.repair);
 alt.onServer('vehicle:DisableEngineControl', systemsVehicles.disableEngineControl);
+alt.onServer('vehicle:StartEngine', systemsVehicles.startEngine);
 
 // =======================================================
 // Chat

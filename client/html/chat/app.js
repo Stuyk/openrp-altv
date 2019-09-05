@@ -73,12 +73,12 @@ class App extends Component {
         this.state = {
             messages: [
                 {
-                    message: 'Chat has loaded successfully.',
-                    style: 'color: rgba(0, 150, 255, 1) !important;'
+                    message: `Use /help for help.`,
+                    style: 'color: rgba(255, 255, 255, 1) !important;'
                 },
                 {
-                    message: 'Created by Stuyk',
-                    style: 'color: rgba(0, 255, 0, 0.5) !important;'
+                    message: 'Z + Right-Click to Interact',
+                    style: 'color: rgba(255, 255, 255, 1) !important;'
                 }
             ],
             cash: `0`,

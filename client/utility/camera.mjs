@@ -73,8 +73,10 @@ export class Camera {
     }
 
     destroy() {
-        native.destroyAllCams(true);
-        native.renderScriptCams(false, false, 0, false, false);
+        for (let i = 0; i < 25; i++) {
+            native.destroyAllCams(true);
+            native.renderScriptCams(false, false, 0, false, false);
+        }
 
         if (this.playerControlFunction !== undefined)
             alt.off('update', this.playerControlFunction);

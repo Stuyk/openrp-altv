@@ -35,6 +35,9 @@ alt.on('ConnectionComplete', () => {
     import('./clientEvents/events.mjs');
     import('./clientEvents/useEvents.mjs');
 
+    // Intervals
+    import('./intervals/players.mjs');
+
     // Sandbox Commands
     import('./commands/sandbox.mjs');
     import('./commands/revive.mjs');

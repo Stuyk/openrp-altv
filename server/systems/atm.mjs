@@ -33,3 +33,8 @@ export function deposit(player, value) {
     player.updateAtmBank(player.getBank());
     player.showAtmSuccess(`Successfully deposited $${value}.`);
 }
+
+export function ready(player) {
+    player.updateAtmCash(player.getCash());
+    player.updateAtmBank(player.getBank());
+}

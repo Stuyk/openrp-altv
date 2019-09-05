@@ -321,11 +321,6 @@ export function setupPlayerFunctions(player) {
     // Show the ATM Panel / Dialogue
     player.showAtmPanel = () => {
         alt.emitClient(player, 'atm:ShowDialogue');
-        setTimeout(() => {
-            if (player === null) return;
-            player.updateAtmCash(player.data.cash);
-            player.updateAtmBank(player.data.bank);
-        }, 500);
     };
 
     // Close the ATM Panel / Dialogue

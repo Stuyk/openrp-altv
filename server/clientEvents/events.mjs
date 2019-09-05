@@ -46,6 +46,7 @@ alt.onClient('interaction:Exec', systemsInteraction.attemptToExecuteInteraction)
 // Atm Handler
 alt.onClient('atm:Withdraw', systemsAtm.withdraw);
 alt.onClient('atm:Deposit', systemsAtm.deposit);
+alt.onClient('atm:Ready', systemsAtm.ready);
 
 // Clothing Handler
 alt.onClient('clothing:SaveClothing', characterClothing.saveClothing);

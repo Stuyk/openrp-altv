@@ -14,16 +14,23 @@ export function showDialogue() {
     webview = new View(url);
     webview.on('atm:Withdraw', withdrawBalance);
     webview.on('atm:Deposit', depositBalance);
+    webview.on('atm:Ready', atmReady);
 }
 
 // Update the cash value on the Webview.
 export function updateCash(value) {
+    alt.log(value);
     webview.emit('setCash', value);
 }
 
 // Show the bank value for the atm menu.
 export function updateBank(value) {
+    alt.log(value);
     webview.emit('setBank', value);
+}
+
+function atmReady() {
+    alt.emitServer('atm:Ready');
 }
 
 // Called when the user is withdrawing balance from the Bank.

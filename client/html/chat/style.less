@@ -1,3 +1,5 @@
+@fontface: 'Inter Medium';
+
 html,
 body {
     height: auto;
@@ -35,7 +37,7 @@ body::-webkit-scrollbar {
     text-shadow: 1px 1px rgba(0, 0, 0);
     box-shadow: inset 0px 0px 0px 1px black;
     height: 4vh;
-    font-family: 'Circular';
+    font-family: @fontface;
     font-size: 1.5vh;
     padding: 0 0.5vw; // Padding
     margin: 0;
@@ -53,7 +55,7 @@ body::-webkit-scrollbar {
     padding: 0.5vw;
     color: white;
     text-shadow: 1px 1px rgba(0, 0, 0);
-    font-family: 'Circular';
+    font-family: @fontface;
     max-width: 32vw;
     overflow-wrap: break-word;
     transition: 0.3s;
@@ -109,12 +111,12 @@ body::-webkit-scrollbar {
 
 .money {
     color: rgba(0, 255, 100, 255);
-    font-family: 'Circular';
+    font-family: @fontface;
     text-align: center;
 }
 
 .location {
-    font-family: 'Circular';
+    font-family: @fontface;
     font-size: 11px;
 }
 
@@ -128,7 +130,7 @@ body::-webkit-scrollbar {
     position: fixed;
     bottom: 1vh;
     width: 100%;
-    font-family: 'Circular';
+    font-family: @fontface;
     color: white;
     text-shadow: 1px 1px rgba(0, 0, 0, 1);
     text-align: center;

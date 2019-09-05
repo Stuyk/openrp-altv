@@ -17,15 +17,8 @@
 }
 
 @font-face {
-    font-family: 'Xolonium';
-    src: url('./fonts/xolonium-regular.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Xolonium Bold';
-    src: url('./fonts/xolonium-bold.otf') format('opentype');
+    font-family: 'Inter Medium';
+    src: url('./fonts/Inter-Medium.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }

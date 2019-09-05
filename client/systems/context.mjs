@@ -36,6 +36,7 @@ export class ContextMenu {
 
     render() {
         if (this.options === undefined) return;
+        native.showCursorThisFrame();
 
         let coords = native.getEntityCoords(this.entity, false);
         this.options.forEach((item, index) => {
@@ -141,6 +142,12 @@ export class ContextMenu {
     execute(item) {
         if (item.event === undefined) return;
 
+        currentContext = undefined;
+
+        alt.setTimeout(() => {
+            drawCursor = false;
+        }, 200);
+
         if (item.isServer) {
             if (native.isEntityAVehicle(this.entity)) {
                 let vehicle = alt.Vehicle.all.find(x => x.scriptID === this.entity);
@@ -175,6 +182,10 @@ function useMenu() {
         currentContext = undefined;
     }
 
+    if (currentContext !== undefined) {
+        currentContext.render();
+    }
+
     if (!drawCursor) return;
 
     native.showCursorThisFrame();
@@ -183,10 +194,6 @@ function useMenu() {
     native.disableControlAction(0, 1, true);
     native.disableControlAction(0, 2, true);
     native.disablePlayerFiring(alt.Player.local.scriptID, false);
-
-    if (currentContext !== undefined) {
-        currentContext.render();
-    }
 
     let [
         _,
@@ -216,6 +223,9 @@ function useMenu() {
         let interaction = interactionTypes[entityType];
 
         if (interaction === undefined) return;
+
+        drawCursor = false;
+        currentContext = undefined;
 
         interaction.func(_entity, _endCoords);
     }

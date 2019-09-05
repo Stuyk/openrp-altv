@@ -277,6 +277,8 @@ function atm(ent) {
 }
 
 function chair(ent) {
+    if (native.hasObjectBeenBroken(ent)) return;
+
     let pos = native.getEntityCoords(ent, false);
     let heading = native.getEntityHeading(ent) + 180.0;
 

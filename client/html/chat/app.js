@@ -310,13 +310,13 @@ function ready() {
     };
 
     if ('alt' in window) {
-        alt.on('showChatInput', showChatInput); // Show the input.
-        alt.on('appendMessage', appendMessage); // Non Formatted Messages
-        alt.on('appendMessageSpecial', appendMessageSpecial); // Preformated Objects
+        alt.on('chat:ShowChatInput', showChatInput); // Show the input.
+        alt.on('chat:AppendMessage', appendMessage); // Non Formatted Messages
+        alt.on('chat:AppendMessageSpecial', appendMessageSpecial); // Preformated Objects
         //alt.on('appendMessageClickable'); // Soon ^tm;
-        alt.on('clearChatBox', clearChatBox); // Clears the chat box.
-        alt.on('hide', setHide);
-        alt.on('appendTask', appendTask);
+        alt.on('chat:ClearChatBox', clearChatBox); // Clears the chat box.
+        alt.on('chat:Hide', setHide);
+        alt.on('chat:AppendTask', appendTask);
     }
 }
 

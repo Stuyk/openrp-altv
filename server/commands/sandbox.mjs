@@ -13,7 +13,7 @@ const sandboxhelp = [
     '/face',
     '/granola, /coffee',
     '/tpto (rp-name)',
-    '/players',
+    '/players, /clearchat',
     'Z + Right-Click to Interact',
     'I for Inventory'
 ];

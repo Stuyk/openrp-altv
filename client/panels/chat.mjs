@@ -25,11 +25,10 @@ export function toggleDialogue() {
     if (currentView.isFocused()) return;
 
     if (!isActive) {
-        alt.emit('panel:SetStatus', 'chat', true);
         isActive = true;
-        alt.emit('chat:IsOpen', true);
+        alt.emit('chat:IsOpen', true); // Used for view.mjs
         webview.focus();
-        webview.emit('showChatInput');
+        webview.emit('chat:ShowChatInput');
         alt.toggleGameControls(false);
         alt.showCursor(true);
     }
@@ -38,14 +37,14 @@ export function toggleDialogue() {
 export function send(msg) {
     if (webview === undefined) return;
 
-    webview.emit('appendMessage', msg);
+    webview.emit('chat:AppendMessage', msg);
 }
 
 export function toggleHide() {
     if (webview === undefined) return;
 
     isViewHidden = !isViewHidden;
-    webview.emit('hide', isViewHidden);
+    webview.emit('chat:Hide', isViewHidden);
     native.displayRadar(!isViewHidden);
 }
 
@@ -63,20 +62,25 @@ function routeMessage(msg) {
     if (!msg) return;
     if (msg.length <= 0) return;
 
+    if (msg === '/clearchat') {
+        webview.emit('chat:ClearChatBox');
+        return;
+    }
+
     alt.emitServer('chat:RouteMessage', msg);
 }
 
 alt.on('hud:SetCash', cash => {
     if (webview === undefined) return;
-    webview.emit('setCash', cash);
+    webview.emit('chat:SetCash', cash);
 });
 
 alt.on('hud:SetLocation', location => {
     if (webview === undefined) return;
-    webview.emit('setLocation', location);
+    webview.emit('chat:SetLocation', location);
 });
 
 alt.on('hud:SetSpeed', speed => {
     if (webview === undefined) return;
-    webview.emit('setSpeed', speed);
+    webview.emit('chat:SetSpeed', speed);
 });

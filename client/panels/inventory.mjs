@@ -25,8 +25,6 @@ export function showDialogue() {
     webview.on('use', use);
     webview.on('destroy', destroy);
     webview.on('fetchItems', fetchItems);
-
-    alt.on('update', disableControls);
 }
 
 export function fetchItems() {
@@ -56,9 +54,4 @@ function use(hash) {
 function drop(hash) {
     alt.log('DROPPED');
     alt.emitServer('inventory:DropItem', hash);
-}
-
-function disableControls() {
-    native.disableControlAction(0, 24, true);
-    native.disableControlAction(0, 25, true);
 }

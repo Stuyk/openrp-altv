@@ -29,31 +29,33 @@ const faceFeatureNames = [
 
 // Synchronize the clothing sent down from the server.
 export function syncClothing(jsonData) {
-    const data = JSON.parse(jsonData);
+    const result = JSON.parse(jsonData);
 
-    for (let key in data) {
-        if (!data[key].isProp) {
+    if (result === null) return;
+
+    result.forEach(item => {
+        if (!item.isProp) {
             native.setPedComponentVariation(
                 alt.Player.local.scriptID,
-                data[key].id,
-                data[key].value,
-                data[key].texture,
+                item.id,
+                item.value,
+                item.texture,
                 0
             );
         } else {
+            if (item.value === -1) {
+                native.clearPedProp(alt.Player.local.scriptID, item.id);
+            }
+
             native.setPedPropIndex(
                 alt.Player.local.scriptID,
-                data[key].id,
-                data[key].value,
-                data[key].texture,
-                true
+                item.id,
+                item.value,
+                item.texture,
+                false
             );
-
-            if (data[key].value === -1) {
-                native.clearPedProp(alt.Player.local.scriptID, data[key].id);
-            }
         }
-    }
+    });
 }
 
 // Apply all of the facial data to the player.

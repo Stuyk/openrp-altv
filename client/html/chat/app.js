@@ -116,9 +116,9 @@ class App extends Component {
         };
 
         if ('alt' in window) {
-            alt.on('setCash', this.setCash.bind(this));
-            alt.on('setLocation', this.setLocation.bind(this));
-            alt.on('setSpeed', this.setSpeed.bind(this));
+            alt.on('chat:SetCash', this.setCash.bind(this));
+            alt.on('chat:SetLocation', this.setLocation.bind(this));
+            alt.on('chat:SetSpeed', this.setSpeed.bind(this));
         }
     }
 
@@ -191,7 +191,7 @@ class App extends Component {
                     h(
                         'input',
                         {
-                            class: 'animated fadeIn hidden',
+                            class: 'hidden',
                             id: 'chat-input',
                             type: 'text',
                             maxlength: '255'
@@ -282,8 +282,6 @@ function ready() {
         if (e.key === 'Enter') {
             let input = document.querySelector('#chat-input');
             input.classList.add('hidden');
-            input.classList.remove('animated');
-            input.classList.remove('fadeIn');
             if (input.value.length <= 0) {
                 alt.emit('routeMessage');
             } else {

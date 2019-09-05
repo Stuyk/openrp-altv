@@ -33,14 +33,12 @@ function getPreviousClothes() {
     const clothingData = alt.Player.local.getSyncedMeta('clothing');
     if (clothingData === undefined || clothingData === null) return;
 
-    alt.log(clothingData);
-
     const data = JSON.parse(clothingData);
 
     if (data === undefined) return;
 
-    for (let key in data) {
-        webview.emit('updateClothes', key, data[key]);
+    for (let index in data) {
+        webview.emit('updateClothes', index, data[index]);
     }
 }
 
@@ -109,66 +107,37 @@ export function closeDialogue() {
 function verifyClothing(jsonData) {
     const result = JSON.parse(jsonData);
 
-    let cancelSave = false;
+    /* 
+    label: item.label,
+    value: item.value,
+    id: item.id,
+    texture: clothingData[index + 1].value,
+    isProp: item.isProp
+    */
 
-    for (let key in result) {
-        // Not a prop.
-        if (!result[key].isProp) {
-            let isValid = native.isPedComponentVariationValid(
-                alt.Player.local.scriptID,
-                result[key].id,
-                result[key].value,
-                result[key].texture
-            );
-
+    result.forEach(item => {
+        if (!item.isProp) {
             native.setPedComponentVariation(
                 alt.Player.local.scriptID,
-                result[key].id,
-                result[key].value,
-                result[key].texture,
+                item.id,
+                item.value,
+                item.texture,
                 0
             );
-
-            if (!isValid) {
-                webview.emit('showError', `Invalid combination for ${key}`);
-                cancelSave = true;
-                return;
-            }
         } else {
-            // is a prop
-            let isValid = native.isPedPropValid(
-                alt.Player.local.scriptID,
-                result[key].id,
-                result[key].value,
-                result[key].texture
-            );
-
-            // Make an exception for turning off
-            // a prop.
-            if (result[key].value === -1) {
-                isValid = true;
-                native.clearPedProp(alt.Player.local.scriptID, result[key].id);
+            if (item.value === -1) {
+                native.clearPedProp(alt.Player.local.scriptID, item.id);
             }
 
             native.setPedPropIndex(
                 alt.Player.local.scriptID,
-                result[key].id,
-                result[key].value,
-                result[key].texture,
-                true
+                item.id,
+                item.value,
+                item.texture,
+                false
             );
-
-            if (!isValid) {
-                webview.emit('showError', `Invalid combination for ${key}`);
-                cancelSave = true;
-                return;
-            }
         }
-    }
-
-    if (cancelSave) {
-        return;
-    }
+    });
 
     alt.emitServer('clothing:SaveClothing', jsonData);
 }

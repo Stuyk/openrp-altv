@@ -1,70 +1,73 @@
+const { createElement, render, Component } = preact;
+const h = createElement;
+
 /* eslint-disable no-undef */
 const clothing = {
-    Head: {
-        label: 'Head',
+    Shirt: {
+        label: 'Shirt',
         value: 0,
         min: 0,
         max: 1,
-        id: 1
+        id: 11
     },
-    HeadTexture: {
-        label: 'Head Texture',
+    ShirtTexture: {
+        label: 'Shirt Texture',
         value: 0,
         min: 0,
         max: 1,
-        id: 1
+        id: 11
     },
-    Torso: {
-        label: 'Torso',
+    Undershirt: {
+        label: 'Undershirt',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 8
+    },
+    UndershirtTexture: {
+        label: 'Undershirt Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 8
+    },
+    Arms: {
+        label: 'Arms',
         value: 0,
         min: 0,
         max: 1,
         id: 3
     },
-    TorsoTexture: {
-        label: 'Torso Texture',
+    ArmsTexture: {
+        label: 'Arms Texture',
         value: 0,
         min: 0,
         max: 1,
         id: 3
     },
-    Legs: {
-        label: 'Legs',
+    Pants: {
+        label: 'Pants',
         value: 0,
         min: 0,
         max: 1,
         id: 4
     },
-    LegsTexture: {
-        label: 'Legs Texture',
+    PantsTexture: {
+        label: 'Pants Texture',
         value: 0,
         min: 0,
         max: 1,
         id: 4
     },
-    Bag: {
-        label: 'Bag',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 5
-    },
-    BagTexture: {
-        label: 'Bag Texture',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 5
-    },
-    Feet: {
-        label: 'Feet',
+    Shoes: {
+        label: 'Shoes',
         value: 0,
         min: 0,
         max: 1,
         id: 6
     },
-    FeetTexture: {
-        label: 'Feet Texture',
+    ShoesTexture: {
+        label: 'Shoes Texture',
         value: 0,
         min: 0,
         max: 1,
@@ -83,34 +86,6 @@ const clothing = {
         min: 0,
         max: 1,
         id: 7
-    },
-    Undershirt: {
-        label: 'Undershirt',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 8
-    },
-    UndershirtTexture: {
-        label: 'Undershirt Texture',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 8
-    },
-    Shirt: {
-        label: 'Shirt',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 11
-    },
-    ShirtTexture: {
-        label: 'Shirt Texture',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 11
     },
     Hat: {
         label: 'Hat',
@@ -144,16 +119,16 @@ const clothing = {
         id: 1,
         isProp: true
     },
-    Ears: {
-        label: 'Ears',
+    Earpiece: {
+        label: 'Earpiece',
         value: 0,
         min: -1,
         max: 1,
         id: 2,
         isProp: true
     },
-    EarsTexture: {
-        label: 'Ears Texture',
+    EarpieceTexture: {
+        label: 'Earpiece Texture',
         value: 0,
         min: 0,
         max: 1,
@@ -191,110 +166,260 @@ const clothing = {
         max: 1,
         id: 7,
         isProp: true
+    },
+    Mask: {
+        label: 'Mask',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 1
+    },
+    MaskTexture: {
+        label: 'Mask Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 1
+    },
+    Bag: {
+        label: 'Bag',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 5
+    },
+    BagTexture: {
+        label: 'Bag Texture',
+        value: 0,
+        min: 0,
+        max: 1,
+        id: 5
     }
 };
 
-$(() => {
-    $('#modal').hide();
-
-    for (let key in clothing) {
-        $('#populateButtons').append(
-            `<div id="group-${key}" class="btn-group w-100 p-2 pl-3 pr-3" role="group"></div>`
-        );
-
-        // Decrease Value Button
-        $(`#group-${key}`).append(
-            `<button type="button" class="btn btn-sm btn-secondary" onclick="changeValue('${key}', false);">&lt;</button>`
-        );
-
-        // Label Text
-        $(`#group-${key}`).append(
-            `<button type="button" id="button-${key}" class="btn btn-sm btn-block btn-secondary" disabled>${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span></button>`
-        );
-
-        // Increase Value Button
-        $(`#group-${key}`).append(
-            `<button type="button" class="btn btn-sm btn-secondary" onclick="changeValue('${key}', true);">&gt;</button>`
-        );
+// The main rendering function.
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            message: 'loading...',
+            hairChanged: false,
+            clothingData: []
+        };
     }
 
-    // Submit Changes Button
-    $('#populateButtons').append(
-        `<div class="btn-group w-100 p-2 pl-3 pr-3" role="group"><button type="button" class="btn btn-sm btn-block btn-primary" onclick="submitChanges();">Submit Changes</button></div>`
-    );
+    componentDidMount() {
+        this.setState({
+            clothingData: [...this.state.clothingData, ...Object.values(clothing)]
+        });
 
-    for (let key in clothing) {
-        if (!clothing[key].label.includes('Texture')) {
-            alt.emit(
-                'clothing:RequestComponentData',
-                key,
-                clothing[key].id,
-                clothing[key].value,
-                clothing[key].isProp
-            );
+        if ('alt' in window) {
+            alt.on('updateMinMax', this.updateMinMax.bind(this));
+            alt.on('showError', this.showError.bind(this));
+            alt.on('updateClothes', this.updateClothes.bind(this));
         }
     }
 
-    alt.emit('clothing:GetPreviousClothes');
-});
+    updateMinMax(...args) {
+        let [key, res] = args;
+        let clothingData = [...this.state.clothingData];
 
-// Updates the local facial values registered in this WebView
-// eslint-disable-next-line no-unused-vars
-function changeValue(key, increment) {
-    if (increment) {
-        clothing[key].value += 1;
-    } else {
-        clothing[key].value -= 1;
+        let index = clothingData.findIndex(x => x.label.split(' ').join('') === key);
+
+        if (index === -1) {
+            console.log('Was not found.');
+            return;
+        }
+
+        // Update clothing element + texture
+        clothingData[index].max = res.components;
+        clothingData[index + 1].value = 0;
+        clothingData[index + 1].max = res.textures;
+
+        this.setState({ clothingData });
     }
 
-    // If we go above max, roll back around to min
-    if (clothing[key].value > clothing[key].max) {
-        clothing[key].value = clothing[key].min;
+    showError(msg) {
+        // Not sure how to handle this yet?
     }
 
-    // If we go below min, roll back up to max
-    if (clothing[key].value < clothing[key].min) {
-        clothing[key].value = clothing[key].max;
+    updateClothes(...args) {
+        let [index, data] = args;
+        let clothingData = [...this.state.clothingData];
+
+        index = index * 1;
+
+        clothingData[index].value = data.value;
+        clothingData[index + 1].value = data.texture;
+
+        this.setState({ clothingData });
     }
 
-    if (clothing[key].increment === 0.1) {
-        clothing[key].value = Number.parseFloat(clothing[key].value).toFixed(2) * 1;
+    setItemValue(index, increment) {
+        let clothingData = [...this.state.clothingData];
+
+        // Play ticky noises :)
+        var audio = new Audio('../sound/sounds/tick.ogg');
+        audio.volume = 0.35;
+        audio.play();
+
+        if (increment) {
+            clothingData[index].value += 1;
+
+            if (clothingData[index].value > clothingData[index].max) {
+                clothingData[index].value = clothingData[index].min;
+            }
+        } else {
+            clothingData[index].value -= 1;
+
+            if (clothingData[index].value < clothingData[index].min) {
+                clothingData[index].value = clothingData[index].max;
+            }
+        }
+
+        if (!clothingData[index].label.includes('Texture')) {
+            if ('alt' in window) {
+                alt.emit(
+                    'clothing:RequestComponentData',
+                    clothingData[index].label.split(' ').join(''),
+                    clothingData[index].id,
+                    clothingData[index].value
+                );
+            }
+        }
+
+        if (clothingData[index].label.includes('Texture')) if (index >= 1) index -= 1;
+
+        // componentID, drawable, texture
+        if ('alt' in window) {
+            alt.emit(
+                'clothing:UpdateComponent',
+                clothingData[index].id,
+                clothingData[index].value,
+                clothingData[index + 1].value,
+                clothingData[index].isProp
+            );
+        }
+
+        this.setState({ clothingData });
     }
 
-    // Update the Value of the Key Pressed
-    $(`#button-${key}`).html(
-        `${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span>`
-    );
+    submitChanges() {
+        const data = [];
+        let clothingData = [...this.state.clothingData];
 
-    if (!clothing[key].label.includes('Texture')) {
-        alt.emit(
-            'clothing:RequestComponentData',
-            key,
-            clothing[key].id,
-            clothing[key].value
+        clothingData.forEach((item, index) => {
+            if (item.label.includes('Texture')) {
+                return;
+            }
+
+            data.push({
+                label: item.label,
+                value: item.value,
+                id: item.id,
+                texture: clothingData[index + 1].value,
+                isProp: item.isProp
+            });
+        });
+
+        alt.emit('clothing:VerifyClothing', JSON.stringify(data));
+    }
+
+    render() {
+        return h(
+            'div',
+            { id: 'app' },
+            h('div', { class: 'tab' }, h('h1', { class: 'title' }, 'Clothing')),
+            h(
+                'div',
+                { class: 'mod-list scroll' },
+                h(ClothingList, {
+                    clothingData: this.state.clothingData,
+                    setItemValue: this.setItemValue.bind(this)
+                })
+            ),
+            h(
+                'div',
+                { class: 'footer', onclick: this.submitChanges.bind(this) },
+                'Submit'
+            )
         );
+        // Render HTML / Components and Shit Here
+    }
+}
+
+const ClothingList = ({ clothingData, setItemValue }) => {
+    const itemList = clothingData.map((item, index) =>
+        h(ClothingItem, { index, item, setItemValue })
+    );
+
+    return h('div', null, itemList);
+};
+
+// Items to Display in a Group
+const ClothingItem = ({ index, item, setItemValue }) => {
+    left = () => {
+        setItemValue(index, false);
+    };
+    right = () => {
+        setItemValue(index, true);
+    };
+    return h(
+        'div',
+        { class: 'mod' },
+        h(
+            'div',
+            { class: 'spacer' },
+            h('div', { class: 'title' }, `${item.label}`),
+            h('div', { class: 'count' }, `${item.value}/${item.max}`)
+        ),
+        h(
+            'div',
+            { class: 'spacer' },
+            h(
+                'button',
+                {
+                    class: 'left button',
+                    onclick: this.left.bind(this)
+                },
+                '-'
+            ),
+            h(
+                'button',
+                {
+                    class: 'right button',
+                    onclick: this.right.bind(this)
+                },
+                '+'
+            )
+        )
+    );
+};
+
+render(h(App), document.querySelector('#render'));
+
+function ready() {
+    for (let key in clothing) {
+        if (!clothing[key].label.includes('Texture')) {
+            if ('alt' in window) {
+                alt.emit(
+                    'clothing:RequestComponentData',
+                    key,
+                    clothing[key].id,
+                    clothing[key].value,
+                    clothing[key].isProp
+                );
+            }
+        }
     }
 
-    // Call the function tied to the object element.
-    pushChanges(key);
+    if ('alt' in window) {
+        alt.emit('clothing:GetPreviousClothes');
+    }
 }
 
-function updateMinMax(...args) {
-    let [key, res] = args;
+/*
 
-    // {res.id, res.components, res.textures}
-    clothing[key].max = res.components;
-    clothing[`${key}Texture`].value = 0;
-    clothing[`${key}Texture`].max = res.textures;
-
-    $(`#button-${key}`).html(
-        `${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span>`
-    );
-
-    $(`#button-${key}Texture`).html(
-        `${clothing[`${key}Texture`].label} <span class="badge badge-secondary">[${clothing[`${key}Texture`].value}|${clothing[`${key}Texture`].max}]</span>`
-    );
-}
 
 function pushChanges(key) {
     if (key.includes('Texture')) {
@@ -344,15 +469,6 @@ function submitChanges() {
     alt.emit('clothing:VerifyClothing', JSON.stringify(data));
 }
 
-function showError(msg) {
-    $('#modal').show();
-    $('#modalText').html(`${msg}`);
-}
-
-$('#closeModal').on('click', () => {
-    $('#modal').hide();
-});
-
 function updateClothes(...args) {
     let [key, data] = args;
     clothing[key].value = data.value;
@@ -365,10 +481,5 @@ function updateClothes(...args) {
     $(`#button-${key}Texture`).html(
         `${clothing[`${key}Texture`].label} <span class="badge badge-secondary">[${clothing[`${key}Texture`].value}|${clothing[`${key}Texture`].max}]</span>`
     );
-}
-
-if ('alt' in window) {
-    alt.on('updateMinMax', updateMinMax);
-    alt.on('showError', showError);
-    alt.on('updateClothes', updateClothes);
-}
+    }
+*/

@@ -50,7 +50,7 @@ export function setupPlayerFunctions(player) {
 
     player.setLastLogin = () => {
         setTimeout(() => {
-            const date = new Date(player.data.lastlogin * 1).toUTCString();
+            const date = new Date(player.data.lastlogin * 1).toString();
             if (player === null) return;
             player.send(`{FFFF00}Last Login: ${date}`);
         }, 2500);

@@ -16,6 +16,8 @@ keybinds[keyI] = panelsInventory.showDialogue;
 let keyT = 'T'.charCodeAt(0);
 keybinds[keyT] = panelsChat.toggleDialogue;
 
+keybinds[118] = panelsChat.toggleHide;
+
 alt.on('keyup', key => {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
 

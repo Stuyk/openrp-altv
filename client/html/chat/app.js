@@ -29,6 +29,8 @@ let clearTask;
 let clearChatBox;
 
 function colorify(text) {
+    if (text.length <= 0) return text;
+
     let matches = [];
     let m = null;
     let curPos = 0;
@@ -133,11 +135,14 @@ class App extends Component {
     }
 
     componentDidUpdate() {
-        this.scrollToBottom();
+        //if (this.state.hide) return;
+        //this.scrollToBottom();
     }
 
     scrollToBottom() {
         setTimeout(() => {
+            if (this.state.hide || this.lastMessage.current === null) return;
+
             this.lastMessage.current.scrollIntoView({ behavior: 'smooth' });
         }, 500);
     }
@@ -146,6 +151,7 @@ class App extends Component {
         let messages = [...this.state.messages];
         messages.push(msg);
         this.setState({ messages });
+        this.scrollToBottom();
     }
 
     appendTask(msg) {
@@ -162,6 +168,10 @@ class App extends Component {
 
     hide(value) {
         this.setState({ hide: value });
+
+        if (!value) {
+            this.appendMessage({ message: '' });
+        }
     }
 
     render() {

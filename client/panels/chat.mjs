@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 import { currentView } from 'client/utility/view.mjs';
 
 alt.log('Loaded: client->panels->chat.mjs');
@@ -40,12 +41,12 @@ export function send(msg) {
     webview.emit('appendMessage', msg);
 }
 
-export function hide(value) {
+export function toggleHide() {
     if (webview === undefined) return;
 
-    isViewHidden = value;
-
-    webview.emit('hide', value);
+    isViewHidden = !isViewHidden;
+    webview.emit('hide', isViewHidden);
+    native.displayRadar(!isViewHidden);
 }
 
 function routeMessage(msg) {

@@ -40,6 +40,8 @@ export function send(msg) {
     webview.emit('chat:AppendMessage', msg);
 }
 
+alt.on('chat:Toggle', toggleHide);
+
 export function toggleHide() {
     if (webview === undefined) return;
 

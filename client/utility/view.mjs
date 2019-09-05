@@ -29,6 +29,7 @@ export class View {
             currentView.on('close', currentView.close);
         }
 
+        alt.emit('chat:Toggle');
         currentView.view.url = url;
         currentView.view.isVisible = true;
         currentView.view.focus();
@@ -59,6 +60,7 @@ export class View {
         currentView.view.unfocus();
         currentView.view.destroy();
         currentView.view = undefined;
+        alt.emit('chat:Toggle');
         alt.off('update', currentView.gameControls);
     }
 

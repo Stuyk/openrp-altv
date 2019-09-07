@@ -57,7 +57,7 @@ alt.on('inventory:SubItem', (player, index, quantity) => {
     player.inventory[index].quantity -= quantity;
 
     if (player.inventory[index].quantity <= 0) {
-        player.inventory.splice(index, 1);
+        player.inventory[index] = undefined;
         player.data.inventory = JSON.stringify(player.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
         player.updateInventory();

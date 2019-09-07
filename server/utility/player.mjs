@@ -418,7 +418,15 @@ export function setupPlayerFunctions(player) {
         itemClone.quantity += quantity;
         const hash = utilityEncryption.generateHash(JSON.stringify(itemClone));
         itemClone.hash = hash;
-        player.inventory.push(itemClone);
+
+        let undefinedIndex = player.inventory.findIndex(x => x === undefined);
+
+        if (undefinedIndex === -1) {
+            player.send(`You have no room for that item.`);
+            return;
+        }
+
+        player.inventory[undefinedIndex] = itemClone;
         player.data.inventory = JSON.stringify(player.inventory);
         player.setSyncedMeta('inventory', player.data.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);

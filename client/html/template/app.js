@@ -5,11 +5,7 @@ const h = createElement;
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            message: 'loading...',
-            hairChanged: false,
-            faceData: []
-        };
+        this.state = {};
     }
 
     render(props, state) {

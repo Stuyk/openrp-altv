@@ -22,8 +22,8 @@ export function showDialogue(regCamCoord) {
     });
 
     regCamCoord.z += 150;
-    camera = new Camera(regCamCoord, 90);
-    alt.on('update', rotateCamera);
+    //camera = new Camera(regCamCoord, 90);
+    //alt.on('update', rotateCamera);
 }
 
 function existingAccount(username, password, remember) {
@@ -45,7 +45,7 @@ function rotateCamera() {
 // Called when login is complete.
 export function closeDialogue() {
     alt.off('rotateCamera', rotateCamera);
-    camera.destroy();
+    //camera.destroy();
     camera = undefined;
 
     // Close webview

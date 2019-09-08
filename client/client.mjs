@@ -16,6 +16,7 @@ import * as systemsClothing from 'client/systems/clothing.mjs';
 import * as systemsWeather from 'client/systems/weather.mjs';
 import * as systemsCallbacks from 'client/systems/callbacks.mjs';
 import * as systemsContext from 'client/systems/context.mjs';
+import * as systemsJob from 'client/systems/job.mjs';
 import * as utilitySandbox from 'client/utility/sandbox.mjs';
 import * as hud from 'client/hud/hud.mjs';
 

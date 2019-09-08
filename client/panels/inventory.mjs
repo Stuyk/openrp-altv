@@ -21,10 +21,15 @@ export function showDialogue() {
     }
 
     webview = new View(url);
-    webview.on('drop', drop);
-    webview.on('use', use);
-    webview.on('destroy', destroy);
-    webview.on('fetchItems', fetchItems);
+    webview.on('inventory:Drop', drop);
+    webview.on('inventory:Use', use);
+    webview.on('inventory:Destroy', destroy);
+    webview.on('inventory:FetchItems', fetchItems);
+    webview.on('inventory:SetPosition', setPosition);
+}
+
+function setPosition(newIndexPosition, oldIndexPosition) {
+    alt.emitServer('inventory:UpdatePosition', newIndexPosition, oldIndexPosition);
 }
 
 export function fetchItems() {
@@ -35,8 +40,21 @@ export function fetchItems() {
 
     webview.emit('clearitems');
 
-    itemArray.forEach(ele => {
-        webview.emit('parseitem', ele);
+    itemArray.forEach((item, index) => {
+        if (!item) {
+            webview.emit('inventory:AddItem', index, null);
+            return;
+        }
+
+        webview.emit(
+            'inventory:AddItem',
+            index,
+            item.label,
+            item.hash,
+            item.props,
+            item.quantity,
+            item.slot
+        );
     });
 
     webview.emit('enablebuttons');
@@ -47,11 +65,9 @@ function destroy(hash) {
 }
 
 function use(hash) {
-    alt.log('USING');
     alt.emitServer('inventory:UseItem', hash);
 }
 
-function drop(hash) {
-    alt.log('DROPPED');
-    alt.emitServer('inventory:DropItem', hash);
+function drop(hash, quantity) {
+    alt.emitServer('inventory:DropItem', hash, quantity);
 }

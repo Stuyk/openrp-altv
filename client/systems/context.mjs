@@ -168,7 +168,7 @@ export class ContextMenu {
     }
 }
 
-alt.on('update', useMenu);
+alt.setInterval(useMenu, 0);
 
 function useMenu() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;

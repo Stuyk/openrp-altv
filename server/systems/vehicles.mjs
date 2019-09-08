@@ -109,6 +109,8 @@ export function toggleDoor(player, vehicle, id) {
     if (dist > 5) return;
 
     if (vehicle.lockState === 2) {
+        if (player.vehicles === undefined) return;
+
         if (!player.vehicles.includes(vehicle)) {
             player.send('{FF0000} This vehicle does not belong to you.');
             return;
@@ -125,6 +127,8 @@ export function toggleLock(player, vehicle) {
     const dist = utilityVector.distance(player.pos, vehicle.pos);
     if (dist > 5) return;
 
+    if (player.vehicles === undefined) return;
+
     if (!player.vehicles.includes(vehicle)) return;
 
     if (vehicle.lockState === 2) {
@@ -139,6 +143,8 @@ export function toggleLock(player, vehicle) {
 export function toggleEngine(player, vehicle) {
     if (!player.vehicle) return;
 
+    if (player.vehicles === undefined) return;
+
     if (!player.vehicles.includes(vehicle)) return;
 
     vehicle.engineOn = !vehicle.engineOn;
@@ -148,6 +154,8 @@ export function toggleEngine(player, vehicle) {
 
 export function toggleSafetyLock(player, vehicle) {
     if (!player.vehicle) return;
+
+    if (player.vehicles === undefined) return;
 
     if (!player.vehicles.includes(vehicle)) return;
 

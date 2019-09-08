@@ -23,6 +23,7 @@ const shops = [
 
 let inShop = false;
 let timeout = false;
+let interval;
 
 // Interval to check if a user is in a shop.
 alt.setInterval(() => {
@@ -33,7 +34,11 @@ alt.setInterval(() => {
     // If it does not; turn off the update function.
     if (!shops.includes(currInterior)) {
         inShop = false;
-        alt.off('update', shopKey);
+
+        if (interval !== undefined) {
+            alt.clearInterval(interval);
+            interval = undefined;
+        }
         return;
     }
 
@@ -42,7 +47,7 @@ alt.setInterval(() => {
 
     // Turn on the shop key update function.
     inShop = true;
-    alt.on('update', shopKey);
+    interval = alt.setInterval(shopKey, 0);
 }, 1000);
 
 function shopKey() {

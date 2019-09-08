@@ -46,13 +46,15 @@ let currentTarget;
 let targetMessage = 'Wait for your task...';
 let pause = false;
 let cooldown = Date.now() + 2000;
+let interval;
 
 let currentInterval;
 let isUpdateActive;
 
 alt.on('syncedMetaChange', (entity, key, value) => {
-    if (entity !== alt.Player.local) return; // Local Player Only
+    alt.log('Meta Change');
 
+    if (entity !== alt.Player.local) return; // Local Player Only
     // Call the job function for the synced meta change.
     if (jobFunctions[key] !== undefined) {
         jobFunctions[key].func(value);
@@ -81,7 +83,8 @@ function jobStart() {
 
     // Turn on the Update
     isUpdateActive = true;
-    alt.on('update', drawPointInfo);
+
+    interval = alt.setInterval(drawPointInfo, 0);
 }
 
 /**
@@ -112,7 +115,7 @@ function jobClear(clearTarget) {
 
     // Clear Current Update Function
     if (isUpdateActive) {
-        alt.off('update', drawPointInfo);
+        alt.clearInterval(interval);
         isUpdateActive = false;
     }
 

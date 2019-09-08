@@ -62,7 +62,7 @@ export class View {
         currentView.view = undefined;
         currentView.focused = false;
         alt.emit('chat:Toggle');
-        if (this.clearInterval !== undefined) {
+        if (currentView.interval !== undefined) {
             alt.clearInterval(currentView.interval);
             currentView.interval = undefined;
         }

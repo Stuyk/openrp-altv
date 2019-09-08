@@ -39,7 +39,7 @@ export class View {
         native.displayRadar(false);
         if (killControls) {
             currentView.gameControls = this.toggleGameControls.bind(this);
-            alt.on('update', currentView.gameControls);
+            currentView.interval = alt.setInterval(currentView.gameControls, 0);
         }
         return currentView;
     }
@@ -62,7 +62,7 @@ export class View {
         currentView.view = undefined;
         currentView.focused = false;
         alt.emit('chat:Toggle');
-        alt.off('update', currentView.gameControls);
+        alt.clearInterval(currentView.interval);
     }
 
     // Check if the view is focused.
@@ -73,7 +73,6 @@ export class View {
     // Bind on events, but don't turn off.
     on(name, func) {
         if (currentView.view === undefined) return;
-
         if (currentView.events.includes(event => event.name === name)) return;
         const event = {
             name,

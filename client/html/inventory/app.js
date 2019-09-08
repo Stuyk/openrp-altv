@@ -33,6 +33,16 @@ class App extends Component {
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
             this.addItem(0, 'Fish', '2151251', { description: 'Whatever' }, 1);
+            this.addItem(
+                2,
+                'Really Ugly Fish',
+                '2151251',
+                { description: 'Whatever' },
+                1
+            );
+            this.addItem(3, 'Helmet', '2151251', { description: 'Whatever' }, 1, 28);
+            this.addItem(4, 'Gloves', '2151251', { description: 'Whatever' }, 1, 29);
+            this.addItem(5, 'Body Armor', '2151251', { description: 'Whatever' }, 1, 30);
         }
 
         window.addEventListener('keyup', this.closeInventory.bind(this));
@@ -59,7 +69,7 @@ class App extends Component {
     item.quantity
     */
     addItem(...args) {
-        const [_index, label, hash, props, quantity] = args;
+        const [_index, label, hash, props, quantity, slot] = args;
         let items = [...this.state.items];
 
         if (!label) {
@@ -69,7 +79,8 @@ class App extends Component {
                 label,
                 hash,
                 props,
-                quantity
+                quantity,
+                slot
             };
         }
         this.setState({ items });
@@ -191,11 +202,26 @@ class App extends Component {
         const dropItem = items[dropIndex];
         const dragItem = items[dragIndex];
 
+        // Head Slot
+        if (parseInt(dropIndex) >= 28) {
+            if (!this.handleSlot(dragItem, parseInt(dropIndex))) {
+                this.setState({ items, dragging: undefined, targetHover: -1 });
+                return;
+            }
+        }
+
         items[dropIndex] = dragItem;
         items[dragIndex] = dropItem;
 
-        alt.emit('inventory:SetPosition', dropIndex, dragIndex);
+        if ('alt' in window) {
+            alt.emit('inventory:SetPosition', dropIndex, dragIndex);
+        }
         this.setState({ items, dragging: undefined, targetHover: -1 });
+    }
+
+    handleSlot(item, targetSlot) {
+        if (item.slot !== targetSlot) return false;
+        return true;
     }
 
     mousemove(e) {
@@ -526,5 +552,7 @@ document.addEventListener('contextmenu', e => {
 });
 
 function ready() {
-    alt.emit('inventory:FetchItems');
+    if ('alt' in window) {
+        alt.emit('inventory:FetchItems');
+    }
 }

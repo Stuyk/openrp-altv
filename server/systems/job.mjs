@@ -134,6 +134,8 @@ alt.on('job:StartJob', (player, index) => {
  * @param isNewJob
  */
 function syncMeta(player, index, isNewJob) {
+    console.log('Syncing Job Meta');
+
     // Set Synced Meta
     player.setSyncedMeta('job:Job', JSON.stringify(player.job.currentJob));
     player.setSyncedMeta('job:PointIndex', index);

@@ -52,7 +52,8 @@ export function fetchItems() {
             item.label,
             item.hash,
             item.props,
-            item.quantity
+            item.quantity,
+            item.slot
         );
     });
 

@@ -5,9 +5,7 @@ import * as vector from 'client/utility/vector.mjs';
 
 alt.log('Loaded: events->update.mjs');
 
-alt.on('update', () => {
-    drawPlayerNames();
-});
+alt.setInterval(drawPlayerNames, 0);
 
 function drawPlayerNames() {
     if (alt.Player.all.length <= 0) return;

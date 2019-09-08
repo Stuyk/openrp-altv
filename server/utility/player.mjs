@@ -468,7 +468,7 @@ export function setupPlayerFunctions(player) {
             x => x !== null && x !== undefined && x.label === itemName
         );
 
-        if (item === undefined) return false;
+        if (item === undefined || item === null) return false;
         return true;
     };
 

@@ -5,6 +5,7 @@ alt.log(`Loaded: client->systems->interaction.mjs`);
 
 let interactionEnabled = false;
 let currentLabel = undefined;
+let interval;
 
 // Used to check if the player is standing in an interaction area.
 alt.setInterval(() => {
@@ -13,7 +14,11 @@ alt.setInterval(() => {
     if (indexData === undefined || indexData === null) {
         currentLabel = undefined;
         interactionEnabled = false;
-        alt.off('update', showKeyPress);
+
+        if (interval !== undefined) {
+            alt.clearInterval(interval);
+            interval = undefined;
+        }
         return;
     }
 
@@ -24,7 +29,7 @@ alt.setInterval(() => {
 
     // Show prompt for interaction.
     interactionEnabled = true;
-    alt.on('update', showKeyPress);
+    interval = alt.setInterval(showKeyPress, 0);
 }, 500);
 
 // Check for the key the user is pressing when enabled.

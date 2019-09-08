@@ -8,6 +8,7 @@ alt.log('Loaded: client->systems->inventory.mjs');
 
 let itemsOnGround = [];
 let pickingUpItem = false;
+let interval;
 
 export function itemDrop(player, item, randomPos) {
     if (alt.Player.local === player) {
@@ -15,7 +16,7 @@ export function itemDrop(player, item, randomPos) {
     }
 
     itemsOnGround.push({ pos: randomPos, item });
-    alt.on('update', drawItems);
+    alt.setInterval(drawItems, 1);
 }
 
 export function itemPickup(hash) {
@@ -28,14 +29,21 @@ export function itemPickup(hash) {
     itemsOnGround.splice(index, 1);
 
     if (itemsOnGround.length <= 0) {
-        alt.off('update', drawItems);
         pickingUpItem = false;
+        if (interval) {
+            alt.clearInterval(interval);
+            interval = undefined;
+        }
     }
 }
 
 function drawItems() {
     if (itemsOnGround.length <= 0) {
-        alt.off('update', drawItems);
+        if (interval) {
+            alt.clearInterval(interval);
+            interval = undefined;
+        }
+
         pickingUpItem = false;
         return;
     }

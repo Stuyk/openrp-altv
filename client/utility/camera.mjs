@@ -78,17 +78,23 @@ export class Camera {
             native.renderScriptCams(false, false, 0, false, false);
         }
 
-        if (this.playerControlFunction !== undefined) alt.clearInterval(this.interval);
+        if (this.interval !== undefined) {
+            alt.clearInterval(this.interval);
+            this.interval = undefined;
+        }
     }
 
     playerControlsEntity(ent, noWASD = false) {
         this.target = ent;
         this.noWASD = noWASD;
 
-        if (this.playerControlFunction !== undefined) alt.clearInterval(this.interval);
+        if (this.interval !== undefined) {
+            alt.clearInterval(this.interval);
+            this.interval = undefined;
+        }
 
         this.playerControlFunction = this.playerControls.bind(this);
-        this.interval = this.playerControlFunction;
+        this.interval = alt.setInterval(this.playerControlFunction, 5);
     }
 
     // Call in update function.

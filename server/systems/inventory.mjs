@@ -57,7 +57,7 @@ alt.on('inventory:SubItem', (player, index, quantity) => {
     player.inventory[index].quantity -= quantity;
 
     if (player.inventory[index].quantity <= 0) {
-        player.inventory[index] = undefined;
+        player.inventory[index] = null;
         player.data.inventory = JSON.stringify(player.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
         player.updateInventory();
@@ -80,7 +80,9 @@ alt.on('inventory:AddItem', (player, index, quantity) => {
 export function use(player, hash) {
     console.log('USING ITEM: ' + hash);
 
-    let item = player.inventory.find(x => x.hash === hash);
+    let item = player.inventory.find(
+        x => x !== null && x !== undefined && x.hash === hash
+    );
 
     if (item === undefined) {
         player.updateInventory();
@@ -98,16 +100,22 @@ export function use(player, hash) {
     });
 }
 
-export function drop(player, hash) {
-    let item = player.inventory.find(x => x.hash === hash);
+export function drop(player, hash, quantity) {
+    let item = player.inventory.find(
+        x => x !== null && x !== undefined && x.hash === hash
+    );
 
     if (item === undefined) return;
+
+    if (item.quantity < quantity) {
+        player.updateInventory();
+        return;
+    }
 
     let isDroppable = true;
     Object.keys(configurationItems.Items).forEach(key => {
         if (configurationItems.Items[key].label !== item.label) return;
         isDroppable = configurationItems.Items[key].droppable;
-        console.log(isDroppable);
     });
 
     if (!isDroppable) {
@@ -118,7 +126,8 @@ export function drop(player, hash) {
 
     // Generate a clone of the object.
     let clonedItem = { ...item };
-    if (!player.subItemByHash(hash, 1)) return;
+    clonedItem.quantity = parseInt(quantity);
+    if (!player.subItemByHash(hash, parseInt(quantity))) return;
 
     // Regenerate new hash for each dropped item.
     let newHash = utilityEncryption.generateHash(JSON.stringify({ hash, clonedItem }));
@@ -160,8 +169,12 @@ export function pickup(player, hash) {
         let clonedTemplate = { ...configurationItems.Items[key] };
         clonedTemplate.props = item.props;
 
-        player.addItem(clonedTemplate, 1);
+        player.addItem(clonedTemplate, item.quantity);
     });
 
     player.pickingUpItem = false;
+}
+
+export function updatePosition(player, newIndex, oldIndex) {
+    player.swapItems(newIndex, oldIndex);
 }

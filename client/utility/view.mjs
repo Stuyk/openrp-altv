@@ -16,7 +16,7 @@ export class View {
         if (currentView === undefined) {
             currentView = this;
             currentView.view = new alt.WebView(url);
-            currentView.events = new Map();
+            currentView.events = [];
             currentView.on('close', currentView.close);
         }
 
@@ -25,7 +25,7 @@ export class View {
 
         if (currentView.view === undefined) {
             currentView.view = new alt.WebView(url);
-            currentView.events = new Map();
+            currentView.events = [];
             currentView.on('close', currentView.close);
         }
 
@@ -47,19 +47,20 @@ export class View {
     // Close view and hide.
     close() {
         if (!currentView.ready) return;
-        currentView.focused = false;
         currentView.ready = false;
-        showCursor(false);
-        native.displayRadar(true);
 
-        Object.keys(currentView.events).forEach(key => {
-            currentView.view.off(key, currentView.events[key]);
+        currentView.events.forEach(event => {
+            alt.log(event.name);
+            currentView.view.off(event.name, event.func);
         });
 
+        showCursor(false);
+        native.displayRadar(true);
         currentView.view.off('close', currentView.close);
         currentView.view.unfocus();
         currentView.view.destroy();
         currentView.view = undefined;
+        currentView.focused = false;
         alt.emit('chat:Toggle');
         alt.off('update', currentView.gameControls);
     }
@@ -71,13 +72,19 @@ export class View {
 
     // Bind on events, but don't turn off.
     on(name, func) {
-        if (currentView.events.has(name)) return;
-        const boundFunction = func.bind(this);
-        currentView.events.set(name, boundFunction);
-        currentView.view.on(name, boundFunction);
+        if (currentView.view === undefined) return;
+
+        if (currentView.events.includes(event => event.name === name)) return;
+        const event = {
+            name,
+            func
+        };
+        currentView.events.push(event);
+        currentView.view.on(name, func);
     }
 
     emit(name, ...args) {
+        if (!currentView.view) return;
         currentView.view.emit(name, ...args);
     }
 

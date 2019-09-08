@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+  <head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+	<link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+	<div class="card" style="width: 30rem;" id="atm">
+	  <div id="fullcard">
+		<div class="card-header">
+		  Inventory
+		  <button type="button" id="info" title="Info" class="btn btn-secondary btn-sm ml-2">?</button>
+		  <button type="button" class="close" aria-label="Close" id="close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="card-body overflow-auto">
+		  <ul class="list-group list-group-flush" id="itemslist" style="overflow-y: scroll; max-height: 50vh !important">
+		  </ul>
+		</div>
+	  </div>
+	</div>
+	<!--- Modal --->
+	<div class="modal" id="infomodal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title">Info</h5>
+			<button type="button" id="closemodal" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<p>
+			  This is your inventory. Your inventory is used to handle your items. You will see the item name on the left and the number of items of that type you have next to it.</p>
+			<p>
+			  On the right-hand side you will see three buttons.
+			  <ul>
+				<li>Use</li>
+				<li>Drop</li>
+				<li>Destroy</li>
+			  </ul>
+			  Use allows you to use or consume that item. It is dependent on the item configuration.
+			  <br /><br />
+			  Drop allows you to drop that item on the ground. It can be picked up again.
+			  <br /><br />
+			  Destroy will destroy a single instance of that item. It cannot be recovered.
+			</p>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
+	<script src="./app.js" type="text/javascript"></script>
+  </body>
+</html>

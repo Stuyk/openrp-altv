@@ -56,6 +56,7 @@ alt.onClient('inventory:DestroyItem', systemsInventory.destroy);
 alt.onClient('inventory:UseItem', systemsInventory.use);
 alt.onClient('inventory:DropItem', systemsInventory.drop);
 alt.onClient('inventory:Pickup', systemsInventory.pickup);
+alt.onClient('inventory:UpdatePosition', systemsInventory.updatePosition);
 
 // Vehicle
 alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);

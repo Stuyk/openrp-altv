@@ -197,7 +197,7 @@ export function getClosestDriverByGuid(player, guid) {
         }
 
         // Get closest driver each time.
-        if (taxiDistance < lastDistance) {
+        if (jobDistance < lastDistance) {
             closestDriver = p;
             lastDistance = jobDistance;
         }

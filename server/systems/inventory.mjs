@@ -133,8 +133,6 @@ export function drop(player, hash, quantity) {
     let newHash = utilityEncryption.generateHash(JSON.stringify({ hash, clonedItem }));
     clonedItem.hash = newHash;
 
-    console.log('Dropping ' + newHash);
-
     // Setup the dropped item.
     ItemDrops.set(newHash, clonedItem);
 

@@ -565,11 +565,6 @@ function targetDropType(player, callback) {
  */
 function targetGetType(player, callback) {
     const target = player.job.target;
-    const dist = utilityVector.distance(target.player.pos, player.pos);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
     if (player.vehicle !== target.player.vehicle) {
         return callback(false);
     }

@@ -166,34 +166,6 @@ const clothing = {
         max: 1,
         id: 7,
         isProp: true
-    },
-    Mask: {
-        label: 'Mask',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 1
-    },
-    MaskTexture: {
-        label: 'Mask Texture',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 1
-    },
-    Bag: {
-        label: 'Bag',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 5
-    },
-    BagTexture: {
-        label: 'Bag Texture',
-        value: 0,
-        min: 0,
-        max: 1,
-        id: 5
     }
 };
 

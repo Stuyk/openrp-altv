@@ -129,7 +129,7 @@ function save(newFaceJSON) {
             continue;
         }
 
-        if (previousFace[key] !== undefined) {
+        if (!previousFace[key]) {
             previousFace[key].value = newFace[key].value;
         }
     }

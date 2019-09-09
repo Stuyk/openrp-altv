@@ -190,6 +190,7 @@ export function setupPlayerFunctions(player) {
 
         player.data.face = valueJSON;
         player.saveField(player.data.id, 'face', valueJSON);
+        player.setSyncedMeta('face', valueJSON);
         alt.emitClient(player, 'face:ApplyFacialData', valueJSON);
     };
 

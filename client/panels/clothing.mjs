@@ -4,7 +4,7 @@ import { View } from 'client/utility/view.mjs';
 import { Camera } from 'client/utility/camera.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 
-alt.log('Loaded: client->customizers->clothing.mjs');
+alt.log('Loaded: client->panels->clothing.mjs');
 
 const url = 'http://resource/client/html/clothing/index.html';
 let webview;

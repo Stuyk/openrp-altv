@@ -163,25 +163,28 @@ export function setupPlayerFunctions(player) {
             player.model = 'mp_m_freemode_01';
         }
 
+        player.setSyncedMeta('face', valueJSON);
         alt.emitClient(player, 'face:ApplyFacialData', valueJSON);
     };
 
-    player.saveFace = valueJSON => {
+    player.saveFace = (valueJSON, isBarbershop) => {
         const data = JSON.parse(valueJSON);
 
-        if (data['Sex'].value === 0) {
-            player.model = 'mp_f_freemode_01';
-            if (player.isNewPlayer) {
-                player.saveClothing(
-                    JSON.stringify(configurationClothing.DefaultOutfits.Female)
-                );
-            }
-        } else {
-            player.model = 'mp_m_freemode_01';
-            if (player.isNewPlayer) {
-                player.saveClothing(
-                    JSON.stringify(configurationClothing.DefaultOutfits.Male)
-                );
+        if (!isBarbershop) {
+            if (data['Sex'].value === 0) {
+                player.model = 'mp_f_freemode_01';
+                if (player.isNewPlayer) {
+                    player.saveClothing(
+                        JSON.stringify(configurationClothing.DefaultOutfits.Female)
+                    );
+                }
+            } else {
+                player.model = 'mp_m_freemode_01';
+                if (player.isNewPlayer) {
+                    player.saveClothing(
+                        JSON.stringify(configurationClothing.DefaultOutfits.Male)
+                    );
+                }
             }
         }
 

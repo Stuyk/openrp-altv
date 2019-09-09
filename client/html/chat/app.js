@@ -281,6 +281,8 @@ function ready() {
         // Enter
         if (e.key === 'Enter') {
             let input = document.querySelector('#chat-input');
+            if (input === undefined) return;
+
             input.classList.add('hidden');
             if (input.value.length <= 0) {
                 alt.emit('routeMessage');

@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { createBlip } from 'client/blips/bliphelper.mjs';
-//import * as panelsClothing from 'client/panels/clothing.mjs';
+import * as panelsBarbershop from 'client/panels/barbershop.mjs';
 
 alt.log('Loaded: client->systems->barbershop.mjs');
 
@@ -14,12 +14,6 @@ let interval;
 /*
 [null,{"x":-817.9737548828125,"y":-185.95896911621094,"z":36.5706901550293},169410130]
 */
-
-/*
-Barber Chairs?
-3002973360
-*/
-
 shops.forEach(shop => {
     let [_null, _shopPos] = native.getInteriorInfo(shop, undefined, undefined);
     createBlip(_shopPos, 71, 17, 'Barbershop');
@@ -61,8 +55,7 @@ function shopKey() {
         if (timeout) return;
 
         timeout = true;
-        alt.log('Not implemented yet.');
-        //panelsClothing.showDialogue();
+        panelsBarbershop.showDialogue();
         alt.setTimeout(() => {
             timeout = false;
         }, 500);

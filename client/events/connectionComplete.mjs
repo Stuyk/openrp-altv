@@ -12,4 +12,6 @@ alt.on('connectionComplete', () => {
     alt.log(`Interior Location ID: ${coordLoc}`);
 
     native.pinInteriorInMemory(coordLoc);
+
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
 });

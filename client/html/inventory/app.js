@@ -3,6 +3,12 @@ const h = createElement;
 
 const maxItemLength = 128;
 
+function ready() {
+    if ('alt' in window) {
+        alt.emit('inventory:FetchItems');
+    }
+}
+
 // The main rendering function.
 class App extends Component {
     constructor(props) {
@@ -33,6 +39,7 @@ class App extends Component {
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
             this.addItem(0, 'Fish', '2151251', { description: 'Whatever' }, 1);
+            this.addItem(0, 'Fishing Rod', '2151251', { description: 'Whatever' }, 29);
             this.addItem(
                 2,
                 'Really Ugly Fish',
@@ -43,6 +50,8 @@ class App extends Component {
             this.addItem(3, 'Helmet', '2151251', { description: 'Whatever' }, 1, 28);
             this.addItem(4, 'Gloves', '2151251', { description: 'Whatever' }, 1, 29);
             this.addItem(5, 'Body Armor', '2151251', { description: 'Whatever' }, 1, 30);
+            this.addItem(6, 'Backpack', '2151251', { description: 'Whatever' }, 1, 31);
+            this.addItem(7, 'Uniform', '2151251', { description: 'Whatever' }, 1, 32);
         }
 
         window.addEventListener('keyup', this.closeInventory.bind(this));
@@ -347,6 +356,22 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this)
+                        }),
+                        h('div', { class: 'equip-title' }, 'Bag'),
+                        h(Equipment, {
+                            id: 31,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this)
+                        }),
+                        h('div', { class: 'equip-title' }, 'Uniform'),
+                        h(Equipment, {
+                            id: 32,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this)
                         })
                     )
                 ),
@@ -550,9 +575,3 @@ render(h(App), document.querySelector('#render'));
 document.addEventListener('contextmenu', e => {
     e.preventDefault();
 });
-
-function ready() {
-    if ('alt' in window) {
-        alt.emit('inventory:FetchItems');
-    }
-}

@@ -46,6 +46,7 @@ export function fetchItems() {
             return;
         }
 
+        alt.log(item.slot);
         webview.emit(
             'inventory:AddItem',
             index,

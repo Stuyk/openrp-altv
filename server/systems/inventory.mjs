@@ -47,6 +47,8 @@ alt.on('item:Use', (player, itemObject) => {
             player.playAudio(itemTemplate.sound);
         }
 
+        if (itemTemplate.eventcall === undefined) return;
+
         alt.emit(itemTemplate.eventcall, player, itemObject.props, itemTemplate.message);
         return;
     });

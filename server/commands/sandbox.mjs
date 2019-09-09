@@ -59,6 +59,15 @@ chat.registerCmd('coffee', player => {
     player.addItem(itemTemplate, 5);
 });
 
+chat.registerCmd('additem', (player, arg) => {
+    let itemTemplate = configurationItems.Items[`${arg[0]}`];
+    if (itemTemplate === undefined) {
+        player.send('Item does not exist');
+        return;
+    }
+    player.addItem(itemTemplate, 1);
+});
+
 chat.registerCmd('addveh', (player, arg) => {
     try {
         player.addVehicle(arg[0], player.pos, new alt.Vector3(0, 0, 0));

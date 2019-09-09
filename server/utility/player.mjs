@@ -401,7 +401,8 @@ export function setupPlayerFunctions(player) {
         let itemClone = {
             label: itemTemplate.label,
             quantity: 0,
-            props: itemTemplate.props
+            props: itemTemplate.props,
+            slot: itemTemplate.slot
         };
 
         // If the item is stackable; check if the player has it.
@@ -425,7 +426,7 @@ export function setupPlayerFunctions(player) {
         itemClone.hash = hash;
 
         let undefinedIndex = player.inventory.findIndex(
-            x => x === undefined || x === null
+            x => x === null || x === undefined
         );
 
         // Prevent Using Equipment Slots
@@ -444,9 +445,13 @@ export function setupPlayerFunctions(player) {
         const newIndexItem = { ...player.inventory[newIndexPos] };
         const oldIndexItem = { ...player.inventory[oldIndexPos] };
 
+        // Handle Equippables
+        if (oldIndexPos >= 28 && oldIndexPos <= 40) {
+            player.syncClothing(player.data.clothing);
+        }
+
         player.inventory[newIndexPos] = oldIndexItem;
         player.inventory[oldIndexPos] = newIndexItem;
-        console.log(`${newIndexPos} -> ${JSON.stringify(player.inventory[newIndexPos])}`);
         player.data.inventory = JSON.stringify(player.inventory);
         player.setSyncedMeta('inventory', player.data.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);

@@ -67,7 +67,7 @@ export const Character = new orm.EntitySchema({
         },
         inventory: {
             type: 'text',
-            default: `${JSON.stringify(new Array(30))}`
+            default: `${JSON.stringify(new Array(128))}`
         },
         lastposition: {
             type: 'text',

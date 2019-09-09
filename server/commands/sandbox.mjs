@@ -14,6 +14,8 @@ const sandboxhelp = [
     '/granola, /coffee',
     '/tpto (rp-name)',
     '/players, /clearchat',
+    '/taxi, /taxicancel',
+    '/mechanic, /mechaniccancel',
     'Z + Right-Click to Interact',
     'I for Inventory'
 ];
@@ -58,7 +60,24 @@ chat.registerCmd('coffee', player => {
 });
 
 chat.registerCmd('addveh', (player, arg) => {
-    player.addVehicle(arg[0], player.pos, new alt.Vector3(0, 0, 0));
+    try {
+        player.addVehicle(arg[0], player.pos, new alt.Vector3(0, 0, 0));
+    } catch (e) {
+        player.send('Not a valid vehicle model. Must be a plain name. ie. infernus');
+    }
+});
+
+chat.registerCmd('coord', (player, args) => {
+    if (args.length <= 2) {
+        player.send('/coord (x, y, z)');
+        return;
+    }
+
+    player.pos = {
+        x: args[0],
+        y: args[1],
+        z: args[2]
+    };
 });
 
 chat.registerCmd('tpto', (player, arg) => {

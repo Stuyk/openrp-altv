@@ -78,8 +78,6 @@ alt.on('inventory:AddItem', (player, index, quantity) => {
 });
 
 export function use(player, hash) {
-    console.log('USING ITEM: ' + hash);
-
     let item = player.inventory.find(
         x => x !== null && x !== undefined && x.hash === hash
     );
@@ -101,6 +99,11 @@ export function use(player, hash) {
 }
 
 export function drop(player, hash, quantity) {
+    if (player.vehicle) {
+        player.updateInventory();
+        return;
+    }
+
     let item = player.inventory.find(
         x => x !== null && x !== undefined && x.hash === hash
     );
@@ -151,7 +154,6 @@ export function pickup(player, hash) {
     if (!ItemDrops.has(hash)) return;
 
     player.pickingUpItem = true;
-    console.log('Picking up' + hash);
 
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);

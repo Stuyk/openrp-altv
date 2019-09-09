@@ -20,6 +20,8 @@ export function itemDrop(player, item, randomPos) {
 }
 
 export function itemPickup(hash) {
+    if (alt.Player.local.vehicle) return;
+
     if (itemsOnGround.length <= 0) return;
 
     let index = itemsOnGround.findIndex(x => x.item.hash === hash);

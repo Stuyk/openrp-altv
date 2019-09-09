@@ -46,13 +46,13 @@ let currentTarget;
 let targetMessage = 'Wait for your task...';
 let pause = false;
 let cooldown = Date.now() + 2000;
+let interval;
 
 let currentInterval;
 let isUpdateActive;
 
 alt.on('syncedMetaChange', (entity, key, value) => {
     if (entity !== alt.Player.local) return; // Local Player Only
-
     // Call the job function for the synced meta change.
     if (jobFunctions[key] !== undefined) {
         jobFunctions[key].func(value);
@@ -81,7 +81,8 @@ function jobStart() {
 
     // Turn on the Update
     isUpdateActive = true;
-    alt.on('update', drawPointInfo);
+
+    interval = alt.setInterval(drawPointInfo, 0);
 }
 
 /**
@@ -112,7 +113,7 @@ function jobClear(clearTarget) {
 
     // Clear Current Update Function
     if (isUpdateActive) {
-        alt.off('update', drawPointInfo);
+        alt.clearInterval(interval);
         isUpdateActive = false;
     }
 
@@ -465,27 +466,17 @@ function targetGetType() {
     if (dist >= currentPoint.range) {
         return false;
     }
-
-    alt.log('Passed Distance');
-
     if (!currentTarget.player.vehicle) {
         return false;
     }
-
-    alt.log('Passed Passenger Vehicle');
 
     if (!alt.Player.local.vehicle) {
         return false;
     }
 
-    alt.log('Passed Player Vehicle');
-
     if (currentTarget.player.vehicle.scriptID !== alt.Player.local.vehicle.scriptID) {
         return false;
     }
-
-    alt.log('Passed Same Vehicle');
-
     return true;
 }
 
@@ -496,23 +487,18 @@ function targetDropType() {
         return false;
     }
 
-    alt.log('Passed Passenger Vehicle');
-
     if (!alt.Player.local.vehicle) {
         return false;
     }
-
-    alt.log('Passed Local Vehicle');
 
     const dist = utilityVector.distance(
         alt.Player.local.pos,
         currentTarget.props.position
     );
+
     if (dist >= currentPoint.range) {
         return false;
     }
-
-    alt.log('Passed Distance');
 
     return true;
 }

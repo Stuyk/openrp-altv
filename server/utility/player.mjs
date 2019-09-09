@@ -404,7 +404,9 @@ export function setupPlayerFunctions(player) {
         // If the item is stackable; check if the player has it.
         if (itemTemplate.stackable && !isUnique) {
             // Find stackable item index.
-            let index = player.inventory.findIndex(x => x.label === itemClone.label);
+            let index = player.inventory.findIndex(
+                x => x !== null && x !== undefined && x.label === itemClone.label
+            );
 
             // The item exists.
             if (index > -1) {
@@ -418,7 +420,30 @@ export function setupPlayerFunctions(player) {
         itemClone.quantity += quantity;
         const hash = utilityEncryption.generateHash(JSON.stringify(itemClone));
         itemClone.hash = hash;
-        player.inventory.push(itemClone);
+
+        let undefinedIndex = player.inventory.findIndex(
+            x => x === undefined || x === null
+        );
+
+        // Prevent Using Equipment Slots
+        if (undefinedIndex === -1 || undefinedIndex >= 28) {
+            player.send(`You have no room for that item.`);
+            return;
+        }
+
+        player.inventory[undefinedIndex] = itemClone;
+        player.data.inventory = JSON.stringify(player.inventory);
+        player.setSyncedMeta('inventory', player.data.inventory);
+        player.saveField(player.data.id, 'inventory', player.data.inventory);
+    };
+
+    player.swapItems = (newIndexPos, oldIndexPos) => {
+        const newIndexItem = { ...player.inventory[newIndexPos] };
+        const oldIndexItem = { ...player.inventory[oldIndexPos] };
+
+        player.inventory[newIndexPos] = oldIndexItem;
+        player.inventory[oldIndexPos] = newIndexItem;
+        console.log(`${newIndexPos} -> ${JSON.stringify(player.inventory[newIndexPos])}`);
         player.data.inventory = JSON.stringify(player.inventory);
         player.setSyncedMeta('inventory', player.data.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
@@ -426,7 +451,9 @@ export function setupPlayerFunctions(player) {
 
     // Remove an item from a player.
     player.subItem = (itemTemplate, quantity) => {
-        let index = player.inventory.findIndex(x => x.label === itemTemplate.label);
+        let index = player.inventory.findIndex(
+            x => x !== null && x !== undefined && x.label === itemTemplate.label
+        );
 
         if (index <= -1) return false;
 
@@ -437,14 +464,18 @@ export function setupPlayerFunctions(player) {
     };
 
     player.hasItem = itemName => {
-        let item = player.inventory.find(x => x.label === itemName);
+        let item = player.inventory.find(
+            x => x !== null && x !== undefined && x.label === itemName
+        );
 
-        if (item === undefined) return false;
+        if (item === undefined || item === null) return false;
         return true;
     };
 
     player.subItemByHash = (itemHash, quantity) => {
-        let index = player.inventory.findIndex(x => x.hash === itemHash);
+        let index = player.inventory.findIndex(
+            x => x !== null && x !== undefined && x.hash === itemHash
+        );
 
         if (index <= -1) return false;
 
@@ -455,7 +486,9 @@ export function setupPlayerFunctions(player) {
     };
 
     player.addItemByHash = (itemHash, quantity) => {
-        let index = player.inventory.findIndex(x => x.hash === itemHash);
+        let index = player.inventory.findIndex(
+            x => x !== null && x !== undefined && x.hash === itemHash
+        );
 
         if (index <= -1) return false;
 
@@ -463,7 +496,9 @@ export function setupPlayerFunctions(player) {
     };
 
     player.destroyItem = itemHash => {
-        let index = player.inventory.findIndex(x => x.hash === itemHash);
+        let index = player.inventory.findIndex(
+            x => x !== null && x !== undefined && x.hash === itemHash
+        );
 
         if (index <= -1) return false;
 
@@ -474,7 +509,9 @@ export function setupPlayerFunctions(player) {
 
     // Mostly for consumption / item effects.
     player.consumeItem = itemHash => {
-        let index = player.inventory.findIndex(x => x.hash === itemHash);
+        let index = player.inventory.findIndex(
+            x => x !== null && x !== undefined && x.hash === itemHash
+        );
 
         if (index <= -1) return false;
 
@@ -485,14 +522,15 @@ export function setupPlayerFunctions(player) {
 
         // Failed to consume.
         if (!player.subItemByHash(itemHash, 1)) return false;
-
         alt.emit('item:Consume', player, consumedItem);
         return true;
     };
 
     // Mostly for displaying items.
     player.useItem = itemHash => {
-        let index = player.inventory.findIndex(x => x.hash === itemHash);
+        let index = player.inventory.findIndex(
+            x => x !== null && x !== undefined && x.hash === itemHash
+        );
 
         if (index <= -1) return false;
 
@@ -523,6 +561,7 @@ export function setupPlayerFunctions(player) {
         alt.emitClient(
             null,
             'animation:PlayAnimation',
+            player,
             dictionary,
             name,
             durationInMS,

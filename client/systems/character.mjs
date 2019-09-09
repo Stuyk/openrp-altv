@@ -243,6 +243,6 @@ export function applyFacialData(jsonData) {
         const coll = native.getHashKey(parsedData['Overlay'].collection);
         const over = native.getHashKey(parsedData['Overlay'].overlay);
         native.clearPedDecorations(alt.Player.local.scriptID);
-        native.setPedDecoration(alt.Player.local.scriptID, coll, over);
+        native.addPedDecorationFromHashes(alt.Player.local.scriptID, coll, over);
     }
 }

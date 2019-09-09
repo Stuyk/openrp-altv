@@ -12,10 +12,12 @@ import * as eventsDisconnect from 'client/events/disconnect.mjs';
 import * as eventsUpdate from 'client/events/update.mjs';
 import * as eventsKeyup from 'client/events/keyup.mjs';
 import * as systemsInteraction from 'client/systems/interaction.mjs';
+import * as systemsBarbershop from 'client/systems/barbershop.mjs';
 import * as systemsClothing from 'client/systems/clothing.mjs';
 import * as systemsWeather from 'client/systems/weather.mjs';
 import * as systemsCallbacks from 'client/systems/callbacks.mjs';
 import * as systemsContext from 'client/systems/context.mjs';
+import * as systemsJob from 'client/systems/job.mjs';
 import * as utilitySandbox from 'client/utility/sandbox.mjs';
 import * as hud from 'client/hud/hud.mjs';
 

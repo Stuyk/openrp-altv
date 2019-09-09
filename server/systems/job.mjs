@@ -134,6 +134,8 @@ alt.on('job:StartJob', (player, index) => {
  * @param isNewJob
  */
 function syncMeta(player, index, isNewJob) {
+    console.log('Syncing Job Meta');
+
     // Set Synced Meta
     player.setSyncedMeta('job:Job', JSON.stringify(player.job.currentJob));
     player.setSyncedMeta('job:PointIndex', index);
@@ -195,7 +197,7 @@ export function getClosestDriverByGuid(player, guid) {
         }
 
         // Get closest driver each time.
-        if (taxiDistance < lastDistance) {
+        if (jobDistance < lastDistance) {
             closestDriver = p;
             lastDistance = jobDistance;
         }
@@ -563,11 +565,6 @@ function targetDropType(player, callback) {
  */
 function targetGetType(player, callback) {
     const target = player.job.target;
-    const dist = utilityVector.distance(target.player.pos, player.pos);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
     if (player.vehicle !== target.player.vehicle) {
         return callback(false);
     }

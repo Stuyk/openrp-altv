@@ -11,6 +11,7 @@ let webview = undefined;
 let camera;
 let lastTriedUsername = null;
 let yaw = 0;
+let interval;
 
 export function showDialogue(regCamCoord) {
     webview = new View(url);
@@ -23,7 +24,7 @@ export function showDialogue(regCamCoord) {
 
     regCamCoord.z += 150;
     camera = new Camera(regCamCoord, 90);
-    alt.on('update', rotateCamera);
+    interval = alt.setInterval(rotateCamera, 1);
 }
 
 function existingAccount(username, password, remember) {
@@ -44,7 +45,10 @@ function rotateCamera() {
 
 // Called when login is complete.
 export function closeDialogue() {
-    alt.off('rotateCamera', rotateCamera);
+    if (interval) {
+        alt.clearInterval(interval);
+        interval = undefined;
+    }
     camera.destroy();
     camera = undefined;
 

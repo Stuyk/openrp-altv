@@ -16,6 +16,18 @@ keybinds[keyI] = panelsInventory.showDialogue;
 let keyT = 'T'.charCodeAt(0);
 keybinds[keyT] = panelsChat.toggleDialogue;
 
+// Used to Print Location Info
+let keyPlus = 187;
+keybinds[keyPlus] = () => {
+    alt.log(
+        `Interior ID: ${native.getInteriorAtCoords(
+            alt.Player.local.pos.x,
+            alt.Player.local.pos.y,
+            alt.Player.local.pos.z
+        )}`
+    );
+};
+
 keybinds[118] = panelsChat.toggleHide;
 
 alt.on('keyup', key => {

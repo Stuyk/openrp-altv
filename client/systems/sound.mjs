@@ -10,3 +10,4 @@ export function playAudio(soundName) {
 }
 
 native.startAudioScene('FBI_HEIST_H5_MUTE_AMBIENCE_SCENE');
+native.startAudioScene('CHARACTER_CHANGE_IN_SKY_SCENE');

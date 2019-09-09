@@ -41,7 +41,7 @@ export function startEngine(value) {
 }
 
 // Disable seat shuffle.
-alt.on('update', disableSeatShuffle);
+alt.setInterval(disableSeatShuffle, 0);
 
 function disableSeatShuffle() {
     if (!native.isPedInAnyVehicle(alt.Player.local.scriptID, undefined)) return;

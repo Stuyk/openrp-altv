@@ -69,7 +69,7 @@ export function showDialogue() {
     // Update Hair Color Choices for Buttons
     updateHairColorChoices();
 
-    native.setPedDecoration(
+    native.addPedDecorationFromHashes(
         ped.scriptID,
         native.getHashKey('mpbeach_overlays'),
         native.getHashKey('fm_hair_fuzz')
@@ -163,7 +163,7 @@ function updateHair(dataAsJSON, overlayData) {
 
     native.clearPedDecorations(ped.scriptID);
     if (overlayData) {
-        native.setPedDecoration(
+        native.addPedDecorationFromHashes(
             ped.scriptID,
             native.getHashKey(overlayData.collection),
             native.getHashKey(overlayData.overlay)
@@ -191,7 +191,7 @@ function resetCamera(modelToUse) {
     native.setPedComponentVariation(ped.scriptID, 6, 1, 0, 0);
 
     // Set Hair Fuzz
-    native.setPedDecoration(
+    native.addPedDecorationFromHashes(
         ped.scriptID,
         native.getHashKey('mpbeach_overlays'),
         native.getHashKey('fm_hair_fuzz')

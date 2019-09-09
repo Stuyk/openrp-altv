@@ -155,11 +155,11 @@ function degToRad(deg) {
 
 // Get entity, ground, etc. targeted by mouse position in 3D space.
 export function screenToWorld(flags, ignore) {
-    let x = native.getControlNormal(0, 239);
-    let y = native.getControlNormal(0, 240);
-    let screenRes = native.getActiveScreenResolution(0, 0);
-    let absoluteX = screenRes[1] * x;
-    let absoluteY = screenRes[2] * y;
+    let x = alt.getCursorPos().x;
+    let y = alt.getCursorPos().y;
+
+    let absoluteX = x;
+    let absoluteY = y;
 
     let camPos = native.getGameplayCamCoord();
     let processedCoords = processCoordinates(absoluteX, absoluteY);

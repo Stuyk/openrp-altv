@@ -36,22 +36,22 @@ export class ContextMenu {
 
     render() {
         if (this.options === undefined) return;
-        native.showCursorThisFrame();
-
+        native.setMouseCursorActiveThisFrame();
         let coords = native.getEntityCoords(this.entity, false);
         this.options.forEach((item, index) => {
             const [_visible, _x, _y] = native.getScreenCoordFromWorldCoord(
                 coords.x,
                 coords.y,
-                coords.z + 2
+                coords.z
             );
 
-            if (!_visible) return;
+            if (!_visible) {
+                return;
+            }
 
             let yPos = _y + this.height * index;
 
             if (index === 0) {
-                native.setUiLayer(99);
                 native.drawRect(
                     _x,
                     _y + this.height / 2,
@@ -143,6 +143,7 @@ export class ContextMenu {
         if (item.event === undefined) return;
 
         currentContext = undefined;
+        alt.log(JSON.stringify(item));
 
         alt.setTimeout(() => {
             drawCursor = false;
@@ -168,18 +169,20 @@ export class ContextMenu {
     }
 }
 
-alt.on('update', useMenu);
+alt.setInterval(useMenu, 1);
 
 function useMenu() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
 
     if (native.isControlPressed(0, 20)) {
         drawCursor = true;
+        native.setMouseCursorSprite(1);
     }
 
     if (native.isControlJustReleased(0, 20)) {
         drawCursor = false;
         currentContext = undefined;
+        native.setMouseCursorSprite(1);
     }
 
     if (currentContext !== undefined) {
@@ -188,7 +191,7 @@ function useMenu() {
 
     if (!drawCursor) return;
 
-    native.showCursorThisFrame();
+    native.setMouseCursorActiveThisFrame();
     native.disableControlAction(0, 24, true); // Left Mouse
     native.disableControlAction(0, 25, true); // Right Mouse
     native.disableControlAction(0, 1, true);
@@ -204,12 +207,16 @@ function useMenu() {
     ] = utilityScreen2World.screenToWorld(22, -1);
 
     if (!_hit) {
-        native.setCursorSprite(1);
+        native.setMouseCursorSprite(1);
         return;
     }
 
-    if (utilityVector.distance(alt.Player.local.pos, _endCoords) > 5) return;
-    native.setCursorSprite(3);
+    if (utilityVector.distance(alt.Player.local.pos, _endCoords) > 5) {
+        native.setMouseCursorSprite(1);
+        return;
+    }
+
+    native.setMouseCursorSprite(3);
 
     // Right Clicking
     if (native.isDisabledControlJustPressed(0, 25)) {
@@ -223,10 +230,8 @@ function useMenu() {
         let interaction = interactionTypes[entityType];
 
         if (interaction === undefined) return;
-
         drawCursor = false;
         currentContext = undefined;
-
         interaction.func(_entity, _endCoords);
     }
 }

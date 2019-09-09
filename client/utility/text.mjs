@@ -19,7 +19,6 @@ export function drawText3d(
     layer = 0
 ) {
     native.setDrawOrigin(x, y, z, 0);
-    native.setUiLayer(layer);
     native.beginTextCommandDisplayText('STRING');
     native.addTextComponentSubstringPlayerName(msg);
     native.setTextFont(fontType);
@@ -51,7 +50,7 @@ export function drawText2d(
     layer = 0,
     align = 0
 ) {
-    native.setUiLayer(layer);
+    //native.setScriptGfxDrawOrder(layer);
     native.beginTextCommandDisplayText('STRING');
     native.addTextComponentSubstringPlayerName(msg);
     native.setTextFont(fontType);

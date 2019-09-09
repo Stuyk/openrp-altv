@@ -1,34 +1,28 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as panelsClothing from 'client/panels/clothing.mjs';
 import { createBlip } from 'client/blips/bliphelper.mjs';
+//import * as panelsClothing from 'client/panels/clothing.mjs';
 
-alt.log('Loaded: client->systems->clothing.mjs');
+alt.log('Loaded: client->systems->barbershop.mjs');
 
-const shops = [
-    198145,
-    165633,
-    235265,
-    137217,
-    171265,
-    166145,
-    179713,
-    140801,
-    183553,
-    201473,
-    202497,
-    169217,
-    176129,
-    175361
-];
+const shops = [165377, 198657, 171009, 199937, 155905, 140545, 180225];
 
 let inShop = false;
 let timeout = false;
 let interval;
 
+/*
+[null,{"x":-817.9737548828125,"y":-185.95896911621094,"z":36.5706901550293},169410130]
+*/
+
+/*
+Barber Chairs?
+3002973360
+*/
+
 shops.forEach(shop => {
     let [_null, _shopPos] = native.getInteriorInfo(shop, undefined, undefined);
-    createBlip(_shopPos, 73, 8, 'Clothing Store');
+    createBlip(_shopPos, 71, 17, 'Barbershop');
 });
 
 // Interval to check if a user is in a shop.
@@ -59,7 +53,7 @@ alt.setInterval(() => {
 function shopKey() {
     native.beginTextCommandDisplayHelp('STRING');
     native.addTextComponentSubstringPlayerName(
-        `Press ~INPUT_CONTEXT~ to change your clothes.`
+        `Press ~INPUT_CONTEXT~ to change your hairstyle.`
     );
     native.endTextCommandDisplayHelp(0, false, true, -1);
 
@@ -67,7 +61,8 @@ function shopKey() {
         if (timeout) return;
 
         timeout = true;
-        panelsClothing.showDialogue();
+        alt.log('Not implemented yet.');
+        //panelsClothing.showDialogue();
         alt.setTimeout(() => {
             timeout = false;
         }, 500);

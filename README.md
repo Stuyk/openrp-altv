@@ -69,7 +69,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Roleplay Commands (/me, /do, /b, /cc)
 -   [x] Ranged Chat
 -   [ ] Voice Chat
--   [ ] Playing Hours Stats
+-   [x] Playing Hours Stats
 -   [ ] Skill System for Jobs
 -   [ ] Drug System
 -   [ ] Drugs for Health

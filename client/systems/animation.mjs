@@ -21,7 +21,7 @@ alt.log('Loaded: client->systems->animation.mjs');
 */
 
 alt.on('animation:Play', (ent, data) => {
-    playAnimation(data.dict, data.name, data.duration, data.flag);
+    playAnimation(alt.Player.local, data.dict, data.name, data.duration, data.flag);
 });
 
 alt.on('animation:Clear', ent => {
@@ -29,13 +29,13 @@ alt.on('animation:Clear', ent => {
     native.clearPedSecondaryTask(alt.Player.local.scriptID);
 });
 
-export function playAnimation(dictionary, name, durationInMS, flag) {
+export function playAnimation(player, dictionary, name, durationInMS, flag) {
     let res = loadAnim(dictionary);
 
     res.then(() => {
         alt.log('Playing Animation');
         native.taskPlayAnim(
-            alt.Player.local.scriptID,
+            player.scriptID,
             dictionary,
             name,
             1,

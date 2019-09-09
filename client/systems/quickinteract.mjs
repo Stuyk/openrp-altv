@@ -121,7 +121,7 @@ export class QuickInteract {
     }
 }
 
-alt.on('update', parseQuickInteracts);
+alt.setInterval(parseQuickInteracts, 0);
 
 // Loop through interactions.
 function parseQuickInteracts() {

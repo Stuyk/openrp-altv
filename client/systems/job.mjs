@@ -52,8 +52,6 @@ let currentInterval;
 let isUpdateActive;
 
 alt.on('syncedMetaChange', (entity, key, value) => {
-    alt.log('Meta Change');
-
     if (entity !== alt.Player.local) return; // Local Player Only
     // Call the job function for the synced meta change.
     if (jobFunctions[key] !== undefined) {
@@ -468,27 +466,17 @@ function targetGetType() {
     if (dist >= currentPoint.range) {
         return false;
     }
-
-    alt.log('Passed Distance');
-
     if (!currentTarget.player.vehicle) {
         return false;
     }
-
-    alt.log('Passed Passenger Vehicle');
 
     if (!alt.Player.local.vehicle) {
         return false;
     }
 
-    alt.log('Passed Player Vehicle');
-
     if (currentTarget.player.vehicle.scriptID !== alt.Player.local.vehicle.scriptID) {
         return false;
     }
-
-    alt.log('Passed Same Vehicle');
-
     return true;
 }
 
@@ -499,23 +487,18 @@ function targetDropType() {
         return false;
     }
 
-    alt.log('Passed Passenger Vehicle');
-
     if (!alt.Player.local.vehicle) {
         return false;
     }
-
-    alt.log('Passed Local Vehicle');
 
     const dist = utilityVector.distance(
         alt.Player.local.pos,
         currentTarget.props.position
     );
+
     if (dist >= currentPoint.range) {
         return false;
     }
-
-    alt.log('Passed Distance');
 
     return true;
 }

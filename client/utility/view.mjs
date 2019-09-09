@@ -50,7 +50,6 @@ export class View {
         currentView.ready = false;
 
         currentView.events.forEach(event => {
-            alt.log(event.name);
             currentView.view.off(event.name, event.func);
         });
 

@@ -281,7 +281,7 @@ function ready() {
         // Enter
         if (e.key === 'Enter') {
             let input = document.querySelector('#chat-input');
-            if (input === undefined) return;
+            if (input === undefined || input === null) return;
 
             input.classList.add('hidden');
             if (input.value.length <= 0) {

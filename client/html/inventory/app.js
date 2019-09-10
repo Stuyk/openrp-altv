@@ -2,6 +2,7 @@ const { createElement, render, Component } = preact;
 const h = createElement;
 
 const maxItemLength = 128;
+let usingTextBox = false;
 
 function ready() {
     if ('alt' in window) {
@@ -27,7 +28,9 @@ class App extends Component {
             contextY: 0,
             quantity: 1,
             mask: undefined,
-            targetHover: -1
+            targetHover: -1,
+            renaming: false,
+            newname: ''
         };
 
         this.mousemove = this.mousemove.bind(this);
@@ -47,7 +50,17 @@ class App extends Component {
                 { description: 'Whatever' },
                 1
             );
-            this.addItem(3, 'Hat', '0', { description: 'Whatever' }, 1, 28);
+            this.addItem(
+                3,
+                'Hat',
+                '0',
+                { description: 'Whatever' },
+                1,
+                28,
+                true,
+                true,
+                true
+            );
             this.addItem(4, 'Helmet', '0', { description: 'Whatever' }, 1, 29);
             this.addItem(5, 'Shirt', '0', { description: 'Whatever' }, 1, 30);
             this.addItem(6, 'Pants', '0', { description: 'Whatever' }, 1, 31);
@@ -61,6 +74,15 @@ class App extends Component {
             this.addItem(14, 'Bracelet', '0', { description: 'Whatever' }, 1, 39);
             this.addItem(15, 'Glasses', '0', { description: 'Whatever' }, 1, 40);
             this.addItem(16, 'Police Uniform', '0', { description: 'Whatever' }, 1, 41);
+            this.addItem(
+                17,
+                'Fire Uniform',
+                '0',
+                { description: 'Whatever' },
+                1,
+                41,
+                true
+            );
         }
 
         window.addEventListener('keyup', this.closeInventory.bind(this));
@@ -68,10 +90,11 @@ class App extends Component {
 
     closeInventory(e) {
         if (e.keyCode !== 'I'.charCodeAt(0)) return;
+        if (usingTextBox) return;
 
         if ('alt' in window) {
             alt.emit('inventory:SavePositions', this.state.items);
-            alt.emit('close');
+            alt.emit('inventory:Exit');
         }
     }
 
@@ -87,7 +110,17 @@ class App extends Component {
     item.quantity
     */
     addItem(...args) {
-        const [_index, label, hash, props, quantity, slot] = args;
+        const [
+            _index,
+            label,
+            hash,
+            props,
+            quantity,
+            slot,
+            rename,
+            useitem,
+            droppable
+        ] = args;
         let items = [...this.state.items];
 
         if (!label) {
@@ -98,15 +131,19 @@ class App extends Component {
                 hash,
                 props,
                 quantity,
-                slot
+                slot,
+                rename,
+                useitem,
+                droppable
             };
         }
         this.setState({ items });
     }
 
     navigate(e) {
+        usingTextBox = false;
         const currentTab = e.target.id * 1;
-        this.setState({ currentTab });
+        this.setState({ currentTab, renaming: false });
     }
 
     clickItem(e) {
@@ -173,6 +210,14 @@ class App extends Component {
         }
     }
 
+    rename() {
+        usingTextBox = true;
+        this.setState({
+            itemContext: false,
+            renaming: true
+        });
+    }
+
     destroy() {
         let result = this.subItem(this.state.contextItem, 1);
         if (!result.result) return;
@@ -210,6 +255,31 @@ class App extends Component {
         this.setState({ quantity: e.target.value });
     }
 
+    renameChange(e) {
+        let value = e.target.value + '';
+        if (value.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+            this.setState({ newname: '' });
+            return;
+        }
+        this.setState({ newname: e.target.value });
+    }
+
+    parseRename() {
+        let items = [...this.state.items];
+        const index = this.state.contextItem;
+        const hash = this.state.items[index].hash;
+        const name = this.state.newname;
+
+        items[index].label = name;
+
+        this.setState({ renaming: false, contextItem: undefined, newname: '' });
+        usingTextBox = false;
+
+        if ('alt' in window) {
+            alt.emit('inventory:Rename', hash, name);
+        }
+    }
+
     release(e) {
         if (!this.state.dragging) return;
         document.removeEventListener('mousemove', this.mousemove);
@@ -226,6 +296,16 @@ class App extends Component {
             if (!this.handleSlot(dragItem, parseInt(dropIndex))) {
                 this.setState({ items, dragging: undefined, targetHover: -1 });
                 return;
+            }
+        }
+
+        // Dragging into Inventory
+        if (parseInt(dragIndex) >= 28) {
+            if (dropItem !== undefined && dropItem !== null) {
+                if (dragItem.slot !== dropItem.slot) {
+                    this.setState({ items, dragging: undefined, targetHover: -1 });
+                    return;
+                }
             }
         }
 
@@ -269,8 +349,7 @@ class App extends Component {
         if (e.target.id === 'context') return;
 
         this.setState({
-            itemContext: false,
-            contextItem: undefined
+            itemContext: false
         });
     }
 
@@ -464,14 +543,44 @@ class App extends Component {
                     'div',
                     { class: 'panelcon scroll' },
                     // ===> ITEMS
-                    this.state.currentTab === 0 &&
+                    this.state.renaming === true &&
+                        this.state.currentTab === 0 &&
+                        h(
+                            'div',
+                            { class: 'renamecon' },
+                            h('div', { class: 'input-label' }, 'Drop Amount'),
+                            h(
+                                'div',
+                                { class: 'rename-group' },
+                                h('input', {
+                                    type: 'text',
+                                    class: 'inputname',
+                                    value: this.state.newname,
+                                    maxlength: '20',
+                                    oninput: this.renameChange.bind(this)
+                                }),
+                                h(
+                                    'button',
+                                    {
+                                        type: 'text',
+                                        class: 'rename-button',
+                                        maxlength: 20,
+                                        onclick: this.parseRename.bind(this)
+                                    },
+                                    'Submit'
+                                )
+                            )
+                        ),
+                    this.state.renaming === false &&
+                        this.state.currentTab === 0 &&
                         h(Items, {
                             state: this.state,
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this)
                         }),
-                    this.state.currentTab === 0 &&
+                    this.state.renaming === false &&
+                        this.state.currentTab === 0 &&
                         h(
                             'div',
                             { class: 'inputcon' },
@@ -553,9 +662,11 @@ class App extends Component {
             // ===> Context Menu
             this.state.itemContext &&
                 h(ItemContext, {
+                    contextItem: this.state.items[this.state.contextItem],
                     use: this.use.bind(this),
                     drop: this.drop.bind(this),
                     destroy: this.destroy.bind(this),
+                    rename: this.rename.bind(this),
                     contextX: this.state.contextX,
                     contextY: this.state.contextY
                 })
@@ -607,7 +718,7 @@ const ItemProps = ({ props }) => {
     return h('ul', { class: 'info-desc' }, propDivs);
 };
 
-const ItemContext = ({ use, drop, destroy, contextX, contextY }) => {
+const ItemContext = ({ contextItem, use, drop, destroy, rename, contextX, contextY }) => {
     return h(
         'div',
         {
@@ -615,9 +726,13 @@ const ItemContext = ({ use, drop, destroy, contextX, contextY }) => {
             class: 'context',
             style: `left: ${contextX - 37.5}px; top: ${contextY - 5}px`
         },
-        h('div', { id: 'context', class: 'context-item', onclick: use }, 'Use'),
-        h('div', { id: 'context', class: 'context-item', onclick: drop }, 'Drop'),
-        h('div', { id: 'context', class: 'context-item', onclick: destroy }, 'Destroy')
+        contextItem.useitem &&
+            h('div', { id: 'context', class: 'context-item', onclick: use }, 'Use'),
+        contextItem.droppable &&
+            h('div', { id: 'context', class: 'context-item', onclick: drop }, 'Drop'),
+        h('div', { id: 'context', class: 'context-item', onclick: destroy }, 'Destroy'),
+        contextItem.rename &&
+            h('div', { id: 'context', class: 'context-item', onclick: rename }, 'Rename')
     );
 };
 

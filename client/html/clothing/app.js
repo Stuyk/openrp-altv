@@ -187,7 +187,7 @@ class App extends Component {
         });
 
         if ('alt' in window) {
-            alt.on('getSex', this.getSex.bind(this));
+            alt.on('setSex', this.setSex.bind(this));
             alt.on('updateMinMax', this.updateMinMax.bind(this));
             alt.on('showError', this.showError.bind(this));
             alt.on('updateClothes', this.updateClothes.bind(this));
@@ -239,7 +239,7 @@ class App extends Component {
         }
     }
 
-    getSex(sex) {
+    setSex(sex) {
         this.setState({ sex });
     }
 
@@ -332,24 +332,7 @@ class App extends Component {
     }
 
     submitChanges() {
-        const data = [];
-        let clothingData = [...this.state.clothingData];
-
-        clothingData.forEach((item, index) => {
-            if (item.label.includes('Texture')) {
-                return;
-            }
-
-            data.push({
-                label: item.label,
-                value: item.value,
-                id: item.id,
-                texture: clothingData[index + 1].value,
-                isProp: item.isProp
-            });
-        });
-
-        alt.emit('clothing:VerifyClothing', JSON.stringify(data));
+        alt.emit('clothing:CloseDialogue');
     }
 
     render() {
@@ -455,5 +438,6 @@ function ready() {
 
     if ('alt' in window) {
         alt.emit('clothing:GetPreviousClothes');
+        alt.emit('clothing:GetSex');
     }
 }

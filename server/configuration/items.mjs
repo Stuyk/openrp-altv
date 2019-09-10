@@ -135,6 +135,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 28,
@@ -147,6 +148,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 29,
@@ -159,6 +161,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 30,
@@ -171,6 +174,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 31,
@@ -183,6 +187,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 32,
@@ -195,6 +200,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 33,
@@ -207,6 +213,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 34,
@@ -219,6 +226,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 35,
@@ -231,6 +239,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 36,
@@ -243,6 +252,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 37,
@@ -255,6 +265,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 38,
@@ -267,6 +278,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 39,
@@ -279,6 +291,7 @@ export const Items = {
         useitem: false,
         droppable: true,
         sellable: true,
+        rename: true,
         message: '',
         quantity: 0,
         slot: 40,
@@ -296,6 +309,7 @@ export const Items = {
         slot: 41,
         props: {
             description: 'Standard Issue Police Uniform',
+            restriction: -1,
             female: [
                 { id: 3, value: 9 },
                 { id: 4, value: 30 },
@@ -324,6 +338,7 @@ export const Items = {
         slot: 28,
         props: {
             description: 'Conceal Your Identity',
+            restriction: -1,
             female: [
                 {
                     id: 1,
@@ -350,6 +365,7 @@ export const Items = {
         slot: 28,
         props: {
             description: 'Conceal Your Identity',
+            restriction: -1,
             female: [
                 {
                     id: 1,
@@ -376,6 +392,7 @@ export const Items = {
         slot: 28,
         props: {
             description: 'Conceal Your Identity',
+            restriction: -1,
             female: [
                 {
                     id: 1,
@@ -403,6 +420,7 @@ export const Items = {
         props: {
             description: 'Protect Your Face',
             isProp: true,
+            restriction: -1,
             female: [
                 {
                     id: 0,
@@ -430,6 +448,7 @@ export const Items = {
         props: {
             description: 'Protect Your Face',
             isProp: true,
+            restriction: -1,
             female: [
                 {
                     id: 0,

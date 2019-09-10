@@ -3,12 +3,6 @@ import * as configurationItems from '../configuration/items.mjs';
 
 console.log('Loaded: character->clothing.mjs');
 
-// Save the player's clothing.
-export function saveClothing(player, jsonData) {
-    player.saveClothing(jsonData);
-    player.closeClothingDialogue();
-}
-
 /*
 28 - Hat
 29 - Helmet
@@ -67,4 +61,9 @@ export function purchase(player, jsonData) {
 
     itemClone.props = props;
     player.addItem(itemClone, 1);
+    player.playAudio('buy');
+}
+
+export function resync(player) {
+    player.syncInventory();
 }

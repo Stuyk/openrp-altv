@@ -282,6 +282,10 @@ html {
     border: 1px solid @contrast1;
 }
 
+.item-dragging + .panels .single-item .item:hover {
+    border: 1px solid @contrast2;
+}
+
 .item-place {
     border: 1px dashed @whitecontrast;
     font-size: 12px;
@@ -303,6 +307,10 @@ html {
 
 .item-hovered {
     border: 1px solid @contrast1 !important;
+}
+
+.item-hovered-disabled {
+    border: 1px solid @contrast2 !important;
 }
 
 .item-quantity {

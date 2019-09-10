@@ -8,7 +8,7 @@ export function setFacialData(player, facialJSON, isBarbershop) {
 
     // Sync Clothing After Barbershop Changes
     if (isBarbershop) {
-        player.syncClothing(player.data.clothing);
+        player.syncInventory();
     }
 
     if (!player.needsRoleplayName) return;

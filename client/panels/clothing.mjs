@@ -14,11 +14,13 @@ let camera = undefined;
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Setup Webview
-    webview = new View(url, false);
+    webview = new View(url, true);
     webview.on('clothing:RequestComponentData', requestComponentData);
     webview.on('clothing:UpdateComponent', updateComponent);
-    webview.on('clothing:VerifyClothing', verifyClothing);
+    webview.on('clothing:CloseDialogue', closeDialogue);
     webview.on('clothing:GetPreviousClothes', getPreviousClothes);
+    webview.on('clothing:Purchase', purchaseClothing);
+    webview.on('clothing:GetSex', getSex);
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
@@ -27,6 +29,11 @@ export function showDialogue() {
     camera = new Camera(pPos, 90);
     camera.pointAtCoord(alt.Player.local.pos);
     camera.playerControlsEntity(alt.Player.local.scriptID);
+}
+
+function getSex() {
+    let isMale = native.isPedMale(alt.Player.local.scriptID);
+    webview.emit('setSex', isMale === true ? 1 : 0);
 }
 
 function getPreviousClothes() {
@@ -97,43 +104,9 @@ export function closeDialogue() {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     webview.close();
     camera.destroy();
+    alt.emitServer('clothing:Resync');
 }
 
-// Verify the clothing is correct; before saving.
-function verifyClothing(jsonData) {
-    const result = JSON.parse(jsonData);
-
-    /* 
-    label: item.label,
-    value: item.value,
-    id: item.id,
-    texture: clothingData[index + 1].value,
-    isProp: item.isProp
-    */
-
-    result.forEach(item => {
-        if (!item.isProp) {
-            native.setPedComponentVariation(
-                alt.Player.local.scriptID,
-                item.id,
-                item.value,
-                item.texture,
-                0
-            );
-        } else {
-            if (item.value === -1) {
-                native.clearPedProp(alt.Player.local.scriptID, item.id);
-            }
-
-            native.setPedPropIndex(
-                alt.Player.local.scriptID,
-                item.id,
-                item.value,
-                item.texture,
-                false
-            );
-        }
-    });
-
-    alt.emitServer('clothing:SaveClothing', jsonData);
+function purchaseClothing(json) {
+    alt.emitServer('clothing:Purchase', json);
 }

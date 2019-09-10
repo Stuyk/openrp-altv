@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
-import * as configurationClothing from '../configuration/clothing.mjs';
+import * as configurationItems from '../configuration/items.mjs';
 import * as configurationPlayer from '../configuration/player.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsTime from '../systems/time.mjs';
@@ -174,16 +174,12 @@ export function setupPlayerFunctions(player) {
             if (data['Sex'].value === 0) {
                 player.model = 'mp_f_freemode_01';
                 if (player.isNewPlayer) {
-                    player.saveClothing(
-                        JSON.stringify(configurationClothing.DefaultOutfits.Female)
-                    );
+                    player.addStarterItems();
                 }
             } else {
                 player.model = 'mp_m_freemode_01';
                 if (player.isNewPlayer) {
-                    player.saveClothing(
-                        JSON.stringify(configurationClothing.DefaultOutfits.Male)
-                    );
+                    player.addStarterItems();
                 }
             }
         }
@@ -362,24 +358,6 @@ export function setupPlayerFunctions(player) {
         alt.emitClient(player, 'clothing:CloseDialogue');
     };
 
-    /**
-     * Sync the player's clothes from a JSON.
-     */
-    player.syncClothing = data => {
-        alt.emitClient(player, 'clothing:SyncClothing', data);
-        player.setSyncedMeta('clothing', data);
-    };
-
-    /**
-     * Save the player's clothing.
-     */
-    player.saveClothing = dataJSON => {
-        player.data.clothing = dataJSON;
-        player.setSyncedMeta('clothing', dataJSON);
-        player.saveField(player.data.id, 'clothing', dataJSON);
-        player.syncClothing(dataJSON);
-    };
-
     // =================================
     /**
      * Set / Save the player's Roleplay name
@@ -403,7 +381,10 @@ export function setupPlayerFunctions(player) {
             label: itemTemplate.label,
             quantity: 0,
             props: itemTemplate.props,
-            slot: itemTemplate.slot
+            slot: itemTemplate.slot,
+            rename: itemTemplate.rename,
+            useitem: itemTemplate.useitem,
+            droppable: itemTemplate.droppable
         };
 
         // If the item is stackable; check if the player has it.
@@ -445,12 +426,6 @@ export function setupPlayerFunctions(player) {
     player.swapItems = (newIndexPos, oldIndexPos) => {
         const newIndexItem = { ...player.inventory[newIndexPos] };
         const oldIndexItem = { ...player.inventory[oldIndexPos] };
-
-        // Handle Equippables
-        if (oldIndexPos >= 28 && oldIndexPos <= 40) {
-            player.syncClothing(player.data.clothing);
-        }
-
         player.inventory[newIndexPos] = oldIndexItem;
         player.inventory[oldIndexPos] = newIndexItem;
         player.data.inventory = JSON.stringify(player.inventory);
@@ -556,6 +531,44 @@ export function setupPlayerFunctions(player) {
     player.updateInventory = () => {
         player.setSyncedMeta('inventory', JSON.stringify(player.inventory));
         alt.emitClient(player, 'inventory:FetchItems');
+    };
+
+    player.addStarterItems = () => {
+        let shirt = { ...configurationItems.Items['Shirt'] };
+        shirt.props = {
+            description: 'Starter Shirt',
+            restriction: -1,
+            female: [
+                { id: 11, value: 2, texture: 2 },
+                { id: 8, value: 2, texture: 0 },
+                { id: 3, value: 2, texture: 0 }
+            ],
+            male: [
+                { id: 11, value: 16, texture: 0 },
+                { id: 8, value: 16, texture: 0 },
+                { id: 3, value: 0, texture: 0 }
+            ]
+        };
+
+        let pants = { ...configurationItems.Items['Pants'] };
+        pants.props = {
+            description: 'Starter Pants',
+            restriction: -1,
+            female: [{ id: 4, value: 0, texture: 2 }],
+            male: [{ id: 4, value: 0, texture: 0 }]
+        };
+
+        let shoes = { ...configurationItems.Items['Shoes'] };
+        shoes.props = {
+            description: 'Starter Pants',
+            restriction: -1,
+            female: [{ id: 6, value: 3, texture: 0 }],
+            male: [{ id: 6, value: 1, texture: 0 }]
+        };
+
+        player.addItem(shirt, 1);
+        player.addItem(pants, 1);
+        player.addItem(shoes, 1);
     };
 
     // =================================

@@ -117,10 +117,6 @@ function existingCharacter(player, data) {
     data.cash = data.cash * 1;
     data.bank = data.bank * 1;
 
-    if (data.clothing !== null || data.clothing !== undefined) {
-        player.syncClothing(data.clothing);
-    }
-
     // Make sure they spawn dead.
     player.loginHealth = setTimeout(() => {
         if (data.dead) {

@@ -15,7 +15,7 @@ let lastHair;
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Setup Webview
-    webview = new View(url, false);
+    webview = new View(url, true);
     webview.on('barbershop:FetchFace', fetchFace);
     webview.on('barbershop:Save', save);
     webview.on('barbershop:UpdateFaceDecor', updateFaceDecor);

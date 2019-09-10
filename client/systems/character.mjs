@@ -246,3 +246,31 @@ export function applyFacialData(jsonData) {
         native.addPedDecorationFromHashes(alt.Player.local.scriptID, coll, over);
     }
 }
+
+alt.on('updateHair', () => {
+    let parsedData = JSON.parse(alt.Player.local.getSyncedMeta('face'));
+
+    if (parsedData === null || parsedData === undefined) return;
+
+    // Set Hair, Texture, Highlights, etc.
+    native.setPedComponentVariation(
+        alt.Player.local.scriptID,
+        2,
+        parsedData['Hair'].value,
+        parsedData['HairTexture'].value,
+        2
+    );
+
+    native.setPedHairColor(
+        alt.Player.local.scriptID,
+        parsedData['HairColor'].value,
+        parsedData['HairHighlights'].value
+    );
+
+    if (parsedData['Overlay']) {
+        const coll = native.getHashKey(parsedData['Overlay'].collection);
+        const over = native.getHashKey(parsedData['Overlay'].overlay);
+        native.clearPedDecorations(alt.Player.local.scriptID);
+        native.addPedDecorationFromHashes(alt.Player.local.scriptID, coll, over);
+    }
+});

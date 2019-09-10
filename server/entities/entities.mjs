@@ -60,11 +60,6 @@ export const Character = new orm.EntitySchema({
             nullable: true,
             default: null
         },
-        clothing: {
-            type: 'text',
-            nullable: true,
-            default: null
-        },
         inventory: {
             type: 'text',
             default: `${JSON.stringify(new Array(128))}`

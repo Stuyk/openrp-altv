@@ -10,8 +10,18 @@ Inventory slots are built around a player limit of 128 slots. However, only 28 s
 
 ---
 
-28 - Mask
-29 - Hand
-30 - Body
-31 - Bag
-32 - Uniform
+Current Slots:
+28 - Hat
+29 - Helmet
+30 - Shirt
+31 - Pants
+32 - Shoes
+33 - Body Armor
+34 - Accessory
+35 - Ears
+36 - Backpack
+37 - Hand
+38 - Watch
+39 - Bracelet
+40 - Glasses
+41 - Uniform

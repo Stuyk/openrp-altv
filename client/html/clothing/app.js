@@ -176,7 +176,8 @@ class App extends Component {
         this.state = {
             message: 'loading...',
             hairChanged: false,
-            clothingData: []
+            clothingData: [],
+            sex: 0
         };
     }
 
@@ -186,10 +187,60 @@ class App extends Component {
         });
 
         if ('alt' in window) {
+            alt.on('getSex', this.getSex.bind(this));
             alt.on('updateMinMax', this.updateMinMax.bind(this));
             alt.on('showError', this.showError.bind(this));
             alt.on('updateClothes', this.updateClothes.bind(this));
         }
+    }
+
+    purchase(e) {
+        let props = {
+            description: 'Clothing Item',
+            isProp: this.state.clothingData[e.target.id].isProp,
+            restriction: this.state.sex
+        };
+
+        let data = [];
+
+        // Shirt, Undershirt, Torso
+        if (parseInt(e.target.id) === 0) {
+            for (let i = 0; i < 6; i++) {
+                let index = data.findIndex(x => x.id === this.state.clothingData[i].id);
+                if (index !== -1) {
+                    console.log('match?');
+                    data[index].texture = this.state.clothingData[i].value;
+                } else {
+                    data.push({
+                        id: this.state.clothingData[i].id,
+                        value: this.state.clothingData[i].value
+                    });
+                }
+            }
+        } else {
+            const index = parseInt(e.target.id);
+            data.push({
+                id: this.state.clothingData[index].id,
+                value: this.state.clothingData[index].value,
+                texture: this.state.clothingData[index + 1].value
+            });
+        }
+
+        if (this.state.sex === 0) {
+            props.female = data;
+        } else {
+            props.male = data;
+        }
+
+        if ('alt' in window) {
+            alt.emit('clothing:Purchase', JSON.stringify(props));
+        } else {
+            console.log(JSON.stringify(props));
+        }
+    }
+
+    getSex(sex) {
+        this.setState({ sex });
     }
 
     updateMinMax(...args) {
@@ -311,7 +362,8 @@ class App extends Component {
                 { class: 'mod-list scroll' },
                 h(ClothingList, {
                     clothingData: this.state.clothingData,
-                    setItemValue: this.setItemValue.bind(this)
+                    setItemValue: this.setItemValue.bind(this),
+                    purchase: this.purchase.bind(this)
                 })
             ),
             h(
@@ -324,16 +376,16 @@ class App extends Component {
     }
 }
 
-const ClothingList = ({ clothingData, setItemValue }) => {
+const ClothingList = ({ clothingData, setItemValue, purchase }) => {
     const itemList = clothingData.map((item, index) =>
-        h(ClothingItem, { index, item, setItemValue })
+        h(ClothingItem, { index, item, setItemValue, purchase })
     );
 
     return h('div', null, itemList);
 };
 
 // Items to Display in a Group
-const ClothingItem = ({ index, item, setItemValue }) => {
+const ClothingItem = ({ index, item, setItemValue, purchase }) => {
     left = () => {
         setItemValue(index, false);
     };
@@ -345,13 +397,13 @@ const ClothingItem = ({ index, item, setItemValue }) => {
         { class: 'mod' },
         h(
             'div',
-            { class: 'spacer' },
+            { class: 'spacer-left' },
             h('div', { class: 'title' }, `${item.label}`),
             h('div', { class: 'count' }, `${item.value}/${item.max}`)
         ),
         h(
             'div',
-            { class: 'spacer' },
+            { class: 'spacer-right' },
             h(
                 'button',
                 {
@@ -368,6 +420,18 @@ const ClothingItem = ({ index, item, setItemValue }) => {
                 },
                 '+'
             )
+        ),
+        h(
+            'div',
+            { class: 'spacer' },
+            !item.label.includes('Texture') &&
+                !item.label.includes('Arms') &&
+                !item.label.includes('Undershirt') &&
+                h(
+                    'button',
+                    { class: 'buy', id: `${index}`, onclick: purchase.bind(this) },
+                    `Purchase`
+                )
         )
     );
 };
@@ -393,69 +457,3 @@ function ready() {
         alt.emit('clothing:GetPreviousClothes');
     }
 }
-
-/*
-
-
-function pushChanges(key) {
-    if (key.includes('Texture')) {
-        key = key.replace('Texture', '');
-    }
-
-    // componentID, drawable, texture
-    alt.emit(
-        'clothing:UpdateComponent',
-        clothing[key].id,
-        clothing[key].value,
-        clothing[`${key}Texture`].value,
-        clothing[key].isProp
-    );
-}
-
-// eslint-disable-next-line no-unused-vars
-function submitChanges() {
-    const data = {};
-
-    for (let key in clothing) {
-        // If this is a Texture; append to normal key.
-        if (key.includes('Texture')) {
-            let tempKey = key.replace('Texture', '');
-            data[tempKey].texture = clothing[key].value;
-            continue;
-        }
-
-        // Create the object.
-        if (data[key] === undefined) {
-            data[key] = {};
-        }
-
-        // Append normal data.
-        data[key] = {
-            value: clothing[key].value,
-            id: clothing[key].id,
-            texture: 0
-        };
-
-        // Add Prop Info
-        if (clothing[key].isProp !== undefined) {
-            data[key].isProp = true;
-        }
-    }
-
-    alt.emit('clothing:VerifyClothing', JSON.stringify(data));
-}
-
-function updateClothes(...args) {
-    let [key, data] = args;
-    clothing[key].value = data.value;
-    clothing[`${key}Texture`].value = data.texture;
-
-    $(`#button-${key}`).html(
-        `${clothing[key].label} <span class="badge badge-secondary">[${clothing[key].value}|${clothing[key].max}]</span>`
-    );
-
-    $(`#button-${key}Texture`).html(
-        `${clothing[`${key}Texture`].label} <span class="badge badge-secondary">[${clothing[`${key}Texture`].value}|${clothing[`${key}Texture`].max}]</span>`
-    );
-    }
-*/

@@ -259,15 +259,11 @@ html {
 .single-item {
     display: grid;
     height: auto;
-    justify-content: space-evenly;
     grid-template-columns: repeat(1, 75px);
     grid-auto-columns: auto;
     grid-auto-rows: 75px;
     grid-row-gap: 5px;
     grid-column-gap: 5px;
-    grid-column: span 3;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 
 /*
@@ -300,11 +296,15 @@ html {
 ====> Equipment Panels 
 */
 .equip-panel {
-    padding: 10px;
-    display: flex;
+    display: grid;
     justify-content: space-evenly;
-    flex-direction: column;
+    grid-template-columns: repeat(2, 75px);
+    grid-auto-columns: auto;
+    grid-auto-rows: 75px;
+    grid-row-gap: 5px;
+    grid-column-gap: 5px;
     grid-column: span 3;
+    width: 100%;
 
     .equip-title {
         width: 100%;

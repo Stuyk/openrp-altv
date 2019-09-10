@@ -19,6 +19,7 @@ export function showDialogue() {
     webview.on('clothing:UpdateComponent', updateComponent);
     webview.on('clothing:VerifyClothing', verifyClothing);
     webview.on('clothing:GetPreviousClothes', getPreviousClothes);
+    webview.on('clothing:Purchase', purchaseClothing);
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
@@ -97,6 +98,10 @@ export function closeDialogue() {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     webview.close();
     camera.destroy();
+}
+
+function purchaseClothing(json) {
+    alt.emitServer('clothing:Purchase', json);
 }
 
 // Verify the clothing is correct; before saving.

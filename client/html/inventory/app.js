@@ -39,7 +39,7 @@ class App extends Component {
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
             this.addItem(0, 'Fish', '2151251', { description: 'Whatever' }, 1);
-            this.addItem(0, 'Fishing Rod', '2151251', { description: 'Whatever' }, 29);
+            this.addItem(1, 'Fishing Rod', '2151251', { description: 'Whatever' }, 1, 37);
             this.addItem(
                 2,
                 'Really Ugly Fish',
@@ -47,11 +47,20 @@ class App extends Component {
                 { description: 'Whatever' },
                 1
             );
-            this.addItem(3, 'Helmet', '2151251', { description: 'Whatever' }, 1, 28);
-            this.addItem(4, 'Gloves', '2151251', { description: 'Whatever' }, 1, 29);
-            this.addItem(5, 'Body Armor', '2151251', { description: 'Whatever' }, 1, 30);
-            this.addItem(6, 'Backpack', '2151251', { description: 'Whatever' }, 1, 31);
-            this.addItem(7, 'Uniform', '2151251', { description: 'Whatever' }, 1, 32);
+            this.addItem(3, 'Hat', '0', { description: 'Whatever' }, 1, 28);
+            this.addItem(4, 'Helmet', '0', { description: 'Whatever' }, 1, 29);
+            this.addItem(5, 'Shirt', '0', { description: 'Whatever' }, 1, 30);
+            this.addItem(6, 'Pants', '0', { description: 'Whatever' }, 1, 31);
+            this.addItem(7, 'Shoes', '0', { description: 'Whatever' }, 1, 32);
+            this.addItem(8, 'Body Armor', '0', { description: 'Whatever' }, 1, 33);
+            this.addItem(9, 'Accessory', '0', { description: 'Whatever' }, 1, 34);
+            this.addItem(10, 'Earring', '0', { description: 'Whatever' }, 1, 35);
+            this.addItem(11, 'Backpack', '0', { description: 'Whatever' }, 1, 36);
+            this.addItem(12, 'Pistol', '0', { description: 'Whatever' }, 1, 37);
+            this.addItem(13, 'Watch', '0', { description: 'Whatever' }, 1, 38);
+            this.addItem(14, 'Bracelet', '0', { description: 'Whatever' }, 1, 39);
+            this.addItem(15, 'Glasses', '0', { description: 'Whatever' }, 1, 40);
+            this.addItem(16, 'Police Uniform', '0', { description: 'Whatever' }, 1, 41);
         }
 
         window.addEventListener('keyup', this.closeInventory.bind(this));
@@ -110,6 +119,7 @@ class App extends Component {
     }
 
     openItemContext(e) {
+        if (e.target.className.includes('item-place')) return;
         this.setState({
             itemContext: true,
             contextX: e.clientX,
@@ -333,45 +343,119 @@ class App extends Component {
                     h(
                         'div',
                         { class: 'equip-panel' },
-                        h('div', { class: 'equip-title' }, 'Mask'),
                         h(Equipment, {
                             id: 28,
                             state: this.state,
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this)
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Hat'
                         }),
-                        h('div', { class: 'equip-title' }, 'Hand'),
+                        h(Equipment, {
+                            id: 34,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Accessory'
+                        }),
                         h(Equipment, {
                             id: 29,
                             state: this.state,
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this)
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Helmet / Mask'
                         }),
-                        h('div', { class: 'equip-title' }, 'Body'),
+
+                        h(Equipment, {
+                            id: 35,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Ears'
+                        }),
                         h(Equipment, {
                             id: 30,
                             state: this.state,
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this)
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Shirt'
                         }),
-                        h('div', { class: 'equip-title' }, 'Bag'),
+
+                        h(Equipment, {
+                            id: 33,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Body Armor'
+                        }),
                         h(Equipment, {
                             id: 31,
                             state: this.state,
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this)
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Pants'
                         }),
-                        h('div', { class: 'equip-title' }, 'Uniform'),
+                        h(Equipment, {
+                            id: 36,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Backpack'
+                        }),
                         h(Equipment, {
                             id: 32,
                             state: this.state,
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this)
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Shoes'
+                        }),
+                        h(Equipment, {
+                            id: 37,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Hand'
+                        }),
+                        h(Equipment, {
+                            id: 38,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Watch'
+                        }),
+                        h(Equipment, {
+                            id: 39,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Bracelet'
+                        }),
+                        h(Equipment, {
+                            id: 40,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Glasses'
+                        }),
+                        h(Equipment, {
+                            id: 41,
+                            state: this.state,
+                            click: this.clickItem.bind(this),
+                            release: this.release.bind(this),
+                            mouseover: this.mouseover.bind(this),
+                            slotName: 'Uniform'
                         })
                     )
                 ),
@@ -537,7 +621,7 @@ const ItemContext = ({ use, drop, destroy, contextX, contextY }) => {
     );
 };
 
-const Equipment = ({ state, click, release, mouseover, id }) => {
+const Equipment = ({ state, click, release, mouseover, id, slotName }) => {
     return h(
         'div',
         { class: 'single-item' },
@@ -551,7 +635,7 @@ const Equipment = ({ state, click, release, mouseover, id }) => {
                       onmouseup: release.bind(this),
                       onmouseover: mouseover.bind(this)
                   },
-                  state.items[id] ? state.items[id].label : 'Empty'
+                  state.items[id] ? state.items[id].label : slotName
               )
             : h(
                   'div',
@@ -565,7 +649,7 @@ const Equipment = ({ state, click, release, mouseover, id }) => {
                       onmouseup: release.bind(this),
                       onmouseover: mouseover.bind(this)
                   },
-                  state.items[id] ? state.items[id].label : 'Empty'
+                  state.items[id] ? state.items[id].label : slotName
               )
     );
 };

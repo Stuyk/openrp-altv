@@ -50,6 +50,7 @@ alt.onClient('atm:Ready', systemsAtm.ready);
 
 // Clothing Handler
 alt.onClient('clothing:SaveClothing', characterClothing.saveClothing);
+alt.onClient('clothing:Purchase', characterClothing.purchase);
 
 // Inventory
 alt.onClient('inventory:DestroyItem', systemsInventory.destroy);

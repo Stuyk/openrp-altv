@@ -11,6 +11,7 @@ import * as eventsConnectionComplete from 'client/events/connectionComplete.mjs'
 import * as eventsDisconnect from 'client/events/disconnect.mjs';
 import * as eventsUpdate from 'client/events/update.mjs';
 import * as eventsKeyup from 'client/events/keyup.mjs';
+import * as systemsEquip from 'client/systems/equip.mjs';
 import * as systemsInteraction from 'client/systems/interaction.mjs';
 import * as systemsBarbershop from 'client/systems/barbershop.mjs';
 import * as systemsClothing from 'client/systems/clothing.mjs';

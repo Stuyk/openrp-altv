@@ -34,7 +34,7 @@ let lastHair = 0; // Get the last hair the player set.
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Load the WebView
-    webview = new View(url, false);
+    webview = new View(url, true);
     webview.on('updateSex', updateSex);
     webview.on('updatePlayerFace', updatePlayerFace);
     webview.on('updateFaceDecor', updateFaceDecor);

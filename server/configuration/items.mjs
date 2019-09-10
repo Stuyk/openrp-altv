@@ -128,6 +128,175 @@ export const Items = {
         quantity: 0,
         props: {}
     },
+    Hat: {
+        label: 'Hat',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 28,
+        props: {}
+    },
+    Helmet: {
+        label: 'Helmet',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 29,
+        props: {}
+    },
+    Shirt: {
+        label: 'Shirt',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 30,
+        props: {}
+    },
+    Pants: {
+        label: 'Pants',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 31,
+        props: {}
+    },
+    Shoes: {
+        label: 'Shoes',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 32,
+        props: {}
+    },
+    BodyArmour: {
+        label: 'BodyArmour',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 33,
+        props: {}
+    },
+    Accessory: {
+        label: 'Accessory',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 34,
+        props: {}
+    },
+    Earrings: {
+        label: 'Earrings',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 35,
+        props: {}
+    },
+    Backpack: {
+        label: 'Backpack',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 36,
+        props: {}
+    },
+    Hand: {
+        label: 'Hand',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        props: {}
+    },
+    Watch: {
+        label: 'Watch',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 38,
+        props: {}
+    },
+    Bracelet: {
+        label: 'Bracelet',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 39,
+        props: {}
+    },
+    Glasses: {
+        label: 'Glasses',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        sellable: true,
+        rename: true,
+        message: '',
+        quantity: 0,
+        slot: 40,
+        props: {}
+    },
     PoliceUniform: {
         label: 'Police Uniform',
         stackable: false,
@@ -137,9 +306,10 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
-        slot: 32,
+        slot: 41,
         props: {
             description: 'Standard Issue Police Uniform',
+            restriction: -1,
             female: [
                 { id: 3, value: 9 },
                 { id: 4, value: 30 },
@@ -168,6 +338,7 @@ export const Items = {
         slot: 28,
         props: {
             description: 'Conceal Your Identity',
+            restriction: -1,
             female: [
                 {
                     id: 1,
@@ -194,6 +365,7 @@ export const Items = {
         slot: 28,
         props: {
             description: 'Conceal Your Identity',
+            restriction: -1,
             female: [
                 {
                     id: 1,
@@ -220,6 +392,7 @@ export const Items = {
         slot: 28,
         props: {
             description: 'Conceal Your Identity',
+            restriction: -1,
             female: [
                 {
                     id: 1,
@@ -247,6 +420,7 @@ export const Items = {
         props: {
             description: 'Protect Your Face',
             isProp: true,
+            restriction: -1,
             female: [
                 {
                     id: 0,
@@ -274,6 +448,7 @@ export const Items = {
         props: {
             description: 'Protect Your Face',
             isProp: true,
+            restriction: -1,
             female: [
                 {
                     id: 0,

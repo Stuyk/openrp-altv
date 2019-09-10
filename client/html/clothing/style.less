@@ -90,18 +90,34 @@ html {
 }
 
 .mod {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-columns: auto;
+    grid-auto-rows: auto;
+    grid-row-gap: 5px;
+    grid-column-gap: 5px;
+
     align-items: center;
     justify-content: space-between;
     padding: 20px;
     transition: 0.2s;
     font-size: 10px;
 
-    .spacer {
+    .spacer-left {
         display: flex;
-        justify-content: space-between;
+    }
+
+    .spacer-right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+    }
+
+    .spacer {
+        grid-column: span 2;
+        display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
     }
 
     .item-switcher {
@@ -115,10 +131,27 @@ html {
     }
 
     .count {
-        padding-left: 1vw;
+        padding-left: 5px;
         grid-area: count;
         text-align: right;
         transition: 2s;
+    }
+
+    .buy {
+        padding: 10px;
+        font-size: 10px;
+        color: white;
+        margin: 0;
+        border: 1px solid white;
+        text-transform: uppercase;
+        width: 100%;
+        grid-column: span 2;
+        transition: 0.2s;
+    }
+
+    .buy:hover {
+        color: lime;
+        border: 1px solid lime;
     }
 
     button {
@@ -137,16 +170,6 @@ html {
 
     button:focus {
         outline: none;
-    }
-}
-
-.mod:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: inset 3px 0px 0px 0px @contrast1;
-
-    .title,
-    .count {
-        color: @contrast1;
     }
 }
 

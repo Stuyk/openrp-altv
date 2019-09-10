@@ -71,7 +71,7 @@ export function keepEngineRunning() {
 
     let interval = alt.setInterval(() => {
         if (!alt.Player.local.vehicle) {
-            native.setVehicleEngineOn(vehicle, true, true, false);
+            native.setVehicleEngineOn(vehicle, true, true, true);
             alt.clearInterval(interval);
         }
     }, 100);

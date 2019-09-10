@@ -59,20 +59,21 @@ function disableSeatShuffle() {
 }
 
 // Disable turning engine off, after exiting (Holding F will still turn it off)
-alt.on('keyup', (key) => {
-    if (key === 'F'.charCodeAt(0)) {
-        const player = alt.Player.local.scriptID;
+export function keepEngineRunning() {
+    const player = alt.Player.local.scriptID;
 
-        if (!native.isPedInAnyVehicle(player, undefined)) return;
-        let vehicle = native.getVehiclePedIsIn(player, undefined);
+    if (!native.isPedInAnyVehicle(player, undefined)) return;
+    let vehicle = native.getVehiclePedIsIn(player, undefined);
 
-        if (!native.getPedInVehicleSeat(vehicle, -1) === player) return;
+    if (!native.getPedInVehicleSeat(vehicle, -1) === player) return;
 
-        let interval = alt.setInterval(() => {
-            if (vehicle && !alt.Player.local.vehicle) {
-                native.setVehicleEngineOn(vehicle, true, true, false);
-                alt.clearInterval(interval);
-            }
-        }, 100);
-    }
-});
+    if (!native.getIsVehicleEngineRunning(vehicle)) return;
+
+    let interval = alt.setInterval(() => {
+        if (!alt.Player.local.vehicle) {
+            alt.log('Clear interval 1');
+            native.setVehicleEngineOn(vehicle, true, true, false);
+            alt.clearInterval(interval);
+        }
+    }, 100);
+}

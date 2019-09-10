@@ -57,3 +57,22 @@ function disableSeatShuffle() {
         }
     }
 }
+
+// Disable turning engine off, after exiting (Holding F will still turn it off)
+export function keepEngineRunning() {
+    const player = alt.Player.local.scriptID;
+
+    if (!native.isPedInAnyVehicle(player, undefined)) return;
+    let vehicle = native.getVehiclePedIsIn(player, undefined);
+
+    if (!native.getPedInVehicleSeat(vehicle, -1) === player) return;
+
+    if (!native.getIsVehicleEngineRunning(vehicle)) return;
+
+    let interval = alt.setInterval(() => {
+        if (!alt.Player.local.vehicle) {
+            native.setVehicleEngineOn(vehicle, true, true, true);
+            alt.clearInterval(interval);
+        }
+    }, 100);
+}

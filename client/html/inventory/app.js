@@ -412,6 +412,16 @@ class App extends Component {
                 ),
                 h('div', { class: 'navcon' }, h('div', { class: 'navtitle' }, 'Info'))
             ),
+            this.state.dragging &&
+                h(
+                    'div',
+                    {
+                        class: 'item-dragging',
+                        style: `left: ${this.state.mX - 37.5}px; top: ${this.state.mY -
+                            37.5}px;`
+                    },
+                    `${this.state.items[this.state.dragging].label}`
+                ),
             h(
                 'div',
                 { class: 'panels' },
@@ -649,16 +659,6 @@ class App extends Component {
                     )
                 )
             ),
-            this.state.dragging &&
-                h(
-                    'div',
-                    {
-                        class: 'item-dragging',
-                        style: `left: ${this.state.mX - 37.5}px; top: ${this.state.mY -
-                            37.5}px;`
-                    },
-                    `${this.state.items[this.state.dragging].label}`
-                ),
             // ===> Context Menu
             this.state.itemContext &&
                 h(ItemContext, {
@@ -757,7 +757,9 @@ const Equipment = ({ state, click, release, mouseover, id, slotName }) => {
                   {
                       class:
                           parseInt(state.targetHover) === id
-                              ? 'item item-place item-hovered'
+                              ? parseInt(state.items[state.dragging].slot) === id
+                                ? 'item item-place item-hovered'
+                                : 'item item-place item-hovered-disabled'
                               : 'item item-place',
                       id: id,
                       onmousedown: click.bind(this),

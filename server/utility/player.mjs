@@ -358,24 +358,6 @@ export function setupPlayerFunctions(player) {
         alt.emitClient(player, 'clothing:CloseDialogue');
     };
 
-    /**
-     * Sync the player's clothes from a JSON.
-     */
-    player.syncClothing = data => {
-        alt.emitClient(player, 'clothing:SyncClothing', data);
-        player.setSyncedMeta('clothing', data);
-    };
-
-    /**
-     * Save the player's clothing.
-     */
-    player.saveClothing = dataJSON => {
-        player.data.clothing = dataJSON;
-        player.setSyncedMeta('clothing', dataJSON);
-        player.saveField(player.data.id, 'clothing', dataJSON);
-        player.syncClothing(dataJSON);
-    };
-
     // =================================
     /**
      * Set / Save the player's Roleplay name
@@ -444,12 +426,6 @@ export function setupPlayerFunctions(player) {
     player.swapItems = (newIndexPos, oldIndexPos) => {
         const newIndexItem = { ...player.inventory[newIndexPos] };
         const oldIndexItem = { ...player.inventory[oldIndexPos] };
-
-        // Handle Equippables
-        if (oldIndexPos >= 28 && oldIndexPos <= 40) {
-            player.syncClothing(player.data.clothing);
-        }
-
         player.inventory[newIndexPos] = oldIndexItem;
         player.inventory[oldIndexPos] = newIndexItem;
         player.data.inventory = JSON.stringify(player.inventory);

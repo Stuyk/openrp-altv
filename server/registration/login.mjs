@@ -91,6 +91,7 @@ function existingCharacter(player, data) {
     player.setSyncedMeta('loggedin', true);
     player.needsRoleplayName = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
+    player.vehicles = [];
 
     // Set player name.
     if (data.name !== null) {

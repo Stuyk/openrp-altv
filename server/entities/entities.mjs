@@ -118,6 +118,10 @@ export const Vehicle = new orm.EntitySchema({
         stats: {
             type: 'text',
             nullable: true
+        },
+        customization: {
+            type: 'text',
+            nullable: true
         }
     }
 });

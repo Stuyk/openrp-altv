@@ -65,6 +65,7 @@ alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onClient('vehicle:ToggleLock', systemsVehicles.toggleLock);
 alt.onClient('vehicle:ToggleEngine', systemsVehicles.toggleEngine);
 alt.onClient('vehicle:SafetyLock', systemsVehicles.toggleSafetyLock);
+alt.onClient('vehicle:SaveChanges', systemsVehicles.saveChanges);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);

@@ -349,11 +349,7 @@ class App extends Component {
                     purchase: this.purchase.bind(this)
                 })
             ),
-            h(
-                'div',
-                { class: 'footer', onclick: this.submitChanges.bind(this) },
-                'Submit'
-            )
+            h('div', { class: 'footer', onclick: this.submitChanges.bind(this) }, 'Exit')
         );
         // Render HTML / Components and Shit Here
     }

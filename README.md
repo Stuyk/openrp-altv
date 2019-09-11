@@ -35,7 +35,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Driving Test
 -   [x] Taxi Job
 -   [x] Mechanic Job
--   [ ] Vehicle Customization
+-   [x] Vehicle Customization
 -   [ ] Vehicle Fuel System
 -   [x] Nametags / Character Names
 -   [ ] Door System

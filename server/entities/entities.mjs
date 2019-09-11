@@ -35,6 +35,16 @@ export const Character = new orm.EntitySchema({
             nullable: true,
             default: null
         },
+        dob: {
+            type: 'date',
+            nullable: true,
+            default: null
+        },
+        idnum: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
         creation: {
             type: 'bigint',
             default: Date.now()

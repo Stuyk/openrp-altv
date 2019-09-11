@@ -11,7 +11,7 @@ export function setFacialData(player, facialJSON, isBarbershop) {
         player.syncInventory();
     }
 
-    if (!player.needsRoleplayName) return;
+    if (!player.needsRoleplayInfo) return;
 
-    player.showRoleplayNameDialogue();
+    player.showRoleplayInfoDialogue();
 }

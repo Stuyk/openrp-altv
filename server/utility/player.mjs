@@ -192,16 +192,12 @@ export function setupPlayerFunctions(player) {
 
     // ====================================
     // Roleplay Name Dialogues
-    player.showRoleplayNameDialogue = () => {
-        alt.emitClient(player, 'roleplayname:ShowDialogue');
+    player.showRoleplayInfoDialogue = () => {
+        alt.emitClient(player, 'roleplayinfo:ShowDialogue');
     };
 
-    player.closeRoleplayNameDialogue = () => {
-        alt.emitClient(player, 'roleplayname:CloseDialogue');
-    };
-
-    player.showRoleplayNameTaken = () => {
-        alt.emitClient(player, 'roleplayname:ShowNameTaken');
+    player.closeRoleplayInfoDialogue = () => {
+        alt.emitClient(player, 'roleplayinfo:CloseDialogue');
     };
 
     // ====================================
@@ -360,12 +356,18 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     /**
-     * Set / Save the player's Roleplay name
+     * Set / Save the player's Roleplay Info 
      */
-    player.saveRoleplayName = value => {
-        player.data.name = value;
+    player.saveRoleplayInfo = value => {
+        player.data.name = value.name;
+        player.data.dob = value.dob;
+        player.data.idnum = value.idnum;
         player.setSyncedMeta('name', player.data.name);
+        player.setSyncedMeta('dob', player.data.dob);
+        player.setSyncedMeta('idnum', player.data.idnum);
         player.saveField(player.data.id, 'name', player.data.name);
+        player.saveField(player.data.id, 'dob', player.data.dob);
+        player.saveField(player.data.id, 'idnum', player.data.idnum);
     };
 
     // =================================

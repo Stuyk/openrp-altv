@@ -5,7 +5,7 @@ import * as registrationRegister from '../registration/register.mjs';
 import * as registrationLogin from '../registration/login.mjs';
 import * as characterFace from '../character/face.mjs';
 import * as utilityLocationHelper from '../utility/locationhelper.mjs';
-import * as characterName from '../character/name.mjs';
+import * as characterInfo from '../character/info.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
@@ -37,8 +37,8 @@ alt.onClient('utility:GoToLastLocation', utilityLocationHelper.goToLastLocation)
 
 // ====================================================
 // Registration
-// Set the users roleplay name
-alt.onClient('character:SetRoleplayName', characterName.setRoleplayName);
+// Set the users roleplay info
+alt.onClient('character:SetRoleplayInfo', characterInfo.setRoleplayInfo);
 
 // Interaction Stuff
 alt.onClient('interaction:Exec', systemsInteraction.attemptToExecuteInteraction);

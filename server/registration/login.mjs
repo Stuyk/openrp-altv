@@ -89,13 +89,15 @@ export function finishPlayerLogin(player, databaseID) {
 function existingCharacter(player, data) {
     const lastPos = JSON.parse(data.lastposition);
     player.setSyncedMeta('loggedin', true);
-    player.needsRoleplayName = true;
+    player.needsRoleplayInfo = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
 
     // Set player name.
     if (data.name !== null) {
-        player.needsRoleplayName = false;
+        player.needsRoleplayInfo = false;
         player.setSyncedMeta('name', data.name);
+        player.setSyncedMeta('dob', data.dob);
+        player.setSyncedMeta('idnum', data.idnum);
         alt.log(`${data.name} has spawned.`);
     }
 
@@ -108,8 +110,8 @@ function existingCharacter(player, data) {
     } else {
         player.applyFace(data.face);
 
-        if (player.needsRoleplayName) {
-            player.showRoleplayNameDialogue();
+        if (player.needsRoleplayInfo) {
+            player.showRoleplayInfoDialogue();
         }
     }
 

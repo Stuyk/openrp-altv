@@ -6,7 +6,7 @@ console.log('Loaded: commands->sandbox.mjs');
 
 const sandboxhelp = [
     //
-    '/pos, /b, /me, /do',
+    '/b, /me, /do',
     '/addveh (model)',
     '/addcash (amount)',
     '/wep (hash)',
@@ -24,10 +24,6 @@ chat.registerCmd('help', player => {
     sandboxhelp.forEach(helper => {
         player.send(`${helper}`);
     });
-});
-
-chat.registerCmd('pos', player => {
-    console.log(player.pos);
 });
 
 chat.registerCmd('addcash', (player, value) => {

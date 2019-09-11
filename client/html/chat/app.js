@@ -296,6 +296,7 @@ function ready() {
         // Escape
         if (e.key === 'Escape') {
             let input = document.querySelector('#chat-input');
+            if (input === null || input === undefined) return;
             input.classList.add('hidden');
             input.classList.remove('animated');
             input.classList.remove('fadeIn');

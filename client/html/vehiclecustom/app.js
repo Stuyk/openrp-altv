@@ -15,7 +15,7 @@ class App extends Component {
     componentDidMount() {
         if ('alt' in window) {
             alt.on('parseMod', this.parseMod.bind(this));
-            alt.emit('fetchModList');
+            alt.emit('vehicle:FetchModList');
         } else {
             // JSON Mimic for Editing
             const list = JSON.parse(json);
@@ -31,12 +31,17 @@ class App extends Component {
 
     saveVehicle() {
         if ('alt' in window) {
-            alt.emit('saveChanges');
-            alt.emit('close');
+            alt.emit('vehicle:SaveChanges');
         }
     }
 
-    setItemValue(index, mod, increment) {
+    exit() {
+        if ('alt' in window) {
+            alt.emit('vehicle:Exit');
+        }
+    }
+
+    setItemValue(index, increment) {
         let mods = [...this.state.mods];
 
         if (increment) {
@@ -47,30 +52,44 @@ class App extends Component {
             mods[index].modLabels.unshift(popped);
         }
 
+        this.sendModification(mods[index].index, mods[index].modLabels[0].index);
         this.setState({ mods });
     }
 
-    purchase(index) {
-        let mod = this.state.mods[index].modLabels[0];
-
-        console.log(mod);
+    sendModification(index, value) {
+        alt.emit('vehicle:UpdateLocalVehicle', {
+            modType: index,
+            modIndex: value
+        });
     }
 
     render() {
         return h(
             'div',
             { id: 'app' },
-            h('div', { class: 'tab' }, h('h1', { class: 'title' }, 'Vehicle')),
+            h('div', { class: 'tab' }, h('h1', { class: 'title' }, 'Customize Vehicle')),
             h(
                 'div',
                 { class: 'mod-list scroll' },
                 h(ModList, {
                     mods: this.state.mods,
-                    setItemValue: this.setItemValue.bind(this),
-                    purchase: this.purchase.bind(this)
+                    setItemValue: this.setItemValue.bind(this)
                 })
             ),
-            h('div', { class: 'footer', onclick: this.saveVehicle.bind(this) }, 'Exit')
+            h(
+                'div',
+                { class: 'footer' },
+                h(
+                    'button',
+                    { class: 'footer-button', onclick: this.exit.bind(this) },
+                    'Exit'
+                ),
+                h(
+                    'button',
+                    { class: 'footer-button', onclick: this.saveVehicle.bind(this) },
+                    'Purchase'
+                )
+            )
         );
     }
 }
@@ -84,18 +103,17 @@ const ModList = ({ mods, setItemValue, purchase }) => {
 };
 
 // Items to Display in a Group
-const ModItem = ({ index, item, setItemValue, purchase }) => {
+const ModItem = ({ index, item, setItemValue }) => {
     left = () => {
-        setItemValue(index, item, false);
+        setItemValue(index, false);
     };
     right = () => {
-        setItemValue(index, item, true);
+        setItemValue(index, true);
     };
     buymod = () => {
         purchase(index);
     };
 
-    console.log(item);
     return h(
         'div',
         { class: 'mod' },
@@ -124,88 +142,14 @@ const ModItem = ({ index, item, setItemValue, purchase }) => {
                 },
                 '+'
             )
-        ),
-        h(
-            'div',
-            { class: 'spacer' },
-            h(
-                'button',
-                { class: 'buy', id: `${index}`, onclick: this.buymod.bind(this) },
-                `Purchase`
-            )
         )
     );
 };
-
-class Mod extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            selected: 0
-        };
-    }
-
-    left(mod) {
-        if (this.state.selected - 1 < 0) {
-            this.setState({
-                selected: mod.modLabels.length - 1
-            });
-        } else {
-            this.setState({
-                selected: this.state.selected - 1
-            });
-        }
-
-        this.sendModification(mod);
-    }
-
-    right(mod) {
-        if (this.state.selected + 1 >= mod.modLabels.length) {
-            this.setState({
-                selected: 0
-            });
-        } else {
-            this.setState({
-                selected: this.state.selected + 1
-            });
-        }
-
-        this.sendModification(mod);
-    }
-
-    sendModification(mod) {
-        alt.emit('updateLocalVehicle', {
-            modType: mod.index,
-            modIndex: mod.modLabels[this.state.selected].index
-        });
-    }
-
-    render(props, state) {
-        return h(
-            'div',
-            { class: 'mod' },
-            h('div', { class: 'title' }, props.mod.slotName),
-            h(
-                'div',
-                { class: 'count' },
-                `${state.selected + 1}/${props.mod.modLabels.length}`
-            ),
-            h(
-                'div',
-                { class: 'item-switcher' },
-                h('button', { class: 'left', onclick: () => this.left(props.mod) }, '<'),
-                h('span', {}, `${props.mod.modLabels[state.selected].displayName}`),
-                h('button', { class: 'right', onclick: () => this.right(props.mod) }, '>')
-            )
-        );
-    }
-}
 
 render(h(App), document.querySelector('#render'));
 
 document.addEventListener('keyup', key => {
     if (key.key === 'Escape') {
-        alt.emit('close');
+        alt.emit('vehicle:Exit');
     }
 });

@@ -17,7 +17,6 @@ let interval;
 shops.forEach(shop => {
     let [_null, _shopPos] = native.getInteriorInfo(shop, undefined, undefined);
     createBlip(_shopPos, 402, 77, 'Vehicle Customs Shop');
-    alt.log('heroo');
 });
 
 // Interval to check if a user is in a shop.

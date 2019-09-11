@@ -4,30 +4,41 @@ import { View } from 'client/utility/view.mjs';
 
 let webview;
 let vehicleChanges = {};
+let previousVehicle = {};
 
 export function showDialogue() {
-    alt.log('Called');
-
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     if (webview) return;
     webview = new View('http://resource/client/html/vehiclecustom/index.html', true);
-    webview.on('fetchModList', buildModList);
-    webview.on('updateLocalVehicle', updateLocalVehicle);
-    webview.on('saveChanges', saveVehicle);
+    webview.on('vehicle:FetchModList', buildModList);
+    webview.on('vehicle:UpdateLocalVehicle', updateLocalVehicle);
+    webview.on('vehicle:SaveChanges', saveChanges);
+    webview.on('vehicle:Exit', exit);
+    getPreviousVehicleMods();
+}
+
+function getPreviousVehicleMods() {
+    previousVehicle = {};
+
+    const vehID = alt.Player.local.vehicle.scriptID;
+    native.setVehicleModKit(vehID, 0);
+    for (let i = 0; i <= 48; i++) {
+        let value = native.getVehicleMod(vehID, i);
+        previousVehicle[i] = value;
+    }
 }
 
 function buildModList() {
     const vehID = alt.Player.local.vehicle.scriptID;
     native.setVehicleModKit(vehID, 0);
 
-    for (let i = 0; i <= 49; i++) {
+    for (let i = 0; i <= 48; i++) {
         const mod = {
             index: i,
             numMods: 0,
             modLabels: []
         };
         mod.numMods = native.getNumVehicleMods(vehID, i);
-        mod.slotName = native.getModSlotName(vehID, i);
 
         if (mod.numMods >= 1) {
             for (let modIndex = 0; modIndex < mod.numMods; modIndex++) {
@@ -43,7 +54,7 @@ function buildModList() {
             }
 
             if (mod.modLabels.length > 0) {
-                webview.emit(webview, 'parseMod', JSON.stringify(mod));
+                webview.emit('parseMod', JSON.stringify(mod));
             }
         }
     }
@@ -52,17 +63,65 @@ function buildModList() {
 function updateLocalVehicle({ modType, modIndex }) {
     const veh = alt.Player.local.vehicle.scriptID;
 
+    if (modType === 'color') {
+        native.setVehicleCustomPrimaryColour(
+            vehicle_number,
+            modIndex.r,
+            modIndex.g,
+            modIndex.b
+        );
+
+        vehicleChanges[modType] = modIndex;
+        return;
+    }
+
+    if (modType === 'color2') {
+        native.native.setVehicleCustomSecondaryColour(
+            vehicle_number,
+            modIndex.r,
+            modIndex.g,
+            modIndex.b
+        );
+
+        vehicleChanges[modType] = modIndex;
+        return;
+    }
+
     native.setVehicleModKit(veh, 0);
     native.setVehicleMod(veh, modType, modIndex, false);
-
     vehicleChanges[modType] = modIndex;
 }
 
-function saveVehicle() {
-    // const veh = alt.Player.local.vehicle.scriptID;
+function saveChanges() {
+    webview.close();
+    webview = undefined;
 
-    alt.log(JSON.stringify(vehicleChanges));
+    Object.keys(vehicleChanges).forEach(key => {
+        previousVehicle[key] = vehicleChanges[key];
+    });
 
-    // native.setVehicleModKit(veh, 1);
-    alt.emitServer('vehicle:modify', JSON.stringify(vehicleChanges));
+    Object.keys(previousVehicle).forEach(key => {
+        if (previousVehicle[key] === -1) delete previousVehicle[key];
+    });
+
+    // New modification list is sent up.
+    alt.emitServer(
+        'vehicle:SaveChanges',
+        alt.Player.local.vehicle,
+        JSON.stringify(previousVehicle)
+    );
+}
+
+function exit() {
+    webview.close();
+    webview = undefined;
+
+    Object.keys(previousVehicle).forEach(key => {
+        native.setVehicleMod(
+            alt.Player.local.vehicle.scriptID,
+            key,
+            previousVehicle[key],
+            false
+        );
+    });
 }

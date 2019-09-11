@@ -437,7 +437,6 @@ function ready() {
     }
 
     if ('alt' in window) {
-        alt.emit('clothing:GetPreviousClothes');
         alt.emit('clothing:GetSex');
     }
 }

@@ -18,7 +18,6 @@ export function showDialogue() {
     webview.on('clothing:RequestComponentData', requestComponentData);
     webview.on('clothing:UpdateComponent', updateComponent);
     webview.on('clothing:CloseDialogue', closeDialogue);
-    webview.on('clothing:GetPreviousClothes', getPreviousClothes);
     webview.on('clothing:Purchase', purchaseClothing);
     webview.on('clothing:GetSex', getSex);
 
@@ -34,15 +33,6 @@ export function showDialogue() {
 function getSex() {
     let isMale = native.isPedMale(alt.Player.local.scriptID);
     webview.emit('setSex', isMale === true ? 1 : 0);
-}
-
-function getPreviousClothes() {
-    const clothingData = alt.Player.local.getSyncedMeta('clothing');
-    if (clothingData === undefined || clothingData === null) return;
-
-    const data = JSON.parse(clothingData);
-    if (data === undefined) return;
-    webview.emit('updateClothes', clothingData);
 }
 
 function requestComponentData(key, id, value, isProp) {

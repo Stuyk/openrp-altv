@@ -253,7 +253,7 @@ html {
             grid-template-columns: repeat(4, 75px);
             grid-auto-columns: auto;
             grid-auto-rows: 75px;
-            grid-row-gap: 5px;
+            grid-row-gap: 3px;
             grid-column-gap: 5px;
             grid-column: span 3;
             padding-left: 10px;
@@ -276,6 +276,18 @@ html {
     background-size: contain;
     width: 100%;
     cursor: grab;
+}
+
+.non-equip {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.equipped {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.equipped-hover {
+    background-color: rgba(55, 95, 100, 0.4);
 }
 
 .item:hover {
@@ -322,6 +334,7 @@ html {
     width: 100%;
     top: 5px;
     left: 5px;
+    z-index: 5;
 }
 
 .single-item {

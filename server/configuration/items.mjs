@@ -81,6 +81,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     PilotsLicense: {
@@ -93,6 +94,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     OpenCarryLicense: {
@@ -105,6 +107,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     WeaponLicense: {
@@ -117,6 +120,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     MilitaryLicense: {
@@ -129,6 +133,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     Hat: {

@@ -11,8 +11,12 @@ let webview;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
+    alt.log('called');
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+    alt.log('logged in');
+    alt.log(JSON.stringify(webview));
     if (webview) return;
+    alt.log('webview called');
 
     webview = new View(url, true);
     webview.on('inventory:Drop', drop);

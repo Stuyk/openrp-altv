@@ -17,7 +17,10 @@
     <script src="../less.min.js" ></script>
     
     <script>
-      less.pageLoadFinished.then(() => document.querySelector('#render').style.display = 'block');
+      less.pageLoadFinished.then(() => {
+          document.querySelector('#render').style.display = 'block';
+          ready();
+      });
     </script>
   </body>
 </html>

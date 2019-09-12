@@ -2,6 +2,22 @@ const { render, Component, h } = preact;
 
 const maxItemLength = 128;
 let usingTextBox = false;
+const itemIcons = {
+    28: 'hat',
+    29: 'bandana',
+    30: 'shirt',
+    31: 'trousers',
+    32: 'chelsea-boot',
+    33: 'body-armour',
+    34: 'accessory',
+    35: 'earring',
+    36: 'backpack',
+    37: 'hand',
+    38: 'watch',
+    39: 'bracelet',
+    40: 'glasses',
+    41: 'outfit'
+};
 
 function ready() {
     if ('alt' in window) {
@@ -694,14 +710,27 @@ const Items = ({ state, click, release, mouseover }) => {
         return h(
             'div',
             {
-                class: index === state.dragging * 1 ? 'item item-dragged' : 'item',
+                class:
+                    index === state.dragging * 1 ? 'item item-dragged' : 'item non-equip',
                 id: index,
                 onmousedown: click.bind(this),
                 onmouseup: release.bind(this),
                 onmouseover: mouseover.bind(this)
             },
-            item.label,
-            h('div', { class: 'item-quantity' }, `x${item.quantity}`)
+
+            item.quantity >= 2 &&
+                h('div', { class: 'item-quantity' }, `x${item.quantity}`),
+            item.slot >= 28 &&
+                h(
+                    'object',
+                    {
+                        type: 'image/svg+xml',
+                        class: `svg ${itemIcons[item.slot]}`,
+                        style: `background: url('../icons/${itemIcons[item.slot]}.svg');`
+                    }
+                    //icon
+                ),
+            item.label
         );
     });
 
@@ -742,7 +771,7 @@ const Equipment = ({ state, click, release, mouseover, id, icon }) => {
             ? h(
                   'div',
                   {
-                      class: 'item',
+                      class: 'item equipped',
                       id: id,
                       onmousedown: click.bind(this),
                       onmouseup: release.bind(this),
@@ -765,7 +794,7 @@ const Equipment = ({ state, click, release, mouseover, id, icon }) => {
                       class:
                           parseInt(state.targetHover) === id
                               ? parseInt(state.items[state.dragging].slot) === id
-                                  ? 'item item-place item-hovered'
+                                  ? 'item equipped-hover item-place item-hovered'
                                   : 'item item-place item-hovered-disabled'
                               : 'item item-place',
                       id: id,

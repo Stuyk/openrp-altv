@@ -3,6 +3,9 @@ const { render, Component, h } = preact;
 const maxItemLength = 128;
 let usingTextBox = false;
 const itemIcons = {
+    unknown: 'unknown',
+    fishingrod: 'fishingrod',
+    fish: 'fish',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',
@@ -56,14 +59,38 @@ class App extends Component {
             alt.on('inventory:ClearItems', this.clearItems.bind(this));
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
-            this.addItem(0, 'Fish', '2151251', { description: 'Whatever' }, 1);
-            this.addItem(1, 'Fishing Rod', '2151251', { description: 'Whatever' }, 1, 37);
+            // _index,label,hash,props,quantity,equipSlot,
+            // rename,useitem,droppable,icon
+            this.addItem(
+                0,
+                'Fish',
+                '2151251',
+                { description: 'Whatever' },
+                2,
+                undefined,
+                false,
+                false,
+                true,
+                'fish'
+            );
+            this.addItem(
+                1,
+                'Fishing Rod',
+                '2151251',
+                { description: 'Whatever' },
+                1,
+                37,
+                false,
+                false,
+                true,
+                'fishingrod'
+            );
             this.addItem(
                 2,
                 'Really Ugly Fish',
                 '2151251',
                 { description: 'Whatever' },
-                1
+                2
             );
             this.addItem(
                 3,
@@ -133,7 +160,8 @@ class App extends Component {
             slot,
             rename,
             useitem,
-            droppable
+            droppable,
+            icon
         ] = args;
         let items = [...this.state.items];
 
@@ -148,7 +176,8 @@ class App extends Component {
                 slot,
                 rename,
                 useitem,
-                droppable
+                droppable,
+                icon
             };
         }
         this.setState({ items });
@@ -721,6 +750,7 @@ const Items = ({ state, click, release, mouseover }) => {
             item.quantity >= 2 &&
                 h('div', { class: 'item-quantity' }, `x${item.quantity}`),
             item.slot >= 28 &&
+                !item.icon &&
                 h(
                     'object',
                     {
@@ -730,6 +760,19 @@ const Items = ({ state, click, release, mouseover }) => {
                     }
                     //icon
                 ),
+            item.icon &&
+                h('object', {
+                    type: 'image/svg+xml',
+                    class: `svg ${itemIcons[item.icon]}`,
+                    style: `background: url('../icons/${itemIcons[item.icon]}.svg');`
+                }),
+            !item.icon &&
+                !item.slot &&
+                h('object', {
+                    type: 'image/svg+xml',
+                    class: `svg unknown`,
+                    style: `background: url('../icons/unknown.svg');`
+                }),
             item.label
         );
     });

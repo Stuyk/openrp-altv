@@ -385,7 +385,8 @@ export function setupPlayerFunctions(player) {
             rename: itemTemplate.rename,
             useitem: itemTemplate.useitem,
             consumeable: itemTemplate.consumeable,
-            droppable: itemTemplate.droppable
+            droppable: itemTemplate.droppable,
+            icon: itemTemplate.icon
         };
 
         // If the item is stackable; check if the player has it.

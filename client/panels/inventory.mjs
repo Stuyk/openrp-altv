@@ -58,7 +58,8 @@ export function fetchItems() {
             item.slot,
             item.rename,
             canuse,
-            item.droppable
+            item.droppable,
+            item.icon
         );
     });
 

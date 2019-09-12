@@ -158,9 +158,11 @@ export function clearJob(player) {
         clearTimeout(player.job.timeout);
         const currentVeh = player.job.currentVehicle;
 
-        let index = player.vehicles.findIndex(x => x === currentVeh);
-        if (index !== -1) {
-            player.vehicles.splice(index, 1);
+        if (player.vehicles) {
+            let index = player.vehicles.findIndex(x => x === currentVeh);
+            if (index !== -1) {
+                player.vehicles.splice(index, 1);
+            }
         }
 
         // Clear current vehicle.
@@ -772,9 +774,11 @@ function vehicleDropType(player, callback) {
 
     player.ejectSlowly();
     player.job.timeout = setTimeout(() => {
-        let index = player.vehicles.findIndex(x => x === player.job.currentVehicle);
-        if (index !== -1) {
-            player.vehicles.splice(index, 1);
+        if (player.vehicles) {
+            let index = player.vehicles.findIndex(x => x === player.job.currentVehicle);
+            if (index !== -1) {
+                player.vehicles.splice(index, 1);
+            }
         }
 
         player.job.currentVehicle.destroy();

@@ -143,7 +143,6 @@ export class ContextMenu {
         if (item.event === undefined) return;
 
         currentContext = undefined;
-        alt.log(JSON.stringify(item));
 
         alt.setTimeout(() => {
             drawCursor = false;

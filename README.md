@@ -22,6 +22,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Roleplay Name Formatting
 -   [x] Character Clothing Customization
 -   [x] Glasses, Bracelets, etc.
+-   [x] Barbershop
 -   [ ] Tattoos
 -   [x] Character Inventory System
 -   [x] Item Configuration
@@ -34,7 +35,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Driving Test
 -   [x] Taxi Job
 -   [x] Mechanic Job
--   [ ] Vehicle Customization
+-   [x] Vehicle Customization
 -   [ ] Vehicle Fuel System
 -   [x] Nametags / Character Names
 -   [ ] Door System
@@ -78,7 +79,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Drug Jobs 3 jobs for each type.
 -   [ ] Loyalty Program
 
-I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://twitch.tv/stuykgaming/).
+I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://www.twitch.tv/stuyksoft/).
 
 ---
 

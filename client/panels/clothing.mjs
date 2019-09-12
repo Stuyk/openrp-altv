@@ -4,7 +4,7 @@ import { View } from 'client/utility/view.mjs';
 import { Camera } from 'client/utility/camera.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 
-alt.log('Loaded: client->customizers->clothing.mjs');
+alt.log('Loaded: client->panels->clothing.mjs');
 
 const url = 'http://resource/client/html/clothing/index.html';
 let webview;
@@ -14,11 +14,12 @@ let camera = undefined;
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Setup Webview
-    webview = new View(url, false);
+    webview = new View(url, true);
     webview.on('clothing:RequestComponentData', requestComponentData);
     webview.on('clothing:UpdateComponent', updateComponent);
-    webview.on('clothing:VerifyClothing', verifyClothing);
-    webview.on('clothing:GetPreviousClothes', getPreviousClothes);
+    webview.on('clothing:CloseDialogue', closeDialogue);
+    webview.on('clothing:Purchase', purchaseClothing);
+    webview.on('clothing:GetSex', getSex);
 
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
@@ -29,13 +30,9 @@ export function showDialogue() {
     camera.playerControlsEntity(alt.Player.local.scriptID);
 }
 
-function getPreviousClothes() {
-    const clothingData = alt.Player.local.getSyncedMeta('clothing');
-    if (clothingData === undefined || clothingData === null) return;
-
-    const data = JSON.parse(clothingData);
-    if (data === undefined) return;
-    webview.emit('updateClothes', clothingData);
+function getSex() {
+    let isMale = native.isPedMale(alt.Player.local.scriptID);
+    webview.emit('setSex', isMale === true ? 1 : 0);
 }
 
 function requestComponentData(key, id, value, isProp) {
@@ -97,43 +94,9 @@ export function closeDialogue() {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     webview.close();
     camera.destroy();
+    alt.emitServer('clothing:Resync');
 }
 
-// Verify the clothing is correct; before saving.
-function verifyClothing(jsonData) {
-    const result = JSON.parse(jsonData);
-
-    /* 
-    label: item.label,
-    value: item.value,
-    id: item.id,
-    texture: clothingData[index + 1].value,
-    isProp: item.isProp
-    */
-
-    result.forEach(item => {
-        if (!item.isProp) {
-            native.setPedComponentVariation(
-                alt.Player.local.scriptID,
-                item.id,
-                item.value,
-                item.texture,
-                0
-            );
-        } else {
-            if (item.value === -1) {
-                native.clearPedProp(alt.Player.local.scriptID, item.id);
-            }
-
-            native.setPedPropIndex(
-                alt.Player.local.scriptID,
-                item.id,
-                item.value,
-                item.texture,
-                false
-            );
-        }
-    });
-
-    alt.emitServer('clothing:SaveClothing', jsonData);
+function purchaseClothing(json) {
+    alt.emitServer('clothing:Purchase', json);
 }

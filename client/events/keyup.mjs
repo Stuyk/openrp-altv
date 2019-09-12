@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as panelsChat from 'client/panels/chat.mjs';
+import * as systemsVehicles from 'client/systems/vehicles.mjs';
 // import * as chat from 'chat';
 
 alt.log('Loaded: client->events->keyup.mjs');
@@ -10,6 +11,9 @@ let keybinds = {};
 let cooldown = false;
 
 // Setup Keybinds
+let keyF = 'F'.charCodeAt(0);
+keybinds[keyF] = systemsVehicles.keepEngineRunning;
+
 let keyI = 'I'.charCodeAt(0);
 keybinds[keyI] = panelsInventory.showDialogue;
 

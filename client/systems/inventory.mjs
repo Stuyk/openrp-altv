@@ -4,8 +4,6 @@ import * as systemsSound from 'client/systems/sound.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 import * as utilityText from 'client/utility/text.mjs';
 
-alt.log('Loaded: client->systems->inventory.mjs');
-
 let itemsOnGround = [];
 let pickingUpItem = false;
 let interval;
@@ -20,6 +18,8 @@ export function itemDrop(player, item, randomPos) {
 }
 
 export function itemPickup(hash) {
+    if (alt.Player.local.vehicle) return;
+
     if (itemsOnGround.length <= 0) return;
 
     let index = itemsOnGround.findIndex(x => x.item.hash === hash);

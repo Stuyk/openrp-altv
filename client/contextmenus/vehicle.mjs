@@ -12,8 +12,6 @@ const doorNames = [
 ];
 
 alt.on('menu:Vehicle', ent => {
-    alt.log('Creating Vehicle Menu');
-
     const name = native.getLabelText(
         native.getDisplayNameFromVehicleModel(native.getEntityModel(ent))
     );

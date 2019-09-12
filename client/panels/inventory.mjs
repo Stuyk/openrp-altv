@@ -7,25 +7,21 @@ import { View } from 'client/utility/view.mjs';
 alt.log(`Loaded: client->panels->inventory.mjs`);
 
 const url = 'http://resource/client/html/inventory/index.html';
-let webview = undefined;
+let webview;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    // Load Webview
-    if (webview !== undefined && webview.view !== undefined) {
-        if (webview.view.url === url) {
-            webview.close();
-            return;
-        }
-    }
+    if (webview) return;
 
-    webview = new View(url);
+    webview = new View(url, true);
     webview.on('inventory:Drop', drop);
     webview.on('inventory:Use', use);
     webview.on('inventory:Destroy', destroy);
     webview.on('inventory:FetchItems', fetchItems);
     webview.on('inventory:SetPosition', setPosition);
+    webview.on('inventory:Rename', rename);
+    webview.on('inventory:Exit', exit);
 }
 
 function setPosition(newIndexPosition, oldIndexPosition) {
@@ -53,11 +49,19 @@ export function fetchItems() {
             item.hash,
             item.props,
             item.quantity,
-            item.slot
+            item.slot,
+            item.rename,
+            item.useitem,
+            item.droppable
         );
     });
 
     webview.emit('enablebuttons');
+}
+
+function exit() {
+    webview.close();
+    webview = undefined;
 }
 
 function destroy(hash) {
@@ -70,4 +74,8 @@ function use(hash) {
 
 function drop(hash, quantity) {
     alt.emitServer('inventory:DropItem', hash, quantity);
+}
+
+function rename(hash, name) {
+    alt.emitServer('inventory:RenameItem', hash, name);
 }

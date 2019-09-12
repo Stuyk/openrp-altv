@@ -34,7 +34,7 @@ let lastHair = 0; // Get the last hair the player set.
 export function showDialogue() {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Load the WebView
-    webview = new View(url, false);
+    webview = new View(url, true);
     webview.on('updateSex', updateSex);
     webview.on('updatePlayerFace', updatePlayerFace);
     webview.on('updateFaceDecor', updateFaceDecor);
@@ -63,7 +63,7 @@ export function showDialogue() {
 
     // Setup the ped camera point.
     camera = new Camera(cameraPoint, 28);
-    camera.pointAtBone(ped.scriptID, 31086, 0.1, 0, 0);
+    camera.pointAtBone(ped.scriptID, 31086, 0.05, 0, 0);
     camera.playerControlsEntity(ped.scriptID, true);
 
     // Update Hair Color Choices for Buttons
@@ -202,7 +202,7 @@ function resetCamera(modelToUse) {
 
     updateHairColorChoices();
 
-    camera.pointAtBone(ped.scriptID, 31086, 0.1, 0, 0);
+    camera.pointAtBone(ped.scriptID, 31086, 0.05, 0, 0);
     camera.playerControlsEntity(ped.scriptID, true);
 }
 
@@ -218,7 +218,6 @@ function updateHairColorChoices() {
 
 function setPlayerFacialData(facialDataJSON) {
     alt.emitServer('face:SetFacialData', facialDataJSON);
-    alt.emit('panel:SetStatus', 'character', false);
 
     // Remove the CharacterCamera
     camera.destroy();

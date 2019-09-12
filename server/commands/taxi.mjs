@@ -60,6 +60,8 @@ chat.registerCmd('taxi', player => {
             `{FFFF00}You will be charged ${cost.toFixed(2) * 1} after this ride.`
         );
 
+        player.jobStartPosition = player.pos;
+
         // Process the callback for the driver.
         closestDriver.job.processTarget(player, {
             fare: cost.toFixed(2) * 1,
@@ -76,6 +78,7 @@ chat.registerCmd('taxi', player => {
  */
 chat.registerCmd('taxicancel', player => {
     systemsJob.cancelTarget(player);
+    player.send('Cancelled taxi request.');
 });
 
 // Called from the client-side when the player wants to

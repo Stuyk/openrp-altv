@@ -91,37 +91,18 @@ html {
 
 .mod {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-columns: auto;
+    grid-template-columns: 1fr 1fr;
     grid-auto-rows: auto;
-    grid-row-gap: 5px;
-    grid-column-gap: 5px;
-
-    align-items: center;
-    justify-content: space-between;
+    grid-row-gap: 10px;
+    grid-template-areas:
+        'title count'
+        'switcher switcher';
     padding: 20px;
     transition: 0.2s;
     font-size: 10px;
 
-    .spacer-left {
-        display: flex;
-    }
-
-    .spacer-right {
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-end;
-    }
-
-    .spacer {
-        grid-column: span 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
     .item-switcher {
-        display: flex;
+        display: none;
         transition: 2s;
     }
 
@@ -131,45 +112,23 @@ html {
     }
 
     .count {
-        padding-left: 5px;
         grid-area: count;
         text-align: right;
         transition: 2s;
     }
+}
 
-    .buy {
-        padding: 10px;
-        font-size: 10px;
-        color: white;
-        margin: 0;
-        border: 1px solid white;
-        text-transform: uppercase;
-        width: 100%;
-        grid-column: span 2;
-        transition: 0.2s;
+.mod:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 3px 0px 0px 0px @contrast1;
+
+    .item-switcher {
+        display: flex;
     }
 
-    .buy:hover {
-        color: lime;
-        border: 1px solid lime;
-    }
-
-    button {
-        background: rgba(0, 0, 0, 0);
-        border: 0;
-        color: #feffff;
-        font-weight: bold;
-        transition: 1s;
-        font-size: 24px;
-    }
-
-    button:hover {
-        cursor: pointer;
+    .title,
+    .count {
         color: @contrast1;
-    }
-
-    button:focus {
-        outline: none;
     }
 }
 
@@ -181,10 +140,10 @@ html {
     grid-area: switcher;
     width: 100%;
     text-align: center;
-    padding: 0px;
+    padding: 5px;
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 
     button {
         background: rgba(0, 0, 0, 0);
@@ -192,17 +151,11 @@ html {
         color: #feffff;
         font-weight: bold;
         transition: 1s;
-        font-size: 24px;
-        padding: 5px;
     }
 
     button:hover {
         cursor: pointer;
         color: @contrast1;
-    }
-
-    button:focus {
-        outline: none;
     }
 }
 

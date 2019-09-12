@@ -12,6 +12,8 @@ export function setRoleplayName(player, roleplayName) {
         return;
     }
 
+    player.needsRoleplayName = false;
+
     // Cache the name.
     cache.cacheName(roleplayName);
 

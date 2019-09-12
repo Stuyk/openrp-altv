@@ -23,8 +23,8 @@ export function showDialogue(regCamCoord) {
     });
 
     regCamCoord.z += 150;
-    camera = new Camera(regCamCoord, 90);
-    interval = alt.setInterval(rotateCamera, 1);
+    //camera = new Camera(regCamCoord, 90);
+    //interval = alt.setInterval(rotateCamera, 1);
 }
 
 function existingAccount(username, password, remember) {
@@ -49,8 +49,8 @@ export function closeDialogue() {
         alt.clearInterval(interval);
         interval = undefined;
     }
-    camera.destroy();
-    camera = undefined;
+    //camera.destroy();
+    //camera = undefined;
 
     // Close webview
     webview.close();

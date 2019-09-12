@@ -60,14 +60,9 @@ export const Character = new orm.EntitySchema({
             nullable: true,
             default: null
         },
-        clothing: {
-            type: 'text',
-            nullable: true,
-            default: null
-        },
         inventory: {
             type: 'text',
-            default: `${JSON.stringify(new Array(30))}`
+            default: `${JSON.stringify(new Array(128))}`
         },
         lastposition: {
             type: 'text',
@@ -121,6 +116,10 @@ export const Vehicle = new orm.EntitySchema({
             nullable: true
         },
         stats: {
+            type: 'text',
+            nullable: true
+        },
+        customization: {
             type: 'text',
             nullable: true
         }

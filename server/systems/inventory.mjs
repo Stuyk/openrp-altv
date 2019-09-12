@@ -47,6 +47,8 @@ alt.on('item:Use', (player, itemObject) => {
             player.playAudio(itemTemplate.sound);
         }
 
+        if (itemTemplate.eventcall === undefined) return;
+
         alt.emit(itemTemplate.eventcall, player, itemObject.props, itemTemplate.message);
         return;
     });
@@ -77,9 +79,41 @@ alt.on('inventory:AddItem', (player, index, quantity) => {
     player.updateInventory();
 });
 
-export function use(player, hash) {
-    console.log('USING ITEM: ' + hash);
+export function rename(player, hash, newName) {
+    let index = player.inventory.findIndex(
+        x => x !== null && x !== undefined && x.hash === hash
+    );
 
+    if (index <= -1) {
+        player.updateInventory();
+        return;
+    }
+
+    if (!player.inventory[index].rename) {
+        player.updateInventory();
+        player.send(`You can't rename that item.`);
+        return;
+    }
+
+    if (newName.length >= 20) {
+        player.updateInventory();
+        player.send(`New name is too long.`);
+        return;
+    }
+
+    if (newName.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+        player.updateInventory();
+        player.send(`New name cannot contain symbols.`);
+        return;
+    }
+
+    player.inventory[index].label = newName;
+    player.data.inventory = JSON.stringify(player.inventory);
+    player.setSyncedMeta('inventory', player.data.inventory);
+    player.saveField(player.data.id, 'inventory', player.data.inventory);
+}
+
+export function use(player, hash) {
     let item = player.inventory.find(
         x => x !== null && x !== undefined && x.hash === hash
     );
@@ -101,6 +135,11 @@ export function use(player, hash) {
 }
 
 export function drop(player, hash, quantity) {
+    if (player.vehicle) {
+        player.updateInventory();
+        return;
+    }
+
     let item = player.inventory.find(
         x => x !== null && x !== undefined && x.hash === hash
     );
@@ -151,7 +190,6 @@ export function pickup(player, hash) {
     if (!ItemDrops.has(hash)) return;
 
     player.pickingUpItem = true;
-    console.log('Picking up' + hash);
 
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);

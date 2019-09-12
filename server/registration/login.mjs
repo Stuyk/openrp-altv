@@ -91,6 +91,7 @@ function existingCharacter(player, data) {
     player.setSyncedMeta('loggedin', true);
     player.needsRoleplayName = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
+    player.vehicles = [];
 
     // Set player name.
     if (data.name !== null) {
@@ -116,10 +117,6 @@ function existingCharacter(player, data) {
     // Fixes any 'string' issue that may arise.
     data.cash = data.cash * 1;
     data.bank = data.bank * 1;
-
-    if (data.clothing !== null || data.clothing !== undefined) {
-        player.syncClothing(data.clothing);
-    }
 
     // Make sure they spawn dead.
     player.loginHealth = setTimeout(() => {

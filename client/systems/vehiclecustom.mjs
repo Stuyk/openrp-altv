@@ -1,11 +1,11 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { createBlip } from 'client/blips/bliphelper.mjs';
-import * as panelsBarbershop from 'client/panels/barbershop.mjs';
+import * as panelsVehicleCustom from 'client/panels/vehiclecustom.mjs';
 
 alt.log('Loaded: client->systems->barbershop.mjs');
 
-const shops = [165377, 198657, 171009, 199937, 155905, 140545, 180225];
+const shops = [196609, 234753, 164353, 153601, 201729, 179457];
 
 let inShop = false;
 let timeout = false;
@@ -16,11 +16,13 @@ let interval;
 */
 shops.forEach(shop => {
     let [_null, _shopPos] = native.getInteriorInfo(shop, undefined, undefined);
-    createBlip(_shopPos, 71, 17, 'Barbershop');
+    createBlip(_shopPos, 402, 77, 'Vehicle Customs Shop');
 });
 
 // Interval to check if a user is in a shop.
 alt.setInterval(() => {
+    if (!alt.Player.local.vehicle) return;
+
     // Get the current interior of the user.
     const currInterior = native.getInteriorFromEntity(alt.Player.local.scriptID);
 
@@ -36,6 +38,11 @@ alt.setInterval(() => {
         return;
     }
 
+    let ped = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1, 0);
+    if (alt.Player.local.scriptID !== ped) {
+        return;
+    }
+
     // Check if they're already in a shop. Return if they are.
     if (inShop) return;
 
@@ -47,15 +54,15 @@ alt.setInterval(() => {
 function shopKey() {
     native.beginTextCommandDisplayHelp('STRING');
     native.addTextComponentSubstringPlayerName(
-        `Press ~INPUT_CONTEXT~ to change your hairstyle.`
+        `Press ~INPUT_CONTEXT~ to customize your vehicle.`
     );
     native.endTextCommandDisplayHelp(0, false, true, -1);
 
-    if (native.isControlJustReleased(0, 38) && !alt.Player.local.vehicle) {
+    if (native.isControlJustReleased(0, 38) && alt.Player.local.vehicle) {
         if (timeout) return;
 
         timeout = true;
-        panelsBarbershop.showDialogue();
+        panelsVehicleCustom.showDialogue();
         alt.setTimeout(() => {
             timeout = false;
         }, 500);

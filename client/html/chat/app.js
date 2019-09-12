@@ -281,6 +281,8 @@ function ready() {
         // Enter
         if (e.key === 'Enter') {
             let input = document.querySelector('#chat-input');
+            if (input === undefined || input === null) return;
+
             input.classList.add('hidden');
             if (input.value.length <= 0) {
                 alt.emit('routeMessage');
@@ -294,6 +296,7 @@ function ready() {
         // Escape
         if (e.key === 'Escape') {
             let input = document.querySelector('#chat-input');
+            if (input === null || input === undefined) return;
             input.classList.add('hidden');
             input.classList.remove('animated');
             input.classList.remove('fadeIn');

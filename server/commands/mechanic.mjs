@@ -39,6 +39,7 @@ chat.registerCmd('mechanic', player => {
 
     // Send the player a message notifying them.
     player.send('{FFFF00}A mechanic is now enroute.');
+    player.jobStartPosition = player.pos;
 
     // Process the callback for the driver.
     closestDriver.job.processTarget(player, {
@@ -52,4 +53,5 @@ chat.registerCmd('mechanic', player => {
  */
 chat.registerCmd('mechaniccancel', player => {
     systemsJob.cancelTarget(player);
+    player.send('Cancelled mechanic request.');
 });

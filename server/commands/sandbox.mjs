@@ -6,7 +6,7 @@ console.log('Loaded: commands->sandbox.mjs');
 
 const sandboxhelp = [
     //
-    '/pos, /b, /me, /do',
+    '/b, /me, /do',
     '/addveh (model)',
     '/addcash (amount)',
     '/wep (hash)',
@@ -24,10 +24,6 @@ chat.registerCmd('help', player => {
     sandboxhelp.forEach(helper => {
         player.send(`${helper}`);
     });
-});
-
-chat.registerCmd('pos', player => {
-    console.log(player.pos);
 });
 
 chat.registerCmd('addcash', (player, value) => {
@@ -57,6 +53,15 @@ chat.registerCmd('granola', player => {
 chat.registerCmd('coffee', player => {
     let itemTemplate = configurationItems.Items['Coffee'];
     player.addItem(itemTemplate, 5);
+});
+
+chat.registerCmd('additem', (player, arg) => {
+    let itemTemplate = configurationItems.Items[`${arg[0]}`];
+    if (itemTemplate === undefined) {
+        player.send('Item does not exist');
+        return;
+    }
+    player.addItem(itemTemplate, 1);
 });
 
 chat.registerCmd('addveh', (player, arg) => {

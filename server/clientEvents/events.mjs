@@ -49,7 +49,8 @@ alt.onClient('atm:Deposit', systemsAtm.deposit);
 alt.onClient('atm:Ready', systemsAtm.ready);
 
 // Clothing Handler
-alt.onClient('clothing:SaveClothing', characterClothing.saveClothing);
+alt.onClient('clothing:Purchase', characterClothing.purchase);
+alt.onClient('clothing:Resync', characterClothing.resync);
 
 // Inventory
 alt.onClient('inventory:DestroyItem', systemsInventory.destroy);
@@ -57,12 +58,14 @@ alt.onClient('inventory:UseItem', systemsInventory.use);
 alt.onClient('inventory:DropItem', systemsInventory.drop);
 alt.onClient('inventory:Pickup', systemsInventory.pickup);
 alt.onClient('inventory:UpdatePosition', systemsInventory.updatePosition);
+alt.onClient('inventory:RenameItem', systemsInventory.rename);
 
 // Vehicle
 alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onClient('vehicle:ToggleLock', systemsVehicles.toggleLock);
 alt.onClient('vehicle:ToggleEngine', systemsVehicles.toggleEngine);
 alt.onClient('vehicle:SafetyLock', systemsVehicles.toggleSafetyLock);
+alt.onClient('vehicle:SaveChanges', systemsVehicles.saveChanges);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);

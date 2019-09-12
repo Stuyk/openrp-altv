@@ -9,6 +9,7 @@ const itemIcons = {
     granolabar: 'chocolate-bar',
     coffee: 'coffee-cup',
     soda: 'soda-can',
+    license: 'id-card',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',

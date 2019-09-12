@@ -89,6 +89,10 @@ class App extends Component {
         }
     }
 
+    leave() {
+        alt.emit('close');
+    }
+
     render() {
         return h(
             'div',
@@ -142,7 +146,8 @@ class App extends Component {
                         'div',
                         { class: 'center' },
                         h('button', { onclick: this.withdraw.bind(this) }, 'Withdraw'),
-                        h('button', { onclick: this.deposit.bind(this) }, 'Deposit')
+                        h('button', { onclick: this.deposit.bind(this) }, 'Deposit'),
+                        h('button', { onclick: this.leave.bind(this) }, 'Leave'),
                     )
                 )
             )
@@ -157,13 +162,3 @@ function ready() {
         alt.emit('atm:Ready');
     }
 }
-
-const keys = ['W'.charCodeAt(0), 'A'.charCodeAt(0), 'S'.charCodeAt(0), 'D'.charCodeAt(0)];
-
-window.addEventListener('keyup', e => {
-    if (keys.includes(e.keyCode)) {
-        if ('alt' in window) {
-            alt.emit('close');
-        }
-    }
-});

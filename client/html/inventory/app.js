@@ -601,7 +601,7 @@ class App extends Component {
                         h(
                             'div',
                             { class: 'renamecon' },
-                            h('div', { class: 'input-label' }, 'Drop Amount'),
+                            h('div', { class: 'input-label' }, 'Rename Item'),
                             h(
                                 'div',
                                 { class: 'rename-group' },

@@ -9,6 +9,7 @@ alt.log('Loaded: client->events->keyup.mjs');
 
 let keybinds = {};
 let cooldown = false;
+let isChatOpen = false;
 
 // Setup Keybinds
 let keyF = 'F'.charCodeAt(0);
@@ -36,8 +37,7 @@ keybinds[118] = panelsChat.toggleHide;
 
 alt.on('keyup', key => {
     if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-
-    //if (chat.isChatOpen()) return;
+    if (isChatOpen) return;
 
     if (cooldown) return;
 
@@ -49,4 +49,8 @@ alt.on('keyup', key => {
             cooldown = false;
         }, 200);
     }
+});
+
+alt.on('chat:IsOpen', value => {
+    isChatOpen = value;
 });

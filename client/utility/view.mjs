@@ -13,6 +13,7 @@ alt.on('chat:IsOpen', value => {
 export let currentView;
 export class View {
     constructor(url, killControls = true) {
+        if (isChatOpen) return;
         if (currentView === undefined) {
             currentView = this;
             currentView.view = new alt.WebView(url);
@@ -21,7 +22,6 @@ export class View {
         }
 
         if (currentView.focused) return;
-        if (isChatOpen) return;
 
         if (currentView.view === undefined) {
             currentView.view = new alt.WebView(url);

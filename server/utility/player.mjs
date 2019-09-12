@@ -384,6 +384,7 @@ export function setupPlayerFunctions(player) {
             slot: itemTemplate.slot,
             rename: itemTemplate.rename,
             useitem: itemTemplate.useitem,
+            consumeable: itemTemplate.consumeable,
             droppable: itemTemplate.droppable
         };
 

@@ -42,6 +42,8 @@ export function fetchItems() {
             return;
         }
 
+        const canuse = item.useitem ? true : item.consumeable ? true : false;
+
         webview.emit(
             'inventory:AddItem',
             index,
@@ -51,7 +53,7 @@ export function fetchItems() {
             item.quantity,
             item.slot,
             item.rename,
-            item.useitem,
+            canuse,
             item.droppable
         );
     });

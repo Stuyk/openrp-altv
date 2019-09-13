@@ -13,7 +13,7 @@ function startInterval(key, value) {
     // Disable Motorcylce Helmet
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
-    native.setPedConfigFlag(alt.Player.local.scriptID, 35, 1);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
     alt.setInterval(vehicleInterval, 100);
 }
 

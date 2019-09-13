@@ -15,7 +15,8 @@ export function showDialogue() {
         webview = new View();
     }
 
-    if (webview.url === url) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
     // Setup Webview
     webview.open(url, true);
     webview.on('inventory:Drop', drop);

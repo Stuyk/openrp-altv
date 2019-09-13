@@ -6,11 +6,6 @@ console.log('Loaded: character->facedata.mjs');
 export function setFacialData(player, facialJSON, isBarbershop) {
     player.saveFace(facialJSON, isBarbershop);
 
-    // Sync Clothing After Barbershop Changes
-    if (isBarbershop) {
-        player.syncInventory();
-    }
-
     if (!player.needsRoleplayName) return;
 
     player.showRoleplayNameDialogue();

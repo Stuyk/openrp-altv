@@ -143,11 +143,16 @@ class App extends Component {
     }
 
     closeInventory(e) {
-        if (e.keyCode !== 'I'.charCodeAt(0)) return;
         if (usingTextBox) return;
 
-        if ('alt' in window) {
+        if (e.keyCode === 'I'.charCodeAt(0)) {
             alt.emit('inventory:Exit');
+            return;
+        }
+
+        if (e.keyCode === 27) {
+            alt.emit('inventory:Exit');
+            return;
         }
     }
 
@@ -866,7 +871,7 @@ const Equipment = ({ state, click, release, mouseover, id, icon }) => {
                       {
                           type: 'image/svg+xml',
                           class: `svg ${icon}`,
-                          style: `background: url('../icons/${icon}.svg');`
+                          style: `background: url('../icons/${icon}.svg'); cursor: grab;`
                       },
                       icon
                   )

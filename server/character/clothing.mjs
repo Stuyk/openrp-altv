@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
+import { dropNewItem } from '../systems/inventory.mjs';
 
 console.log('Loaded: character->clothing.mjs');
 
@@ -60,7 +61,11 @@ export function purchase(player, jsonData) {
     }
 
     itemClone.props = props;
-    player.addItem(itemClone, 1);
+    if (!player.addItem(itemClone, 1)) {
+        player.playAudio('error');
+        return;
+    }
+
     player.playAudio('buy');
 }
 

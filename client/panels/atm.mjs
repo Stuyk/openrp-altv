@@ -13,6 +13,8 @@ export function showDialogue() {
         webview = new View();
     }
 
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
     // Load Webview
     webview.open(url);
     webview.on('atm:Withdraw', withdrawBalance);

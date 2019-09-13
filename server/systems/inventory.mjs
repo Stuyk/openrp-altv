@@ -135,6 +135,31 @@ export function use(player, hash) {
     });
 }
 
+export function dropNewItem(player, item) {
+    let isDroppable = true;
+    Object.keys(configurationItems.Items).forEach(key => {
+        if (configurationItems.Items[key].label !== item.label) return;
+        isDroppable = configurationItems.Items[key].droppable;
+    });
+
+    if (!isDroppable) {
+        console.log('Cannot be dropped.');
+        console.log(item);
+        return;
+    }
+
+    // Regenerate new hash for each dropped item.
+    let firstHash = utilityEncryption.generateHash(JSON.stringify(item));
+    let newHash = utilityEncryption.generateHash(JSON.stringify({ firstHash, item }));
+    item.hash = newHash;
+
+    // Setup the dropped item.
+    ItemDrops.set(newHash, item);
+
+    let randomPos = utilityVector.randPosAround(player.pos, 2);
+    alt.emitClient(null, 'inventory:ItemDrop', player, item, randomPos);
+}
+
 export function drop(player, hash, quantity) {
     if (player.vehicle) {
         player.updateInventory();

@@ -7,16 +7,13 @@ import { Weapons, CauseOfDeath } from '../configuration/weapons.mjs';
 alt.on('playerDeath', (target, killer, weapon) => {
     if (target.reviving) return;
 
-    if (CauseOfDeath[weapon] && target !== killer) {
-        if (!CauseOfDeath[weapon].includes('Vehicle Death')) {
-            if (!verifyWeapon(killer)) {
-                target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);
-                return;
-            }
-        } else {
-            if (!verifyWeapon(killer)) {
-                target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);
-                return;
+    if (target !== killer) {
+        if (weapon !== 133987706 || weapon !== 2741846334) {
+            if (killer) {
+                if (!verifyWeapon(killer)) {
+                    target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);
+                    return;
+                }
             }
         }
     }

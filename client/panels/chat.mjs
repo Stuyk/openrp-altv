@@ -1,6 +1,5 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { currentView } from 'client/utility/view.mjs';
 
 alt.log('Loaded: client->panels->chat.mjs');
 
@@ -31,7 +30,7 @@ export function toggleDialogue() {
         return;
     }
 
-    if (currentView.isFocused()) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (!isActive) {
         isActive = true;

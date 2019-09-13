@@ -16,10 +16,11 @@ export class View {
 
     open(url, killControls = true) {
         if (currentView.view) return;
+        alt.Player.local.setMeta('viewOpen', true);
+        alt.emit('chat:Toggle');
         currentView.view = new alt.WebView(url);
         currentView.events = [];
         currentView.on('close', currentView.close);
-        alt.emit('chat:Toggle');
         currentView.view.url = url;
         currentView.view.isVisible = true;
         currentView.view.focus();
@@ -47,16 +48,12 @@ export class View {
         currentView.view.unfocus();
         currentView.view.destroy();
         currentView.view = undefined;
+        alt.Player.local.setMeta('viewOpen', false);
         alt.emit('chat:Toggle');
         if (currentView.interval !== undefined) {
             alt.clearInterval(currentView.interval);
             currentView.interval = undefined;
         }
-    }
-
-    // Check if the view is focused.
-    isFocused() {
-        return currentView.focused;
     }
 
     // Bind on events, but don't turn off.

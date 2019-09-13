@@ -177,11 +177,13 @@ export function setupPlayerFunctions(player) {
                 player.model = 'mp_f_freemode_01';
                 if (player.isNewPlayer) {
                     player.addStarterItems();
+                    player.isNewPlayer = false;
                 }
             } else {
                 player.model = 'mp_m_freemode_01';
                 if (player.isNewPlayer) {
                     player.addStarterItems();
+                    player.isNewPlayer = false;
                 }
             }
         }
@@ -189,6 +191,7 @@ export function setupPlayerFunctions(player) {
         player.data.face = valueJSON;
         player.saveField(player.data.id, 'face', valueJSON);
         player.emitMeta('face', valueJSON);
+        player.syncInventory(true);
     };
 
     // ====================================
@@ -416,7 +419,7 @@ export function setupPlayerFunctions(player) {
             // The item exists.
             if (index > -1) {
                 alt.emit('inventory:AddItem', player, index, quantity);
-                return;
+                return true;
             }
         }
 
@@ -431,13 +434,14 @@ export function setupPlayerFunctions(player) {
         // Prevent Using Equipment Slots
         if (undefinedIndex === -1 || undefinedIndex >= 28) {
             player.send(`You have no room for that item.`);
-            return;
+            return false;
         }
 
         player.inventory[undefinedIndex] = itemClone;
         player.data.inventory = JSON.stringify(player.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
         player.syncInventory();
+        return true;
     };
 
     player.swapItems = (newIndexPos, oldIndexPos) => {

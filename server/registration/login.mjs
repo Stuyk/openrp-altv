@@ -123,10 +123,16 @@ export function sync(player) {
 
     // Check if the player has a face.
     if (player.data.face === null) {
-        console.log('No Face');
         player.model = 'mp_f_freemode_01';
         player.isNewPlayer = true;
-        player.showFaceCustomizerDialogue(lastPos);
+
+        let timeout = setTimeout(() => {
+            if (!player) {
+                clearTimeout(timeout);
+                return;
+            }
+            player.showFaceCustomizerDialogue(lastPos);
+        }, 1500);
     } else {
         player.applyFace(player.data.face);
 
@@ -151,11 +157,16 @@ export function sync(player) {
     player.syncMoney();
 
     // Setup Health / Armor
-    if (player.data.dead) {
-        player.health = 0;
-        player.send('You last logged out as dead.');
-    } else {
-        player.health = player.data.health;
-        player.armour = player.data.armour;
-    }
+    let timeout = setTimeout(() => {
+        if (!player) clearTimeout(timeout);
+
+        if (player.data.dead) {
+            player.health = 0;
+            player.armour = 0;
+            player.send('You last logged out as dead.');
+        } else {
+            player.health = player.data.health;
+            player.armour = player.data.armour;
+        }
+    }, 1500);
 }

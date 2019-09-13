@@ -12,6 +12,8 @@ export function showDialogue() {
         webview = new View();
     }
 
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
     // Setup Webview
     webview.open(url, true);
     webview.on('vehicle:FetchModList', buildModList);

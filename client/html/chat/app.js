@@ -80,7 +80,7 @@ class App extends Component {
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 },
                 {
-                    message: 'Z + Right-Click to Interact',
+                    message: 'Press TAB to use context cursor.',
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 }
             ],

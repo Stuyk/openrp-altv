@@ -16,7 +16,7 @@ const sandboxhelp = [
     '/players, /clearchat',
     '/taxi, /taxicancel',
     '/mechanic, /mechaniccancel',
-    'Z + Right-Click to Interact',
+    'Press TAB for context cursor.',
     'I for Inventory'
 ];
 
@@ -105,4 +105,9 @@ chat.registerCmd('players', player => {
     alt.Player.all.forEach(t => {
         player.send(`${t.data.name}`);
     });
+});
+
+chat.registerCmd('pos', player => {
+    player.send(`${JSON.stringify(player.pos)}`);
+    console.log(player.pos);
 });

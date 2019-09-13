@@ -12,8 +12,12 @@ let camera = undefined;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
+    if (!webview) {
+        webview = new View();
+    }
+
     // Setup Webview
-    webview = new View(url, true);
+    webview.open(url, true);
     webview.on('clothing:RequestComponentData', requestComponentData);
     webview.on('clothing:UpdateComponent', updateComponent);
     webview.on('clothing:CloseDialogue', closeDialogue);

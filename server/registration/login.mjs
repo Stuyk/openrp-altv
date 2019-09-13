@@ -142,13 +142,13 @@ export function sync(player) {
     // Setup data on the player.
     player.dimension = 0;
     player.startTime = Date.now(); // Used for time tracking
+    player.spawnVehicles();
     player.screenFadeIn(1000);
     player.setLastLogin();
     player.updateTime();
     player.syncInteractionBlips();
-    player.syncInventory();
+    player.syncInventory(true);
     player.syncMoney();
-    player.spawnVehicles();
 
     // Setup Health / Armor
     if (player.data.dead) {

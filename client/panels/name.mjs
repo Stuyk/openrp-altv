@@ -8,8 +8,11 @@ let webview = undefined;
 
 // Show the webview for the player to type in their roleplay name.
 export function showDialogue() {
-    // Load Webview
-    webview = new View(url);
+    if (!webview) {
+        webview = new View();
+    }
+    // Setup Webview
+    webview.open(url, true);
     webview.on('setname', setRoleplayName);
 }
 

@@ -157,6 +157,9 @@ altVServerFolder/
 |   |   ├── client.mjs
 |   |   ├── database.mjs
 |   |	└── resource.cfg
+└── package.json
+└── altv-server.exe
+└── node_modules/
 ```
 
 **Installing Packages for NodeJS**

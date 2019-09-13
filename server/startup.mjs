@@ -47,6 +47,7 @@ alt.on('ConnectionComplete', () => {
     import('./commands/job.mjs');
 
     // Systems
+    import('./systems/anticheat.mjs');
     import('./systems/vehicles.mjs');
     import('./systems/inventory.mjs');
     import('./systems/time.mjs');

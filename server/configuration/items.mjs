@@ -16,6 +16,22 @@
 */
 
 export const Items = {
+    Weapon: {
+        label: '',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        icon: 'weapon',
+        props: {
+            hash: 0
+        }
+    },
     GranolaBar: {
         label: 'Granola Bar',
         stackable: true,

@@ -78,3 +78,7 @@ export function actionMessage(player, msg) {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
     });
 }
+
+export function setStatus(player, value) {
+    alt.emitClient(null, 'chat:SetStatus', player, value);
+}

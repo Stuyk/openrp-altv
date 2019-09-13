@@ -10,6 +10,7 @@ const itemIcons = {
     coffee: 'coffee-cup',
     soda: 'soda-can',
     license: 'id-card',
+    weapon: 'weapon',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',
@@ -132,6 +133,13 @@ class App extends Component {
         }
 
         window.addEventListener('keyup', this.closeInventory.bind(this));
+    }
+
+    playAudio(name) {
+        if ('alt' in window) {
+            const audio = new Audio(`../sound/sounds/${name}.ogg`);
+            audio.play();
+        }
     }
 
     closeInventory(e) {
@@ -385,6 +393,10 @@ class App extends Component {
         let desc = this.state.items[e.target.id]
             ? this.state.items[e.target.id].props
             : '';
+
+        if (info !== 'Empty') {
+            this.playAudio('tick');
+        }
 
         this.setState({
             info,

@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.mjs';
 import * as configurationItems from '../configuration/items.mjs';
+import { addWeapon } from '../systems/inventory.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
@@ -38,7 +39,12 @@ chat.registerCmd('wep', (player, hash) => {
         return;
     }
 
-    player.giveWeapon(hash[0], 9999, true);
+    if (!addWeapon(player, parseInt(hash))) {
+        player.send(`Not a valid weapon hash. -270015777`);
+        return;
+    }
+
+    player.send(`Weapon was added to your inventory.`);
 });
 
 chat.registerCmd('face', player => {

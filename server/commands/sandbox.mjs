@@ -37,6 +37,8 @@ chat.registerCmd('wep', (player, hash) => {
         player.send(`Hash; such as: -270015777`);
         return;
     }
+    if (parseInt(hash) == NaN)
+        hash = alt.hash(hash);
 
     player.giveWeapon(hash[0], 9999, true);
 });

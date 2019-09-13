@@ -9,8 +9,7 @@ let currentSlots = new Map();
 let isPedMale;
 
 // When the player updates their inventory.
-alt.on('syncedMetaChange', (entity, key, value) => {
-    if (entity !== alt.Player.local) return;
+alt.on('meta:Changed', (key, value) => {
     if (key !== 'inventory') return;
 
     // Get Gender
@@ -41,7 +40,7 @@ const equipItem = (item, slot) => {
         if (slot === 28) {
             native.clearPedProp(ped, 0, -1);
             native.setPedPropIndex(ped, 0, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Shirt
@@ -89,7 +88,7 @@ const equipItem = (item, slot) => {
         if (slot === 35) {
             native.clearPedProp(ped, 2, -1);
             native.setPedPropIndex(ped, 2, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Backpack
@@ -111,14 +110,14 @@ const equipItem = (item, slot) => {
         if (slot === 39) {
             native.clearPedProp(ped, 7, -1);
             native.setPedPropIndex(ped, 7, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Glasses
         if (slot === 40) {
             native.clearPedProp(ped, 1, -1);
             native.setPedPropIndex(ped, 1, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Handle Pre-equipped Item

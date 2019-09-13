@@ -41,7 +41,7 @@ export class Interaction {
     // Call the server event from anywhere on the server-side.
     exec(player) {
         if (utilityVector.distance(player.pos, this.pos) > this.radius) {
-            player.setSyncedMeta('interaction', undefined);
+            player.emitMeta('interaction', undefined);
             return;
         }
 
@@ -66,7 +66,7 @@ export function forwardEventToPlayer(colshape, entity) {
 
     if (index <= -1) return;
 
-    entity.setSyncedMeta('interaction', {
+    entity.emitMeta('interaction', {
         index: index,
         message: interactions[index].message
     });
@@ -76,7 +76,7 @@ export function forwardEventToPlayer(colshape, entity) {
 // player hits the correct button. This is basically called
 // after the player press 'E' and is standing in a ColShape.
 export function attemptToExecuteInteraction(player) {
-    const data = player.getSyncedMeta('interaction');
+    const data = player.getMeta('interaction');
 
     if (data === undefined || data === null) return;
 
@@ -84,13 +84,13 @@ export function attemptToExecuteInteraction(player) {
 
     if (interactions[index] === undefined) return;
 
-    player.setSyncedMeta('interaction', undefined);
+    player.emitMeta('interaction', undefined);
     interactions[index].exec(player);
 }
 
 // Clear the interaction synced meta information.
 export function clearInteraction(player) {
-    const data = player.getSyncedMeta('interaction');
+    const data = player.getMeta('interaction');
 
     if (data === undefined || data === null) return;
 
@@ -98,5 +98,5 @@ export function clearInteraction(player) {
 
     if (interactions[index] === undefined) return;
 
-    player.setSyncedMeta('interaction', undefined);
+    player.emitMeta('interaction', undefined);
 }

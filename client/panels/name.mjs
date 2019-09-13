@@ -8,7 +8,6 @@ let webview = undefined;
 
 // Show the webview for the player to type in their roleplay name.
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Load Webview
     webview = new View(url);
     webview.on('setname', setRoleplayName);

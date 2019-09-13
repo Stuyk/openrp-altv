@@ -20,6 +20,13 @@ const db = new SQL();
 // Keep the sectioned off; it makes it easier.
 export function setupPlayerFunctions(player) {
     // ====================================
+    // Set Meta for User
+    player.emitMeta = (key, value) => {
+        player.setMeta(key, value);
+        alt.emitClient(player, 'meta:Emit', key, value);
+    };
+
+    // ====================================
     // Enable Player Saving
     player.save = () => {
         db.upsertData(player.data, 'Character', () => {});
@@ -163,8 +170,7 @@ export function setupPlayerFunctions(player) {
             player.model = 'mp_m_freemode_01';
         }
 
-        player.setSyncedMeta('face', valueJSON);
-        alt.emitClient(player, 'face:ApplyFacialData', valueJSON);
+        player.emitMeta('face', valueJSON);
     };
 
     player.saveFace = (valueJSON, isBarbershop) => {
@@ -186,8 +192,7 @@ export function setupPlayerFunctions(player) {
 
         player.data.face = valueJSON;
         player.saveField(player.data.id, 'face', valueJSON);
-        player.setSyncedMeta('face', valueJSON);
-        alt.emitClient(player, 'face:ApplyFacialData', valueJSON);
+        player.emitMeta('face', valueJSON);
     };
 
     // ====================================
@@ -208,8 +213,8 @@ export function setupPlayerFunctions(player) {
     // Money Functions
     // Remove cash from the player.
     player.syncMoney = () => {
-        player.setSyncedMeta('bank', player.data.bank);
-        player.setSyncedMeta('cash', player.data.cash);
+        player.emitMeta('bank', player.data.bank);
+        player.emitMeta('cash', player.data.cash);
     };
 
     player.subCash = value => {
@@ -373,7 +378,7 @@ export function setupPlayerFunctions(player) {
     // Add an item to a player.
     player.syncInventory = () => {
         player.inventory = JSON.parse(player.data.inventory);
-        player.setSyncedMeta('inventory', player.data.inventory);
+        player.emitMeta('inventory', player.data.inventory);
     };
 
     player.addItem = (itemTemplate, quantity, isUnique = false) => {
@@ -421,8 +426,8 @@ export function setupPlayerFunctions(player) {
 
         player.inventory[undefinedIndex] = itemClone;
         player.data.inventory = JSON.stringify(player.inventory);
-        player.setSyncedMeta('inventory', player.data.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
+        player.syncInventory();
     };
 
     player.swapItems = (newIndexPos, oldIndexPos) => {
@@ -431,8 +436,8 @@ export function setupPlayerFunctions(player) {
         player.inventory[newIndexPos] = oldIndexItem;
         player.inventory[oldIndexPos] = newIndexItem;
         player.data.inventory = JSON.stringify(player.inventory);
-        player.setSyncedMeta('inventory', player.data.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
+        player.syncInventory();
     };
 
     // Remove an item from a player.
@@ -531,7 +536,7 @@ export function setupPlayerFunctions(player) {
     };
 
     player.updateInventory = () => {
-        player.setSyncedMeta('inventory', JSON.stringify(player.inventory));
+        player.syncInventory();
         alt.emitClient(player, 'inventory:FetchItems');
     };
 
@@ -595,7 +600,12 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     // Vehicles
-    player.syncVehicles = () => {
+    player.spawnVehicles = () => {
+        if (!player.vehicles) {
+            player.vehicles = [];
+            player.emitMeta('pedflags', true);
+        }
+
         db.fetchAllByField('guid', player.data.id, 'Vehicle', vehicles => {
             if (vehicles === undefined) return;
 
@@ -645,9 +655,5 @@ export function setupPlayerFunctions(player) {
 
     player.ejectSlowly = () => {
         alt.emitClient(player, 'vehicle:Eject', true);
-    };
-
-    player.disableEngineControl = () => {
-        alt.emitClient(player, 'vehicle:DisableEngineControl');
     };
 }

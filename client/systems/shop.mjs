@@ -73,12 +73,11 @@ let currentShop;
 let interval;
 let shopCheckInterval;
 
-alt.on('syncedMetaChange', startShopInterval);
+alt.on('meta:Changed', startShopInterval);
 
 // Only starts the interval after the player has logged in.
-function startShopInterval(entity, key) {
-    if (entity !== alt.Player.local) return;
-    if (key !== 'loggedin') return;
+function startShopInterval(key, value) {
+    if (key !== 'loggedin' && !value) return;
     if (!shopCheckInterval) {
         shopCheckInterval = alt.setInterval(shopInterval, 250);
         shops.forEach(shop => {
@@ -89,7 +88,7 @@ function startShopInterval(entity, key) {
         });
     }
 
-    alt.off('syncedMetaChange', startShopInterval);
+    alt.off('meta:Changed', startShopInterval);
 }
 
 // Used to handle interiors.

@@ -276,6 +276,10 @@ render(h(App), document.querySelector('#render'));
 
 // eslint-disable-next-line no-unused-vars
 function ready() {
+    if ('alt' in window) {
+        alt.emit('chat:Ready');
+    }
+
     document.getElementById('chat-input').focus();
     document.addEventListener('keyup', e => {
         // Enter

@@ -13,7 +13,6 @@ let lastHair;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Setup Webview
     webview = new View(url, true);
     webview.on('barbershop:FetchFace', fetchFace);
@@ -33,7 +32,7 @@ export function showDialogue() {
 }
 
 function fetchFace() {
-    let faceData = JSON.parse(alt.Player.local.getSyncedMeta('face'));
+    let faceData = JSON.parse(alt.Player.local.getMeta('face'));
 
     for (let key in faceData) {
         webview.emit('updateComponent', key, faceData[key].value);
@@ -119,7 +118,7 @@ function updateHairColorChoices() {
 }
 
 function save(newFaceJSON) {
-    let previousFace = JSON.parse(alt.Player.local.getSyncedMeta('face'));
+    let previousFace = JSON.parse(alt.Player.local.getMeta('face'));
     let newFace = JSON.parse(newFaceJSON);
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
 

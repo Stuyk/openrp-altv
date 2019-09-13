@@ -12,7 +12,6 @@ let camera = undefined;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Setup Webview
     webview = new View(url, true);
     webview.on('clothing:RequestComponentData', requestComponentData);

@@ -7,7 +7,6 @@ let vehicleChanges = {};
 let previousVehicle = {};
 
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     if (webview) return;
     webview = new View('http://resource/client/html/vehiclecustom/index.html', true);
     webview.on('vehicle:FetchModList', buildModList);

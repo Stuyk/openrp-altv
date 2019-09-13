@@ -3,13 +3,13 @@ import * as native from 'natives';
 import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as panelsChat from 'client/panels/chat.mjs';
 import * as systemsVehicles from 'client/systems/vehicles.mjs';
+import * as systemsContext from 'client/systems/context.mjs';
 // import * as chat from 'chat';
 
 alt.log('Loaded: client->events->keyup.mjs');
 
 let keybinds = {};
 let cooldown = false;
-let isChatOpen = false;
 
 // Setup Keybinds
 let keyF = 'F'.charCodeAt(0);
@@ -33,9 +33,19 @@ keybinds[keyPlus] = () => {
     );
 };
 
-keybinds[118] = panelsChat.toggleHide;
+keybinds[118] = panelsChat.toggleHide; // f7
+keybinds[9] = systemsContext.toggleInterval; // tab
 
-alt.on('keyup', key => {
+alt.on('meta:Changed', loadInterval);
+
+// Only starts the interval after the player has logged in.
+function loadInterval(key) {
+    if (key !== 'loggedin') return;
+    alt.off('meta:Changed', loadInterval);
+    alt.on('keyup', keyup);
+}
+
+function keyup(key) {
     if (!alt.Player.local.getMeta('loggedin')) return;
     if (alt.Player.local.getMeta('chat')) return;
 
@@ -49,4 +59,4 @@ alt.on('keyup', key => {
             cooldown = false;
         }, 200);
     }
-});
+}

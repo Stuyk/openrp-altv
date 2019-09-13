@@ -29,6 +29,7 @@ let clearTask;
 let clearChatBox;
 
 function colorify(text) {
+    if (!text) return text;
     if (text.length <= 0) return text;
 
     let matches = [];

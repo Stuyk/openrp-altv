@@ -1,11 +1,48 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
-let isMetric = false;
+alt.log('Loaded: client->hud->hud.mjs');
 
-alt.setInterval(() => {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    isMetric = native.getProfileSetting(227);
+/**
+ * This file was modified to only update less important hud stats once in a while.
+ * This should help with setInterval a bit.
+ */
+
+let isMetric = false;
+let cooldown = Date.now() + 5000;
+
+alt.on('meta:Changed', loadInterval);
+
+// Only starts the interval after the player has logged in.
+function loadInterval(key, value) {
+    if (key !== 'loggedin') return;
+    alt.setInterval(startInterval, 100);
+    alt.off('meta:Changed', loadInterval);
+}
+
+function startInterval() {
+    if (Date.now() > cooldown) {
+        cooldown = Date.now() + 2500;
+        isMetric = native.getProfileSetting(227);
+        updateLocation();
+    }
+
+    if (alt.Player.local.vehicle) {
+        vehicleHudData();
+    } else {
+        alt.emit('hud:SetSpeed', '');
+    }
+}
+
+function vehicleHudData() {
+    let speed = native.getEntitySpeed(alt.Player.local.vehicle.scriptID);
+    let actualSpeed = `${(speed * (isMetric ? 3.6 : 2.236936)).toFixed(2)}${
+        isMetric ? 'KM/H' : 'MPH'
+    }`;
+    alt.emit('hud:SetSpeed', actualSpeed);
+}
+
+function updateLocation() {
     let [_unk, _street, _cross] = native.getStreetNameAtCoord(
         alt.Player.local.pos.x,
         alt.Player.local.pos.y,
@@ -23,17 +60,4 @@ alt.setInterval(() => {
     let streetName = native.getStreetNameFromHashKey(_street);
 
     alt.emit('hud:SetLocation', `${zone}, ${streetName}`);
-    alt.emit('hud:SetCash', alt.Player.local.getSyncedMeta('cash'));
-}, 2500);
-
-alt.setInterval(() => {
-    if (alt.Player.local.vehicle) {
-        let speed = native.getEntitySpeed(alt.Player.local.vehicle.scriptID);
-        let actualSpeed = `${(speed * (isMetric ? 3.6 : 2.236936)).toFixed(2)}${
-            isMetric ? 'KM/H' : 'MPH'
-        }`;
-        alt.emit('hud:SetSpeed', actualSpeed);
-    } else {
-        alt.emit('hud:SetSpeed', '');
-    }
-}, 100);
+}

@@ -137,18 +137,18 @@ function syncMeta(player, index, isNewJob) {
     console.log('Syncing Job Meta');
 
     // Set Synced Meta
-    player.setSyncedMeta('job:Job', JSON.stringify(player.job.currentJob));
-    player.setSyncedMeta('job:PointIndex', index);
-    player.setSyncedMeta('job:Progress', -1);
+    player.emitMeta('job:Job', JSON.stringify(player.job.currentJob));
+    player.emitMeta('job:PointIndex', index);
+    player.emitMeta('job:Progress', -1);
     player.job.progress = -1;
     player.job.cooldown = Date.now();
 
     if (isNewJob) {
-        player.setSyncedMeta('job:Start', Date.now());
+        player.emitMeta('job:Start', Date.now());
         return;
     }
 
-    player.setSyncedMeta('job:Update', Date.now());
+    player.emitMeta('job:Update', Date.now());
 }
 
 // Used to cleanup / clear the current job the player is doing.
@@ -172,9 +172,9 @@ export function clearJob(player) {
         }
     }
 
-    player.setSyncedMeta('job:Job', undefined);
-    player.setSyncedMeta('job:PointIndex', undefined);
-    player.setSyncedMeta('job:Clear', true);
+    player.emitMeta('job:Job', undefined);
+    player.emitMeta('job:PointIndex', undefined);
+    player.emitMeta('job:Clear', true);
     player.job = {};
 }
 
@@ -508,7 +508,7 @@ function targetType(player, callback) {
             player: target,
             props
         };
-        player.setSyncedMeta('job:Target', player.job.target);
+        player.emitMeta('job:Target', player.job.target);
         return callback(true);
     };
     return callback(false);
@@ -624,7 +624,7 @@ function captureType(player, callback) {
 
     // Add job progression.
     player.job.progress += 1;
-    player.setSyncedMeta('job:Progress', player.job.progress);
+    player.emitMeta('job:Progress', player.job.progress);
 
     // Check if the job progression meets the current...
     // points 'progressMax' value.
@@ -665,7 +665,7 @@ function driveCaptureType(player, callback) {
 
     // Add job progression.
     player.job.progress += 1;
-    player.setSyncedMeta('job:Progress', player.job.progress);
+    player.emitMeta('job:Progress', player.job.progress);
 
     // Check if the job progression meets the current...
     // points 'progressMax' value.
@@ -698,7 +698,7 @@ function hackType(player, callback) {
     player.job.callback = callback;
 
     // Send Callback
-    player.setSyncedMeta(
+    player.emitMeta(
         'job:Callback',
         JSON.stringify({ type: player.job.currentPoint.type, callback: callbackname })
     );
@@ -733,7 +733,7 @@ function spawnVehicleType(player, callback) {
     player.job.callback = callback;
 
     // Send Callback
-    player.setSyncedMeta(
+    player.emitMeta(
         'job:Callback',
         JSON.stringify({ type: player.job.currentPoint.type, callback: callbackname })
     );
@@ -803,7 +803,7 @@ function targetRepairType(player, callback) {
     }
 
     player.job.progress += 1;
-    player.setSyncedMeta('job:Progress', player.job.progress);
+    player.emitMeta('job:Progress', player.job.progress);
     playJobAnimation(player);
 
     if (player.job.progress < player.job.currentPoint.progressMax) {
@@ -864,7 +864,7 @@ function callbackHack(player, callbackname, value) {
     if (value) {
         playJobAnimation(player);
         player.job.progress += 1;
-        player.setSyncedMeta('job:Progress', player.job.progress);
+        player.emitMeta('job:Progress', player.job.progress);
 
         if (player.job.progress > player.job.currentPoint.progressMax) {
             player.job.callback(true);
@@ -908,7 +908,7 @@ function callbackSpawnVehicle(player, callbackname, value) {
         0
     );
 
-    player.job.currentVehicle.setSyncedMeta('job:Owner', player.data.name);
+    player.job.currentVehicle.setMeta('job:Owner', player.data.name);
     player.job.currentVehicle.lockState = player.job.vehicle.lockState;
     player.job.currentVehicle.engineOn = true;
     player.vehicles.push(player.job.currentVehicle);

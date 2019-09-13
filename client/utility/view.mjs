@@ -4,16 +4,10 @@ import { showCursor } from 'client/utility/cursor.mjs';
 
 alt.log('Loaded: client->utility->view.mjs');
 
-let isChatOpen = false;
-
-alt.on('chat:IsOpen', value => {
-    isChatOpen = value;
-});
-
 export let currentView;
 export class View {
     constructor(url, killControls = true) {
-        if (isChatOpen) return;
+        if (alt.Player.local.getMeta('chat')) return;
         if (currentView === undefined) {
             currentView = this;
             currentView.view = new alt.WebView(url);

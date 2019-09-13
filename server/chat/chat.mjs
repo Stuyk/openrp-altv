@@ -7,11 +7,14 @@ console.log('Loaded: chat->chat.mjs');
 let cmds = {};
 let mutedPlayers = [];
 
-export function registerCmd(cmd, callback) {
+export function registerCmd(cmd, callback, adminlevel = "user") {
     if (cmds[cmd] !== undefined) {
         alt.logError(`Failed to register command /${cmd}, already registered`);
     } else {
-        cmds[cmd] = callback;
+        cmds[cmd] = {
+            callback,
+            adminlevel
+        };
     }
 }
 
@@ -26,10 +29,24 @@ export function routeMessage(player, msg) {
             let args = msg.split(' ');
             let cmd = args.shift();
 
-            const callback = cmds[cmd];
+            const command = cmds[cmd];
 
-            if (callback) {
-                callback(player, args);
+            if (command != null) {
+                if (command.adminlevel == 'user' || player.admingroup === 'superadmin') {
+                    command.callback(player, args);
+                } else {
+                    if (command.adminlevel == player.admingroup) {
+                        command.callback(player, args);
+                    } else {
+                        const indexOfRequired = ChatConfig.adminGroups.indexOf(command.adminlevel);
+                        const indexOfPlayer = ChatConfig.adminGroups.indexOf(player.admingroup);
+                        if (indexOfRequired <= indexOfPlayer) {
+                            command.callback(player, args);
+                        } else {
+                            player.send(player, `You haven't the autorization of doing /${cmd}`);
+                        }
+                    }
+                }
             } else {
                 player.send(player, `Unknown command /${cmd}`);
             }

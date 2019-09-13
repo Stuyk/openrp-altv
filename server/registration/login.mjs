@@ -46,6 +46,7 @@ export function existingAccount(player, username, password) {
     LoggedInPlayers.push(username);
 
     player.username = username;
+    player.admingroup = account.admingroup;
     player.showRegisterEventSuccess('Successful login! Please wait...');
     finishPlayerLogin(player, account.id);
     alt.log(`${player.name} has logged in.`);

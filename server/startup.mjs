@@ -63,11 +63,12 @@ alt.on('ConnectionComplete', () => {
 // Used to speed up the server dramatically.
 function cacheInformation() {
     // Passwords are encrypted.
-    db.selectData('Account', ['id', 'username', 'password'], data => {
+    db.selectData('Account', ['id', 'username', 'password', 'admingroup'], data => {
         if (data === undefined) return;
 
         for (let i = 0; i < data.length; i++) {
-            cache.cacheAccount(data[i].username, data[i].id, data[i].password);
+            alt.log("Cached account " + data[i].username)
+            cache.cacheAccount(data[i].username, data[i].id, data[i].password, data[i].admingroup);
         }
 
         console.log(`=====> Cached: ${data.length} Accounts`);

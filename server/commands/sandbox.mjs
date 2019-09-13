@@ -30,32 +30,33 @@ chat.registerCmd('addcash', (player, value) => {
     let data = value * 1;
     if (value > 600000) return;
     player.addCash(data);
-});
+}, 'admin');
 
 chat.registerCmd('wep', (player, hash) => {
     if (hash === undefined) {
         player.send(`Hash; such as: -270015777`);
         return;
     }
-    if (parseInt(hash) == NaN)
-        hash = alt.hash(hash);
+    let weapon = hash[0];
+    if (parseInt(weapon) == NaN)
+        weapon = alt.hash(weapon);
 
-    player.giveWeapon(hash[0], 9999, true);
-});
+    player.giveWeapon(weapon, 9999, true);
+}, 'admin');
 
 chat.registerCmd('face', player => {
     player.showFaceCustomizerDialogue(player.pos);
-});
+}, 'admin');
 
 chat.registerCmd('granola', player => {
     let itemTemplate = configurationItems.Items['GranolaBar'];
     player.addItem(itemTemplate, 5);
-});
+}, 'admin');
 
 chat.registerCmd('coffee', player => {
     let itemTemplate = configurationItems.Items['Coffee'];
     player.addItem(itemTemplate, 5);
-});
+}, 'admin');
 
 chat.registerCmd('additem', (player, arg) => {
     let itemTemplate = configurationItems.Items[`${arg[0]}`];
@@ -64,7 +65,7 @@ chat.registerCmd('additem', (player, arg) => {
         return;
     }
     player.addItem(itemTemplate, 1);
-});
+}, 'admin');
 
 chat.registerCmd('addveh', (player, arg) => {
     try {
@@ -101,7 +102,7 @@ chat.registerCmd('tpto', (player, arg) => {
     }
 
     player.pos = target.pos;
-});
+}, 'helper');
 
 chat.registerCmd('players', player => {
     alt.Player.all.forEach(t => {

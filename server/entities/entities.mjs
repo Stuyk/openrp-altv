@@ -17,6 +17,11 @@ export const Account = new orm.EntitySchema({
         },
         password: {
             type: 'varchar'
+        },
+        admingroup: {
+            type: 'varchar',
+            default: 'user',
+            nullable: false
         }
     }
 });

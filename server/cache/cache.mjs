@@ -15,10 +15,11 @@ export function cacheName(name) {
     names.push(name);
 }
 
-export function cacheAccount(username, id, password) {
+export function cacheAccount(username, id, password, admingroup) {
     accounts[username] = {
         id,
-        password
+        password,
+        admingroup
     };
 }
 

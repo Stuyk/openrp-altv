@@ -39,7 +39,7 @@ export function newAccount(player, username, password) {
 
     db.upsertData(playerAccDoc, 'Account', res => {
         // Add account to cache
-        cache.cacheAccount(res.username, res.id, passHashSalt);
+        cache.cacheAccount(res.username, res.id, passHashSalt, 'user');
 
         player.showRegisterEventSuccess('New account was registered successfully.');
 

@@ -27,6 +27,11 @@ const faceFeatureNames = [
     'NeckWidth'
 ];
 
+alt.on('meta:Changed', (key, value) => {
+    if (key !== 'face') return;
+    syncFace(value);
+});
+
 // Synchronize the clothing sent down from the server.
 export function syncClothing(jsonData) {
     const result = JSON.parse(jsonData);
@@ -59,7 +64,7 @@ export function syncClothing(jsonData) {
 }
 
 // Apply all of the facial data to the player.
-export function applyFacialData(jsonData) {
+export function syncFace(jsonData) {
     const parsedData = JSON.parse(jsonData);
 
     // Set all to zero to prevent bugs.
@@ -247,8 +252,8 @@ export function applyFacialData(jsonData) {
     }
 }
 
-alt.on('updateHair', () => {
-    let parsedData = JSON.parse(alt.Player.local.getSyncedMeta('face'));
+alt.on('face:UpdateHair', () => {
+    let parsedData = JSON.parse(alt.Player.local.getMeta('face'));
 
     if (parsedData === null || parsedData === undefined) return;
 

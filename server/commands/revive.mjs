@@ -19,23 +19,13 @@ chat.registerCmd('revive', player => {
     player.reviveTimeout = setTimeout(() => {
         clearTimeout(player.reviveTimeout);
         player.screenFadeOutFadeIn(1000, 5000);
-        player.spawn(player.revivePos.x, player.revivePos.y, player.revivePos.z, 0);
-
-        setTimeout(() => {
-            player.clearBlood();
-            player.revivePos = undefined;
-            player.reviveTime = undefined;
-            player.revive = false;
-            player.saveDead(false);
-            player.taxIncome(
-                configurationHospitals.Currency.feePct,
-                true,
-                'Hospital Fee'
-            );
-            player.send('You have been revived.');
-            player.syncInventory();
-            player.syncMoney();
-            player.setSyncedMeta('loggedin', true);
-        }, 3000);
-    }, 2000);
+        player.spawn(player.revivePos.x, player.revivePos.y, player.revivePos.z, 2000);
+        player.clearBlood();
+        player.revivePos = undefined;
+        player.reviveTime = undefined;
+        player.revive = false;
+        player.saveDead(false);
+        player.taxIncome(configurationHospitals.Currency.feePct, true, 'Hospital Fee');
+        player.send('You have been revived.');
+    }, 20000);
 });

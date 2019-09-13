@@ -2,6 +2,29 @@ const { render, Component, h } = preact;
 
 const maxItemLength = 128;
 let usingTextBox = false;
+const itemIcons = {
+    unknown: 'unknown',
+    fishingrod: 'fishingrod',
+    fish: 'fish',
+    granolabar: 'chocolate-bar',
+    coffee: 'coffee-cup',
+    soda: 'soda-can',
+    license: 'id-card',
+    28: 'hat',
+    29: 'bandana',
+    30: 'shirt',
+    31: 'trousers',
+    32: 'chelsea-boot',
+    33: 'body-armour',
+    34: 'accessory',
+    35: 'earring',
+    36: 'backpack',
+    37: 'hand',
+    38: 'watch',
+    39: 'bracelet',
+    40: 'glasses',
+    41: 'outfit'
+};
 
 function ready() {
     if ('alt' in window) {
@@ -40,14 +63,38 @@ class App extends Component {
             alt.on('inventory:ClearItems', this.clearItems.bind(this));
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
-            this.addItem(0, 'Fish', '2151251', { description: 'Whatever' }, 1);
-            this.addItem(1, 'Fishing Rod', '2151251', { description: 'Whatever' }, 1, 37);
+            // _index,label,hash,props,quantity,equipSlot,
+            // rename,useitem,droppable,icon
+            this.addItem(
+                0,
+                'Fish',
+                '2151251',
+                { description: 'Whatever' },
+                2,
+                undefined,
+                false,
+                false,
+                true,
+                'fish'
+            );
+            this.addItem(
+                1,
+                'Fishing Rod',
+                '2151251',
+                { description: 'Whatever' },
+                1,
+                37,
+                false,
+                false,
+                true,
+                'fishingrod'
+            );
             this.addItem(
                 2,
                 'Really Ugly Fish',
                 '2151251',
                 { description: 'Whatever' },
-                1
+                2
             );
             this.addItem(
                 3,
@@ -117,7 +164,8 @@ class App extends Component {
             slot,
             rename,
             useitem,
-            droppable
+            droppable,
+            icon
         ] = args;
         let items = [...this.state.items];
 
@@ -132,7 +180,8 @@ class App extends Component {
                 slot,
                 rename,
                 useitem,
-                droppable
+                droppable,
+                icon
             };
         }
         this.setState({ items });
@@ -556,7 +605,7 @@ class App extends Component {
                         h(
                             'div',
                             { class: 'renamecon' },
-                            h('div', { class: 'input-label' }, 'Drop Amount'),
+                            h('div', { class: 'input-label' }, 'Rename Item'),
                             h(
                                 'div',
                                 { class: 'rename-group' },
@@ -694,14 +743,41 @@ const Items = ({ state, click, release, mouseover }) => {
         return h(
             'div',
             {
-                class: index === state.dragging * 1 ? 'item item-dragged' : 'item',
+                class:
+                    index === state.dragging * 1 ? 'item item-dragged' : 'item non-equip',
                 id: index,
                 onmousedown: click.bind(this),
                 onmouseup: release.bind(this),
                 onmouseover: mouseover.bind(this)
             },
-            item.label,
-            h('div', { class: 'item-quantity' }, `x${item.quantity}`)
+
+            item.quantity >= 2 &&
+                h('div', { class: 'item-quantity' }, `x${item.quantity}`),
+            item.slot >= 28 &&
+                !item.icon &&
+                h(
+                    'object',
+                    {
+                        type: 'image/svg+xml',
+                        class: `svg ${itemIcons[item.slot]}`,
+                        style: `background: url('../icons/${itemIcons[item.slot]}.svg');`
+                    }
+                    //icon
+                ),
+            item.icon &&
+                h('object', {
+                    type: 'image/svg+xml',
+                    class: `svg ${itemIcons[item.icon]}`,
+                    style: `background: url('../icons/${itemIcons[item.icon]}.svg');`
+                }),
+            !item.icon &&
+                !item.slot &&
+                h('object', {
+                    type: 'image/svg+xml',
+                    class: `svg unknown`,
+                    style: `background: url('../icons/unknown.svg');`
+                }),
+            item.label
         );
     });
 
@@ -742,7 +818,7 @@ const Equipment = ({ state, click, release, mouseover, id, icon }) => {
             ? h(
                   'div',
                   {
-                      class: 'item',
+                      class: 'item equipped',
                       id: id,
                       onmousedown: click.bind(this),
                       onmouseup: release.bind(this),
@@ -765,7 +841,7 @@ const Equipment = ({ state, click, release, mouseover, id, icon }) => {
                       class:
                           parseInt(state.targetHover) === id
                               ? parseInt(state.items[state.dragging].slot) === id
-                                  ? 'item item-place item-hovered'
+                                  ? 'item equipped-hover item-place item-hovered'
                                   : 'item item-place item-hovered-disabled'
                               : 'item item-place',
                       id: id,

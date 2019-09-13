@@ -51,8 +51,8 @@ let interval;
 let currentInterval;
 let isUpdateActive;
 
-alt.on('syncedMetaChange', (entity, key, value) => {
-    if (entity !== alt.Player.local) return; // Local Player Only
+alt.on('meta:Changed', (key, value) => {
+    if (!key.includes('job')) return;
     // Call the job function for the synced meta change.
     if (jobFunctions[key] !== undefined) {
         jobFunctions[key].func(value);
@@ -69,8 +69,8 @@ function jobStart() {
     jobClear();
 
     // Get Current Job Info
-    currentJob = JSON.parse(alt.Player.local.getSyncedMeta('job:Job'));
-    currentPointIndex = alt.Player.local.getSyncedMeta('job:PointIndex'); // Always a number.
+    currentJob = JSON.parse(alt.Player.local.getMeta('job:Job'));
+    currentPointIndex = alt.Player.local.getMeta('job:PointIndex'); // Always a number.
 
     // Store Point Info
     currentPoint = currentJob.points[currentPointIndex];
@@ -132,11 +132,9 @@ function jobClear(clearTarget) {
  *  unwanted behavior.
  */
 function jobUpdate() {
-    alt.log('Updating job.');
-
     pause = true;
-    currentJob = JSON.parse(alt.Player.local.getSyncedMeta('job:Job'));
-    currentPointIndex = alt.Player.local.getSyncedMeta('job:PointIndex');
+    currentJob = JSON.parse(alt.Player.local.getMeta('job:Job'));
+    currentPointIndex = alt.Player.local.getMeta('job:PointIndex');
     currentPoint = currentJob.points[currentPointIndex];
 
     parseJobInfo(currentPoint);

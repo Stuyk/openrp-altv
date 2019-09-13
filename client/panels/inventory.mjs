@@ -11,13 +11,7 @@ let webview;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
-    alt.log('called');
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    alt.log('logged in');
-    alt.log(JSON.stringify(webview));
     if (webview) return;
-    alt.log('webview called');
-
     webview = new View(url, true);
     webview.on('inventory:Drop', drop);
     webview.on('inventory:Use', use);
@@ -35,7 +29,7 @@ function setPosition(newIndexPosition, oldIndexPosition) {
 export function fetchItems() {
     if (webview === undefined) return;
 
-    let itemJSON = alt.Player.local.getSyncedMeta('inventory');
+    let itemJSON = alt.Player.local.getMeta('inventory');
     let itemArray = JSON.parse(itemJSON);
 
     webview.emit('clearitems');
@@ -58,7 +52,8 @@ export function fetchItems() {
             item.slot,
             item.rename,
             canuse,
-            item.droppable
+            item.droppable,
+            item.icon
         );
     });
 

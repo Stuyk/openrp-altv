@@ -36,8 +36,8 @@ keybinds[keyPlus] = () => {
 keybinds[118] = panelsChat.toggleHide;
 
 alt.on('keyup', key => {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    if (isChatOpen) return;
+    if (!alt.Player.local.getMeta('loggedin')) return;
+    if (alt.Player.local.getMeta('chat')) return;
 
     if (cooldown) return;
 
@@ -49,8 +49,4 @@ alt.on('keyup', key => {
             cooldown = false;
         }, 200);
     }
-});
-
-alt.on('chat:IsOpen', value => {
-    isChatOpen = value;
 });

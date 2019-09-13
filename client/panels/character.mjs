@@ -32,7 +32,6 @@ let lastHair = 0; // Get the last hair the player set.
 
 // Load the character customizer, freeze controls, create camera, and ped.
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
     // Load the WebView
     webview = new View(url, true);
     webview.on('updateSex', updateSex);

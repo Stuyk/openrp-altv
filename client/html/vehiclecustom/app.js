@@ -15,7 +15,6 @@ class App extends Component {
     componentDidMount() {
         if ('alt' in window) {
             alt.on('parseMod', this.parseMod.bind(this));
-            alt.emit('vehicle:FetchModList');
         } else {
             // JSON Mimic for Editing
             const list = JSON.parse(json);
@@ -153,3 +152,9 @@ document.addEventListener('keyup', key => {
         alt.emit('vehicle:Exit');
     }
 });
+
+function ready() {
+    if ('alt' in window) {
+        alt.emit('vehicle:FetchModList');
+    }
+}

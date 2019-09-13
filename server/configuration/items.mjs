@@ -27,6 +27,7 @@ export const Items = {
         message: 'You eat the granola the bar. It tastes great.',
         quantity: 0,
         sound: 'eat',
+        icon: 'granolabar',
         anim: {
             dict: 'mp_player_inteat@burger',
             name: 'mp_player_int_eat_burger_fp',
@@ -48,6 +49,7 @@ export const Items = {
         message: 'You drink the hot coffee.',
         quantity: 0,
         sound: 'drink',
+        icon: 'coffee',
         props: {
             health: 5,
             armor: 5
@@ -64,6 +66,7 @@ export const Items = {
         message: 'You drink the soda.',
         quantity: 0,
         sound: 'drink',
+        icon: 'soda',
         props: {
             health: 3
         }
@@ -78,6 +81,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     PilotsLicense: {
@@ -90,6 +94,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     OpenCarryLicense: {
@@ -102,6 +107,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     WeaponLicense: {
@@ -114,6 +120,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     MilitaryLicense: {
@@ -126,6 +133,7 @@ export const Items = {
         sellable: false,
         message: '',
         quantity: 0,
+        icon: 'license',
         props: {}
     },
     Hat: {

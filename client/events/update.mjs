@@ -5,7 +5,15 @@ import * as vector from 'client/utility/vector.mjs';
 
 alt.log('Loaded: events->update.mjs');
 
-alt.setInterval(drawPlayerNames, 0);
+alt.on('meta:Changed', loadInterval);
+
+// Only starts the interval after the player has logged in.
+function loadInterval(key) {
+    if (key !== 'loggedin') return;
+    alt.off('meta:Changed', loadInterval);
+
+    alt.setInterval(drawPlayerNames, 0);
+}
 
 function drawPlayerNames() {
     if (alt.Player.all.length <= 0) return;

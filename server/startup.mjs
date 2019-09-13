@@ -67,7 +67,6 @@ function cacheInformation() {
         if (data === undefined) return;
 
         for (let i = 0; i < data.length; i++) {
-            alt.log("Cached account " + data[i].username)
             cache.cacheAccount(data[i].username, data[i].id, data[i].password, data[i].admingroup);
         }
 

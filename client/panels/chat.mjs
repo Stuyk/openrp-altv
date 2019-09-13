@@ -40,6 +40,7 @@ export function toggleDialogue() {
         webview.emit('chat:ShowChatInput');
         alt.toggleGameControls(false);
         alt.showCursor(true);
+        alt.emitServer('chat:IsChatting', true);
     }
 }
 
@@ -64,6 +65,7 @@ function routeMessage(msg) {
     webview.unfocus();
     isActive = false;
     alt.Player.local.setMeta('chat', false);
+    alt.emitServer('chat:IsChatting', false);
 
     try {
         alt.showCursor(false);
@@ -82,6 +84,10 @@ function routeMessage(msg) {
 
 function ready() {
     alt.emitServer('sync:Ready');
+}
+
+export function setStatus(player, value) {
+    player.setMeta('isChatting', value);
 }
 
 alt.on('meta:Changed', (key, value) => {

@@ -12,7 +12,12 @@ let yaw = 0;
 let interval;
 
 export function showDialogue(regCamCoord) {
-    webview = new View(url);
+    if (!webview) {
+        webview = new View();
+    }
+
+    // Setup Webview
+    webview.open(url, true);
     webview.on('registerAccount', registerAccount);
     webview.on('existingAccount', existingAccount);
     webview.on('ready', () => {

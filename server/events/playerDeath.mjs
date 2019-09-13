@@ -1,9 +1,25 @@
 import * as alt from 'alt';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
 import * as utilityVector from '../utility/vector.mjs';
+import { verifyWeapon } from '../systems/anticheat.mjs';
+import { Weapons, CauseOfDeath } from '../configuration/weapons.mjs';
 
-alt.on('playerDeath', target => {
+alt.on('playerDeath', (target, killer, weapon) => {
     if (target.reviving) return;
+
+    if (CauseOfDeath[weapon] && target !== killer) {
+        if (!CauseOfDeath[weapon].includes('Vehicle Death')) {
+            if (!verifyWeapon(killer)) {
+                target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);
+                return;
+            }
+        } else {
+            if (!verifyWeapon(killer)) {
+                target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);
+                return;
+            }
+        }
+    }
 
     target.reviving = false;
 

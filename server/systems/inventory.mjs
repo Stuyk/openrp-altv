@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import * as utilityEncryption from '../utility/encryption.mjs';
+import { Weapons } from '../configuration/weapons.mjs';
 console.log('Loaded: systems->inventory.mjs');
 
 // hash, itemdata
@@ -213,4 +214,25 @@ export function pickup(player, hash) {
 
 export function updatePosition(player, newIndex, oldIndex) {
     player.swapItems(newIndex, oldIndex);
+}
+
+export function addWeapon(player, weaponHash) {
+    let weapon;
+    Object.keys(Weapons).forEach(key => {
+        if (Weapons[key] !== weaponHash) return;
+        weapon = {
+            name: key,
+            value: Weapons[key]
+        };
+    });
+
+    if (!weapon) return false;
+
+    const itemTemplate = { ...configurationItems.Items['Weapon'] };
+    itemTemplate.label = weapon.name;
+    itemTemplate.props = {
+        hash: weapon.value
+    };
+    player.addItem(itemTemplate, 1);
+    return true;
 }

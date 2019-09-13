@@ -5,12 +5,7 @@ alt.on('meta:Changed', startInterval);
 
 const disableControls = [
     //
-    37, // Weapon Wheel
-    66,
-    67,
-    68,
-    69,
-    70
+    37 // Weapon Wheel
 ];
 
 function startInterval(key, value) {

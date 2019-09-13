@@ -122,6 +122,7 @@ alt.onServer('vehicle:StartEngine', systemsVehicles.startEngine);
 // =======================================================
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
+alt.onServer('chat:SetStatus', panelsChat.setStatus);
 
 // =======================================================
 // Global

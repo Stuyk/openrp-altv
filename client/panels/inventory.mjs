@@ -11,8 +11,13 @@ let webview;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
-    if (webview) return;
-    webview = new View(url, true);
+    if (!webview) {
+        webview = new View();
+    }
+
+    if (webview.url === url) return;
+    // Setup Webview
+    webview.open(url, true);
     webview.on('inventory:Drop', drop);
     webview.on('inventory:Use', use);
     webview.on('inventory:Destroy', destroy);
@@ -62,7 +67,6 @@ export function fetchItems() {
 
 function exit() {
     webview.close();
-    webview = undefined;
 }
 
 function destroy(hash) {

@@ -13,8 +13,12 @@ let lastHair;
 
 // Setup the player clothing customizer.
 export function showDialogue() {
+    if (!webview) {
+        webview = new View();
+    }
+
     // Setup Webview
-    webview = new View(url, true);
+    webview.open(url, true);
     webview.on('barbershop:FetchFace', fetchFace);
     webview.on('barbershop:Save', save);
     webview.on('barbershop:UpdateFaceDecor', updateFaceDecor);

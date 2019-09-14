@@ -123,10 +123,16 @@ export function sync(player) {
 
     // Check if the player has a face.
     if (player.data.face === null) {
-        console.log('No Face');
         player.model = 'mp_f_freemode_01';
         player.isNewPlayer = true;
-        player.showFaceCustomizerDialogue(lastPos);
+
+        let timeout = setTimeout(() => {
+            if (!player) {
+                clearTimeout(timeout);
+                return;
+            }
+            player.showFaceCustomizerDialogue(lastPos);
+        }, 1500);
     } else {
         player.applyFace(player.data.face);
 
@@ -142,20 +148,25 @@ export function sync(player) {
     // Setup data on the player.
     player.dimension = 0;
     player.startTime = Date.now(); // Used for time tracking
+    player.spawnVehicles();
     player.screenFadeIn(1000);
     player.setLastLogin();
     player.updateTime();
     player.syncInteractionBlips();
-    player.syncInventory();
+    player.syncInventory(true);
     player.syncMoney();
-    player.spawnVehicles();
 
     // Setup Health / Armor
-    if (player.data.dead) {
-        player.health = 0;
-        player.send('You last logged out as dead.');
-    } else {
-        player.health = player.data.health;
-        player.armour = player.data.armour;
-    }
+    let timeout = setTimeout(() => {
+        if (!player) clearTimeout(timeout);
+
+        if (player.data.dead) {
+            player.health = 0;
+            player.armour = 0;
+            player.send('You last logged out as dead.');
+        } else {
+            player.health = player.data.health;
+            player.armour = player.data.armour;
+        }
+    }, 1500);
 }

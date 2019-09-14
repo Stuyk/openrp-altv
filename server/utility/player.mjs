@@ -56,12 +56,8 @@ export function setupPlayerFunctions(player) {
     };
 
     player.setLastLogin = () => {
-        setTimeout(() => {
-            const date = new Date(player.data.lastlogin * 1).toString();
-            if (player === null) return;
-            player.send(`{FFFF00}Last Login: ${date}`);
-        }, 2500);
-
+        const date = new Date(player.data.lastlogin * 1).toString();
+        player.send(`{FFFF00}Last Login: ${date}`);
         player.data.lastlogin = Date.now();
         player.saveField(player.data.id, 'lastlogin', player.data.lastlogin);
     };
@@ -181,11 +177,13 @@ export function setupPlayerFunctions(player) {
                 player.model = 'mp_f_freemode_01';
                 if (player.isNewPlayer) {
                     player.addStarterItems();
+                    player.isNewPlayer = false;
                 }
             } else {
                 player.model = 'mp_m_freemode_01';
                 if (player.isNewPlayer) {
                     player.addStarterItems();
+                    player.isNewPlayer = false;
                 }
             }
         }
@@ -193,6 +191,7 @@ export function setupPlayerFunctions(player) {
         player.data.face = valueJSON;
         player.saveField(player.data.id, 'face', valueJSON);
         player.emitMeta('face', valueJSON);
+        player.syncInventory(true);
     };
 
     // ====================================
@@ -376,7 +375,23 @@ export function setupPlayerFunctions(player) {
     // =================================
     // INVENTORY
     // Add an item to a player.
-    player.syncInventory = () => {
+    player.syncInventory = (cleanse = false) => {
+        if (cleanse) {
+            const inventory = JSON.parse(player.data.inventory);
+            inventory.forEach(item => {
+                if (!item) {
+                    item = null;
+                    return;
+                }
+
+                if (item.constructor === Object && Object.entries(item).length <= 0) {
+                    item = null;
+                    return;
+                }
+            });
+            player.data.inventory = JSON.stringify(inventory);
+        }
+
         player.inventory = JSON.parse(player.data.inventory);
         player.emitMeta('inventory', player.data.inventory);
     };
@@ -404,7 +419,7 @@ export function setupPlayerFunctions(player) {
             // The item exists.
             if (index > -1) {
                 alt.emit('inventory:AddItem', player, index, quantity);
-                return;
+                return true;
             }
         }
 
@@ -414,30 +429,62 @@ export function setupPlayerFunctions(player) {
         const hash = utilityEncryption.generateHash(JSON.stringify(itemClone));
         itemClone.hash = hash;
 
-        let undefinedIndex = player.inventory.findIndex(
-            x => x === null || x === undefined
-        );
+        let undefinedIndex = player.inventory.findIndex(x => x === null);
 
         // Prevent Using Equipment Slots
         if (undefinedIndex === -1 || undefinedIndex >= 28) {
             player.send(`You have no room for that item.`);
-            return;
+            return false;
         }
 
         player.inventory[undefinedIndex] = itemClone;
         player.data.inventory = JSON.stringify(player.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
         player.syncInventory();
+        return true;
     };
 
     player.swapItems = (newIndexPos, oldIndexPos) => {
-        const newIndexItem = { ...player.inventory[newIndexPos] };
-        const oldIndexItem = { ...player.inventory[oldIndexPos] };
+        let newIndexItem = { ...player.inventory[newIndexPos] };
+        let oldIndexItem = { ...player.inventory[oldIndexPos] };
+
+        // Handle Empty Object
+        if (newIndexItem) {
+            if (
+                newIndexItem.constructor === Object &&
+                Object.entries(newIndexItem).length === 0
+            )
+                newIndexItem = null;
+        }
+
+        // Handle Empty Object
+        if (oldIndexItem) {
+            if (
+                oldIndexItem.constructor === Object &&
+                Object.entries(oldIndexItem).length === 0
+            )
+                oldIndexItem = null;
+        }
+
         player.inventory[newIndexPos] = oldIndexItem;
         player.inventory[oldIndexPos] = newIndexItem;
+
+        if (player.inventory[37]) {
+            if (player.inventory[37].props.hash) {
+                player.setWeapon(player.inventory[37].props.hash);
+            }
+        } else {
+            player.removeAllWeapons();
+        }
+
         player.data.inventory = JSON.stringify(player.inventory);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
         player.syncInventory();
+    };
+
+    player.setWeapon = hash => {
+        player.removeAllWeapons();
+        player.giveWeapon(hash, 999, true);
     };
 
     // Remove an item from a player.
@@ -612,6 +659,7 @@ export function setupPlayerFunctions(player) {
             if (vehicles.length <= 0) return;
 
             vehicles.forEach(veh => {
+                if (!player) return;
                 alt.emit('vehicles:SpawnVehicle', player, veh);
             });
         });

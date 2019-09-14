@@ -9,10 +9,12 @@ function startInterval(key, value) {
     if (key !== 'pedflags') return;
     alt.off('meta:Changed', startInterval);
     // Disable Vehicle Engine Startup
+    // Disable Shuffling to Driver Seat - Doesn't work?
     // Disable Motorcylce Helmet
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
-    alt.setInterval(vehicleInterval, 30);
+    alt.setInterval(vehicleInterval, 100);
 }
 
 export function toggleDoor(vehicle, id, state) {
@@ -51,15 +53,27 @@ export function startEngine(value) {
 function vehicleInterval() {
     if (!alt.Player.local.vehicle) return;
 
-    const passenger = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, 0);
+    //const passenger = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, 0);
 
+    /*
     if (native.getIsTaskActive(passenger, 165)) {
-        if (native.isVehicleSeatFree(vehicle, -1)) {
+        for (let i = 0; i < 800; i++) {
+            let value = native.getPedConfigFlag(passenger, i, undefined);
+            //alt.log(`Flag: ${i}, ${value}`);
+        }
+        
+        if (native.isVehicleSeatFree(alt.Player.local.vehicle.scriptID, -1)) {
             if (passenger === alt.Player.local.scriptID) {
-                native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle, 0);
+                native.setPedIntoVehicle(
+                    alt.Player.local.scriptID,
+                    alt.Player.local.vehicle.scriptID,
+                    0
+                );
             }
         }
+        
     }
+    */
 
     if (
         native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1) ===
@@ -68,7 +82,12 @@ function vehicleInterval() {
         if (native.getIsVehicleEngineRunning(alt.Player.local.scriptID)) {
             let interval = alt.setInterval(() => {
                 if (!alt.Player.local.vehicle) {
-                    native.setVehicleEngineOn(vehicle, true, true, true);
+                    native.setVehicleEngineOn(
+                        alt.Player.local.vehicle.scriptID,
+                        true,
+                        true,
+                        true
+                    );
                     alt.clearInterval(interval);
                 }
             }, 100);

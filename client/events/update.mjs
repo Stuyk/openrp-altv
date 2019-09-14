@@ -22,7 +22,6 @@ function drawPlayerNames() {
 
     alt.Player.all.forEach(player => {
         if (player === alt.Player.local) return;
-
         let localPlayerName = player.getSyncedMeta('name');
 
         if (localPlayerName === undefined || localPlayerName === null) return;
@@ -79,5 +78,23 @@ function drawPlayerNames() {
             false,
             99
         );
+
+        if (player.getMeta('isChatting')) {
+            text.drawText3d(
+                '...',
+                player.pos.x,
+                player.pos.y,
+                player.pos.z + 1.25,
+                scale,
+                4,
+                255,
+                255,
+                255,
+                100,
+                true,
+                false,
+                99
+            );
+        }
     });
 }

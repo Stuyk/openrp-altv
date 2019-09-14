@@ -71,6 +71,7 @@ alt.onClient('vehicle:SaveChanges', systemsVehicles.saveChanges);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);
+alt.onClient('chat:IsChatting', chat.setStatus);
 
 // Job
 alt.onClient('job:TestObjective', systemsJob.testObjective);

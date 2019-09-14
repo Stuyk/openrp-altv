@@ -9,8 +9,14 @@ let webview;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
+    if (!webview) {
+        webview = new View();
+    }
+
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
     // Load Webview
-    webview = new View(url);
+    webview.open(url);
     webview.on('atm:Withdraw', withdrawBalance);
     webview.on('atm:Deposit', depositBalance);
     webview.on('atm:Ready', atmReady);

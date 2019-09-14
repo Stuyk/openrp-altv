@@ -89,7 +89,7 @@ const clothing = {
     },
     Hat: {
         label: 'Hat',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 0,
@@ -105,7 +105,7 @@ const clothing = {
     },
     Glasses: {
         label: 'Glasses',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 1,
@@ -121,7 +121,7 @@ const clothing = {
     },
     Earpiece: {
         label: 'Earpiece',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 2,
@@ -137,7 +137,7 @@ const clothing = {
     },
     Watches: {
         label: 'Watches',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 6,
@@ -153,7 +153,7 @@ const clothing = {
     },
     Bracelet: {
         label: 'Bracelet',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 7,
@@ -191,6 +191,8 @@ class App extends Component {
             alt.on('updateMinMax', this.updateMinMax.bind(this));
             alt.on('showError', this.showError.bind(this));
             alt.on('updateClothes', this.updateClothes.bind(this));
+        } else {
+            this.forceClothing();
         }
     }
 
@@ -237,10 +239,15 @@ class App extends Component {
         } else {
             console.log(JSON.stringify(props));
         }
+
+        setTimeout(() => {
+            this.forceClothing();
+        }, 200);
     }
 
     setSex(sex) {
         this.setState({ sex });
+        this.forceClothing();
     }
 
     updateMinMax(...args) {
@@ -280,6 +287,26 @@ class App extends Component {
         });
 
         this.setState({ clothingData });
+    }
+
+    forceClothing() {
+        let clothingData = [...this.state.clothingData];
+        console.log(clothingData.length);
+
+        clothingData.forEach((item, index) => {
+            if (item.label.includes('Texture')) return;
+            if ('alt' in window) {
+                alt.emit(
+                    'clothing:UpdateComponent',
+                    clothingData[index].id,
+                    clothingData[index].value,
+                    clothingData[index + 1].value,
+                    clothingData[index].isProp
+                );
+            } else {
+                console.log(item);
+            }
+        });
     }
 
     setItemValue(index, increment) {

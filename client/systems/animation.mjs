@@ -33,7 +33,7 @@ export function playAnimation(player, dictionary, name, durationInMS, flag) {
     let res = loadAnim(dictionary);
 
     res.then(() => {
-        alt.log('Playing Animation');
+        alt.log(`Playing Animation ${dictionary}`);
         native.taskPlayAnim(
             player.scriptID,
             dictionary,
@@ -43,9 +43,9 @@ export function playAnimation(player, dictionary, name, durationInMS, flag) {
             durationInMS,
             flag,
             1.0,
-            true,
-            true,
-            true
+            false,
+            false,
+            false
         );
     });
 }

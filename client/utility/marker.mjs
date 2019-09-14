@@ -23,7 +23,7 @@ export function drawMarker(type, pos, dir, rot, scale, r, g, b, alpha) {
         b,
         alpha,
         false,
-        false,
+        true,
         2,
         false,
         undefined,

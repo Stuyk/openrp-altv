@@ -3,6 +3,8 @@ import * as native from 'natives';
 import * as systemsSound from 'client/systems/sound.mjs';
 import * as utilityVector from 'client/utility/vector.mjs';
 import * as utilityText from 'client/utility/text.mjs';
+import * as utilityMarker from 'client/utility/marker.mjs';
+
 
 let itemsOnGround = [];
 let pickingUpItem = false;
@@ -50,6 +52,22 @@ function drawItems() {
 
     itemsOnGround.forEach(itemData => {
         let dist = utilityVector.distance(alt.Player.local.pos, itemData.pos);
+        if (dist > 15) return;
+
+        // Questionable item on the ground seen from a distance
+        if (dist <= 15 && dist >= 5) {
+            utilityMarker.drawMarker(
+                32, // question mark
+                itemData.pos,
+                new alt.Vector3(0, 0, 0),
+                new alt.Vector3(0, 0, 0),
+                new alt.Vector3(.2, .2, .2),
+                255,255,255,
+                150
+            );
+        }
+
+        // Closer up, we can recognize the item
         if (dist <= 5) {
             utilityText.drawText3d(
                 itemData.item.label,
@@ -67,6 +85,7 @@ function drawItems() {
                 99
             );
 
+            // Close enough to pick it up
             if (dist <= 1) {
                 native.beginTextCommandDisplayHelp('STRING');
                 native.addTextComponentSubstringPlayerName(
@@ -84,6 +103,6 @@ function drawItems() {
                     }, 500);
                 }
             }
-        }
+        }  
     });
 }

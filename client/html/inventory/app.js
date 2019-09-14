@@ -1,7 +1,5 @@
 const { render, Component, h } = preact;
 
-const maxItemLength = 128;
-let usingTextBox = false;
 const itemIcons = {
     unknown: 'unknown',
     fishingrod: 'fishingrod',
@@ -27,6 +25,83 @@ const itemIcons = {
     41: 'outfit'
 };
 
+/**
+ * These are purposely out of order.
+ * Please do not change this unless
+ * you know what you're doing.
+ */
+const inventorySlots = [
+    {
+        id: 28,
+        icon: 'hat'
+    },
+    {
+        id: 34,
+        icon: 'accessory'
+    },
+    {
+        id: 29,
+        icon: 'bandana'
+    },
+    {
+        id: 35,
+        icon: 'earring'
+    },
+    {
+        id: 30,
+        icon: 'shirt'
+    },
+    {
+        id: 33,
+        icon: 'body-armour'
+    },
+    {
+        id: 31,
+        icon: 'trousers'
+    },
+    {
+        id: 36,
+        icon: 'backpack'
+    },
+    {
+        id: 32,
+        icon: 'chelsea-boot'
+    },
+    {
+        id: 37,
+        icon: 'hand'
+    },
+    {
+        id: 38,
+        icon: 'watch'
+    },
+    {
+        id: 39,
+        icon: 'bracelet'
+    },
+    {
+        id: 40,
+        icon: 'glasses'
+    },
+    {
+        id: 41,
+        icon: 'outfit'
+    }
+];
+
+const addItemArgs = [
+    'index',
+    'label',
+    'hash',
+    'props',
+    'quantity',
+    'slot',
+    'rename',
+    'useitem',
+    'droppable',
+    'icon'
+];
+
 function ready() {
     if ('alt' in window) {
         alt.emit('inventory:FetchItems');
@@ -39,7 +114,7 @@ class App extends Component {
         super(props);
         this.state = {
             currentTab: 0,
-            items: new Array(maxItemLength),
+            items: new Array(128),
             mX: 0,
             mY: 0,
             dragging: undefined,
@@ -64,6 +139,8 @@ class App extends Component {
             alt.on('inventory:ClearItems', this.clearItems.bind(this));
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
+            // These are considered DEMO items.
+            // Used for out of game reference.
             // _index,label,hash,props,quantity,equipSlot,
             // rename,useitem,droppable,icon
             this.addItem(
@@ -132,7 +209,7 @@ class App extends Component {
             );
         }
 
-        window.addEventListener('keyup', this.closeInventory.bind(this));
+        window.addEventListener('keyup', this.close.bind(this));
     }
 
     playAudio(name) {
@@ -142,103 +219,85 @@ class App extends Component {
         }
     }
 
-    closeInventory(e) {
-        if (usingTextBox) return;
+    /**
+     * Close the user's inventory.
+     * @param {*} e
+     */
+    close(e) {
+        if (this.state.usingTextBox) return;
 
+        // I Key
         if (e.keyCode === 'I'.charCodeAt(0)) {
             alt.emit('inventory:Exit');
             return;
         }
 
+        // Escape
         if (e.keyCode === 27) {
             alt.emit('inventory:Exit');
             return;
         }
     }
 
+    /**
+     * Clears the items in the inventory.
+     * Called before refreshing inventory.
+     */
     clearItems() {
         this.setState({ items: [] });
     }
 
-    /*
-    index,
-    item.label,
-    item.hash,
-    item.props,
-    item.quantity
-    */
+    /**
+     * Called from clientside.
+     * Adds items into the inventory grid.
+     * Based on their addItemArguments.
+     * @param  {...any} args
+     */
     addItem(...args) {
-        const [
-            _index,
-            label,
-            hash,
-            props,
-            quantity,
-            slot,
-            rename,
-            useitem,
-            droppable,
-            icon
-        ] = args;
         let items = [...this.state.items];
-
-        if (!label) {
-            items[_index] = null;
+        if (!args[1]) {
+            items[args[0]] = null;
         } else {
-            items[_index] = {
-                label,
-                hash,
-                props,
-                quantity,
-                slot,
-                rename,
-                useitem,
-                droppable,
-                icon
-            };
+            let item = {};
+            addItemArgs.forEach((prop, index) => {
+                item[prop] = args[index];
+            });
+            items[args[0]] = item;
+            console.log(item);
         }
         this.setState({ items });
     }
 
+    /**
+     * Called when the user navigates
+     * to a specific tab by the id.
+     * @param {*} e
+     */
     navigate(e) {
-        usingTextBox = false;
         const currentTab = e.target.id * 1;
-        this.setState({ currentTab, renaming: false });
+        this.setState({ currentTab, renaming: false, usingTextBox: false });
     }
 
-    clickItem(e) {
+    /**
+     * Called when a user left-clicks
+     * or right-clicks an item.
+     * @param {*} e
+     */
+    click(e) {
+        // Context Menu
         if (e.which === 3) {
-            this.openItemContext(e);
+            if (e.target.className.includes('item-place')) return;
+            this.setState({
+                itemContext: true,
+                contextX: e.clientX,
+                contextY: e.clientY,
+                contextItem: e.target.id
+            });
+            window.addEventListener('mousedown', this.clearcontext);
             return;
         }
 
-        this.beginDragState(e);
-    }
-
-    openItemContext(e) {
-        if (e.target.className.includes('item-place')) return;
-        this.setState({
-            itemContext: true,
-            contextX: e.clientX,
-            contextY: e.clientY,
-            contextItem: e.target.id
-        });
-        window.addEventListener('mousedown', this.clearcontext);
-    }
-
-    closeContext(e) {
-        if (e.which === 3) return;
-
-        window.removeEventListener('mousedown', this.clearcontext);
-        if (e.target.className.includes('context-item')) return;
-
-        this.setState({
-            itemContext: false,
-            contextItem: undefined
-        });
-    }
-
-    beginDragState(e) {
+        // Dragging State
         if (e.target.className.includes('item-place')) return;
         this.setState({
             itemContext: false,
@@ -250,8 +309,15 @@ class App extends Component {
         document.addEventListener('mousemove', this.mousemove);
     }
 
+    /**
+     * Called when an item is dropped
+     * from the context menu.
+     * Takes into account the drop
+     * amount at the bottom of the
+     * inventory.
+     */
     drop() {
-        let result = this.subItem(this.state.contextItem, this.state.quantity);
+        let result = this.subtractItem(this.state.contextItem, this.state.quantity);
         if (!result.result) return;
 
         this.setState({ itemContext: false, contextItem: undefined });
@@ -260,8 +326,12 @@ class App extends Component {
         }
     }
 
+    /**
+     * Called when an item is used
+     * from the context menu.
+     */
     use() {
-        let result = this.subItem(this.state.contextItem, 1);
+        let result = this.subtractItem(this.state.contextItem, 1);
         if (!result.result) return;
 
         this.setState({ itemContext: false, contextItem: undefined });
@@ -270,16 +340,26 @@ class App extends Component {
         }
     }
 
+    /**
+     * Called when an item is
+     * renamed from context
+     * menu.
+     */
     rename() {
-        usingTextBox = true;
         this.setState({
             itemContext: false,
-            renaming: true
+            renaming: true,
+            usingTextBox: true
         });
     }
 
+    /**
+     * Called when an item is
+     * destroyed from context
+     * menu.
+     */
     destroy() {
-        let result = this.subItem(this.state.contextItem, 1);
+        let result = this.subtractItem(this.state.contextItem, 1);
         if (!result.result) return;
 
         this.setState({ itemContext: false, contextItem: undefined });
@@ -288,7 +368,15 @@ class App extends Component {
         }
     }
 
-    subItem(itemIndex, quantity) {
+    /**
+     * Called when an item is
+     * dropped or destroyed.
+     * Mimics what happens on
+     * server-side.
+     * @param {*} itemIndex
+     * @param {*} quantity
+     */
+    subtractItem(itemIndex, quantity) {
         let items = [...this.state.items];
         const item = items[itemIndex];
 
@@ -311,11 +399,21 @@ class App extends Component {
         return { hash: item.hash, result: true };
     }
 
+    /**
+     * Called when the drop quantity is changed.
+     * @param {*} e
+     */
     quantityChange(e) {
         this.setState({ quantity: e.target.value });
     }
 
-    renameChange(e) {
+    /**
+     * Called when a user is
+     * renaming their item.
+     * Takes anything but a Symbol.
+     * @param {*} e
+     */
+    renameInput(e) {
         let value = e.target.value + '';
         if (value.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
             this.setState({ newname: '' });
@@ -324,7 +422,10 @@ class App extends Component {
         this.setState({ newname: e.target.value });
     }
 
-    parseRename() {
+    /**
+     * Parses the renamed item.
+     */
+    renameParse() {
         let items = [...this.state.items];
         const index = this.state.contextItem;
         const hash = this.state.items[index].hash;
@@ -332,14 +433,23 @@ class App extends Component {
 
         items[index].label = name;
 
-        this.setState({ renaming: false, contextItem: undefined, newname: '' });
-        usingTextBox = false;
+        this.setState({
+            renaming: false,
+            contextItem: undefined,
+            newname: '',
+            usingTextBox: false
+        });
 
         if ('alt' in window) {
             alt.emit('inventory:Rename', hash, name);
         }
     }
 
+    /**
+     * Called when the user releases
+     * their mouse from dragging.
+     * @param {*} e
+     */
     release(e) {
         if (!this.state.dragging) return;
         document.removeEventListener('mousemove', this.mousemove);
@@ -353,7 +463,7 @@ class App extends Component {
 
         // Head Slot
         if (parseInt(dropIndex) >= 28) {
-            if (!this.handleSlot(dragItem, parseInt(dropIndex))) {
+            if (dragItem.slot !== parseInt(dropIndex)) {
                 this.setState({ items, dragging: undefined, targetHover: -1 });
                 return;
             }
@@ -378,11 +488,11 @@ class App extends Component {
         this.setState({ items, dragging: undefined, targetHover: -1 });
     }
 
-    handleSlot(item, targetSlot) {
-        if (item.slot !== targetSlot) return false;
-        return true;
-    }
-
+    /**
+     * Only called in the dragging state
+     * of an item.
+     * @param {*} e
+     */
     mousemove(e) {
         if (this.state.dragging) {
             this.setState({ mX: e.clientX, mY: e.clientY, targetHover: e.target.id });
@@ -391,6 +501,11 @@ class App extends Component {
         }
     }
 
+    /**
+     * Used for hovering over
+     * various items.
+     * @param {*} e
+     */
     mouseover(e) {
         let info = this.state.items[e.target.id]
             ? this.state.items[e.target.id].label
@@ -409,6 +524,11 @@ class App extends Component {
         });
     }
 
+    /**
+     * Clear's the mouse over when the id
+     * is not of the 'context' type.
+     * @param {*} e
+     */
     clearmouseover(e) {
         if (e.target.id === 'context') return;
 
@@ -436,56 +556,27 @@ class App extends Component {
                 h(
                     'div',
                     { class: 'navcon' },
-
-                    h(
-                        'div',
-                        {
-                            class:
-                                this.state.currentTab === 0
-                                    ? 'navtab navfocus'
-                                    : 'navtab',
-                            id: 0,
-                            onclick: this.navigate.bind(this)
-                        },
-                        'Inventory'
-                    ),
-                    h(
-                        'div',
-                        {
-                            class:
-                                this.state.currentTab === 1
-                                    ? 'navtab navfocus'
-                                    : 'navtab',
-                            id: 1,
-                            onclick: this.navigate.bind(this)
-                        },
-                        'Stats'
-                    ),
-                    h(
-                        'div',
-                        {
-                            class:
-                                this.state.currentTab === 2
-                                    ? 'navtab navfocus'
-                                    : 'navtab',
-                            id: 2,
-                            onclick: this.navigate.bind(this)
-                        },
-                        'Profile'
-                    )
+                    h(NavTab, {
+                        id: 0,
+                        currentTab: this.state.currentTab,
+                        onclick: this.navigate.bind(this),
+                        name: 'Inventory'
+                    }),
+                    h(NavTab, {
+                        id: 1,
+                        currentTab: this.state.currentTab,
+                        onclick: this.navigate.bind(this),
+                        name: 'Stats'
+                    }),
+                    h(NavTab, {
+                        id: 2,
+                        currentTab: this.state.currentTab,
+                        onclick: this.navigate.bind(this),
+                        name: 'Profile'
+                    })
                 ),
                 h('div', { class: 'navcon' }, h('div', { class: 'navtitle' }, 'Info'))
             ),
-            this.state.dragging &&
-                h(
-                    'div',
-                    {
-                        class: 'item-dragging',
-                        style: `left: ${this.state.mX - 37.5}px; top: ${this.state.mY -
-                            37.5}px;`
-                    },
-                    `${this.state.items[this.state.dragging].label}`
-                ),
             h(
                 'div',
                 { class: 'panels' },
@@ -493,124 +584,12 @@ class App extends Component {
                 h(
                     'div',
                     { class: 'panelcon' },
-                    h(
-                        'div',
-                        { class: 'equip-panel' },
-                        h(Equipment, {
-                            id: 28,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'hat'
-                        }),
-                        h(Equipment, {
-                            id: 34,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'accessory'
-                        }),
-                        h(Equipment, {
-                            id: 29,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'bandana'
-                        }),
-
-                        h(Equipment, {
-                            id: 35,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'earring'
-                        }),
-                        h(Equipment, {
-                            id: 30,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'shirt'
-                        }),
-
-                        h(Equipment, {
-                            id: 33,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'body-armour'
-                        }),
-                        h(Equipment, {
-                            id: 31,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'trousers'
-                        }),
-                        h(Equipment, {
-                            id: 36,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'backpack'
-                        }),
-                        h(Equipment, {
-                            id: 32,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'chelsea-boot'
-                        }),
-                        h(Equipment, {
-                            id: 37,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'hand'
-                        }),
-                        h(Equipment, {
-                            id: 38,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: `watch`
-                        }),
-                        h(Equipment, {
-                            id: 39,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'bracelet'
-                        }),
-                        h(Equipment, {
-                            id: 40,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'glasses'
-                        }),
-                        h(Equipment, {
-                            id: 41,
-                            state: this.state,
-                            click: this.clickItem.bind(this),
-                            release: this.release.bind(this),
-                            mouseover: this.mouseover.bind(this),
-                            icon: 'outfit'
-                        })
-                    )
+                    h(CreateEquipment, {
+                        state: this.state,
+                        click: this.click.bind(this),
+                        release: this.release.bind(this),
+                        mouseover: this.mouseover.bind(this)
+                    })
                 ),
                 // ===> CENTER PANEL
                 h(
@@ -631,7 +610,7 @@ class App extends Component {
                                     class: 'inputname',
                                     value: this.state.newname,
                                     maxlength: '20',
-                                    oninput: this.renameChange.bind(this)
+                                    oninput: this.renameInput.bind(this)
                                 }),
                                 h(
                                     'button',
@@ -639,7 +618,7 @@ class App extends Component {
                                         type: 'text',
                                         class: 'rename-button',
                                         maxlength: 20,
-                                        onclick: this.parseRename.bind(this)
+                                        onclick: this.renameParse.bind(this)
                                     },
                                     'Submit'
                                 )
@@ -649,7 +628,7 @@ class App extends Component {
                         this.state.currentTab === 0 &&
                         h(Items, {
                             state: this.state,
-                            click: this.clickItem.bind(this),
+                            click: this.click.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this)
                         }),
@@ -725,6 +704,7 @@ class App extends Component {
             ),
             // ===> Context Menu
             this.state.itemContext &&
+                // Context Menu Div
                 h(ItemContext, {
                     contextItem: this.state.items[this.state.contextItem],
                     use: this.use.bind(this),
@@ -733,7 +713,10 @@ class App extends Component {
                     rename: this.rename.bind(this),
                     contextX: this.state.contextX,
                     contextY: this.state.contextY
-                })
+                }),
+            this.state.dragging &&
+                // Item Dragging Div
+                h(ItemDrag, { state: this.state })
         );
     }
 }
@@ -825,6 +808,43 @@ const ItemContext = ({ contextItem, use, drop, destroy, rename, contextX, contex
         contextItem.rename &&
             h('div', { id: 'context', class: 'context-item', onclick: rename }, 'Rename')
     );
+};
+
+const NavTab = ({ id, currentTab, onclick, name }) => {
+    return h(
+        'div',
+        {
+            class: currentTab === id ? 'navtab navfocus' : 'navtab',
+            id,
+            onclick: onclick.bind(this)
+        },
+        name
+    );
+};
+
+const ItemDrag = ({ state }) => {
+    return h(
+        'div',
+        {
+            class: 'item-dragging',
+            style: `left: ${state.mX - 37.5}px; top: ${state.mY - 37.5}px;`
+        },
+        `${state.items[state.dragging].label}`
+    );
+};
+
+const CreateEquipment = ({ state, click, release, mouseover }) => {
+    const elements = inventorySlots.map(item => {
+        return h(Equipment, {
+            state,
+            click,
+            release,
+            mouseover,
+            id: item.id,
+            icon: item.icon
+        });
+    });
+    return h('div', { class: 'equip-panel' }, elements);
 };
 
 const Equipment = ({ state, click, release, mouseover, id, icon }) => {

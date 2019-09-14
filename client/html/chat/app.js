@@ -92,10 +92,12 @@ class App extends Component {
         };
 
         appendMessageSpecial = msg => {
+            if (!msg) return;
             this.appendMessage(msg);
         };
 
         appendMessage = msg => {
+            if (!msg) return;
             msg = colorify(msg);
             this.appendMessage({ message: msg });
         };

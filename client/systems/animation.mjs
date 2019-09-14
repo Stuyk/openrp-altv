@@ -43,9 +43,9 @@ export function playAnimation(player, dictionary, name, durationInMS, flag) {
             durationInMS,
             flag,
             1.0,
-            true,
-            true,
-            true
+            false,
+            false,
+            false
         );
     });
 }

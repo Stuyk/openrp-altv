@@ -266,3 +266,85 @@ input[type='range']::-webkit-slider-runnable-track {
     cursor: pointer;
     background: rgba(255, 255, 255, 0.15);
 }
+
+/*********************************/
+/********      BASKET     ********/
+/*********************************/
+
+.basket {
+    position: fixed;
+    width: 10vw;
+    right: calc(-10vw - 25px);
+    bottom: 6vh;
+    margin: 25px;
+    background: @dark;
+    text-align: center;
+    font-size: 12px;
+    line-height: 5vh;
+    max-height: calc(88vh - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: right 0.2s;
+
+    &.show {
+        right: 0;
+    }
+
+    .basket-title {
+        .title {
+            font-size: 16px;
+            font-family: @fontface;
+            font-weight: 100;
+            color: @contrast1;
+        }
+    }
+
+    hr {
+        border-color: @contrast1;
+        margin: 0;
+    }
+
+    .basket-item {
+        padding: 0 10px;
+        position: relative;
+
+        .remove {
+            position: absolute;
+            right: 10px;
+            border: 1px solid white;
+            bottom: calc(2.5vh - 12px);
+            line-height: 12px;
+            padding: 5px;
+            width: 12px;
+            height: 12px;
+            transition: 0.2s;
+
+            &:hover {
+                border: 1px solid red;
+                color: red;
+                cursor: pointer;
+            }
+        }
+
+        .basket-label {
+            text-align: left;
+            transition: padding 0.2s;
+            padding-left: 0;
+        }
+
+        &:hover {
+            .basket-label {
+                padding-left: 10px;
+            }
+        }
+    }
+
+    .basket-purchase {
+        transition: color 0.2s;
+        cursor: pointer;
+
+        &:hover {
+            color: @contrast1;
+        }
+    }
+}

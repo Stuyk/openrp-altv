@@ -177,7 +177,8 @@ class App extends Component {
             message: 'loading...',
             hairChanged: false,
             clothingData: [],
-            sex: 0
+            sex: 0,
+            basket: []
         };
     }
 
@@ -196,8 +197,9 @@ class App extends Component {
         }
     }
 
-    purchase(e) {
+    basket(e) {
         let props = {
+            label: this.state.clothingData[e.target.id].label,
             description: 'Clothing Item',
             isProp: this.state.clothingData[e.target.id].isProp,
             restriction: this.state.sex
@@ -234,15 +236,36 @@ class App extends Component {
             props.male = data;
         }
 
-        if ('alt' in window) {
-            alt.emit('clothing:Purchase', JSON.stringify(props));
-        } else {
-            console.log(JSON.stringify(props));
-        }
+        this.state.basket.push(props);
+        this.setState(this.state.basket);
 
         setTimeout(() => {
             this.forceClothing();
         }, 200);
+    }
+
+    purchase() {
+        this.state.basket.forEach((item, index) => {
+            if ('alt' in window) {
+                alt.emit('clothing:Purchase', JSON.stringify(item));
+            } else {
+                console.log(JSON.stringify(item));
+            }
+        })
+
+        this.state.basket = [];
+        this.setState(this.state.basket);
+    }
+
+    removeItem(e) {
+        let index = e.target.id;
+
+        if (this.state.basket[index]) {
+            this.state.basket.splice(index, 1);
+        }
+
+        console.log(this.state.basket.length);
+        this.setState(this.state.basket);
     }
 
     setSex(sex) {
@@ -291,7 +314,7 @@ class App extends Component {
 
     forceClothing() {
         let clothingData = [...this.state.clothingData];
-        console.log(clothingData.length);
+        //console.log(clothingData.length);
 
         clothingData.forEach((item, index) => {
             if (item.label.includes('Texture')) return;
@@ -304,7 +327,7 @@ class App extends Component {
                     clothingData[index].isProp
                 );
             } else {
-                console.log(item);
+                //console.log(item);
             }
         });
     }
@@ -373,8 +396,20 @@ class App extends Component {
                 h(ClothingList, {
                     clothingData: this.state.clothingData,
                     setItemValue: this.setItemValue.bind(this),
-                    purchase: this.purchase.bind(this)
+                    basket: this.basket.bind(this)
                 })
+            ),
+            h(
+                'div',
+                { class: `basket scroll ${this.state.basket.length ? 'show' : null}` },
+                h('div', { class: 'basket-title' }, h('h1', { class: 'title' }, 'Basket')),
+                h('hr'),
+                h(ShoppingBasket, {
+                    basket: this.state.basket,
+                    removeItem: this.removeItem.bind(this)
+                }),
+                h('hr'),
+                h('div', { class: 'basket-purchase', onclick: this.purchase.bind(this) }, 'Purchase')
             ),
             h('div', { class: 'footer', onclick: this.submitChanges.bind(this) }, 'Exit')
         );
@@ -382,16 +417,16 @@ class App extends Component {
     }
 }
 
-const ClothingList = ({ clothingData, setItemValue, purchase }) => {
+const ClothingList = ({ clothingData, setItemValue, basket }) => {
     const itemList = clothingData.map((item, index) =>
-        h(ClothingItem, { index, item, setItemValue, purchase })
+        h(ClothingItem, { index, item, setItemValue, basket })
     );
 
     return h('div', null, itemList);
 };
 
 // Items to Display in a Group
-const ClothingItem = ({ index, item, setItemValue, purchase }) => {
+const ClothingItem = ({ index, item, setItemValue, basket }) => {
     left = () => {
         setItemValue(index, false);
     };
@@ -435,12 +470,42 @@ const ClothingItem = ({ index, item, setItemValue, purchase }) => {
                 !item.label.includes('Undershirt') &&
                 h(
                     'button',
-                    { class: 'buy', id: `${index}`, onclick: purchase.bind(this) },
-                    `Purchase`
+                    { class: 'buy', id: `${index}`, onclick: basket.bind(this) },
+                    `Put into basket`
                 )
         )
     );
 };
+
+const ShoppingBasket = ({ basket, removeItem }) => {
+    const basketList = basket.map((item, index) => 
+        h(BasketItem, { index, item, removeItem })
+    );
+
+    return h('div', null, basketList)
+}
+
+// Items to Display in the Basket
+const BasketItem = ({ index, item, removeItem }) => {
+    return h(
+        'div',
+        { class: 'basket-item' },
+        h(
+            'div',
+            { class: 'basket-label' },
+            `${item.label}`
+        ),
+        h(
+            'div',
+            {
+                class: 'remove',
+                id: `${index}`,
+                onclick: removeItem.bind(this)
+            },
+            'X'
+        )
+    )
+}
 
 render(h(App), document.querySelector('#render'));
 

@@ -87,59 +87,8 @@ export function finishPlayerLogin(player, databaseID) {
 
 // Called for any existing characters.
 function existingCharacter(player, data) {
-    const lastPos = JSON.parse(data.lastposition);
-    player.setSyncedMeta('loggedin', true);
-    player.needsRoleplayName = true;
-    player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
-    player.vehicles = [];
-
-    // Set player name.
-    if (data.name !== null) {
-        player.needsRoleplayName = false;
-        player.setSyncedMeta('name', data.name);
-        alt.log(`${data.name} has spawned.`);
-    }
-
-    // Check if the player has a face.
-    if (data.face === null) {
-        console.log('No Face');
-        player.model = 'mp_f_freemode_01';
-        player.isNewPlayer = true;
-        player.showFaceCustomizerDialogue(lastPos);
-    } else {
-        player.applyFace(data.face);
-
-        if (player.needsRoleplayName) {
-            player.showRoleplayNameDialogue();
-        }
-    }
-
-    // Fixes any 'string' issue that may arise.
-    data.cash = data.cash * 1;
-    data.bank = data.bank * 1;
-
-    // Make sure they spawn dead.
-    player.loginHealth = setTimeout(() => {
-        if (data.dead) {
-            player.health = 0;
-        } else {
-            player.health = data.health;
-            player.armour = data.armour;
-        }
-    }, 5000);
-
-    // Setup data on the player.
     player.data = data;
-    player.dimension = 0;
-    player.startTime = Date.now(); // Used for time tracking
-    player.syncInventory();
-    player.screenFadeIn(1000);
-    player.syncVehicles();
-    player.syncMoney();
-    player.syncInteractionBlips();
-    player.updateTime();
-    player.disableEngineControl();
-    player.setLastLogin();
+    player.emitMeta('loggedin', true);
 }
 
 export function removeLoggedInPlayer(username) {
@@ -149,4 +98,75 @@ export function removeLoggedInPlayer(username) {
 
     let removedUser = LoggedInPlayers.splice(res, 1);
     console.log(`${removedUser} was was logged out.`);
+}
+
+/**
+ * This is called after the chat is started.
+ * It's called from a client-side event.
+ * @param player
+ */
+export function sync(player) {
+    if (player.synced) return;
+    player.synced = true;
+
+    // Setup Position
+    const lastPos = JSON.parse(player.data.lastposition);
+    player.needsRoleplayName = true;
+    player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
+
+    // Set player name.
+    if (player.data.name !== null) {
+        player.needsRoleplayName = false;
+        player.setSyncedMeta('name', player.data.name);
+        alt.log(`${player.data.name} has spawned.`);
+    }
+
+    // Check if the player has a face.
+    if (player.data.face === null) {
+        player.model = 'mp_f_freemode_01';
+        player.isNewPlayer = true;
+
+        let timeout = setTimeout(() => {
+            if (!player) {
+                clearTimeout(timeout);
+                return;
+            }
+            player.showFaceCustomizerDialogue(lastPos);
+        }, 1500);
+    } else {
+        player.applyFace(player.data.face);
+
+        if (player.needsRoleplayName) {
+            player.showRoleplayNameDialogue();
+        }
+    }
+
+    // Fixes any 'string' issue that may arise.
+    player.data.cash = player.data.cash * 1;
+    player.data.bank = player.data.bank * 1;
+
+    // Setup data on the player.
+    player.dimension = 0;
+    player.startTime = Date.now(); // Used for time tracking
+    player.spawnVehicles();
+    player.screenFadeIn(1000);
+    player.setLastLogin();
+    player.updateTime();
+    player.syncInteractionBlips();
+    player.syncInventory(true);
+    player.syncMoney();
+
+    // Setup Health / Armor
+    let timeout = setTimeout(() => {
+        if (!player) clearTimeout(timeout);
+
+        if (player.data.dead) {
+            player.health = 0;
+            player.armour = 0;
+            player.send('You last logged out as dead.');
+        } else {
+            player.health = player.data.health;
+            player.armour = player.data.armour;
+        }
+    }, 1500);
 }

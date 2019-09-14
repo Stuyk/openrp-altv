@@ -1,6 +1,4 @@
 import * as alt from 'alt';
-import * as native from 'natives';
-import * as chat from 'client/panels/chat.mjs';
 import { View } from 'client/utility/view.mjs';
 import { Camera } from 'client/utility/camera.mjs';
 
@@ -14,7 +12,12 @@ let yaw = 0;
 let interval;
 
 export function showDialogue(regCamCoord) {
-    webview = new View(url);
+    if (!webview) {
+        webview = new View();
+    }
+
+    // Setup Webview
+    webview.open(url, true);
     webview.on('registerAccount', registerAccount);
     webview.on('existingAccount', existingAccount);
     webview.on('ready', () => {
@@ -60,12 +63,6 @@ export function closeDialogue() {
     alt.offServer('register:ShowError', showError);
     alt.offServer('register:ShowSuccess', showSuccess);
     alt.offServer('register:CloseDialogue', closeDialogue);
-
-    // Turn on Chat
-    chat.toggleDialogue();
-
-    // Set the Registration Panel Status Off
-    alt.emit('panel:SetStatus', 'registration', false);
 }
 
 // Send error message to the WebView.

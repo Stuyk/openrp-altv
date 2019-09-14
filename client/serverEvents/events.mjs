@@ -23,6 +23,8 @@ import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as panelsClothing from 'client/panels/clothing.mjs';
 import * as panelsCharacter from 'client/panels/character.mjs';
 
+import * as meta from 'client/meta/meta.mjs';
+
 // Utility
 import * as utilityScreenFades from 'client/utility/screenfades.mjs';
 
@@ -63,11 +65,6 @@ alt.onServer('respawn:ClearPedBloodDamage', panelsCharacter.clearPedBloodDamage)
 alt.onServer('face:ShowDialogue', panelsCharacter.showDialogue);
 
 // =======================================================
-// CHARACTER SPECIFIC EVENTS
-// Parses the users face information and applies it to the ped.
-alt.onServer('face:ApplyFacialData', systemsCharacter.applyFacialData);
-
-// =======================================================
 // Screen Fade Effects, self explanatory; mostly takes millisecond parameters.
 alt.onServer('screen:FadeOut', utilityScreenFades.fadeOut);
 alt.onServer('screen:FadeIn', utilityScreenFades.fadeIn);
@@ -98,10 +95,6 @@ alt.onServer('clothing:ShowDialogue', panelsClothing.showDialogue);
 alt.onServer('clothing:CloseDialogue', panelsClothing.closeDialogue);
 
 // =======================================================
-// Clothing Events
-alt.onServer('clothing:SyncClothing', systemsCharacter.syncClothing);
-
-// =======================================================
 // Inventory
 // Sync
 alt.onServer('inventory:FetchItems', panelsInventory.fetchItems);
@@ -124,9 +117,13 @@ alt.onServer('animation:PlayAnimation', systemsAnimation.playAnimation);
 alt.onServer('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onServer('vehicle:Eject', systemsVehicles.eject);
 alt.onServer('vehicle:Repair', systemsVehicles.repair);
-alt.onServer('vehicle:DisableEngineControl', systemsVehicles.disableEngineControl);
 alt.onServer('vehicle:StartEngine', systemsVehicles.startEngine);
 
 // =======================================================
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
+alt.onServer('chat:SetStatus', panelsChat.setStatus);
+
+// =======================================================
+// Global
+alt.onServer('meta:Emit', meta.emit);

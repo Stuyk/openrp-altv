@@ -9,9 +9,14 @@ let webview;
 
 // Show the Dialogue for the ATM Menu.
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
+    if (!webview) {
+        webview = new View();
+    }
+
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
     // Load Webview
-    webview = new View(url);
+    webview.open(url);
     webview.on('atm:Withdraw', withdrawBalance);
     webview.on('atm:Deposit', depositBalance);
     webview.on('atm:Ready', atmReady);
@@ -19,13 +24,11 @@ export function showDialogue() {
 
 // Update the cash value on the Webview.
 export function updateCash(value) {
-    alt.log(value);
     webview.emit('setCash', value);
 }
 
 // Show the bank value for the atm menu.
 export function updateBank(value) {
-    alt.log(value);
     webview.emit('setBank', value);
 }
 

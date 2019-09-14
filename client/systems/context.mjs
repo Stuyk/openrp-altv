@@ -65,6 +65,8 @@ export class ContextMenu {
             }
 
             if (this.isHovered(_x, yPos) && index >= 1) {
+                native.setMouseCursorSprite(5);
+
                 native.drawRect(
                     _x,
                     _y + this.height * index,
@@ -168,27 +170,24 @@ export class ContextMenu {
     }
 }
 
-alt.setInterval(useMenu, 1);
+let interval;
+
+export function toggleInterval() {
+    if (interval) {
+        alt.clearInterval(interval);
+        interval = undefined;
+        currentContext = undefined;
+    } else {
+        interval = alt.setInterval(useMenu, 0);
+    }
+}
 
 function useMenu() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-
-    if (native.isControlPressed(0, 20)) {
-        drawCursor = true;
-        native.setMouseCursorSprite(1);
-    }
-
-    if (native.isControlJustReleased(0, 20)) {
-        drawCursor = false;
-        currentContext = undefined;
-        native.setMouseCursorSprite(1);
-    }
+    native.setMouseCursorSprite(1);
 
     if (currentContext !== undefined) {
         currentContext.render();
     }
-
-    if (!drawCursor) return;
 
     native.setMouseCursorActiveThisFrame();
     native.disableControlAction(0, 24, true); // Left Mouse
@@ -208,14 +207,14 @@ function useMenu() {
     if (!_hit) {
         native.setMouseCursorSprite(1);
         return;
+    } else {
+        native.setMouseCursorSprite(3);
     }
 
     if (utilityVector.distance(alt.Player.local.pos, _endCoords) > 5) {
         native.setMouseCursorSprite(1);
         return;
     }
-
-    native.setMouseCursorSprite(3);
 
     // Right Clicking
     if (native.isDisabledControlJustPressed(0, 25)) {

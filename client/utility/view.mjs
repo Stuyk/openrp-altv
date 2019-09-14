@@ -4,36 +4,26 @@ import { showCursor } from 'client/utility/cursor.mjs';
 
 alt.log('Loaded: client->utility->view.mjs');
 
-let isChatOpen = false;
-
-alt.on('chat:IsOpen', value => {
-    isChatOpen = value;
-});
-
 export let currentView;
 export class View {
-    constructor(url, killControls = true) {
+    constructor() {
+        if (alt.Player.local.getMeta('chat')) return;
         if (currentView === undefined) {
             currentView = this;
-            currentView.view = new alt.WebView(url);
-            currentView.events = [];
-            currentView.on('close', currentView.close);
         }
+        return currentView;
+    }
 
-        if (currentView.focused) return;
-        if (isChatOpen) return;
-
-        if (currentView.view === undefined) {
-            currentView.view = new alt.WebView(url);
-            currentView.events = [];
-            currentView.on('close', currentView.close);
-        }
-
+    open(url, killControls = true) {
+        if (currentView.view) return;
+        alt.Player.local.setMeta('viewOpen', true);
         alt.emit('chat:Toggle');
+        currentView.view = new alt.WebView(url);
+        currentView.events = [];
+        currentView.on('close', currentView.close);
         currentView.view.url = url;
         currentView.view.isVisible = true;
         currentView.view.focus();
-        currentView.focused = true;
         currentView.ready = true;
         showCursor(true);
         native.displayRadar(false);
@@ -41,7 +31,6 @@ export class View {
             currentView.gameControls = this.toggleGameControls.bind(this);
             currentView.interval = alt.setInterval(currentView.gameControls, 0);
         }
-        return currentView;
     }
 
     // Close view and hide.
@@ -59,17 +48,12 @@ export class View {
         currentView.view.unfocus();
         currentView.view.destroy();
         currentView.view = undefined;
-        currentView.focused = false;
+        alt.Player.local.setMeta('viewOpen', false);
         alt.emit('chat:Toggle');
         if (currentView.interval !== undefined) {
             alt.clearInterval(currentView.interval);
             currentView.interval = undefined;
         }
-    }
-
-    // Check if the view is focused.
-    isFocused() {
-        return currentView.focused;
     }
 
     // Bind on events, but don't turn off.

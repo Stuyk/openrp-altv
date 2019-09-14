@@ -29,6 +29,7 @@ let clearTask;
 let clearChatBox;
 
 function colorify(text) {
+    if (!text) return text;
     if (text.length <= 0) return text;
 
     let matches = [];
@@ -79,7 +80,7 @@ class App extends Component {
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 },
                 {
-                    message: 'Z + Right-Click to Interact',
+                    message: 'Press TAB to use context cursor.',
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 }
             ],
@@ -91,10 +92,12 @@ class App extends Component {
         };
 
         appendMessageSpecial = msg => {
+            if (!msg) return;
             this.appendMessage(msg);
         };
 
         appendMessage = msg => {
+            if (!msg) return;
             msg = colorify(msg);
             this.appendMessage({ message: msg });
         };
@@ -276,6 +279,10 @@ render(h(App), document.querySelector('#render'));
 
 // eslint-disable-next-line no-unused-vars
 function ready() {
+    if ('alt' in window) {
+        alt.emit('chat:Ready');
+    }
+
     document.getElementById('chat-input').focus();
     document.addEventListener('keyup', e => {
         // Enter

@@ -2,14 +2,20 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { View } from 'client/utility/view.mjs';
 
+const url = 'http://resource/client/html/vehiclecustom/index.html';
 let webview;
 let vehicleChanges = {};
 let previousVehicle = {};
 
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    if (webview) return;
-    webview = new View('http://resource/client/html/vehiclecustom/index.html', true);
+    if (!webview) {
+        webview = new View();
+    }
+
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
+    // Setup Webview
+    webview.open(url, true);
     webview.on('vehicle:FetchModList', buildModList);
     webview.on('vehicle:UpdateLocalVehicle', updateLocalVehicle);
     webview.on('vehicle:SaveChanges', saveChanges);

@@ -11,10 +11,14 @@ let webview;
 
 // Show the Dialogue for the Inventory
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    if (webview) return;
+    if (!webview) {
+        webview = new View();
+    }
 
-    webview = new View(url, true);
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
+    // Setup Webview
+    webview.open(url, true);
     webview.on('inventory:Drop', drop);
     webview.on('inventory:Use', use);
     webview.on('inventory:Destroy', destroy);
@@ -31,7 +35,7 @@ function setPosition(newIndexPosition, oldIndexPosition) {
 export function fetchItems() {
     if (webview === undefined) return;
 
-    let itemJSON = alt.Player.local.getSyncedMeta('inventory');
+    let itemJSON = alt.Player.local.getMeta('inventory');
     let itemArray = JSON.parse(itemJSON);
 
     webview.emit('clearitems');
@@ -42,6 +46,8 @@ export function fetchItems() {
             return;
         }
 
+        const canuse = item.useitem ? true : item.consumeable ? true : false;
+
         webview.emit(
             'inventory:AddItem',
             index,
@@ -51,8 +57,9 @@ export function fetchItems() {
             item.quantity,
             item.slot,
             item.rename,
-            item.useitem,
-            item.droppable
+            canuse,
+            item.droppable,
+            item.icon
         );
     });
 
@@ -61,7 +68,6 @@ export function fetchItems() {
 
 function exit() {
     webview.close();
-    webview = undefined;
 }
 
 function destroy(hash) {

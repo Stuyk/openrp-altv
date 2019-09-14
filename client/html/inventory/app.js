@@ -1,8 +1,31 @@
-const { createElement, render, Component } = preact;
-const h = createElement;
+const { render, Component, h } = preact;
 
 const maxItemLength = 128;
 let usingTextBox = false;
+const itemIcons = {
+    unknown: 'unknown',
+    fishingrod: 'fishingrod',
+    fish: 'fish',
+    granolabar: 'chocolate-bar',
+    coffee: 'coffee-cup',
+    soda: 'soda-can',
+    license: 'id-card',
+    weapon: 'weapon',
+    28: 'hat',
+    29: 'bandana',
+    30: 'shirt',
+    31: 'trousers',
+    32: 'chelsea-boot',
+    33: 'body-armour',
+    34: 'accessory',
+    35: 'earring',
+    36: 'backpack',
+    37: 'hand',
+    38: 'watch',
+    39: 'bracelet',
+    40: 'glasses',
+    41: 'outfit'
+};
 
 function ready() {
     if ('alt' in window) {
@@ -41,14 +64,38 @@ class App extends Component {
             alt.on('inventory:ClearItems', this.clearItems.bind(this));
             alt.on('inventory:AddItem', this.addItem.bind(this));
         } else {
-            this.addItem(0, 'Fish', '2151251', { description: 'Whatever' }, 1);
-            this.addItem(1, 'Fishing Rod', '2151251', { description: 'Whatever' }, 1, 37);
+            // _index,label,hash,props,quantity,equipSlot,
+            // rename,useitem,droppable,icon
+            this.addItem(
+                0,
+                'Fish',
+                '2151251',
+                { description: 'Whatever' },
+                2,
+                undefined,
+                false,
+                false,
+                true,
+                'fish'
+            );
+            this.addItem(
+                1,
+                'Fishing Rod',
+                '2151251',
+                { description: 'Whatever' },
+                1,
+                37,
+                false,
+                false,
+                true,
+                'fishingrod'
+            );
             this.addItem(
                 2,
                 'Really Ugly Fish',
                 '2151251',
                 { description: 'Whatever' },
-                1
+                2
             );
             this.addItem(
                 3,
@@ -88,13 +135,24 @@ class App extends Component {
         window.addEventListener('keyup', this.closeInventory.bind(this));
     }
 
+    playAudio(name) {
+        if ('alt' in window) {
+            const audio = new Audio(`../sound/sounds/${name}.ogg`);
+            audio.play();
+        }
+    }
+
     closeInventory(e) {
-        if (e.keyCode !== 'I'.charCodeAt(0)) return;
         if (usingTextBox) return;
 
-        if ('alt' in window) {
-            alt.emit('inventory:SavePositions', this.state.items);
+        if (e.keyCode === 'I'.charCodeAt(0)) {
             alt.emit('inventory:Exit');
+            return;
+        }
+
+        if (e.keyCode === 27) {
+            alt.emit('inventory:Exit');
+            return;
         }
     }
 
@@ -119,7 +177,8 @@ class App extends Component {
             slot,
             rename,
             useitem,
-            droppable
+            droppable,
+            icon
         ] = args;
         let items = [...this.state.items];
 
@@ -134,7 +193,8 @@ class App extends Component {
                 slot,
                 rename,
                 useitem,
-                droppable
+                droppable,
+                icon
             };
         }
         this.setState({ items });
@@ -339,6 +399,10 @@ class App extends Component {
             ? this.state.items[e.target.id].props
             : '';
 
+        if (info !== 'Empty') {
+            this.playAudio('tick');
+        }
+
         this.setState({
             info,
             desc
@@ -438,7 +502,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Hat'
+                            icon: 'hat'
                         }),
                         h(Equipment, {
                             id: 34,
@@ -446,7 +510,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Accessory'
+                            icon: 'accessory'
                         }),
                         h(Equipment, {
                             id: 29,
@@ -454,7 +518,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Helmet / Mask'
+                            icon: 'bandana'
                         }),
 
                         h(Equipment, {
@@ -463,7 +527,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Ears'
+                            icon: 'earring'
                         }),
                         h(Equipment, {
                             id: 30,
@@ -471,7 +535,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Shirt'
+                            icon: 'shirt'
                         }),
 
                         h(Equipment, {
@@ -480,7 +544,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Body Armor'
+                            icon: 'body-armour'
                         }),
                         h(Equipment, {
                             id: 31,
@@ -488,7 +552,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Pants'
+                            icon: 'trousers'
                         }),
                         h(Equipment, {
                             id: 36,
@@ -496,7 +560,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Backpack'
+                            icon: 'backpack'
                         }),
                         h(Equipment, {
                             id: 32,
@@ -504,7 +568,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Shoes'
+                            icon: 'chelsea-boot'
                         }),
                         h(Equipment, {
                             id: 37,
@@ -512,7 +576,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Hand'
+                            icon: 'hand'
                         }),
                         h(Equipment, {
                             id: 38,
@@ -520,7 +584,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Watch'
+                            icon: `watch`
                         }),
                         h(Equipment, {
                             id: 39,
@@ -528,7 +592,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Bracelet'
+                            icon: 'bracelet'
                         }),
                         h(Equipment, {
                             id: 40,
@@ -536,7 +600,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Glasses'
+                            icon: 'glasses'
                         }),
                         h(Equipment, {
                             id: 41,
@@ -544,7 +608,7 @@ class App extends Component {
                             click: this.clickItem.bind(this),
                             release: this.release.bind(this),
                             mouseover: this.mouseover.bind(this),
-                            slotName: 'Uniform'
+                            icon: 'outfit'
                         })
                     )
                 ),
@@ -558,7 +622,7 @@ class App extends Component {
                         h(
                             'div',
                             { class: 'renamecon' },
-                            h('div', { class: 'input-label' }, 'Drop Amount'),
+                            h('div', { class: 'input-label' }, 'Rename Item'),
                             h(
                                 'div',
                                 { class: 'rename-group' },
@@ -696,14 +760,41 @@ const Items = ({ state, click, release, mouseover }) => {
         return h(
             'div',
             {
-                class: index === state.dragging * 1 ? 'item item-dragged' : 'item',
+                class:
+                    index === state.dragging * 1 ? 'item item-dragged' : 'item non-equip',
                 id: index,
                 onmousedown: click.bind(this),
                 onmouseup: release.bind(this),
                 onmouseover: mouseover.bind(this)
             },
-            item.label,
-            h('div', { class: 'item-quantity' }, `x${item.quantity}`)
+
+            item.quantity >= 2 &&
+                h('div', { class: 'item-quantity' }, `x${item.quantity}`),
+            item.slot >= 28 &&
+                !item.icon &&
+                h(
+                    'object',
+                    {
+                        type: 'image/svg+xml',
+                        class: `svg ${itemIcons[item.slot]}`,
+                        style: `background: url('../icons/${itemIcons[item.slot]}.svg');`
+                    }
+                    //icon
+                ),
+            item.icon &&
+                h('object', {
+                    type: 'image/svg+xml',
+                    class: `svg ${itemIcons[item.icon]}`,
+                    style: `background: url('../icons/${itemIcons[item.icon]}.svg');`
+                }),
+            !item.icon &&
+                !item.slot &&
+                h('object', {
+                    type: 'image/svg+xml',
+                    class: `svg unknown`,
+                    style: `background: url('../icons/unknown.svg');`
+                }),
+            item.label
         );
     });
 
@@ -736,7 +827,7 @@ const ItemContext = ({ contextItem, use, drop, destroy, rename, contextX, contex
     );
 };
 
-const Equipment = ({ state, click, release, mouseover, id, slotName }) => {
+const Equipment = ({ state, click, release, mouseover, id, icon }) => {
     return h(
         'div',
         { class: 'single-item' },
@@ -744,13 +835,22 @@ const Equipment = ({ state, click, release, mouseover, id, slotName }) => {
             ? h(
                   'div',
                   {
-                      class: 'item',
+                      class: 'item equipped',
                       id: id,
                       onmousedown: click.bind(this),
                       onmouseup: release.bind(this),
                       onmouseover: mouseover.bind(this)
                   },
-                  state.items[id] ? state.items[id].label : slotName
+                  state.items[id] ? state.items[id].label : slotName,
+                  h(
+                      'object',
+                      {
+                          type: 'image/svg+xml',
+                          class: `svg ${icon}`,
+                          style: `background: url('../icons/${icon}.svg');`
+                      },
+                      icon
+                  )
               )
             : h(
                   'div',
@@ -758,15 +858,23 @@ const Equipment = ({ state, click, release, mouseover, id, slotName }) => {
                       class:
                           parseInt(state.targetHover) === id
                               ? parseInt(state.items[state.dragging].slot) === id
-                                ? 'item item-place item-hovered'
-                                : 'item item-place item-hovered-disabled'
+                                  ? 'item equipped-hover item-place item-hovered'
+                                  : 'item item-place item-hovered-disabled'
                               : 'item item-place',
                       id: id,
                       onmousedown: click.bind(this),
                       onmouseup: release.bind(this),
                       onmouseover: mouseover.bind(this)
                   },
-                  state.items[id] ? state.items[id].label : slotName
+                  h(
+                      'object',
+                      {
+                          type: 'image/svg+xml',
+                          class: `svg ${icon}`,
+                          style: `background: url('../icons/${icon}.svg'); cursor: grab;`
+                      },
+                      icon
+                  )
               )
     );
 };

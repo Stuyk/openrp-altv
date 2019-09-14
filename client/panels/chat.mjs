@@ -1,6 +1,5 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { currentView } from 'client/utility/view.mjs';
 
 alt.log('Loaded: client->panels->chat.mjs');
 
@@ -15,22 +14,32 @@ Do not use 'View' for this view. Chat needs to be
 decoupled from everything else.
 */
 
+alt.on('meta:Changed', turnOnChat);
+
+function turnOnChat(key, value) {
+    if (key !== 'loggedin') return;
+    alt.off('meta:Changed', turnOnChat);
+    toggleDialogue();
+}
+
 export function toggleDialogue() {
     if (webview === undefined) {
         webview = new alt.WebView(url);
         webview.on('routeMessage', routeMessage);
+        webview.on('chat:Ready', ready);
         return;
     }
 
-    if (currentView.isFocused()) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (!isActive) {
         isActive = true;
-        alt.emit('chat:IsOpen', true); // Used for view.mjs
+        alt.Player.local.setMeta('chat', true);
         webview.focus();
         webview.emit('chat:ShowChatInput');
         alt.toggleGameControls(false);
         alt.showCursor(true);
+        alt.emitServer('chat:IsChatting', true);
     }
 }
 
@@ -51,11 +60,11 @@ export function toggleHide() {
 }
 
 function routeMessage(msg) {
-    alt.emit('panel:SetStatus', 'chat', false);
     alt.toggleGameControls(true);
     webview.unfocus();
     isActive = false;
-    alt.emit('chat:IsOpen', false);
+    alt.Player.local.setMeta('chat', false);
+    alt.emitServer('chat:IsChatting', false);
 
     try {
         alt.showCursor(false);
@@ -72,17 +81,27 @@ function routeMessage(msg) {
     alt.emitServer('chat:RouteMessage', msg);
 }
 
-alt.on('hud:SetCash', cash => {
-    if (webview === undefined) return;
-    webview.emit('chat:SetCash', cash);
+function ready() {
+    alt.emitServer('sync:Ready');
+}
+
+export function setStatus(player, value) {
+    player.setMeta('isChatting', value);
+}
+
+alt.on('meta:Changed', (key, value) => {
+    if (!webview) return;
+    if (key === 'cash') {
+        webview.emit('chat:SetCash', value);
+    }
 });
 
 alt.on('hud:SetLocation', location => {
-    if (webview === undefined) return;
+    if (!webview) return;
     webview.emit('chat:SetLocation', location);
 });
 
 alt.on('hud:SetSpeed', speed => {
-    if (webview === undefined) return;
+    if (!webview) return;
     webview.emit('chat:SetSpeed', speed);
 });

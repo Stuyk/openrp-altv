@@ -101,9 +101,6 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   Medicinal Jobs
         -   Police Jobs
         -   Firefighter Jobs
-    -   [ ] Gunsmith (Craft Better Guns with Metal, use better guns, sell better guns.)
-        -   Basically use better guns.
-        -   Users craft really bad pistols to begin with.
     -   [ ] Mining (Gather more items from Mining, use better equipment)
         -   Basically better pickaxes that mine more.
     -   [ ] Gathering (Gather more items for Drug Crafting)

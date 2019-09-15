@@ -139,13 +139,24 @@ If you'd like to remove the splash screens at any point; we can negotiate at a p
 ### General Information and Hotkeys
 
 ```
+// General
+Tab --------> Press to Toggle Cursor
+Tab + RMB  -> Show Context Menu on User
+Tab + LMB  -> Select Context Option
+E ----------> Most clothing shops, jobs, etc. to interact.
+I ----------> Toggle Inventory
+T ----------> Chat
+ESC --------> Exit Most Menus
 
-z -------> Press and hold to reveal cursor.
-z + rmb -> Show Context Menu on User
-z + lmb -> Select Context Option
-e -------> Most clothing shops, jobs, etc. to interact.
-i -------> inventory
+// Vehicles
+Shift + F  -> Leave Engine Running
+Shift + G  -> Toggle Engine
+Shift + H  -> Toggle Lock
 
+// Utility
+Shift + F1 -> Get Interior Info in Console
+Shift + F2 -> Get Position
+Shift + F7 -> Hide Chat
 ```
 
 ---

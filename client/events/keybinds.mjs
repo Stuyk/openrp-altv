@@ -22,6 +22,11 @@ let keybinds = {
         shiftModifier: true,
         func: systemsVehicles.toggleEngine
     },
+    72: {
+        altModifier: false,
+        shiftModifier: true,
+        func: systemsVehicles.toggleLock
+    },
     // I - Inventory
     73: {
         altModifier: false,
@@ -46,10 +51,10 @@ let keybinds = {
         shiftModifier: true,
         func: utilityGameInfo.printLocation
     },
-    // F7 - Hide Chat
+    // Shift + F7 - Hide Chat
     118: {
         altModifier: false,
-        shiftModifier: false,
+        shiftModifier: true,
         func: panelsChat.toggleHide
     },
     // Tab - Toggle Cursor

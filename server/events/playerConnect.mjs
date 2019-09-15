@@ -10,6 +10,7 @@ alt.on('playerConnect', player => {
 
     // Player Extensions
     utilityPlayer.setupPlayerFunctions(player);
+    if (player.getMeta('isLoggedIn')) return;
 
     // Setup the Login Camera
     player.pos = RegisterCamPoint;

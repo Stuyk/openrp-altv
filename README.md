@@ -75,9 +75,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [x] Roleplay Commands (/me, /do, /b, /cc)
 -   [x] Experience Curve for Skill System
 -   [ ] Skill System
-    -   [ ] Defense (Damage Taken = Pain Tolerance)
-        -   More Damage Taken = Less Damage Taken
-    -   [ ] Agility (Sprint Modifier)
+    -   [x] Agility (Sprint Modifier)
         -   Increase Stamina
     -   [ ] Cooking (Craft Better Food)
         -   Create Better Healing Food

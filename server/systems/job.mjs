@@ -3,6 +3,7 @@ import * as configurationJob from '../configuration/job.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import { Interaction } from '../systems/interaction.mjs';
 import * as configurationItems from '../configuration/items.mjs';
+import { addXP } from '../systems/skills.mjs';
 
 const jobs = configurationJob.Configuration;
 
@@ -134,8 +135,6 @@ alt.on('job:StartJob', (player, index) => {
  * @param isNewJob
  */
 function syncMeta(player, index, isNewJob) {
-    console.log('Syncing Job Meta');
-
     // Set Synced Meta
     player.emitMeta('job:Job', JSON.stringify(player.job.currentJob));
     player.emitMeta('job:PointIndex', index);
@@ -316,8 +315,18 @@ export function goToNext(player, goToInfinite) {
         nextPoint = player.job.currentJob.points[index];
     }
 
+    if (nextPoint.type === 'rewardxp') {
+        addXP(player, nextPoint.skill, nextPoint.quantity);
+        player.send(
+            `You recieved ${nextPoint.quantity}XP for the ${nextPoint.skill} skill.`
+        );
+
+        index += 1;
+        nextPoint = player.job.currentJob.points[index];
+    }
+
     // Finish Job if undefined point.
-    if (nextPoint === undefined) {
+    if (nextPoint === undefined && !player.job.infinite) {
         player.send('You have finished your job.');
         try {
             clearJob(player);
@@ -466,6 +475,7 @@ export function cancelJob(jobber) {
  */
 function pointType(player, callback) {
     const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
+    if (player.vehicle) return callback(false);
     if (dist > player.job.currentPoint.range) {
         return callback(false);
     }

@@ -486,5 +486,65 @@ export const Items = {
                 }
             ]
         }
+    },
+    TrackSuit: {
+        label: 'Track Suit',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: false,
+        sellable: false,
+        message: '',
+        quantity: 0,
+        slot: 41,
+        props: {
+            description: 'Standard Issue Track Suit',
+            restriction: -1,
+            female: [
+                { id: 3, value: 15 },
+                { id: 4, value: 16 },
+                { id: 6, value: 4 },
+                { id: 8, value: 9 },
+                { id: 11, value: 16 }
+            ],
+            male: [
+                { id: 3, value: 15 },
+                { id: 4, value: 18 },
+                { id: 6, value: 31 },
+                { id: 8, value: 15 },
+                { id: 11, value: 5 }
+            ]
+        }
+    },
+    HikingOutfit: {
+        label: 'Hiking Outfit',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: false,
+        sellable: false,
+        message: '',
+        quantity: 0,
+        slot: 41,
+        props: {
+            description: 'Standard Issue Mountain Gear',
+            restriction: -1,
+            female: [
+                { id: 3, value: 1 },
+                { id: 4, value: 25 },
+                { id: 5, value: 33 },
+                { id: 6, value: 65 },
+                { id: 8, value: 26 },
+                { id: 11, value: 1 }
+            ],
+            male: [
+                { id: 3, value: 1 },
+                { id: 4, value: 15 },
+                { id: 5, value: 33 },
+                { id: 6, value: 62 },
+                { id: 8, value: 15 },
+                { id: 11, value: 41 }
+            ]
+        }
     }
 };

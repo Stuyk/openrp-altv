@@ -234,6 +234,7 @@ function parseJobInfo(currentPoint) {
 function checkPoint() {
     if (pause) return;
     if (currentObjective === undefined) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
     let isTestReady = currentObjective();
     if (!isTestReady) return;
     alt.emitServer('job:TestObjective');
@@ -246,6 +247,7 @@ function checkPoint() {
 function drawPointInfo() {
     if (pause) return;
     if (currentPoint === undefined) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (currentProgress >= 0) {
         let prog = currentProgress / currentPoint.progressMax;

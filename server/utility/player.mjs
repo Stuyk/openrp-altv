@@ -704,4 +704,10 @@ export function setupPlayerFunctions(player) {
     player.ejectSlowly = () => {
         alt.emitClient(player, 'vehicle:Eject', true);
     };
+
+    // =================
+    // Skill Funcs
+    player.syncXP = () => {
+        player.emitMeta('skills', player.data.skills);
+    };
 }

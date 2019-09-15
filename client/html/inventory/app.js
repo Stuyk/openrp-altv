@@ -689,6 +689,7 @@ class App extends Component {
                                 )
                             )
                         )
+                    //this.state.renaming === false && this.state.currentTab === 0 &&
                 ),
                 // ===> INFO
                 h(

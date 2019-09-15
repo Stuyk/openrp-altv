@@ -155,6 +155,7 @@ export function sync(player) {
     player.syncInteractionBlips();
     player.syncInventory(true);
     player.syncMoney();
+    player.syncXP();
 
     // Setup Health / Armor
     let timeout = setTimeout(() => {

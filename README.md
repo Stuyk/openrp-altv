@@ -186,7 +186,7 @@ After; it should be running automatically in your services on windows. You can a
 
 -   Download the latest version of this resource. You can either clone the repository or simply download it. The `resource.cfg` and the rest of the files should be directly inside of a folder called `orp`.
 
--   To configure your database navigate to `resources/orp/server/configuration/` and open `database.mjs`. Fill out the required parameters; and change them to what you setup PostgreSQL with.
+-   To configure your database, you will need the `resources/orp/server/configuration/database.mjs` file configured with the required parameters to connect to your database.  Open `database.mjs.example`, fill out the required parameters, and save it to a new file named `database.mjs`.
 
 **Example Database Configuration**
 

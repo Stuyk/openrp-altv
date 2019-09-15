@@ -113,9 +113,9 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   Craft Repair Kits
         -   All Crafting Items Take Metal
 -   [ ] Drug System
-    -   [ ] Drugs for Health
-    -   [ ] Drugs for Armor
-        -   [ ] Drugs for Fast Running
+    -   [ ] Drugs for Health (Healium)
+    -   [ ] Drugs for Armor (Kevlarium)
+    -   [ ] Drugs for Fast Running (Speed)
     -   [ ] Drug Jobs 3 jobs for each type.
 -   [x] Playing Hours Stats
 -   [ ] Loyalty Program

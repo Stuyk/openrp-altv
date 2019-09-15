@@ -138,6 +138,7 @@ function jobUpdate() {
     currentPoint = currentJob.points[currentPointIndex];
 
     parseJobInfo(currentPoint);
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
     alt.Player.local.inAnimation = false;
     pause = false;
 }
@@ -435,7 +436,11 @@ function hackType() {
 
     cooldown = Date.now() + 2000;
 
-    if (!native.isDisabledControlPressed(0, 38)) return false;
+    if (!native.isDisabledControlPressed(0, 38)) {
+        native.freezeEntityPosition(alt.Player.local.scriptID, false);
+        return false;
+    }
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
     return true;
 }
 

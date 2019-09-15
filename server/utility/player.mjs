@@ -503,7 +503,7 @@ export function setupPlayerFunctions(player) {
 
     player.hasItem = itemName => {
         let item = player.inventory.find(
-            x => x !== null && x !== undefined && x.label === itemName
+            x => x !== null && x !== undefined && x.label.includes(itemName)
         );
 
         if (item === undefined || item === null) return false;
@@ -633,7 +633,15 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     // Animation
-    player.playAnimation = (dictionary, name, durationInMS, flag) => {
+    player.playAnimation = (
+        dictionary,
+        name,
+        durationInMS,
+        flag,
+        freezeX = false,
+        freezeY = false,
+        freezeZ = false
+    ) => {
         alt.emitClient(
             null,
             'animation:PlayAnimation',
@@ -641,7 +649,10 @@ export function setupPlayerFunctions(player) {
             dictionary,
             name,
             durationInMS,
-            flag
+            flag,
+            freezeX,
+            freezeY,
+            freezeZ
         );
     };
 
@@ -711,3 +722,36 @@ export function setupPlayerFunctions(player) {
         player.emitMeta('skills', player.data.skills);
     };
 }
+
+let pickaxe = game.createObject(
+    game.getHashKey('prop_tool_pickaxe'),
+    0,
+    0,
+    0,
+    true,
+    true,
+    true
+);
+
+game.attachEntityToEntity(
+    pickaxe,
+    alt.Player.local.scriptID,
+    game.getPedBoneIndex(alt.Player.local.scriptID, 57005),
+    0.18,
+    -0.02,
+    -0.02,
+    350.0,
+    100.0,
+    25.0,
+    true,
+    true,
+    false,
+    true,
+    1,
+    true
+);
+
+alt.setTimeout(() => {
+    game.detachEntity(pickaxe, false, false);
+    game.deleteObject(pickaxe);
+}, 5000);

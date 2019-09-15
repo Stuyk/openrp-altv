@@ -5,7 +5,11 @@ import { Interaction } from '../systems/interaction.mjs';
 import * as configurationItems from '../configuration/items.mjs';
 import { addXP } from '../systems/skills.mjs';
 
-export function load(jobs) {
+let jobs;
+
+export function load(loadedJobs) {
+    jobs = loadedJobs;
+
     jobs.forEach((job, index) => {
         //position, type, serverEventName, radius, height, message, indexValue)
         let interact = new Interaction(
@@ -307,8 +311,16 @@ export function goToNext(player, goToInfinite) {
         Object.keys(configurationItems.Items).forEach(key => {
             if (configurationItems.Items[key].label !== nextPoint.item) return;
             let itemTemplate = configurationItems.Items[key];
-            player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
-            player.send(`You recieved: ${itemTemplate.label}`);
+
+            if (!itemTemplate.stackable) {
+                for (let i = 0; i < nextPoint.quantity; i++) {
+                    player.addItem({ ...itemTemplate }, 1, true);
+                    player.send(`You recieved: ${itemTemplate.label}`);
+                }
+            } else {
+                player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
+                player.send(`You recieved: ${itemTemplate.label}`);
+            }
         });
 
         index += 1;
@@ -836,7 +848,15 @@ function targetRepairType(player, callback) {
 function playJobAnimation(player) {
     if (player.job.currentPoint.anim === undefined) return;
     const anim = player.job.currentPoint.anim;
-    player.playAnimation(anim.dict, anim.name, anim.duration, anim.flag);
+    player.playAnimation(
+        anim.dict,
+        anim.name,
+        anim.duration,
+        anim.flag,
+        anim.freezeX,
+        anim.freezeY,
+        anim.freezeZ
+    );
 }
 
 /**

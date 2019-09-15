@@ -546,5 +546,52 @@ export const Items = {
                 { id: 11, value: 41 }
             ]
         }
+    },
+    UnrefinedRock: {
+        label: 'Unrefined Rock',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        icon: 'rock',
+        props: {
+            description: 'A hunk of unrefined rock.'
+        }
+    },
+    Pickaxe1: {
+        label: 'Garbage Pickaxe',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        icon: 'pickaxe',
+        props: {
+            lvl: 0
+        }
+    },
+    Pickaxe2: {
+        label: 'Shoddy Pickaxe',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        icon: 'pickaxe',
+        props: {
+            lvl: 10
+        }
     }
 };

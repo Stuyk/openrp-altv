@@ -722,36 +722,3 @@ export function setupPlayerFunctions(player) {
         player.emitMeta('skills', player.data.skills);
     };
 }
-
-let pickaxe = game.createObject(
-    game.getHashKey('prop_tool_pickaxe'),
-    0,
-    0,
-    0,
-    true,
-    true,
-    true
-);
-
-game.attachEntityToEntity(
-    pickaxe,
-    alt.Player.local.scriptID,
-    game.getPedBoneIndex(alt.Player.local.scriptID, 57005),
-    0.18,
-    -0.02,
-    -0.02,
-    350.0,
-    100.0,
-    25.0,
-    true,
-    true,
-    false,
-    true,
-    1,
-    true
-);
-
-alt.setTimeout(() => {
-    game.detachEntity(pickaxe, false, false);
-    game.deleteObject(pickaxe);
-}, 5000);

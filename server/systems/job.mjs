@@ -5,21 +5,21 @@ import { Interaction } from '../systems/interaction.mjs';
 import * as configurationItems from '../configuration/items.mjs';
 import { addXP } from '../systems/skills.mjs';
 
-const jobs = configurationJob.Configuration;
-
-jobs.forEach((job, index) => {
-    //position, type, serverEventName, radius, height, message, indexValue)
-    let interact = new Interaction(
-        job.start,
-        'job',
-        'job:StartJob',
-        3,
-        2,
-        job.name,
-        index
-    );
-    interact.addBlip(job.blipSprite, job.blipColor, job.name);
-});
+export function load(jobs) {
+    jobs.forEach((job, index) => {
+        //position, type, serverEventName, radius, height, message, indexValue)
+        let interact = new Interaction(
+            job.start,
+            'job',
+            'job:StartJob',
+            3,
+            2,
+            job.name,
+            index
+        );
+        interact.addBlip(job.blipSprite, job.blipColor, job.name);
+    });
+}
 
 /* The way these jobs work....
  1. Load the Jobs from the Configuration.

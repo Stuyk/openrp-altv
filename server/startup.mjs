@@ -21,6 +21,8 @@ let db = new SQL(
 // This is required so we don't use the Database functionality too early.
 // Please keep that in mind if you plan on expanding this framework.
 alt.on('ConnectionComplete', () => {
+    import('./configuration/job.mjs');
+
     // Standard Events
     import('./events/playerConnect.mjs');
     import('./events/playerDisconnect.mjs');
@@ -44,7 +46,6 @@ alt.on('ConnectionComplete', () => {
     import('./commands/roleplay.mjs');
     import('./commands/taxi.mjs');
     import('./commands/mechanic.mjs');
-    import('./commands/job.mjs');
 
     // Systems
     import('./systems/anticheat.mjs');
@@ -53,6 +54,7 @@ alt.on('ConnectionComplete', () => {
     import('./systems/time.mjs');
     import('./systems/job.mjs');
     import('./systems/use.mjs');
+    import('./systems/xp.mjs');
 
     // Import Item Effects
     import('./itemeffects/consume.mjs');

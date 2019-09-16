@@ -8,7 +8,7 @@ alt.on('playerDeath', (target, killer, weapon) => {
     if (target.reviving) return;
 
     if (target !== killer) {
-        if (weapon !== 133987706 || weapon !== 2741846334) {
+        if (weapon !== 133987706 && weapon !== 2741846334) {
             if (killer) {
                 if (!verifyWeapon(killer)) {
                     target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);

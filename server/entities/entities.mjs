@@ -87,6 +87,10 @@ export const Character = new orm.EntitySchema({
         dead: {
             type: 'bool',
             default: false
+        },
+        skills: {
+            type: 'text',
+            nullable: true
         }
     }
 });

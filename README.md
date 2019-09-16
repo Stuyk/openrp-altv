@@ -39,45 +39,90 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Vehicle Fuel System
 -   [x] Nametags / Character Names
 -   [ ] Door System
+    -   [ ] House Type
+    -   [ ] Shop System
+        -   [ ] Gun Store
+        -   [ ] Food Store
+        -   [ ] Medical Clinic
 -   [ ] Door Sales System
 -   [ ] Administrative Toolkit
 -   [x] Currency System
 -   [x] ATM / Bank System
--   [ ] Player Transfers / Give Money
--   [ ] Shop System
+    -   [ ] Transfer Money
 -   [ ] Faction System
 -   [ ] Basic Anticheat
 -   [x] Time Sync
 -   [x] Weather Sync
 -   [x] Interaction System
--   [x] Interaction for Vehicles
--   [ ] Interaction for Players
--   [x] Interaction for Objects
+    -   [x] Interaction for Vehicles
+    -   [ ] Interaction for Players
+        -   [ ] Give Money
+    -   [x] Interaction for Objects
+    -   [x] Interaction for Self
+        -   [x] Animations for Sitting
 -   [x] Player Death Handling
 -   [x] Taxation
--   [ ] Taxation goes to Government Fund
--   [ ] Government Fund Management
+    -   [ ] Taxation goes to Government Fund
 -   [x] Animation Manager
 -   [x] Context Menu of Animations
--   [x] Animations for Sitting
--   [x] Splash Screens
 -   [x] Custom Sounds! Blat!
 -   [x] Custom Chat
--   [x] Custom Chat Commands
--   [x] Custom Chat Colors
--   [ ] Custom Chat Notification Functions / Clickables
--   [ ] Custom Chat is Repositionable?
--   [x] Roleplay Commands (/me, /do, /b, /cc)
--   [x] Ranged Chat
--   [ ] Voice Chat
--   [x] Playing Hours Stats
--   [ ] Skill System for Jobs
+    -   [x] Custom Chat Commands
+    -   [x] Custom Chat Colors
+    -   [ ] Custom Chat Notification Functions / Clickables
+    -   [ ] Custom Chat is Repositionable?
+    -   [x] Ranged Chat
+    -   [x] Roleplay Commands (/me, /do, /b, /cc)
+-   [x] Experience Curve for Skill System
+-   [ ] Skill System
+    -   [x] Agility (Sprint Modifier)
+        -   Increase Stamina
+    -   [ ] Cooking (Craft Better Food)
+        -   Create Better Healing Food
+        -   Create Better Healing Drinks
+    -   [ ] Medicine (Health Healed on Player Revivals)
+        -   Heal users quicker.
+        -   Revive users quicker.
+        -   Only accessible through the Nobility skill.
+    -   [ ] Notoriety (Gained Through Criminal Jobs, access to better jobs. Create a gang)
+        -   Lose nobility xp by doing notoriety activities.
+        -   Gain access to create a gang past a certain level.
+        -   Lose XP three times as fast when doing good things.
+        -   Drug Creation Jobs
+        -   Gun Creation Jobs
+        -   Illegal Shipment Jobs
+        -   Hitman Jobs (95+)
+    -   [ ] Nobility (Opposite of Notoriety, access to better jobs / factions.)
+        -   Lose notoriety xp by doing nobility activities.
+        -   Gain access to factions past a certain level. ie. Police Trainee
+        -   Lose XP three times as fast when doing bad things.
+        -   Medicinal Jobs
+        -   Police Jobs
+        -   Firefighter Jobs
+    -   [ ] Mining (Gather more items from Mining, use better equipment)
+        -   Basically better pickaxes that mine more.
+    -   [ ] Gathering (Gather more items for Drug Crafting)
+        -   Basically use better gathering items.
+    -   [ ] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
+        -   Repair Quicker on Mechanic Job
+        -   Use Repair Kits After Level 75+
+    -   [ ] Crafting (Better Quality Items)
+        -   Craft Better Pickaxes
+        -   Craft Better Guns
+        -   Craft Better Gathering Items
+        -   Craft Repair Kits
+        -   All Crafting Items Take Metal
 -   [ ] Drug System
--   [ ] Drugs for Health
--   [ ] Drugs for Armor
--   [ ] Drugs for Fast Running
--   [ ] Drug Jobs 3 jobs for each type.
+    -   [ ] Drugs for Health (Healium)
+    -   [ ] Drugs for Armor (Kevlarium)
+    -   [ ] Drugs for Fast Running (Speed)
+    -   [ ] Drug Jobs 3 jobs for each type.
+-   [x] Playing Hours Stats
 -   [ ] Loyalty Program
+    -   [ ] Extra Housing Slots for Hours Played
+    -   [ ] Extra Backpack Slots for Hours Played
+    -   [ ] Extra Shop Slots for Hours Played
+    -   [ ] Extra Vehicle Slots for Hours Played
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://www.twitch.tv/stuyksoft/).
 
@@ -92,13 +137,24 @@ If you'd like to remove the splash screens at any point; we can negotiate at a p
 ### General Information and Hotkeys
 
 ```
+// General
+Tab --------> Press to Toggle Cursor
+Tab + RMB  -> Show Context Menu on User
+Tab + LMB  -> Select Context Option
+E ----------> Most clothing shops, jobs, etc. to interact.
+I ----------> Toggle Inventory
+T ----------> Chat
+ESC --------> Exit Most Menus
 
-z -------> Press and hold to reveal cursor.
-z + rmb -> Show Context Menu on User
-z + lmb -> Select Context Option
-e -------> Most clothing shops, jobs, etc. to interact.
-i -------> inventory
+// Vehicles
+Shift + F  -> Leave Engine Running
+Shift + G  -> Toggle Engine
+Shift + H  -> Toggle Lock
 
+// Utility
+Shift + F1 -> Get Interior Info in Console
+Shift + F2 -> Get Position
+Shift + F7 -> Hide Chat
 ```
 
 ---
@@ -130,7 +186,7 @@ After; it should be running automatically in your services on windows. You can a
 
 -   Download the latest version of this resource. You can either clone the repository or simply download it. The `resource.cfg` and the rest of the files should be directly inside of a folder called `orp`.
 
--   To configure your database navigate to `resources/orp/server/configuration/` and open `database.mjs`. Fill out the required parameters; and change them to what you setup PostgreSQL with.
+-   To configure your database, you will need the `resources/orp/server/configuration/database.mjs` file configured with the required parameters to connect to your database.  Open `database.mjs.example`, fill out the required parameters, and save it to a new file named `database.mjs`.
 
 **Example Database Configuration**
 

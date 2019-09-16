@@ -130,7 +130,10 @@ export function toggleDoor(player, vehicle, id) {
 
 export function toggleLock(player, vehicle) {
     const dist = utilityVector.distance(player.pos, vehicle.pos);
-    if (dist > 5) return;
+    if (dist > 5) {
+        player.send(`{FF0000} You're too far away to toggle the lock.`);
+        return;
+    }
 
     if (player.vehicles === undefined) return;
 
@@ -139,9 +142,17 @@ export function toggleLock(player, vehicle) {
     if (vehicle.lockState === 2) {
         vehicle.lockState = 1; // Unlocked
         player.send('Your vehicle is now unlocked.');
+
+        if (!player.vehicle) {
+            alt.emitClient(null, 'vehicle:SoundHorn', vehicle, false);
+        }
     } else {
         vehicle.lockState = 2; // Locked
         player.send('Your vehicle is now locked.');
+
+        if (!player.vehicle) {
+            alt.emitClient(null, 'vehicle:SoundHorn', vehicle, true);
+        }
     }
 }
 

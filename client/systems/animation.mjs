@@ -29,7 +29,16 @@ alt.on('animation:Clear', ent => {
     native.clearPedSecondaryTask(alt.Player.local.scriptID);
 });
 
-export function playAnimation(player, dictionary, name, durationInMS, flag) {
+export function playAnimation(
+    player,
+    dictionary,
+    name,
+    durationInMS,
+    flag,
+    freezeX = false,
+    freezeY = false,
+    freezeZ = false
+) {
     let res = loadAnim(dictionary);
 
     res.then(() => {
@@ -43,9 +52,9 @@ export function playAnimation(player, dictionary, name, durationInMS, flag) {
             durationInMS,
             flag,
             1.0,
-            false,
-            false,
-            false
+            freezeX,
+            freezeY,
+            freezeZ
         );
     });
 }

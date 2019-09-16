@@ -1,6 +1,14 @@
 const { createElement, render, Component } = preact;
 const h = createElement;
 
+const keys = [
+    'W'.charCodeAt(0),
+    'A'.charCodeAt(0),
+    'S'.charCodeAt(0),
+    'D'.charCodeAt(0),
+    27
+];
+
 // The main rendering function.
 class App extends Component {
     constructor(props) {
@@ -20,6 +28,14 @@ class App extends Component {
             alt.on('setCash', this.setCashBalance.bind(this));
             alt.on('showSuccess', this.showSuccess.bind(this));
         }
+
+        window.addEventListener('keyup', e => {
+            if (keys.includes(e.keyCode)) {
+                if ('alt' in window) {
+                    alt.emit('close');
+                }
+            }
+        });
     }
 
     setBankBalance(bank) {
@@ -157,13 +173,3 @@ function ready() {
         alt.emit('atm:Ready');
     }
 }
-
-const keys = ['W'.charCodeAt(0), 'A'.charCodeAt(0), 'S'.charCodeAt(0), 'D'.charCodeAt(0)];
-
-window.addEventListener('keyup', e => {
-    if (keys.includes(e.keyCode)) {
-        if ('alt' in window) {
-            alt.emit('close');
-        }
-    }
-});

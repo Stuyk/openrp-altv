@@ -46,6 +46,10 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
 
     let vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
 
+    if (vehicle.modKitsCount >= 1) {
+        vehicle.modKit = 1;
+    }
+
     // Setup extended functions for the new vehicle.
     utilityVehicle.setupVehicleFunctions(vehicle);
 
@@ -70,6 +74,7 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
         vehicle.setHealthDataBase64(stats.health);
         vehicle.setScriptDataBase64(stats.scriptData);
         vehicle.lockState = stats.lockState;
+        vehicle.syncCustom();
     }
 
     // Set the vehicle into the map.
@@ -166,4 +171,15 @@ export function toggleSafetyLock(player, vehicle) {
         vehicle.lockState = 4;
         player.send('Safety Lock was turned on.');
     }
+}
+
+export function saveChanges(player, vehicle, jsonData) {
+    if (!player.vehicles || !player.vehicles.includes(vehicle)) {
+        player.send('This is not your vehicle; you cannot modify it.');
+        vehicle.syncCustom();
+        return;
+    }
+
+    vehicle.saveCustom(jsonData);
+    player.playAudio('buy');
 }

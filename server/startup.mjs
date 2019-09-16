@@ -47,11 +47,13 @@ alt.on('ConnectionComplete', () => {
     import('./commands/job.mjs');
 
     // Systems
+    import('./systems/anticheat.mjs');
     import('./systems/vehicles.mjs');
     import('./systems/inventory.mjs');
     import('./systems/time.mjs');
     import('./systems/job.mjs');
     import('./systems/use.mjs');
+    import('./systems/xp.mjs');
 
     // Import Item Effects
     import('./itemeffects/consume.mjs');

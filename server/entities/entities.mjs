@@ -72,7 +72,7 @@ export const Character = new orm.EntitySchema({
         },
         inventory: {
             type: 'text',
-            default: `${JSON.stringify(new Array(128))}`
+            default: `${JSON.stringify(new Array(128).fill(null))}`
         },
         lastposition: {
             type: 'text',
@@ -97,6 +97,10 @@ export const Character = new orm.EntitySchema({
         dead: {
             type: 'bool',
             default: false
+        },
+        levels: {
+            type: 'text',
+            default: '{}'
         }
     }
 });
@@ -126,6 +130,10 @@ export const Vehicle = new orm.EntitySchema({
             nullable: true
         },
         stats: {
+            type: 'text',
+            nullable: true
+        },
+        customization: {
             type: 'text',
             nullable: true
         }

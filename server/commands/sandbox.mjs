@@ -1,12 +1,13 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.mjs';
 import * as configurationItems from '../configuration/items.mjs';
+import { addWeapon } from '../systems/inventory.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
 const sandboxhelp = [
     //
-    '/pos, /b, /me, /do',
+    '/b, /me, /do',
     '/addveh (model)',
     '/addcash (amount)',
     '/wep (hash)',
@@ -16,7 +17,7 @@ const sandboxhelp = [
     '/players, /clearchat',
     '/taxi, /taxicancel',
     '/mechanic, /mechaniccancel',
-    'Z + Right-Click to Interact',
+    'Press TAB for context cursor.',
     'I for Inventory'
 ];
 
@@ -24,10 +25,6 @@ chat.registerCmd('help', player => {
     sandboxhelp.forEach(helper => {
         player.send(`${helper}`);
     });
-});
-
-chat.registerCmd('pos', player => {
-    console.log(player.pos);
 });
 
 chat.registerCmd('addcash', (player, value) => {
@@ -42,7 +39,12 @@ chat.registerCmd('wep', (player, hash) => {
         return;
     }
 
-    player.giveWeapon(hash[0], 9999, true);
+    if (!addWeapon(player, parseInt(hash))) {
+        player.send(`Not a valid weapon hash. -270015777`);
+        return;
+    }
+
+    player.send(`Weapon was added to your inventory.`);
 });
 
 chat.registerCmd('face', player => {
@@ -109,4 +111,9 @@ chat.registerCmd('players', player => {
     alt.Player.all.forEach(t => {
         player.send(`${t.data.name}`);
     });
+});
+
+chat.registerCmd('pos', player => {
+    player.send(`${JSON.stringify(player.pos)}`);
+    console.log(player.pos);
 });

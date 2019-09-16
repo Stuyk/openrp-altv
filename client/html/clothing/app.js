@@ -89,7 +89,7 @@ const clothing = {
     },
     Hat: {
         label: 'Hat',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 0,
@@ -105,7 +105,7 @@ const clothing = {
     },
     Glasses: {
         label: 'Glasses',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 1,
@@ -121,7 +121,7 @@ const clothing = {
     },
     Earpiece: {
         label: 'Earpiece',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 2,
@@ -137,7 +137,7 @@ const clothing = {
     },
     Watches: {
         label: 'Watches',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 6,
@@ -153,7 +153,7 @@ const clothing = {
     },
     Bracelet: {
         label: 'Bracelet',
-        value: 0,
+        value: -1,
         min: -1,
         max: 1,
         id: 7,
@@ -177,7 +177,8 @@ class App extends Component {
             message: 'loading...',
             hairChanged: false,
             clothingData: [],
-            sex: 0
+            sex: 0,
+            basket: []
         };
     }
 
@@ -191,11 +192,14 @@ class App extends Component {
             alt.on('updateMinMax', this.updateMinMax.bind(this));
             alt.on('showError', this.showError.bind(this));
             alt.on('updateClothes', this.updateClothes.bind(this));
+        } else {
+            this.forceClothing();
         }
     }
 
-    purchase(e) {
+    basket(e) {
         let props = {
+            label: this.state.clothingData[e.target.id].label,
             description: 'Clothing Item',
             isProp: this.state.clothingData[e.target.id].isProp,
             restriction: this.state.sex
@@ -232,15 +236,41 @@ class App extends Component {
             props.male = data;
         }
 
-        if ('alt' in window) {
-            alt.emit('clothing:Purchase', JSON.stringify(props));
-        } else {
-            console.log(JSON.stringify(props));
+        this.state.basket.push(props);
+        this.setState(this.state.basket);
+
+        setTimeout(() => {
+            this.forceClothing();
+        }, 200);
+    }
+
+    purchase() {
+        this.state.basket.forEach((item, index) => {
+            if ('alt' in window) {
+                alt.emit('clothing:Purchase', JSON.stringify(item));
+            } else {
+                console.log(JSON.stringify(item));
+            }
+        })
+
+        this.state.basket = [];
+        this.setState(this.state.basket);
+    }
+
+    removeItem(e) {
+        let index = e.target.id;
+
+        if (this.state.basket[index]) {
+            this.state.basket.splice(index, 1);
         }
+
+        console.log(this.state.basket.length);
+        this.setState(this.state.basket);
     }
 
     setSex(sex) {
         this.setState({ sex });
+        this.forceClothing();
     }
 
     updateMinMax(...args) {
@@ -280,6 +310,26 @@ class App extends Component {
         });
 
         this.setState({ clothingData });
+    }
+
+    forceClothing() {
+        let clothingData = [...this.state.clothingData];
+        //console.log(clothingData.length);
+
+        clothingData.forEach((item, index) => {
+            if (item.label.includes('Texture')) return;
+            if ('alt' in window) {
+                alt.emit(
+                    'clothing:UpdateComponent',
+                    clothingData[index].id,
+                    clothingData[index].value,
+                    clothingData[index + 1].value,
+                    clothingData[index].isProp
+                );
+            } else {
+                //console.log(item);
+            }
+        });
     }
 
     setItemValue(index, increment) {
@@ -346,29 +396,37 @@ class App extends Component {
                 h(ClothingList, {
                     clothingData: this.state.clothingData,
                     setItemValue: this.setItemValue.bind(this),
-                    purchase: this.purchase.bind(this)
+                    basket: this.basket.bind(this)
                 })
             ),
             h(
                 'div',
-                { class: 'footer', onclick: this.submitChanges.bind(this) },
-                'Submit'
-            )
+                { class: `basket scroll ${this.state.basket.length ? 'show' : null}` },
+                h('div', { class: 'basket-title' }, h('h1', { class: 'title' }, 'Basket')),
+                h('hr'),
+                h(ShoppingBasket, {
+                    basket: this.state.basket,
+                    removeItem: this.removeItem.bind(this)
+                }),
+                h('hr'),
+                h('div', { class: 'basket-purchase', onclick: this.purchase.bind(this) }, 'Purchase')
+            ),
+            h('div', { class: 'footer', onclick: this.submitChanges.bind(this) }, 'Exit')
         );
         // Render HTML / Components and Shit Here
     }
 }
 
-const ClothingList = ({ clothingData, setItemValue, purchase }) => {
+const ClothingList = ({ clothingData, setItemValue, basket }) => {
     const itemList = clothingData.map((item, index) =>
-        h(ClothingItem, { index, item, setItemValue, purchase })
+        h(ClothingItem, { index, item, setItemValue, basket })
     );
 
     return h('div', null, itemList);
 };
 
 // Items to Display in a Group
-const ClothingItem = ({ index, item, setItemValue, purchase }) => {
+const ClothingItem = ({ index, item, setItemValue, basket }) => {
     left = () => {
         setItemValue(index, false);
     };
@@ -412,12 +470,42 @@ const ClothingItem = ({ index, item, setItemValue, purchase }) => {
                 !item.label.includes('Undershirt') &&
                 h(
                     'button',
-                    { class: 'buy', id: `${index}`, onclick: purchase.bind(this) },
-                    `Purchase`
+                    { class: 'buy', id: `${index}`, onclick: basket.bind(this) },
+                    `Put into basket`
                 )
         )
     );
 };
+
+const ShoppingBasket = ({ basket, removeItem }) => {
+    const basketList = basket.map((item, index) => 
+        h(BasketItem, { index, item, removeItem })
+    );
+
+    return h('div', null, basketList)
+}
+
+// Items to Display in the Basket
+const BasketItem = ({ index, item, removeItem }) => {
+    return h(
+        'div',
+        { class: 'basket-item' },
+        h(
+            'div',
+            { class: 'basket-label' },
+            `${item.label}`
+        ),
+        h(
+            'div',
+            {
+                class: 'remove',
+                id: `${index}`,
+                onclick: removeItem.bind(this)
+            },
+            'X'
+        )
+    )
+}
 
 render(h(App), document.querySelector('#render'));
 

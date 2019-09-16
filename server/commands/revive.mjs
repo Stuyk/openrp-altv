@@ -20,7 +20,6 @@ chat.registerCmd('revive', player => {
         clearTimeout(player.reviveTimeout);
         player.screenFadeOutFadeIn(1000, 5000);
         player.spawn(player.revivePos.x, player.revivePos.y, player.revivePos.z, 2000);
-
         player.clearBlood();
         player.revivePos = undefined;
         player.reviveTime = undefined;

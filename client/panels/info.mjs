@@ -6,11 +6,16 @@ alt.log('Loaded: client->panels->info.mjs');
 const url = 'http://resource/client/html/roleplayinfo/index.html';
 let webview = undefined;
 
-// Show the webview for the player to type in their roleplay name.
+// Show the webview for the player to type in their roleplay info.
 export function showDialogue() {
-    if (!alt.Player.local.getSyncedMeta('loggedin')) return;
-    // Load Webview
-    webview = new View(url);
+    if (!webview) {
+        webview = new View();
+    }
+
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
+    // Setup Webview
+    webview.open(url, true);
     webview.on('setinfo', setRoleplayInfo);
 }
 
@@ -20,6 +25,6 @@ export function closeDialogue() {
 }
 
 // Routed to the server; to set the user's roleplay info.
-function setRoleplayInfo(info) {
-    alt.emitServer('character:SetRoleplayInfo', info);
+function setRoleplayInfo(roleplayinfo) {
+    alt.emitServer('character:SetRoleplayInfo', roleplayinfo);
 }

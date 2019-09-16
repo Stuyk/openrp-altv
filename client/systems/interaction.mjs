@@ -7,9 +7,11 @@ let interactionEnabled = false;
 let currentLabel = undefined;
 let interval;
 
-// Used to check if the player is standing in an interaction area.
-alt.setInterval(() => {
-    const indexData = alt.Player.local.getSyncedMeta('interaction');
+alt.on('meta:Changed', (key, value) => {
+    if (key !== 'interaction') return;
+    const indexData = value;
+
+    alt.log('hey');
 
     if (indexData === undefined || indexData === null) {
         currentLabel = undefined;
@@ -24,13 +26,12 @@ alt.setInterval(() => {
 
     if (interactionEnabled) return;
 
-    alt.log(JSON.stringify(indexData));
     currentLabel = indexData.message;
 
     // Show prompt for interaction.
     interactionEnabled = true;
     interval = alt.setInterval(showKeyPress, 0);
-}, 500);
+});
 
 // Check for the key the user is pressing when enabled.
 function showKeyPress() {

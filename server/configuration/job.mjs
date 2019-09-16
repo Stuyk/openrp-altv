@@ -398,7 +398,7 @@ export const Configuration = [
         start: {
             x: 437.3670349121094,
             y: -624.3296508789062,
-            z: 28.7069091796875
+            z: 27.7069091796875
         },
         required: [{ name: 'Drivers License', inInventory: true }],
         points: [
@@ -423,7 +423,7 @@ export const Configuration = [
                 position: {
                     x: 408.03955078125,
                     y: -639.6791381835938,
-                    z: 28.4879150390625
+                    z: 27.4879150390625
                 },
                 height: 0.75,
                 range: 2
@@ -445,7 +445,7 @@ export const Configuration = [
                 position: {
                     x: 421.29229736328125,
                     y: -663.7977905273438,
-                    z: 28.926025390625
+                    z: 27.926025390625
                 },
                 height: 0.5,
                 range: 2

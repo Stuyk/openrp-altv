@@ -9,12 +9,8 @@ let currentSlots = new Map();
 let isPedMale;
 
 // When the player updates their inventory.
-alt.on('syncedMetaChange', (entity, key, value) => {
-    if (entity !== alt.Player.local) return;
+alt.on('meta:Changed', (key, value) => {
     if (key !== 'inventory') return;
-
-    // Get Gender
-    if (isPedMale === undefined) isPedMale = native.isPedMale(alt.Player.local.scriptID);
 
     const invData = JSON.parse(value);
     slots.forEach(key => {
@@ -22,37 +18,28 @@ alt.on('syncedMetaChange', (entity, key, value) => {
     });
 });
 
-const isItemInvalid = item => {
-    if (item === null || item === undefined || !item.props) return true;
-    return false;
-};
-
-const isItemMale = item => {
-    if (item.props.male) return true;
-    return false;
-};
-
 const equipItem = (item, slot) => {
     // Unequip
-    if (isItemInvalid(item)) {
+    if (!item) {
         const ped = alt.Player.local.scriptID;
+        isPedMale = native.isPedMale(alt.Player.local.scriptID);
 
         // Hat
         if (slot === 28) {
             native.clearPedProp(ped, 0, -1);
             native.setPedPropIndex(ped, 0, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Shirt
         if (slot === 30) {
             if (isPedMale) {
-                native.setPedComponentVariation(ped, 11, -1, 0, 0);
-                native.setPedComponentVariation(ped, 8, -1, 0, 0);
+                native.setPedComponentVariation(ped, 11, 15, 0, 0);
+                native.setPedComponentVariation(ped, 8, 15, 0, 0);
                 native.setPedComponentVariation(ped, 3, 15, 0, 0);
             } else {
                 native.setPedComponentVariation(ped, 11, 15, 0, 0);
-                native.setPedComponentVariation(ped, 8, -1, 0, 0);
+                native.setPedComponentVariation(ped, 8, 14, 0, 0);
                 native.setPedComponentVariation(ped, 3, 15, 0, 0);
             }
         }
@@ -89,7 +76,7 @@ const equipItem = (item, slot) => {
         if (slot === 35) {
             native.clearPedProp(ped, 2, -1);
             native.setPedPropIndex(ped, 2, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Backpack
@@ -111,14 +98,14 @@ const equipItem = (item, slot) => {
         if (slot === 39) {
             native.clearPedProp(ped, 7, -1);
             native.setPedPropIndex(ped, 7, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Glasses
         if (slot === 40) {
             native.clearPedProp(ped, 1, -1);
             native.setPedPropIndex(ped, 1, -1, 0, 0);
-            alt.emit('updateHair');
+            alt.emit('face:UpdateHair');
         }
 
         // Handle Pre-equipped Item
@@ -127,21 +114,16 @@ const equipItem = (item, slot) => {
     }
 
     // Setup Item Array
-    const isMaleItem = isItemMale(item);
-    let itemArray = item.props.male ? item.props.male : item.props.female;
+    let isMale = native.isPedMale(alt.Player.local.scriptID);
+    let itemArray = isMale ? item.props.male : item.props.female;
 
     if (item.props.restriction >= 0) {
-        if (isPedMale && !isMaleItem) {
-            alt.log('This item cannot be equipped by a male.');
-            return;
-        }
-
-        if (!isPedMale && isMaleItem) {
-            alt.log('This item cannot be equipped by a female.');
+        if (!itemArray) {
+            alt.log('This item cannot be equipped by you.');
             return;
         }
     } else {
-        itemArray = isPedMale ? item.props.male : item.props.female;
+        itemArray = isMale ? item.props.male : item.props.female;
     }
 
     if (itemArray === undefined) {

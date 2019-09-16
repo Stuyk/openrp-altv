@@ -19,10 +19,7 @@ export function setupVehicleFunctions(vehicle) {
     };
 
     vehicle.saveVehicleData = () => {
-        console.log('Saved Vehicle Data');
-
         vehicle.saveField(vehicle.data.id, 'position', JSON.stringify(vehicle.pos));
-
         vehicle.saveField(vehicle.data.id, 'rotation', JSON.stringify(vehicle.rot));
 
         let vehicleData = {
@@ -59,7 +56,28 @@ export function setupVehicleFunctions(vehicle) {
         alt.emitClient(null, 'vehicle:Repair', vehicle);
     };
 
-    // 4
+    // vehicle.data.customization
+    vehicle.saveCustom = json => {
+        vehicle.data.customization = json;
+        vehicle.saveField(vehicle.data.id, 'customization', vehicle.data.customization);
+        vehicle.syncCustom();
+    };
+
+    vehicle.syncCustom = () => {
+        if (!vehicle.data.customization) return;
+        let mods = JSON.parse(vehicle.data.customization);
+        Object.keys(mods).forEach(key => {
+            vehicle.modKit = 1;
+            let index = parseInt(key);
+            let value = parseInt(mods[key]) + 1;
+            try {
+                vehicle.setMod(index, value);
+            } catch (e) {
+                console.log(`Mod: ${index} could not be applied with value ${value}`);
+            }
+        });
+    };
+
     vehicle.toggleDoor = (player, id) => {
         if (vehicle.doorStates === undefined) {
             vehicle.doorStates = {

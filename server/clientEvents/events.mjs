@@ -25,6 +25,8 @@ alt.onClient('register:NewAccount', registrationRegister.newAccount);
 // Called when a client attempts to Login to an account.
 alt.onClient('register:ExistingAccount', registrationLogin.existingAccount);
 
+alt.onClient('sync:Ready', registrationLogin.sync);
+
 // ====================================================
 // Face
 // Set the player's facial data from the customizer.
@@ -65,9 +67,11 @@ alt.onClient('vehicle:ToggleDoor', systemsVehicles.toggleDoor);
 alt.onClient('vehicle:ToggleLock', systemsVehicles.toggleLock);
 alt.onClient('vehicle:ToggleEngine', systemsVehicles.toggleEngine);
 alt.onClient('vehicle:SafetyLock', systemsVehicles.toggleSafetyLock);
+alt.onClient('vehicle:SaveChanges', systemsVehicles.saveChanges);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);
+alt.onClient('chat:IsChatting', chat.setStatus);
 
 // Job
 alt.onClient('job:TestObjective', systemsJob.testObjective);

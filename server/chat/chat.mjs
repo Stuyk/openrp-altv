@@ -31,7 +31,7 @@ export function routeMessage(player, msg) {
             if (callback) {
                 callback(player, args);
             } else {
-                player.send(player, `Unknown command /${cmd}`);
+                player.send(`Unknown command /${cmd}`);
             }
         }
         return;
@@ -39,7 +39,7 @@ export function routeMessage(player, msg) {
 
     // Regular chat messages.
     if (mutedPlayers.includes(player.name)) {
-        player.send(player, `You are muted at this time.`);
+        player.send('You are muted at this time.');
         return;
     }
 
@@ -77,4 +77,8 @@ export function actionMessage(player, msg) {
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
     });
+}
+
+export function setStatus(player, value) {
+    alt.emitClient(null, 'chat:SetStatus', player, value);
 }

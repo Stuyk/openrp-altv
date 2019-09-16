@@ -35,49 +35,96 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] Driving Test
 -   [x] Taxi Job
 -   [x] Mechanic Job
--   [ ] Vehicle Customization
+-   [x] Vehicle Customization
 -   [ ] Vehicle Fuel System
 -   [x] Nametags / Character Names
 -   [ ] Door System
+    -   [ ] House Type
+    -   [ ] Shop System
+        -   [ ] Gun Store
+        -   [ ] Food Store
+        -   [ ] Medical Clinic
 -   [ ] Door Sales System
 -   [ ] Administrative Toolkit
 -   [x] Currency System
 -   [x] ATM / Bank System
--   [ ] Player Transfers / Give Money
--   [ ] Shop System
+    -   [ ] Transfer Money
 -   [ ] Faction System
 -   [ ] Basic Anticheat
 -   [x] Time Sync
 -   [x] Weather Sync
 -   [x] Interaction System
--   [x] Interaction for Vehicles
--   [ ] Interaction for Players
--   [x] Interaction for Objects
+    -   [x] Interaction for Vehicles
+    -   [ ] Interaction for Players
+        -   [ ] Give Money
+    -   [x] Interaction for Objects
+    -   [x] Interaction for Self
+        -   [x] Animations for Sitting
 -   [x] Player Death Handling
 -   [x] Taxation
--   [ ] Taxation goes to Government Fund
--   [ ] Government Fund Management
+    -   [ ] Taxation goes to Government Fund
 -   [x] Animation Manager
 -   [x] Context Menu of Animations
--   [x] Animations for Sitting
--   [x] Splash Screens
 -   [x] Custom Sounds! Blat!
 -   [x] Custom Chat
--   [x] Custom Chat Commands
--   [x] Custom Chat Colors
--   [ ] Custom Chat Notification Functions / Clickables
--   [ ] Custom Chat is Repositionable?
--   [x] Roleplay Commands (/me, /do, /b, /cc)
--   [x] Ranged Chat
--   [ ] Voice Chat
--   [x] Playing Hours Stats
--   [ ] Skill System for Jobs
+    -   [x] Custom Chat Commands
+    -   [x] Custom Chat Colors
+    -   [ ] Custom Chat Notification Functions / Clickables
+    -   [ ] Custom Chat is Repositionable?
+    -   [x] Ranged Chat
+    -   [x] Roleplay Commands (/me, /do, /b, /cc)
+-   [x] Experience Curve for Skill System
+-   [ ] Skill System
+    -   [ ] Defense (Damage Taken = Pain Tolerance)
+        -   More Damage Taken = Less Damage Taken
+    -   [ ] Agility (Sprint Modifier)
+        -   Increase Stamina
+    -   [ ] Cooking (Craft Better Food)
+        -   Create Better Healing Food
+        -   Create Better Healing Drinks
+    -   [ ] Medicine (Health Healed on Player Revivals)
+        -   Heal users quicker.
+        -   Revive users quicker.
+        -   Only accessible through the Nobility skill.
+    -   [ ] Notoriety (Gained Through Criminal Jobs, access to better jobs. Create a gang)
+        -   Lose nobility xp by doing notoriety activities.
+        -   Gain access to create a gang past a certain level.
+        -   Lose XP three times as fast when doing good things.
+        -   Drug Creation Jobs
+        -   Gun Creation Jobs
+        -   Illegal Shipment Jobs
+        -   Hitman Jobs (95+)
+    -   [ ] Nobility (Opposite of Notoriety, access to better jobs / factions.)
+        -   Lose notoriety xp by doing nobility activities.
+        -   Gain access to factions past a certain level. ie. Police Trainee
+        -   Lose XP three times as fast when doing bad things.
+        -   Medicinal Jobs
+        -   Police Jobs
+        -   Firefighter Jobs
+    -   [ ] Mining (Gather more items from Mining, use better equipment)
+        -   Basically better pickaxes that mine more.
+    -   [ ] Gathering (Gather more items for Drug Crafting)
+        -   Basically use better gathering items.
+    -   [ ] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
+        -   Repair Quicker on Mechanic Job
+        -   Use Repair Kits After Level 75+
+    -   [ ] Crafting (Better Quality Items)
+        -   Craft Better Pickaxes
+        -   Craft Better Guns
+        -   Craft Better Gathering Items
+        -   Craft Repair Kits
+        -   All Crafting Items Take Metal
 -   [ ] Drug System
--   [ ] Drugs for Health
--   [ ] Drugs for Armor
--   [ ] Drugs for Fast Running
--   [ ] Drug Jobs 3 jobs for each type.
+    -   [ ] Drugs for Health
+    -   [ ] Drugs for Armor
+        -   [ ] Drugs for Fast Running
+    -   [ ] Drug Jobs 3 jobs for each type.
+-   [x] Playing Hours Stats
 -   [ ] Loyalty Program
+    -   [ ] Extra Housing Slots for Hours Played
+    -   [ ] Extra Backpack Slots for Hours Played
+    -   [ ] Extra Shop Slots for Hours Played
+    -   [ ] Extra Vehicle Slots for Hours Played
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://www.twitch.tv/stuyksoft/).
 
@@ -157,6 +204,9 @@ altVServerFolder/
 |   |   ├── client.mjs
 |   |   ├── database.mjs
 |   |	└── resource.cfg
+└── package.json
+└── altv-server.exe
+└── node_modules/
 ```
 
 **Installing Packages for NodeJS**

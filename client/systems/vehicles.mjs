@@ -3,6 +3,20 @@ import * as native from 'natives';
 
 alt.log('Loaded: client->systems->vehicles.mjs');
 
+alt.on('meta:Changed', startInterval);
+
+function startInterval(key, value) {
+    if (key !== 'pedflags') return;
+    alt.off('meta:Changed', startInterval);
+    // Disable Vehicle Engine Startup
+    // Disable Shuffling to Driver Seat - Doesn't work?
+    // Disable Motorcylce Helmet
+    native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
+    alt.setInterval(vehicleInterval, 100);
+}
+
 export function toggleDoor(vehicle, id, state) {
     if (state) {
         native.setVehicleDoorOpen(vehicle.scriptID, id, false, false);
@@ -31,48 +45,52 @@ export function repair(vehicle) {
     native.setVehicleFixed(vehicle.scriptID);
 }
 
-export function disableEngineControl() {
-    native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
-}
-
 export function startEngine(value) {
     if (!alt.Player.local.vehicle) return;
     native.setVehicleEngineOn(alt.Player.local.vehicle.scriptID, value, false, true);
 }
 
-// Disable seat shuffle.
-alt.setInterval(disableSeatShuffle, 0);
+function vehicleInterval() {
+    if (!alt.Player.local.vehicle) return;
 
-function disableSeatShuffle() {
-    if (!native.isPedInAnyVehicle(alt.Player.local.scriptID, undefined)) return;
-    let vehicle = native.getVehiclePedIsIn(alt.Player.local.scriptID, undefined);
+    //const passenger = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, 0);
 
-    let passenger = native.getPedInVehicleSeat(vehicle, 0);
+    /*
+    if (native.getIsTaskActive(passenger, 165)) {
+        for (let i = 0; i < 800; i++) {
+            let value = native.getPedConfigFlag(passenger, i, undefined);
+            //alt.log(`Flag: ${i}, ${value}`);
+        }
+        
+        if (native.isVehicleSeatFree(alt.Player.local.vehicle.scriptID, -1)) {
+            if (passenger === alt.Player.local.scriptID) {
+                native.setPedIntoVehicle(
+                    alt.Player.local.scriptID,
+                    alt.Player.local.vehicle.scriptID,
+                    0
+                );
+            }
+        }
+        
+    }
+    */
 
-    if (!native.getIsTaskActive(passenger, 165)) return;
-
-    if (native.isVehicleSeatFree(vehicle, -1)) {
-        if (passenger === alt.Player.local.scriptID) {
-            native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle, 0);
+    if (
+        native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1) ===
+        alt.Player.local.scriptID
+    ) {
+        if (native.getIsVehicleEngineRunning(alt.Player.local.scriptID)) {
+            let interval = alt.setInterval(() => {
+                if (!alt.Player.local.vehicle) {
+                    native.setVehicleEngineOn(
+                        alt.Player.local.vehicle.scriptID,
+                        true,
+                        true,
+                        true
+                    );
+                    alt.clearInterval(interval);
+                }
+            }, 100);
         }
     }
-}
-
-// Disable turning engine off, after exiting (Holding F will still turn it off)
-export function keepEngineRunning() {
-    const player = alt.Player.local.scriptID;
-
-    if (!native.isPedInAnyVehicle(player, undefined)) return;
-    let vehicle = native.getVehiclePedIsIn(player, undefined);
-
-    if (!native.getPedInVehicleSeat(vehicle, -1) === player) return;
-
-    if (!native.getIsVehicleEngineRunning(vehicle)) return;
-
-    let interval = alt.setInterval(() => {
-        if (!alt.Player.local.vehicle) {
-            native.setVehicleEngineOn(vehicle, true, true, true);
-            alt.clearInterval(interval);
-        }
-    }, 100);
 }

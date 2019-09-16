@@ -11,6 +11,7 @@ import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
 import * as systemsJob from '../systems/job.mjs';
 import * as systemsAtm from '../systems/atm.mjs';
+import * as systemsSkills from '../systems/skills.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 import * as chat from '../chat/chat.mjs';
 
@@ -75,6 +76,9 @@ alt.onClient('chat:IsChatting', chat.setStatus);
 
 // Job
 alt.onClient('job:TestObjective', systemsJob.testObjective);
+
+// Skills
+alt.onClient('skill:Agility', systemsSkills.agility);
 
 // Temporary:
 // teleport to waypoint stuff

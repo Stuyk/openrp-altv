@@ -10,9 +10,6 @@ let interval;
 alt.on('meta:Changed', (key, value) => {
     if (key !== 'interaction') return;
     const indexData = value;
-
-    alt.log('hey');
-
     if (indexData === undefined || indexData === null) {
         currentLabel = undefined;
         interactionEnabled = false;

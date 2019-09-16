@@ -3,22 +3,27 @@ import * as configurationJob from '../configuration/job.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import { Interaction } from '../systems/interaction.mjs';
 import * as configurationItems from '../configuration/items.mjs';
+import { addXP } from '../systems/skills.mjs';
 
-const jobs = configurationJob.Configuration;
+let jobs;
 
-jobs.forEach((job, index) => {
-    //position, type, serverEventName, radius, height, message, indexValue)
-    let interact = new Interaction(
-        job.start,
-        'job',
-        'job:StartJob',
-        3,
-        2,
-        job.name,
-        index
-    );
-    interact.addBlip(job.blipSprite, job.blipColor, job.name);
-});
+export function load(loadedJobs) {
+    jobs = loadedJobs;
+
+    jobs.forEach((job, index) => {
+        //position, type, serverEventName, radius, height, message, indexValue)
+        let interact = new Interaction(
+            job.start,
+            'job',
+            'job:StartJob',
+            3,
+            2,
+            job.name,
+            index
+        );
+        interact.addBlip(job.blipSprite, job.blipColor, job.name);
+    });
+}
 
 /* The way these jobs work....
  1. Load the Jobs from the Configuration.
@@ -134,8 +139,6 @@ alt.on('job:StartJob', (player, index) => {
  * @param isNewJob
  */
 function syncMeta(player, index, isNewJob) {
-    console.log('Syncing Job Meta');
-
     // Set Synced Meta
     player.emitMeta('job:Job', JSON.stringify(player.job.currentJob));
     player.emitMeta('job:PointIndex', index);
@@ -304,20 +307,43 @@ export function goToNext(player, goToInfinite) {
         player.job.isAvailable = true;
     }
 
-    if (nextPoint.type === 'rewarditem') {
-        Object.keys(configurationItems.Items).forEach(key => {
-            if (configurationItems.Items[key].label !== nextPoint.item) return;
-            let itemTemplate = configurationItems.Items[key];
-            player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
-            player.send(`You recieved: ${itemTemplate.label}`);
-        });
+    if (nextPoint !== undefined) {
+        if (nextPoint.type === 'rewarditem') {
+            Object.keys(configurationItems.Items).forEach(key => {
+                if (configurationItems.Items[key].label !== nextPoint.item) return;
+                let itemTemplate = configurationItems.Items[key];
 
-        index += 1;
-        nextPoint = player.job.currentJob.points[index];
+                if (!itemTemplate.stackable) {
+                    for (let i = 0; i < nextPoint.quantity; i++) {
+                        player.addItem({ ...itemTemplate }, 1, true);
+                        player.send(`You recieved: ${itemTemplate.label}`);
+                    }
+                } else {
+                    player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
+                    player.send(`You recieved: ${itemTemplate.label}`);
+                }
+            });
+
+            index += 1;
+            nextPoint = player.job.currentJob.points[index];
+        }
     }
 
+    if (nextPoint !== undefined) {
+        if (nextPoint.type === 'rewardxp') {
+            addXP(player, nextPoint.skill, nextPoint.quantity);
+            player.send(
+                `You recieved ${nextPoint.quantity}XP for the ${nextPoint.skill} skill.`
+            );
+
+            index += 1;
+            nextPoint = player.job.currentJob.points[index];
+        }
+    }
+    
+
     // Finish Job if undefined point.
-    if (nextPoint === undefined) {
+    if (nextPoint === undefined && !player.job.infinite) {
         player.send('You have finished your job.');
         try {
             clearJob(player);
@@ -466,6 +492,7 @@ export function cancelJob(jobber) {
  */
 function pointType(player, callback) {
     const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
+    if (player.vehicle) return callback(false);
     if (dist > player.job.currentPoint.range) {
         return callback(false);
     }
@@ -826,7 +853,15 @@ function targetRepairType(player, callback) {
 function playJobAnimation(player) {
     if (player.job.currentPoint.anim === undefined) return;
     const anim = player.job.currentPoint.anim;
-    player.playAnimation(anim.dict, anim.name, anim.duration, anim.flag);
+    player.playAnimation(
+        anim.dict,
+        anim.name,
+        anim.duration,
+        anim.flag,
+        anim.freezeX,
+        anim.freezeY,
+        anim.freezeZ
+    );
 }
 
 /**
@@ -865,6 +900,10 @@ function callbackHack(player, callbackname, value) {
         playJobAnimation(player);
         player.job.progress += 1;
         player.emitMeta('job:Progress', player.job.progress);
+
+        if (player.job.currentPoint.sound) {
+            player.playAudio('chop');
+        }
 
         if (player.job.progress > player.job.currentPoint.progressMax) {
             player.job.callback(true);

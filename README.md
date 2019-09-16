@@ -75,9 +75,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [x] Roleplay Commands (/me, /do, /b, /cc)
 -   [x] Experience Curve for Skill System
 -   [ ] Skill System
-    -   [ ] Defense (Damage Taken = Pain Tolerance)
-        -   More Damage Taken = Less Damage Taken
-    -   [ ] Agility (Sprint Modifier)
+    -   [x] Agility (Sprint Modifier)
         -   Increase Stamina
     -   [ ] Cooking (Craft Better Food)
         -   Create Better Healing Food
@@ -85,7 +83,6 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Medicine (Health Healed on Player Revivals)
         -   Heal users quicker.
         -   Revive users quicker.
-        -   Only accessible through the Nobility skill.
     -   [ ] Notoriety (Gained Through Criminal Jobs, access to better jobs. Create a gang)
         -   Lose nobility xp by doing notoriety activities.
         -   Gain access to create a gang past a certain level.
@@ -115,9 +112,9 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   Craft Repair Kits
         -   All Crafting Items Take Metal
 -   [ ] Drug System
-    -   [ ] Drugs for Health
-    -   [ ] Drugs for Armor
-        -   [ ] Drugs for Fast Running
+    -   [ ] Drugs for Health (Healium)
+    -   [ ] Drugs for Armor (Kevlarium)
+    -   [ ] Drugs for Fast Running (Speed)
     -   [ ] Drug Jobs 3 jobs for each type.
 -   [x] Playing Hours Stats
 -   [ ] Loyalty Program
@@ -139,13 +136,24 @@ If you'd like to remove the splash screens at any point; we can negotiate at a p
 ### General Information and Hotkeys
 
 ```
+// General
+Tab --------> Press to Toggle Cursor
+Tab + RMB  -> Show Context Menu on User
+Tab + LMB  -> Select Context Option
+E ----------> Most clothing shops, jobs, etc. to interact.
+I ----------> Toggle Inventory
+T ----------> Chat
+ESC --------> Exit Most Menus
 
-z -------> Press and hold to reveal cursor.
-z + rmb -> Show Context Menu on User
-z + lmb -> Select Context Option
-e -------> Most clothing shops, jobs, etc. to interact.
-i -------> inventory
+// Vehicles
+Shift + F  -> Leave Engine Running
+Shift + G  -> Toggle Engine
+Shift + H  -> Toggle Lock
 
+// Utility
+Shift + F1 -> Get Interior Info in Console
+Shift + F2 -> Get Position
+Shift + F7 -> Hide Chat
 ```
 
 ---
@@ -177,7 +185,7 @@ After; it should be running automatically in your services on windows. You can a
 
 -   Download the latest version of this resource. You can either clone the repository or simply download it. The `resource.cfg` and the rest of the files should be directly inside of a folder called `orp`.
 
--   To configure your database navigate to `resources/orp/server/configuration/` and open `database.mjs`. Fill out the required parameters; and change them to what you setup PostgreSQL with.
+-   To configure your database, you will need the `resources/orp/server/configuration/database.mjs` file configured with the required parameters to connect to your database. Open `database.mjs.example`, fill out the required parameters, and save it to a new file named `database.mjs`.
 
 **Example Database Configuration**
 

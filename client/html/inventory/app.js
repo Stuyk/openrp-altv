@@ -9,6 +9,10 @@ const itemIcons = {
     soda: 'soda-can',
     license: 'id-card',
     weapon: 'weapon',
+    pickaxe: 'pickaxe',
+    rock: 'rock',
+    axe: 'axe',
+    wood: 'wood',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',
@@ -128,7 +132,8 @@ class App extends Component {
             mask: undefined,
             targetHover: -1,
             renaming: false,
-            newname: ''
+            newname: '',
+            stats: []
         };
 
         this.mousemove = this.mousemove.bind(this);
@@ -138,6 +143,7 @@ class App extends Component {
         if ('alt' in window) {
             alt.on('inventory:ClearItems', this.clearItems.bind(this));
             alt.on('inventory:AddItem', this.addItem.bind(this));
+            alt.on('inventory:AddStat', this.addStat.bind(this));
         } else {
             // These are considered DEMO items.
             // Used for out of game reference.
@@ -207,6 +213,14 @@ class App extends Component {
                 41,
                 true
             );
+
+            this.addStat('agility', 32, 16456);
+            this.addStat('mechanic', 32, 16456);
+            this.addStat('gathering', 32, 16456);
+            this.addStat('cooking', 32, 16456);
+            this.addStat('mining', 32, 16456);
+            this.addStat('crafting', 32, 16456);
+            this.addStat('agility', 32, 16456);
         }
 
         window.addEventListener('keyup', this.close.bind(this));
@@ -263,7 +277,6 @@ class App extends Component {
                 item[prop] = args[index];
             });
             items[args[0]] = item;
-            console.log(item);
         }
         this.setState({ items });
     }
@@ -275,7 +288,13 @@ class App extends Component {
      */
     navigate(e) {
         const currentTab = e.target.id * 1;
-        this.setState({ currentTab, renaming: false, usingTextBox: false });
+        this.setState({
+            currentTab,
+            renaming: false,
+            usingTextBox: false,
+            info: '',
+            stat: ''
+        });
     }
 
     /**
@@ -525,6 +544,17 @@ class App extends Component {
     }
 
     /**
+     * Called when the user hovers
+     * over their stat.
+     * @param {*} e
+     */
+    mouseoverStat(e) {
+        if (this.state.stats[e.target.id] === undefined) return;
+        let info = this.state.stats[e.target.id].name;
+        this.setState({ info, desc: { xp: this.state.stats[e.target.id].xp } });
+    }
+
+    /**
      * Clear's the mouse over when the id
      * is not of the 'context' type.
      * @param {*} e
@@ -535,6 +565,23 @@ class App extends Component {
         this.setState({
             itemContext: false
         });
+    }
+
+    /**
+     * Add statistic information.
+     * @param  {...any} args
+     */
+    addStat(...args) {
+        let [name, lvl, xp] = args;
+        let stats = [...this.state.stats];
+
+        stats.push({
+            name,
+            lvl,
+            xp
+        });
+
+        this.setState({ stats });
     }
 
     render() {
@@ -688,7 +735,13 @@ class App extends Component {
                                     'x100'
                                 )
                             )
-                        )
+                        ),
+                    this.state.renaming === false &&
+                        this.state.currentTab === 1 &&
+                        h(Stats, {
+                            stats: this.state.stats,
+                            hover: this.mouseoverStat.bind(this)
+                        })
                 ),
                 // ===> INFO
                 h(
@@ -897,6 +950,24 @@ const Equipment = ({ state, click, release, mouseover, id, icon }) => {
                   )
               )
     );
+};
+
+const Stats = ({ stats, hover }) => {
+    const statList = stats.map((stat, index) => {
+        return h(
+            'div',
+            { class: 'stat', id: index, onmouseover: hover.bind(this) },
+            h('div', { class: 'name' }, stat.name),
+            h('div', { class: 'level' }, `${stat.lvl}/99`),
+            h('svg', {
+                type: 'image/svg+xml',
+                class: `statsvg ${stat.name}`,
+                style: `background: url('../icons/${stat.name}.svg');`
+            })
+        );
+    });
+
+    return h('div', { class: 'statlist' }, statList);
 };
 
 render(h(App), document.querySelector('#render'));

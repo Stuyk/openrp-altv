@@ -17,6 +17,7 @@ const sandboxhelp = [
     '/players, /clearchat',
     '/taxi, /taxicancel',
     '/mechanic, /mechaniccancel',
+    '/quitjob',
     'Press TAB for context cursor.',
     'I for Inventory'
 ];
@@ -116,4 +117,9 @@ chat.registerCmd('players', player => {
 chat.registerCmd('pos', player => {
     player.send(`${JSON.stringify(player.pos)}`);
     console.log(player.pos);
+});
+
+chat.registerCmd('save', player => {
+    player.data.pos = JSON.stringify(player.pos);
+    player.save();
 });

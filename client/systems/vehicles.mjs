@@ -14,7 +14,7 @@ function startInterval(key, value) {
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
-    alt.setInterval(vehicleInterval, 100);
+    // Interval Removed
 }
 
 export function toggleDoor(vehicle, id, state) {
@@ -50,47 +50,68 @@ export function startEngine(value) {
     native.setVehicleEngineOn(alt.Player.local.vehicle.scriptID, value, false, true);
 }
 
-function vehicleInterval() {
+// Called from a keybind.
+export function toggleEngine() {
     if (!alt.Player.local.vehicle) return;
 
-    //const passenger = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, 0);
+    const pedInSeat = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1);
+    if (pedInSeat !== alt.Player.local.scriptID) return;
 
-    /*
-    if (native.getIsTaskActive(passenger, 165)) {
-        for (let i = 0; i < 800; i++) {
-            let value = native.getPedConfigFlag(passenger, i, undefined);
-            //alt.log(`Flag: ${i}, ${value}`);
-        }
-        
-        if (native.isVehicleSeatFree(alt.Player.local.vehicle.scriptID, -1)) {
-            if (passenger === alt.Player.local.scriptID) {
-                native.setPedIntoVehicle(
-                    alt.Player.local.scriptID,
-                    alt.Player.local.vehicle.scriptID,
-                    0
-                );
+    alt.emitServer('vehicle:ToggleEngine', alt.Player.local.vehicle);
+}
+
+// Called from a keybind.
+export function toggleLock() {
+    const vehicle = native.getVehiclePedIsIn(alt.Player.local.scriptID, 1);
+    if (!native.doesEntityExist(vehicle)) return;
+
+    let veh = alt.Vehicle.all.find(x => x.scriptID === vehicle);
+    if (!veh) return;
+
+    if (alt.Player.local.vehicle) return;
+
+    alt.emitServer('vehicle:ToggleLock', veh);
+}
+
+// Called from a keybind.
+export function keepEngineRunning() {
+    if (!alt.Player.local.vehicle) return;
+    if (!native.getIsVehicleEngineRunning(alt.Player.local.vehicle.scriptID)) return;
+    const pedInSeat = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1);
+    if (pedInSeat !== alt.Player.local.scriptID) return;
+    alt.setTimeout(() => {
+        native.setVehicleEngineOn(
+            // Retrieves last vehicle ped was in.
+            native.getVehiclePedIsIn(alt.Player.local.scriptID, 1),
+            true,
+            true,
+            true
+        );
+    }, 100);
+}
+
+// Called when the user locks their vehicle.
+export function soundHorn(vehicle, state) {
+    let id = vehicle.scriptID;
+
+    let count = 0;
+    if (state) {
+        let interval = alt.setInterval(() => {
+            native.setVehicleLights(id, 0);
+            native.startVehicleHorn(id, 50, native.getHashKey('HELDDOWN'), false);
+            native.setVehicleLights(id, 2);
+            if (count == 1) {
+                alt.clearInterval(interval);
             }
-        }
-        
-    }
-    */
+            native.setVehicleLights(id, 0);
+            count += 1;
+        }, 100);
+    } else {
+        native.setVehicleLights(id, 2);
+        native.startVehicleHorn(id, 50, native.getHashKey('HELDDOWN'), false);
 
-    if (
-        native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1) ===
-        alt.Player.local.scriptID
-    ) {
-        if (native.getIsVehicleEngineRunning(alt.Player.local.scriptID)) {
-            let interval = alt.setInterval(() => {
-                if (!alt.Player.local.vehicle) {
-                    native.setVehicleEngineOn(
-                        alt.Player.local.vehicle.scriptID,
-                        true,
-                        true,
-                        true
-                    );
-                    alt.clearInterval(interval);
-                }
-            }, 100);
-        }
+        alt.setTimeout(() => {
+            native.setVehicleLights(id, 0);
+        }, 50);
     }
 }

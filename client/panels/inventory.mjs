@@ -3,6 +3,7 @@ import * as native from 'natives';
 //import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 //import { WebView } from 'client/utility/webview.mjs';
 import { View } from 'client/utility/view.mjs';
+import { getLevel } from 'client/systems/xp.mjs';
 
 alt.log(`Loaded: client->panels->inventory.mjs`);
 
@@ -60,6 +61,18 @@ export function fetchItems() {
             canuse,
             item.droppable,
             item.icon
+        );
+    });
+
+    let statJSON = alt.Player.local.getMeta('skills');
+    let statArray = JSON.parse(statJSON);
+
+    Object.keys(statArray).forEach(key => {
+        webview.emit(
+            'inventory:AddStat',
+            key,
+            getLevel(statArray[key].xp),
+            statArray[key].xp
         );
     });
 

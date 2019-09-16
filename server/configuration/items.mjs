@@ -562,6 +562,21 @@ export const Items = {
             description: 'A hunk of unrefined rock.'
         }
     },
+    UnrefinedWood: {
+        label: 'Unrefined Wood',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        icon: 'wood',
+        props: {
+            description: 'A hunk of unrefined wood.'
+        }
+    },
     Pickaxe1: {
         label: 'Garbage Pickaxe',
         stackable: false,
@@ -592,6 +607,22 @@ export const Items = {
         icon: 'pickaxe',
         props: {
             lvl: 10
+        }
+    },
+    Axe1: {
+        label: 'Garbage Axe',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        icon: 'axe',
+        props: {
+            lvl: 0
         }
     }
 };

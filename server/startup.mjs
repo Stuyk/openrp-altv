@@ -41,6 +41,7 @@ alt.on('ConnectionComplete', () => {
     import('./intervals/players.mjs');
 
     // Sandbox Commands
+    import('./commands/job.mjs');
     import('./commands/sandbox.mjs');
     import('./commands/revive.mjs');
     import('./commands/roleplay.mjs');

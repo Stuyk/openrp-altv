@@ -11,6 +11,8 @@ const itemIcons = {
     weapon: 'weapon',
     pickaxe: 'pickaxe',
     rock: 'rock',
+    axe: 'axe',
+    wood: 'wood',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',

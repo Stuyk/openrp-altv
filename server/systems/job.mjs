@@ -898,6 +898,10 @@ function callbackHack(player, callbackname, value) {
         player.job.progress += 1;
         player.emitMeta('job:Progress', player.job.progress);
 
+        if (player.job.currentPoint.sound) {
+            player.playAudio('chop');
+        }
+
         if (player.job.progress > player.job.currentPoint.progressMax) {
             player.job.callback(true);
             player.job.callback = undefined;

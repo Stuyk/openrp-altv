@@ -307,34 +307,36 @@ export function goToNext(player, goToInfinite) {
         player.job.isAvailable = true;
     }
 
-    if (nextPoint.type === 'rewarditem') {
-        Object.keys(configurationItems.Items).forEach(key => {
-            if (configurationItems.Items[key].label !== nextPoint.item) return;
-            let itemTemplate = configurationItems.Items[key];
+    if (nextPoint !== undefined) {
+        if (nextPoint.type === 'rewarditem') {
+            Object.keys(configurationItems.Items).forEach(key => {
+                if (configurationItems.Items[key].label !== nextPoint.item) return;
+                let itemTemplate = configurationItems.Items[key];
 
-            if (!itemTemplate.stackable) {
-                for (let i = 0; i < nextPoint.quantity; i++) {
-                    player.addItem({ ...itemTemplate }, 1, true);
+                if (!itemTemplate.stackable) {
+                    for (let i = 0; i < nextPoint.quantity; i++) {
+                        player.addItem({ ...itemTemplate }, 1, true);
+                        player.send(`You recieved: ${itemTemplate.label}`);
+                    }
+                } else {
+                    player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
                     player.send(`You recieved: ${itemTemplate.label}`);
                 }
-            } else {
-                player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
-                player.send(`You recieved: ${itemTemplate.label}`);
-            }
-        });
+            });
 
-        index += 1;
-        nextPoint = player.job.currentJob.points[index];
-    }
+            index += 1;
+            nextPoint = player.job.currentJob.points[index];
+        }
 
-    if (nextPoint.type === 'rewardxp') {
-        addXP(player, nextPoint.skill, nextPoint.quantity);
-        player.send(
-            `You recieved ${nextPoint.quantity}XP for the ${nextPoint.skill} skill.`
-        );
+        if (nextPoint.type === 'rewardxp') {
+            addXP(player, nextPoint.skill, nextPoint.quantity);
+            player.send(
+                `You recieved ${nextPoint.quantity}XP for the ${nextPoint.skill} skill.`
+            );
 
-        index += 1;
-        nextPoint = player.job.currentJob.points[index];
+            index += 1;
+            nextPoint = player.job.currentJob.points[index];
+        }
     }
 
     // Finish Job if undefined point.

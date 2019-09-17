@@ -8,13 +8,6 @@ import * as alt from 'alt';
 // username, encrypted password
 const accounts = {};
 
-// IDs
-const idNums = [];
-
-export function cacheIdNum(idNum) {
-    idNums.push(idNum);
-}
-
 export function cacheAccount(username, id, password) {
     accounts[username] = {
         id,

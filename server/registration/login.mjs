@@ -118,7 +118,6 @@ export function sync(player) {
     if (player.data.name !== null && player.data.dob !== null) {
         player.needsRoleplayInfo = false;
         player.setSyncedMeta('name', player.data.name);
-        player.setSyncedMeta('idnum', player.data.idnum);
         player.setSyncedMeta('dob', player.data.dob);
         alt.log(`${player.data.name} has spawned.`);
     }

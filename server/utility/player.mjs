@@ -360,18 +360,15 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     /**
-     * Set / Save the player's Roleplay Info 
+     * Set / Save the player's Roleplay Info
      */
     player.saveRoleplayInfo = value => {
         player.data.name = value.name;
         player.data.dob = value.dob;
-        player.data.idnum = value.idnum;
         player.setSyncedMeta('name', player.data.name);
         player.setSyncedMeta('dob', player.data.dob);
-        player.setSyncedMeta('idnum', player.data.idnum);
         player.saveField(player.data.id, 'name', player.data.name);
         player.saveField(player.data.id, 'dob', player.data.dob);
-        player.saveField(player.data.id, 'idnum', player.data.idnum);
     };
 
     // =================================

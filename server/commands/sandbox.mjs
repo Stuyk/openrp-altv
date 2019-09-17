@@ -17,7 +17,7 @@ const sandboxhelp = [
     '/players, /clearchat',
     '/taxi, /taxicancel',
     '/mechanic, /mechaniccancel',
-    '/quitjob',
+    '/quitjob, /getsector',
     'Press TAB for context cursor.',
     'I for Inventory'
 ];
@@ -122,4 +122,8 @@ chat.registerCmd('pos', player => {
 chat.registerCmd('save', player => {
     player.data.pos = JSON.stringify(player.pos);
     player.save();
+});
+
+chat.registerCmd('sector', player => {
+    player.send(`Current Sector -> X: ${player.sector.x}, Y: ${player.sector.y}`);
 });

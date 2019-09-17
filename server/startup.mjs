@@ -56,6 +56,7 @@ alt.on('ConnectionComplete', () => {
     import('./systems/job.mjs');
     import('./systems/use.mjs');
     import('./systems/xp.mjs');
+    import('./systems/grid.mjs');
 
     // Import Item Effects
     import('./itemeffects/consume.mjs');

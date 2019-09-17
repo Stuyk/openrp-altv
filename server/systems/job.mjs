@@ -327,7 +327,9 @@ export function goToNext(player, goToInfinite) {
             index += 1;
             nextPoint = player.job.currentJob.points[index];
         }
+    }
 
+    if (nextPoint !== undefined) {
         if (nextPoint.type === 'rewardxp') {
             addXP(player, nextPoint.skill, nextPoint.quantity);
             player.send(
@@ -338,6 +340,7 @@ export function goToNext(player, goToInfinite) {
             nextPoint = player.job.currentJob.points[index];
         }
     }
+    
 
     // Finish Job if undefined point.
     if (nextPoint === undefined && !player.job.infinite) {

@@ -501,11 +501,10 @@ export function setupPlayerFunctions(player) {
     };
 
     player.hasItem = itemName => {
-        let item = player.inventory.find(
-            x => x !== null && x !== undefined && x.label.includes(itemName)
-        );
-
-        if (item === undefined || item === null) return false;
+        let items = player.inventory.filter(x => x !== null && x !== undefined);
+        if (items.length <= 0) return false;
+        let item = items.find(x => x.label && x.label.includes(itemName));
+        if (!item) return false;
         return true;
     };
 

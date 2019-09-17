@@ -13,6 +13,7 @@ const itemIcons = {
     rock: 'rock',
     axe: 'axe',
     wood: 'wood',
+    phone: 'phone',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',

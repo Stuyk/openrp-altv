@@ -87,6 +87,19 @@ export const Items = {
             health: 3
         }
     },
+    Phone: {
+        label: 'Phone',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        eventcall: '',
+        sellable: true,
+        droppable: true,
+        message: '',
+        quantity: 0,
+        icon: 'phone',
+        props: {}
+    },
     DriversLicense: {
         label: 'Drivers License',
         stackable: false,

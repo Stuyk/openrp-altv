@@ -7,6 +7,11 @@ chat.registerCmd('t', (player, args) => {
         return;
     }
 
+    if (!player.hasItem('Phone')) {
+        player.send(`You don't seem to have a phone.`);
+        return;
+    }
+
     let number = args.shift();
     if (isNaN(number)) {
         player.send(`${number} is not a number.`);
@@ -37,6 +42,11 @@ chat.registerCmd('t', (player, args) => {
         return;
     }
 
+    if (!user.hasItem('Phone')) {
+        player.send(`{FFFF00} That number is not in service at this time.`);
+        return;
+    }
+
     user.send(`{FFFF00}SMS: ${msg} | Sender: ${user.data.name} (${player.data.id})`);
     player.send(`{d4d400}SENT: ${msg} | To: ${user.data.name} (${number})`);
 });
@@ -44,6 +54,11 @@ chat.registerCmd('t', (player, args) => {
 chat.registerCmd('addcontact', (player, arg) => {
     if (arg === undefined || arg.length <= 0) {
         player.send(`{FF0000} Usage: /addcontact (number)`);
+        return;
+    }
+
+    if (!player.hasItem('Phone')) {
+        player.send(`You don't seem to have a phone.`);
         return;
     }
 
@@ -71,6 +86,11 @@ chat.registerCmd('deletecontact', removeContact);
 function removeContact(player, arg) {
     if (arg === undefined || arg.length <= 0) {
         player.send(`{FF0000} Usage: /removecontact (number)`);
+        return;
+    }
+
+    if (!player.hasItem('Phone')) {
+        player.send(`You don't seem to have a phone.`);
         return;
     }
 
@@ -103,6 +123,11 @@ chat.registerCmd('call', (player, arg) => {
         return;
     }
 
+    if (!player.hasItem('Phone')) {
+        player.send(`You don't seem to have a phone.`);
+        return;
+    }
+
     let number = arg[0];
     if (isNaN(number)) {
         player.send(`${number} is not a number.`);
@@ -123,6 +148,11 @@ chat.registerCmd('call', (player, arg) => {
     let users = alt.Player.all.filter(x => x.data !== undefined && x.data.id === number);
     let user = users[0];
     if (!user) {
+        player.send(`{FFFF00} That number is not in service at this time.`);
+        return;
+    }
+
+    if (!user.hasItem('Phone')) {
         player.send(`{FFFF00} That number is not in service at this time.`);
         return;
     }
@@ -177,6 +207,11 @@ chat.registerCmd('call', (player, arg) => {
 chat.registerCmd('answer', player => {
     if (player.call === undefined) {
         player.send('{FF0000} Nobody is calling you at this time.');
+        return;
+    }
+
+    if (!player.hasItem('Phone')) {
+        player.send(`You don't seem to have a phone.`);
         return;
     }
 

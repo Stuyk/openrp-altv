@@ -46,6 +46,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   [ ] Medical Clinic
 -   [ ] Door Sales System
 -   [ ] Administrative Toolkit
+-   [x] Phone System
 -   [x] Currency System
 -   [x] ATM / Bank System
     -   [ ] Transfer Money

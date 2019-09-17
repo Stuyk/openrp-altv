@@ -1,6 +1,10 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.mjs';
 
+chat.registerCmd('phonenumber', player => {
+    player.send(`Your number is: ${player.data.id}`);
+});
+
 chat.registerCmd('t', (player, args) => {
     if (args === undefined || args.length <= 1) {
         player.send('Usage: /t (id) (message)');

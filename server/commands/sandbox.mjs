@@ -18,6 +18,7 @@ const sandboxhelp = [
     '/taxi, /taxicancel',
     '/mechanic, /mechaniccancel',
     '/quitjob, /getsector',
+    '/phonenumber',
     '/t, /call, /addcontact, /removecontact, /hangup',
     'Press TAB for context cursor.',
     'I for Inventory'

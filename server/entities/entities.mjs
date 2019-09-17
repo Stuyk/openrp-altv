@@ -109,6 +109,10 @@ export const Character = new orm.EntitySchema({
                 smithing: { xp: 0 },
                 woodcutting: { xp: 0 }
             })
+        },
+        contacts: {
+            type: 'text',
+            default: '[]'
         }
     }
 });

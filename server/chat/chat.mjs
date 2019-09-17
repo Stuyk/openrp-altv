@@ -62,6 +62,12 @@ function handleMessage(player, msg) {
     const message = `${sender} says: ${msg}`;
     alt.log(message);
 
+    if (player.call) {
+        if (player.call.calling && player.call.pickedup) {
+            player.call.calling.send(`{FFFF00}${sender} says: ${msg}`);
+        }
+    }
+
     for (var i = 0; i < playersInRange.length; i++) {
         playersInRange[i].send(message);
     }

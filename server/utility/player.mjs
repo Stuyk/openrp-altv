@@ -720,4 +720,40 @@ export function setupPlayerFunctions(player) {
     player.syncXP = () => {
         player.emitMeta('skills', player.data.skills);
     };
+
+    // =================
+    // Phone
+    player.addContact = number => {
+        let contacts = JSON.parse(player.data.contacts);
+        if (contacts.includes(number)) {
+            return false;
+        }
+
+        contacts.push(number);
+        player.data.contacts = JSON.stringify(contacts);
+        player.saveField(player.data.id, 'contacts', player.data.contacts);
+        return true;
+    };
+
+    player.removeContact = number => {
+        let contacts = JSON.parse(player.data.contacts);
+        let index = contacts.findIndex(x => x === number);
+        if (index <= -1) {
+            return false;
+        }
+
+        contacts.splice(index, 1);
+        player.data.contacts = JSON.stringify(contacts);
+        player.saveField(player.data.id, 'contacts', player.data.contacts);
+        return true;
+    };
+
+    player.hasContact = number => {
+        let contacts = JSON.parse(player.data.contacts);
+        let index = contacts.findIndex(x => x === number);
+        if (index <= -1) {
+            return false;
+        }
+        return true;
+    };
 }

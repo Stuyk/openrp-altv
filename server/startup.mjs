@@ -47,6 +47,7 @@ alt.on('ConnectionComplete', () => {
     import('./commands/roleplay.mjs');
     import('./commands/taxi.mjs');
     import('./commands/mechanic.mjs');
+    import('./commands/phone.mjs');
 
     // Systems
     import('./systems/anticheat.mjs');

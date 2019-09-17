@@ -119,6 +119,7 @@ export function sync(player) {
         player.needsRoleplayInfo = false;
         player.setSyncedMeta('name', player.data.name);
         player.setSyncedMeta('dob', player.data.dob);
+        player.setSyncedMeta('id', player.data.id);
         alt.log(`${player.data.name} has spawned.`);
     }
 

@@ -18,7 +18,7 @@ import * as systemsVehicles from 'client/systems/vehicles.mjs';
 // Panels
 import * as panelsChat from 'client/panels/chat.mjs';
 import * as panelsAtm from 'client/panels/atm.mjs';
-import * as panelsName from 'client/panels/name.mjs';
+import * as panelsInfo from 'client/panels/info.mjs';
 import * as panelsInventory from 'client/panels/inventory.mjs';
 import * as panelsClothing from 'client/panels/clothing.mjs';
 import * as panelsCharacter from 'client/panels/character.mjs';
@@ -74,9 +74,8 @@ alt.onServer('screen:FadeOutFadeIn', utilityScreenFades.fadeOutFadeIn); // 2 par
 
 // =======================================================
 // Set Character Name
-alt.onServer('roleplayname:ShowDialogue', panelsName.showDialogue);
-alt.onServer('roleplayname:ShowNameTaken', panelsName.showNameTaken);
-alt.onServer('roleplayname:CloseDialogue', panelsName.closeDialogue);
+alt.onServer('roleplayinfo:ShowDialogue', panelsInfo.showDialogue);
+alt.onServer('roleplayinfo:CloseDialogue', panelsInfo.closeDialogue);
 
 // =======================================================
 // Create Blip

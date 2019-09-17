@@ -111,13 +111,15 @@ export function sync(player) {
 
     // Setup Position
     const lastPos = JSON.parse(player.data.lastposition);
-    player.needsRoleplayName = true;
+    player.needsRoleplayInfo = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
 
     // Set player name.
-    if (player.data.name !== null) {
-        player.needsRoleplayName = false;
+    if (player.data.name !== null && player.data.dob !== null) {
+        player.needsRoleplayInfo = false;
         player.setSyncedMeta('name', player.data.name);
+        player.setSyncedMeta('idnum', player.data.idnum);
+        player.setSyncedMeta('dob', player.data.dob);
         alt.log(`${player.data.name} has spawned.`);
     }
 
@@ -136,8 +138,8 @@ export function sync(player) {
     } else {
         player.applyFace(player.data.face);
 
-        if (player.needsRoleplayName) {
-            player.showRoleplayNameDialogue();
+        if (player.needsRoleplayInfo) {
+            player.showRoleplayInfoDialogue();
         }
     }
 

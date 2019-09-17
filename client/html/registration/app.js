@@ -107,6 +107,12 @@ class App extends Component {
         }, 1000);
     }
 
+    handleKeyPress = (event) => {
+        if(event.key === 'Enter'){
+          this.submitData()
+        }
+      }
+
     setLogin() {
         this.setState({ fadeOut: 1 });
 
@@ -226,6 +232,7 @@ class App extends Component {
                             name: 'password',
                             placeholder: 'password',
                             oninput: this.validData.bind(this),
+                            onkeypress: this.handleKeyPress.bind(this),
                             id: 'password1',
                             class:
                                 (this.state.register &&
@@ -254,6 +261,7 @@ class App extends Component {
                                   placeholder: 'password confirmation',
                                   oninput: this.validData.bind(this),
                                   id: 'password2',
+                                  onkeypress: this.handleKeyPress.bind(this),
                                   class:
                                       this.state.register &&
                                       (this.state.password1.length >= 6 &&

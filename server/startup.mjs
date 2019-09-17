@@ -78,13 +78,13 @@ function cacheInformation() {
     });
 
     // Used for quickly determing if a roleplay name is in use.
-    db.selectData('Character', ['name'], data => {
+    db.selectData('Character', ['idnum'], data => {
         if (data === undefined) return;
 
         for (let i = 0; i < data.length; i++) {
-            cache.cacheName(data[i].name);
+            cache.cacheIdNum(data[i].idnum);
         }
 
-        console.log(`=====> Cached: ${data.length} Character Names`);
+        console.log(`=====> Cached: ${data.length} Character Ids`);
     });
 }

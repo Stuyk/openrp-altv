@@ -241,10 +241,10 @@ export function updatePosition(player, newIndex, oldIndex) {
     player.swapItems(newIndex, oldIndex);
 }
 
-export function addWeapon(player, weaponHash) {
+export function addWeapon(player, weaponName) {
     let weapon;
     Object.keys(Weapons).forEach(key => {
-        if (Weapons[key] !== weaponHash) return;
+        if (key !== weaponName) return;
         weapon = {
             name: key,
             value: Weapons[key]

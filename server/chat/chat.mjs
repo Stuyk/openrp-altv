@@ -24,7 +24,7 @@ export function routeMessage(player, msg) {
             alt.log('[CMD] ' + player.name + ': /' + msg);
 
             let args = msg.split(' ');
-            let cmd = args.shift();
+            let cmd = args.shift().toLowerCase();
 
             const callback = cmds[cmd];
 

@@ -232,7 +232,7 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
                 return h(
                     'div',
                     {
-                        class: 'animated slideInLeft msg',
+                        class: 'msg',
                         id: 'lastmsg',
                         ref: lastMessageRef,
                         dangerouslySetInnerHTML: { __html: msgData.message }
@@ -244,7 +244,7 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
             return h(
                 'div',
                 {
-                    class: 'animated slideInLeft msg',
+                    class: 'msg',
                     id: 'lastmsg',
                     ref: lastMessageRef,
                     style: msgData.style
@@ -257,7 +257,7 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
             return h(
                 'div',
                 {
-                    class: 'animated slideInLeft msg',
+                    class: 'slideInLeft msg',
                     id: 'lastmsg',
                     dangerouslySetInnerHTML: { __html: msgData.message }
                 },
@@ -267,7 +267,7 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
 
         return h(
             'div',
-            { class: 'animated slideInLeft msg', style: msgData.style },
+            { class: 'slideInLeft msg', style: msgData.style },
             msgData.message
         );
     });
@@ -305,8 +305,6 @@ function ready() {
             let input = document.querySelector('#chat-input');
             if (input === null || input === undefined) return;
             input.classList.add('hidden');
-            input.classList.remove('animated');
-            input.classList.remove('fadeIn');
             input.value = '';
             alt.emit('routeMessage');
         }

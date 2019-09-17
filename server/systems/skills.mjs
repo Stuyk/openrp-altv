@@ -17,6 +17,7 @@ const skills = {
 };
 
 export function addXP(player, skill, xpToAdd) {
+    skill = skill.toLowerCase();
     let oldLevel = 1;
     let newLevel;
     let skills = !player.data.skills ? { ...skills } : JSON.parse(player.data.skills);
@@ -36,6 +37,7 @@ export function addXP(player, skill, xpToAdd) {
         player.send(`${skill} is now level: ${newLevel}`);
     }
 
+    player.emitMeta('gainxp', xpToAdd);
     player.data.skills = JSON.stringify(skills);
     player.emitMeta('skills', player.data.skills);
     player.saveField(player.data.id, 'skills', player.data.skills);

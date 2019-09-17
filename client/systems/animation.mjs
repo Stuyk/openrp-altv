@@ -20,7 +20,7 @@ alt.log('Loaded: client->systems->animation.mjs');
 	unk6_rot90 = 1024
 */
 
-alt.on('animation:Play', (ent, data) => {
+alt.on('animation:Play', data => {
     playAnimation(alt.Player.local, data.dict, data.name, data.duration, data.flag);
 });
 

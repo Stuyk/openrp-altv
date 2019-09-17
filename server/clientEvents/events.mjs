@@ -75,7 +75,7 @@ alt.onClient('chat:RouteMessage', chat.routeMessage);
 alt.onClient('chat:IsChatting', chat.setStatus);
 
 // Job
-alt.onClient('job:TestObjective', systemsJob.testObjective);
+alt.onClient('job:Check', systemsJob.check);
 
 // Skills
 alt.onClient('skill:Agility', systemsSkills.agility);

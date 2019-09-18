@@ -278,6 +278,9 @@ class Objective {
             player.vehicles.push(vehicle);
         }
 
+        // Play a sound; after a user finishes their objective.
+        playFinishedSound(player, this);
+
         // Go To Next Objective
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
@@ -422,6 +425,11 @@ const playAnimation = (player, objective) => {
 const playEverySound = (player, objective) => {
     if (objective.everySound === undefined) return;
     player.playAudio(objective.everySound);
+};
+
+const playFinishedSound = (player, objective) => {
+    if (objective.finishSound === undefined) return;
+    player.playAudio(objective.finishSound);
 };
 
 class Job {
@@ -742,8 +750,8 @@ chat.registerCmd('test', player => {
         100
     );
     objective.setEverySound('tick');
+    objective.setFinishSound('complete');
     job.add(copyObjective(objective));
-
     job.start(player);
 });
 
@@ -784,7 +792,6 @@ chat.registerCmd('track', player => {
         100
     );
     obj.setRewards([{ type: 'item', prop: 'TrackSuit', quantity: 1 }]);
-    obj.setVehicle('akuma', trackStart);
     job.add(copyObjective(obj));
 
     // Infinite Loop
@@ -807,6 +814,7 @@ chat.registerCmd('track', player => {
             0,
             100
         );
+        obj.setFinishSound('complete');
         obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 20 }]);
         job.add(copyObjective(obj));
     });

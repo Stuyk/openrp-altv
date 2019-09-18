@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as registrationLogin from '../registration/login.mjs';
-import * as systemsJob from '../systems/job.mjs';
+import { quitJob } from '../systems/job.mjs';
 import * as utilityTime from '../utility/time.mjs';
 
 console.log('Loaded: events->playerDisconnect.mjs');
@@ -31,16 +31,9 @@ alt.on('playerDisconnect', player => {
     alt.log(`${player.username} has disconnected.`);
 
     try {
-        // Has character data at this point.
         clearTimeout(player.reviveTimeout);
         clearTimeout(player.loginHealth);
-
-        // Clear Job Data
-        if (player.jobOwner !== undefined && player.inJobVehicle) {
-            systemsJob.exitFee(player, player.jobOwner);
-        }
-
-        systemsJob.cancelJob(player);
+        quitJob(player, true);
     } catch (err) {
         console.log(err);
     }

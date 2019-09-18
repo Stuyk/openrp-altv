@@ -7,7 +7,7 @@ import { Items } from '../configuration/items.mjs';
 
 const Debug = true;
 
-const Objectives = {
+const objectives = {
     POINT: 0, // Go to Point
     CAPTURE: 1, // Stand in Point
     HOLD: 2, // Hold 'E'
@@ -17,19 +17,30 @@ const Objectives = {
     INFINITE: 6 // Repeat any objectives after this.
 };
 
-const Modifiers = {
+const modifiers = {
     MIN: 0,
     ON_FOOT: 1,
     IN_VEHICLE: 2,
-    PROGRESS: 4,
-    SPAWN_VEHICLE: 8,
-    REMOVE_VEHICLE: 16,
-    PICKUP_PLAYER: 32,
-    DROPOFF_PLAYER: 64,
-    KILL_PLAYER: 128,
-    REPAIR_PLAYER: 256,
-    ITEM_RESTRICTIONS: 512,
+    SPAWN_VEHICLE: 4,
+    REMOVE_VEHICLE: 8,
+    PICKUP_PLAYER: 16,
+    DROPOFF_PLAYER: 32,
+    KILL_PLAYER: 64,
+    REPAIR_PLAYER: 128,
+    ITEM_RESTRICTIONS: 256,
     MAX: 1024
+};
+
+/**
+ * These cause instant fails. :D
+ */
+const restrictions = {
+    MIN: 0,
+    NO_VEHICLES: 1,
+    NO_WEAPONS: 2,
+    NO_DIEING: 4,
+    TIME_LIMIT: 8,
+    MAX: 16
 };
 
 /**
@@ -192,21 +203,39 @@ class Objective {
         this.itemRestrictions = arrayOfItems;
     }
 
+    /**
+     * Set a vehicle to be spawned after objective completion.
+     * @param type
+     * @param pos
+     */
+    setVehicle(type, pos) {
+        this.veh = {
+            type,
+            pos
+        };
+    }
+
+    /**
+     * Called when the user wants to attempt
+     * the objective reference they have.
+     * @param player
+     * @param args
+     */
     attemptObjective(player, ...args) {
+        // Check job restrictions from job.
+        checkRestrictions(player);
+
+        if (!player.job) return;
+
         // Check the Objective
         if (!this.checkObjective(player, args)) {
             player.emitMeta('job:Progress', this.progress);
             return false;
         }
 
+        // Issue Rewards
         if (this.rewards.length >= 1) {
             this.rewards.forEach(reward => {
-                /*
-                 * [
-                 * { type: 'item', prop: 'itemKey', quantity: 1 },
-                 * { type: 'xp', prop: 'agility', quantity: 25 }
-                 * ]
-                 */
                 if (reward.type === 'xp') {
                     addXP(player, reward.prop, reward.quantity);
                 }
@@ -237,12 +266,30 @@ class Objective {
             });
         }
 
+        if (this.veh) {
+            let pos = randPosAround(this.veh.pos, 10);
+            const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
+
+            vehicle.job = {
+                player,
+                preventHijack: true
+            };
+
+            player.vehicles.push(vehicle);
+        }
+
         // Go To Next Objective
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
         return true;
     }
 
+    /**
+     * Check the objective and see if it's
+     * valid.
+     * @param player
+     * @param args
+     */
     checkObjective(player, args) {
         let valid = true;
 
@@ -264,39 +311,43 @@ class Objective {
          */
         //if ()
 
-        /**
-         * We check modifiers after the range check.
-         */
-        if (isFlagged(this.flags, Modifiers.ON_FOOT) && valid) {
+        if (isFlagged(this.flags, modifiers.ON_FOOT) && valid) {
+            /**
+             * We check modifiers after the range check.
+             */
             if (player.vehicle) valid = false;
         }
 
-        if (isFlagged(this.flags, Modifiers.IN_VEHICLE) && valid) {
-            if (!player.vehicle) valid = false;
-        }
+        if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
+            if (!player.vehicle) {
+                valid = false;
+            } else {
+                const vehicles = player.vehicles.filter(
+                    x => x.job !== undefined && x === player.vehicle
+                );
 
-        if (isFlagged(this.flags, Modifiers.PROGRESS) && valid) {
-            if (!this.progress) {
-                this.progress = 0;
+                if (vehicles.length <= 0) {
+                    valid = false;
+                }
             }
         }
 
         /**
          * Finally check the base objective type
          */
-        if (this.type === Objectives.CAPTURE && valid) {
+        if (this.type === objectives.CAPTURE && valid) {
             valid = capture(player, this);
         }
 
-        if (this.type === Objectives.HOLD && valid) {
+        if (this.type === objectives.HOLD && valid) {
             valid = hold(player, this);
         }
 
-        if (this.type === Objectives.MASH && valid) {
+        if (this.type === objectives.MASH && valid) {
             valid = mash(player, this);
         }
 
-        if (this.type === Objectives.ORDER && valid) {
+        if (this.type === objectives.ORDER && valid) {
             valid = order(player, this, args);
         }
 
@@ -310,7 +361,7 @@ const isInRange = (player, objective) => {
 };
 
 /**
- * The Follow Objectives
+ * The Follow objectives
  * are to be kept seperate; for additional objective modifiers.
  */
 
@@ -374,9 +425,12 @@ const playEverySound = (player, objective) => {
 };
 
 class Job {
-    constructor(player, name) {
+    constructor(player, name, restrictions = 0) {
         this.name = name;
         this.objectives = [];
+        this.restrictions = restrictions;
+        this.timelimit = 60000;
+        player.hasDied = false;
         player.job = this;
     }
 
@@ -396,7 +450,16 @@ class Job {
      * @param player
      */
     start(player) {
+        this.start = Date.now();
         player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
+
+        if (isFlagged(this.restrictions, restrictions.TIME_LIMIT)) {
+            this.end = this.start + this.timelimit;
+        }
+    }
+
+    setTimelimit(timeInMS) {
+        this.timelimit = timeInMS;
     }
 
     /**
@@ -422,7 +485,7 @@ class Job {
             }
 
             // If the objective type is infinite; skip it.
-            if (this.objectives[0].type === Objectives.INFINITE) {
+            if (this.objectives[0].type === objectives.INFINITE) {
                 this.infinite = true;
                 this.objectives.shift();
             }
@@ -459,23 +522,84 @@ export function check(player) {
     player.job.check(player);
 }
 
-/*
-let objectiveModifiers = 0;
-objectiveModifiers |= flags.ON_FOOT;
-objectiveModifiers |= flags.PROGRESS_BAR;
+export function checkRestrictions(player) {
+    if (!player.job) return;
+    if (player.job.restrictions <= 0) return;
 
-if (isFlagTicked(objectiveModifiers, flags.IN_VEHICLE)) {
+    if (isFlagged(player.job.restrictions, restrictions.NO_VEHICLES)) {
+        if (player.vehicle) {
+            player.send('Failed; no vehicles allowed.');
+            quitJob(player, false, true);
+            return;
+        }
+    }
+
+    if (isFlagged(player.job.restrictions, restrictions.TIME_LIMIT)) {
+        if (Date.now() > this.end) {
+            player.send('You have exhausted your time limit.');
+            quitJob(player, false, true);
+            return;
+        }
+    }
+
+    // Dieing Restriction
+    if (isFlagged(player.job.restrictions, restrictions.NO_DIEING)) {
+        if (player.hasDied) {
+            player.send('This job does not allow dieing; you have failed.');
+            quitJob(player, false, true);
+            return;
+        }
+    }
+
+    // Weapon Restriction
+    if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
+        if (player.inventory[37]) {
+            if (player.inventory[37].isWeapon) {
+                player.send('This job does not allow weapons.');
+                quitJob(player, false, true);
+                return;
+            }
+        }
+    }
+}
+
+export function quitJob(player, loggingOut = false, playFailSound = false) {
+    if (player.job) delete player.job;
+    if (player.vehicles.length >= 1) {
+        let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
+        let jobVehicles = player.vehicles.filter(x => x.job !== undefined);
+        player.vehicles = nonJobVehicles;
+        if (jobVehicles.length >= 1) {
+            jobVehicles.forEach(veh => {
+                veh.destroy();
+            });
+        }
+    }
+
+    if (playFailSound) {
+        player.playAudio('error');
+    }
+
+    player.emitMeta('job:ClearObjective', true);
+}
+
+/*
+let objectivemodifiers = 0;
+objectivemodifiers |= flags.ON_FOOT;
+objectivemodifiers |= flags.PROGRESS_BAR;
+
+if (isFlagTicked(objectivemodifiers, flags.IN_VEHICLE)) {
   console.log(true);
 } else {
   console.log(false);
 }
 
 
-let typeModifiers = 0;
-typeModifiers |= types.POINT;
-typeModifiers |= types.HACK;
+let typemodifiers = 0;
+typemodifiers |= types.POINT;
+typemodifiers |= types.HACK;
 
-if (isFlagTicked(typeModifiers, types.POINT)) {
+if (isFlagTicked(typemodifiers, types.POINT)) {
     console.log(true);
 }
 */
@@ -640,7 +764,8 @@ const trackPoints = [
 ];
 
 chat.registerCmd('track', player => {
-    let job = new Job(player, 'Agility Training');
+    player.pos = trackStart;
+    let job = new Job(player, 'Agility Training', 7);
     let emptyVector = { x: 0, y: 0, z: 0 };
     let obj = new Objective(0, 1);
     obj.setPosition(trackStart);
@@ -659,10 +784,11 @@ chat.registerCmd('track', player => {
         100
     );
     obj.setRewards([{ type: 'item', prop: 'TrackSuit', quantity: 1 }]);
+    obj.setVehicle('akuma', trackStart);
     job.add(copyObjective(obj));
 
     // Infinite Loop
-    obj = new Objective(6, 1);
+    obj = new Objective(6, 0);
     job.add(copyObjective(obj));
 
     trackPoints.forEach(pos => {
@@ -681,7 +807,7 @@ chat.registerCmd('track', player => {
             0,
             100
         );
-        obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 10 }]);
+        obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 20 }]);
         job.add(copyObjective(obj));
     });
 

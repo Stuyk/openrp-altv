@@ -24,6 +24,7 @@ export const Items = {
         droppable: true,
         eventcall: '',
         sellable: true,
+        isWeapon: true,
         message: '',
         quantity: 0,
         slot: 37,

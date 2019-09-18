@@ -35,6 +35,7 @@ export function addXP(player, skill, xpToAdd) {
 
     if (newLevel > oldLevel) {
         player.send(`${skill} is now level: ${newLevel}`);
+        player.playAudio('levelup');
     }
 
     player.emitMeta('gainxp', xpToAdd);

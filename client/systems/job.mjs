@@ -27,6 +27,21 @@ const types = {
     5: order // Press Keys in Order
 };
 
+const modifiers = {
+    MIN: 0,
+    ON_FOOT: 1,
+    IN_VEHICLE: 2,
+    PROGRESS: 4,
+    SPAWN_VEHICLE: 8,
+    REMOVE_VEHICLE: 16,
+    PICKUP_PLAYER: 32,
+    DROPOFF_PLAYER: 64,
+    KILL_PLAYER: 128,
+    REPAIR_PLAYER: 256,
+    ITEM_RESTRICTIONS: 512,
+    MAX: 1024
+};
+
 const metaTypes = {
     'job:Objective': setupObjective,
     'job:ClearObjective': clearObjective,
@@ -87,6 +102,7 @@ function clearObjective() {
 }
 
 function updateProgress(value) {
+    if (!objective) return;
     objective.progress = value;
 }
 
@@ -137,6 +153,7 @@ function intervalObjectiveChecking() {
     if (dist > objective.range) return;
     let testType = types[objective.type];
     if (!testType) return;
+    if (!preObjectiveCheck()) return;
 
     // Execute Objective Test Type
     let result = testType();
@@ -145,6 +162,27 @@ function intervalObjectiveChecking() {
         return;
     }
     alt.emitServer('job:Check');
+}
+
+function preObjectiveCheck() {
+    let valid = true;
+
+    if (isFlagged(objective.flags, modifiers.ON_FOOT) && valid) {
+        if (player.vehicle) valid = false;
+    }
+
+    if (isFlagged(objective.flags, modifiers.IN_VEHICLE) && valid) {
+        if (!player.vehicle) valid = false;
+    }
+
+    return valid;
+}
+
+function isFlagged(flags, flagValue) {
+    if ((flags & flagValue) === flagValue) {
+        return true;
+    }
+    return false;
 }
 
 function point() {

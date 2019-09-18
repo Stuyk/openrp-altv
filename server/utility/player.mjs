@@ -405,7 +405,8 @@ export function setupPlayerFunctions(player) {
             useitem: itemTemplate.useitem,
             consumeable: itemTemplate.consumeable,
             droppable: itemTemplate.droppable,
-            icon: itemTemplate.icon
+            icon: itemTemplate.icon,
+            isWeapon: itemTemplate.isWeapon
         };
 
         // If the item is stackable; check if the player has it.

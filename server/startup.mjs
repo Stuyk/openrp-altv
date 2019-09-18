@@ -59,6 +59,10 @@ alt.on('ConnectionComplete', () => {
     import('./systems/xp.mjs');
     import('./systems/grid.mjs');
 
+    // Jobs
+    import('./jobs/agilityTrack.mjs');
+    import('./jobs/agilityWorkout.mjs');
+
     // Import Item Effects
     import('./itemeffects/consume.mjs');
     import('./itemeffects/showlicense.mjs');

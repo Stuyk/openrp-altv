@@ -13,10 +13,12 @@ let objectiveChecking;
 let objective;
 let mashing;
 let mashingCooldown = Date.now();
+let lastMash = Date.now();
 let blip;
 let dist;
 let cooldown = Date.now();
 let pause = false;
+let playerSpeed = 0;
 
 const types = {
     0: point, // Go to Point
@@ -97,6 +99,10 @@ function clearObjective() {
         blip = undefined;
     }
 
+    if (!alt.Player.local.vehicle) {
+        native.clearPedTasks(alt.Player.local.scriptID);
+    }
+
     mashing = 0;
     pause = false;
 }
@@ -144,16 +150,31 @@ function intervalObjectiveInfo() {
         if (native.isControlJustPressed(0, 38) && Date.now() > mashingCooldown) {
             mashingCooldown = Date.now() + 125;
             mashing += 1;
+            lastMash = Date.now() + 2500;
         }
+    }
+
+    playerSpeed = native.getEntitySpeed(alt.Player.local.scriptID);
+
+    if (playerSpeed >= 0.2) {
+        alt.Player.local.inAnimation = false;
     }
 }
 
 function intervalObjectiveChecking() {
     if (!objective || pause) return;
+
+    // Check Distance
     if (dist > objective.range) return;
+
+    // Check if type exists.
     let testType = types[objective.type];
     if (!testType) return;
-    if (!preObjectiveCheck()) return;
+
+    // Check modifier flags.
+    if (!preObjectiveCheck()) {
+        return;
+    }
 
     // Execute Objective Test Type
     let result = testType();
@@ -161,6 +182,8 @@ function intervalObjectiveChecking() {
         native.freezeEntityPosition(alt.Player.local.scriptID, false);
         return;
     }
+
+    // Check Serverside
     alt.emitServer('job:Check');
 }
 
@@ -192,6 +215,9 @@ function point() {
 function capture() {
     if (Date.now() < cooldown) return false;
     cooldown = Date.now() + 2000;
+
+    if (playerSpeed >= 0.2) return false;
+
     return true;
 }
 
@@ -199,20 +225,69 @@ function hold() {
     if (Date.now() < cooldown) return false;
     cooldown = Date.now() + 2000;
 
-    if (native.isControlPressed(0, 38)) {
-        return true;
+    if (playerSpeed >= 5) {
+        clearScenario();
+        return false;
     }
+
+    if (native.isControlPressed(0, 38)) {
+        native.freezeEntityPosition(alt.Player.local.scriptID, true);
+        if (!alt.Player.local.inScenario) {
+            playScenario();
+        }
+        return true;
+    } else {
+        native.freezeEntityPosition(alt.Player.local.scriptID, false);
+        clearScenario();
+    }
+
+    native.clearPedTasks(alt.Player.local.scriptID);
     return false;
 }
 
 function mash() {
+    if (playerSpeed >= 5 && !alt.Player.local.inScenario) {
+        clearScenario();
+        return false;
+    }
+
+    if (Date.now() > lastMash) {
+        native.freezeEntityPosition(alt.Player.local.scriptID, false);
+        clearScenario();
+        return false;
+    } else {
+        if (!alt.Player.local.inScenario) {
+            native.freezeEntityPosition(alt.Player.local.scriptID, true);
+            playScenario();
+        }
+    }
+
     if (mashing >= 5) {
         mashing = 0;
         return true;
     }
+
+    native.clearPedTasks(alt.Player.local.scriptID);
     return false;
 }
 
 function order() {}
 
 function player() {}
+
+function playScenario() {
+    if (!objective.scenario) return;
+    alt.Player.local.inScenario = true;
+    native.taskStartScenarioInPlace(
+        alt.Player.local.scriptID,
+        objective.scenario,
+        0,
+        true
+    );
+}
+
+function clearScenario() {
+    alt.Player.local.inScenario = false;
+    if (alt.Player.local.vehicle) return;
+    native.clearPedTasks(alt.Player.local.scriptID);
+}

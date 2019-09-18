@@ -7,7 +7,7 @@ import { Items } from '../configuration/items.mjs';
 
 const Debug = true;
 
-const objectives = {
+export const objectives = {
     POINT: 0, // Go to Point
     CAPTURE: 1, // Stand in Point
     HOLD: 2, // Hold 'E'
@@ -17,24 +17,22 @@ const objectives = {
     INFINITE: 6 // Repeat any objectives after this.
 };
 
-const modifiers = {
+export const modifiers = {
     MIN: 0,
     ON_FOOT: 1,
     IN_VEHICLE: 2,
-    SPAWN_VEHICLE: 4,
-    REMOVE_VEHICLE: 8,
+    REMOVE_VEHICLE: 4,
     PICKUP_PLAYER: 16,
     DROPOFF_PLAYER: 32,
     KILL_PLAYER: 64,
     REPAIR_PLAYER: 128,
-    ITEM_RESTRICTIONS: 256,
-    MAX: 1024
+    MAX: 256
 };
 
 /**
  * These cause instant fails. :D
  */
-const restrictions = {
+export const restrictions = {
     MIN: 0,
     NO_VEHICLES: 1,
     NO_WEAPONS: 2,
@@ -58,7 +56,7 @@ function isFlagged(flags, flagValue) {
 /**
  * Create an objective to add to a JOB.
  */
-class Objective {
+export class Objective {
     constructor(objectiveType, objectiveFlags) {
         this.type = objectiveType;
         this.flags = objectiveFlags;
@@ -100,6 +98,15 @@ class Objective {
     }
 
     /**
+     * Set a scenario to be played when using
+     * any key press type.
+     * @param name
+     */
+    setScenario(name) {
+        this.scenario = name;
+    }
+
+    /**
      * Set an array of rewards to give.
      * [
      * { type: 'item', prop: 'itemKey', quantity: 1 },
@@ -134,11 +141,11 @@ class Objective {
      * @param flags number
      * @param duration numberInMS
      */
-    setAnimation(dict, name, flags, duration) {
+    setAnimation(dict, name, flag, duration) {
         this.anim = {
             dict,
             name,
-            flags,
+            flag,
             duration
         };
     }
@@ -216,6 +223,16 @@ class Objective {
     }
 
     /**
+     * Set the max progress to complete
+     * an objective. 10 is minimum.
+     * @param amount
+     */
+    setMaxProgress(amount = 10) {
+        if (amount <= 10) amount = 10;
+        this.maxProgress = amount;
+    }
+
+    /**
      * Called when the user wants to attempt
      * the objective reference they have.
      * @param player
@@ -281,6 +298,9 @@ class Objective {
         // Play a sound; after a user finishes their objective.
         playFinishedSound(player, this);
 
+        // Reset progress for this objective.
+        this.progress = -1;
+
         // Go To Next Objective
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
@@ -312,12 +332,9 @@ class Objective {
         /**
          * Target objectives have to come first.
          */
-        //if ()
+        // TODO: Add target objectives.
 
         if (isFlagged(this.flags, modifiers.ON_FOOT) && valid) {
-            /**
-             * We check modifiers after the range check.
-             */
             if (player.vehicle) valid = false;
         }
 
@@ -393,6 +410,10 @@ const hold = (player, objective) => {
 // MASH: 3, // Mash 'E'
 const mash = (player, objective) => {
     objective.progress += 1;
+
+    alt.log(objective.progress);
+    alt.log(objective.maxProgress);
+
     if (objective.progress < objective.maxProgress) {
         playAnimation(player, objective);
         playEverySound(player, objective);
@@ -432,11 +453,12 @@ const playFinishedSound = (player, objective) => {
     player.playAudio(objective.finishSound);
 };
 
-class Job {
+export class Job {
     constructor(player, name, restrictions = 0) {
         this.name = name;
         this.objectives = [];
         this.restrictions = restrictions;
+        this.items = [];
         this.timelimit = 60000;
         player.hasDied = false;
         player.job = this;
@@ -458,6 +480,14 @@ class Job {
      * @param player
      */
     start(player) {
+        // Check Item Restrictions
+        if (!this.checkItemRestrictions(player)) {
+            quitJob(player, false, true);
+            return;
+        }
+
+        this.addUniform(player);
+
         this.start = Date.now();
         player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
 
@@ -466,8 +496,59 @@ class Job {
         }
     }
 
+    setUniform(uniformKey) {
+        if (!Items[uniformKey]) {
+            console.log('That key does not exist in items.');
+            return;
+        }
+
+        this.uniform = uniformKey;
+    }
+
+    addUniform(player) {
+        if (!this.uniform) return;
+        if (player.hasItem(Items[this.uniform].label)) return;
+        player.addItem({ ...Items[this.uniform] }, 1, false);
+        player.send(`${Items[this.uniform].label} was added to your inventory.`);
+    }
+
+    checkItemRestrictions(player) {
+        if (this.items.length <= 0) return true;
+        let allValid = true;
+        for (let i = 0; i < this.items.length; i++) {
+            if (this.items[i].hasItem) {
+                if (!player.hasItem(this.items[i].label)) {
+                    allValid = false;
+                    player.send('You are restricted from doing this job.');
+                    player.send(`You don't have {FF0000}${this.items[i].label}{FFFFFF}.`);
+                    break;
+                }
+            } else {
+                if (player.hasItem(this.items[i].label)) {
+                    allValid = false;
+                    player.send('You are restricted from doing this job.');
+                    player.send(`You have {FF0000}${this.items[i].label}{FFFFFF}.`);
+                    break;
+                }
+            }
+        }
+        return allValid;
+    }
+
+    /**
+     * Set a time limit for the entire job.
+     * @param timeInMS
+     */
     setTimelimit(timeInMS) {
         this.timelimit = timeInMS;
+    }
+
+    /**
+     * [{ label: 'Drivers License', hasItem: false }]
+     * @param arrayOfItems
+     */
+    setItemRestrictions(arrayOfItems) {
+        this.items = arrayOfItems;
     }
 
     /**
@@ -533,7 +614,6 @@ export function check(player) {
 export function checkRestrictions(player) {
     if (!player.job) return;
     if (player.job.restrictions <= 0) return;
-
     if (isFlagged(player.job.restrictions, restrictions.NO_VEHICLES)) {
         if (player.vehicle) {
             player.send('Failed; no vehicles allowed.');
@@ -759,65 +839,3 @@ export function copyObjective(original) {
     var copied = Object.assign(Object.create(Object.getPrototypeOf(original)), original);
     return copied;
 }
-
-const trackStart = { x: -1697.0869140625, y: 142.81460571289062, z: 64.37159729003906 };
-const trackPoints = [
-    { x: -1717.818359375, y: 173.0086669921875, z: 64.37152862548828 },
-    { x: -1733.586181640625, y: 191.8198699951172, z: 64.37095642089844 },
-    { x: -1764.5313720703125, y: 187.3607177734375, z: 64.37181091308594 },
-    { x: -1765.78955078125, y: 156.7715301513672, z: 64.37181091308594 },
-    { x: -1748.8880615234375, y: 132.46299743652344, z: 64.37181091308594 },
-    { x: -1714.2867431640625, y: 126.52886962890625, z: 64.37163543701172 },
-    { x: -1707.92431640625, y: 158.70193481445312, z: 64.37149047851562 }
-];
-
-chat.registerCmd('track', player => {
-    player.pos = trackStart;
-    let job = new Job(player, 'Agility Training', 7);
-    let emptyVector = { x: 0, y: 0, z: 0 };
-    let obj = new Objective(0, 1);
-    obj.setPosition(trackStart);
-    obj.setRange(2);
-    obj.setHelpText('Go to the starting point.');
-    obj.setBlip(1, 2, trackStart);
-    obj.setMarker(
-        1,
-        trackStart,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(1, 1, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    obj.setRewards([{ type: 'item', prop: 'TrackSuit', quantity: 1 }]);
-    job.add(copyObjective(obj));
-
-    // Infinite Loop
-    obj = new Objective(6, 0);
-    job.add(copyObjective(obj));
-
-    trackPoints.forEach(pos => {
-        obj = new Objective(0, 1);
-        obj.setHelpText('Sprint!');
-        obj.setPosition(pos);
-        obj.setBlip(1, 2, pos);
-        obj.setMarker(
-            1,
-            pos,
-            emptyVector,
-            emptyVector,
-            new alt.Vector3(1, 1, 1),
-            0,
-            255,
-            0,
-            100
-        );
-        obj.setFinishSound('complete');
-        obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 20 }]);
-        job.add(copyObjective(obj));
-    });
-
-    job.start(player);
-});

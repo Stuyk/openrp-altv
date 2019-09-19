@@ -19,6 +19,8 @@ let dist;
 let cooldown = Date.now();
 let pause = false;
 let playerSpeed = 0;
+let target;
+let targetBlip = false;
 
 const types = {
     0: point, // Go to Point
@@ -29,25 +31,23 @@ const types = {
     5: order // Press Keys in Order
 };
 
-const modifiers = {
+export const modifiers = {
     MIN: 0,
     ON_FOOT: 1,
     IN_VEHICLE: 2,
-    PROGRESS: 4,
-    SPAWN_VEHICLE: 8,
-    REMOVE_VEHICLE: 16,
-    PICKUP_PLAYER: 32,
-    DROPOFF_PLAYER: 64,
-    KILL_PLAYER: 128,
-    REPAIR_PLAYER: 256,
-    ITEM_RESTRICTIONS: 512,
-    MAX: 1024
+    REMOVE_VEHICLE: 4,
+    PICKUP_PLAYER: 16,
+    DROPOFF_PLAYER: 32,
+    KILL_PLAYER: 64,
+    REPAIR_PLAYER: 128,
+    MAX: 256
 };
 
 const metaTypes = {
     'job:Objective': setupObjective,
     'job:ClearObjective': clearObjective,
-    'job:Progress': updateProgress
+    'job:Progress': updateProgress,
+    'job:Target': updateTarget
 };
 
 // When the player updates their inventory.
@@ -56,22 +56,32 @@ alt.on('meta:Changed', (key, value) => {
     metaTypes[key](value);
 });
 
+/**
+ * Setup the current objective information
+ * that is passed from server-side.
+ * @param value
+ */
 function setupObjective(value) {
     if (!value) return;
     pause = true;
     objective = JSON.parse(value);
+
+    alt.log(`MODIFIER FLAGS: ${objective.flags}`);
+
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
 
     if (objective.blip) {
-        blip = new alt.PointBlip(
-            objective.blip.pos.x,
-            objective.blip.pos.y,
-            objective.blip.pos.z
-        );
-        blip.shortRange = false;
-        blip.sprite = objective.blip.sprite;
-        blip.color = objective.blip.color;
-        blip.name = 'Objective';
+        if (objective.blip.pos.x + objective.blip.pos.y !== 0) {
+            blip = new alt.PointBlip(
+                objective.blip.pos.x,
+                objective.blip.pos.y,
+                objective.blip.pos.z
+            );
+            blip.shortRange = false;
+            blip.sprite = objective.blip.sprite;
+            blip.color = objective.blip.color;
+            blip.name = 'Objective';
+        }
     }
 
     objectiveInfo = alt.setInterval(intervalObjectiveInfo, 0);
@@ -79,6 +89,9 @@ function setupObjective(value) {
     pause = false;
 }
 
+/**
+ * Clear the current objective.
+ */
 function clearObjective() {
     pause = true;
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
@@ -94,7 +107,7 @@ function clearObjective() {
         objectiveChecking = undefined;
     }
 
-    if (blip) {
+    if (blip && !targetBlip) {
         blip.destroy();
         blip = undefined;
     }
@@ -107,9 +120,47 @@ function clearObjective() {
     pause = false;
 }
 
+/**
+ * Update progress of a job.
+ * @param value
+ */
 function updateProgress(value) {
     if (!objective) return;
     objective.progress = value;
+}
+
+/**
+ * Setup a Target for the 'Player' objective type.
+ * @param jsonOrUndefined
+ */
+function updateTarget(data) {
+    if (!data) {
+        target = undefined;
+        targetBlip = false;
+        if (blip) {
+            blip.destroy();
+            blip = undefined;
+        }
+        return;
+    }
+
+    target = data;
+
+    if (blip) {
+        blip.destroy();
+        blip = undefined;
+    }
+
+    targetBlip = true;
+    blip = new alt.PointBlip(
+        target.entity.pos.x,
+        target.entity.pos.y,
+        target.entity.pos.z
+    );
+    blip.shortRange = false;
+    blip.sprite = objective.blip.sprite;
+    blip.color = objective.blip.color;
+    blip.name = 'Objective';
 }
 
 /**
@@ -117,8 +168,6 @@ function updateProgress(value) {
  */
 function intervalObjectiveInfo() {
     if (!objective || pause) return;
-
-    dist = distance(alt.Player.local.pos, objective.pos);
 
     if (objective.marker && dist <= 100) {
         drawMarker(
@@ -134,9 +183,13 @@ function intervalObjectiveInfo() {
         );
     }
 
-    if (objective.helpText) {
+    if (objective.helpText && !target) {
         native.beginTextCommandDisplayHelp('STRING');
         native.addTextComponentSubstringPlayerName(objective.helpText);
+        native.endTextCommandDisplayHelp(0, false, true, -1);
+    } else {
+        native.beginTextCommandDisplayHelp('STRING');
+        native.addTextComponentSubstringPlayerName(target.message);
         native.endTextCommandDisplayHelp(0, false, true, -1);
     }
 
@@ -159,6 +212,31 @@ function intervalObjectiveInfo() {
     if (playerSpeed >= 0.2) {
         alt.Player.local.inAnimation = false;
     }
+
+    /**
+     * Check if target is defined.
+     */
+    if (target && isFlagged(objective.flags, modifiers.DROPOFF_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.pos);
+        if (blip) {
+            blip.position = [target.pos.x, target.pos.y, target.pos.z];
+        }
+        return;
+    }
+
+    if (target && isFlagged(objective.flags, modifiers.PICKUP_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.entity.pos);
+        if (blip) {
+            blip.position = [
+                target.entity.pos.x,
+                target.entity.pos.y,
+                target.entity.pos.z
+            ];
+        }
+        return;
+    }
+
+    dist = distance(alt.Player.local.pos, objective.pos);
 }
 
 function intervalObjectiveChecking() {
@@ -191,11 +269,11 @@ function preObjectiveCheck() {
     let valid = true;
 
     if (isFlagged(objective.flags, modifiers.ON_FOOT) && valid) {
-        if (player.vehicle) valid = false;
+        if (alt.Player.local.vehicle) valid = false;
     }
 
     if (isFlagged(objective.flags, modifiers.IN_VEHICLE) && valid) {
-        if (!player.vehicle) valid = false;
+        if (!alt.Player.local.vehicle) valid = false;
     }
 
     return valid;
@@ -247,7 +325,6 @@ function hold() {
 
 function mash() {
     if (playerSpeed >= 5 && !alt.Player.local.inScenario) {
-        alt.log('2fast 5 me');
         clearScenario();
         return false;
     }
@@ -273,7 +350,30 @@ function mash() {
 
 function order() {}
 
-function player() {}
+/**
+ * Check if the target has been set.
+ * Then check the modifiers that
+ * are set for the individual
+ * objective.
+ */
+function player() {
+    if (!target) return false;
+
+    let isValid = true;
+    if (isFlagged(objective.flags, modifiers.DROPOFF_PLAYER)) {
+        if (dist > objective.range) isValid = false;
+    }
+
+    if (isFlagged(objective.flags, modifiers.PICKUP_PLAYER)) {
+        if (target.entity.vehicle !== alt.Player.local.vehicle) isValid = false;
+    }
+
+    if (isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        if (dist > objective.range) isValid = false;
+    }
+
+    return isValid;
+}
 
 function playScenario() {
     if (!objective.scenario) return;

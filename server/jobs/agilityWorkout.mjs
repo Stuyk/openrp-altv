@@ -69,7 +69,6 @@ alt.on('job:AgilityWorkout', player => {
     obj = new Objective(objectives.INFINITE, modifiers.MIN);
     job.add(copyObjective(obj));
 
-    /*
     // Setup the rest of the points.
     trackPoints.forEach(pos => {
         obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
@@ -116,7 +115,6 @@ alt.on('job:AgilityWorkout', player => {
     obj.setFinishSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
-    */
 
     pos = { x: -1594.2423095703125, y: -1173.86279296875, z: 1.9826781749725342 };
     obj = new Objective(objectives.MASH, modifiers.ON_FOOT);

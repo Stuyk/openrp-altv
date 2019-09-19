@@ -191,18 +191,6 @@ export class Objective {
     }
 
     /**
-     * Set a target for the objective.
-     * @param target vector3, player, vehicle, etc.
-     * @param type vector3, player, vehicle, as string
-     */
-    setTarget(target, type) {
-        this.target = {
-            target,
-            type
-        };
-    }
-
-    /**
      * [{ label: 'Pickaxe', inInventory: true, quantity: 1 }]
      * @param arrayOfItems
      */
@@ -292,6 +280,8 @@ export class Objective {
                 preventHijack: true
             };
 
+            vehicle.engineOn = true;
+
             player.vehicles.push(vehicle);
         }
 
@@ -300,6 +290,12 @@ export class Objective {
 
         // Reset progress for this objective.
         this.progress = -1;
+
+        if (player.job.target && isFlagged(this.flags, modifiers.DROPOFF_PLAYER)) {
+            if (player.job.target.entity) {
+                player.job.target.entity.ejectSlowly();
+            }
+        }
 
         // Go To Next Objective
         // Issue Rewards Here
@@ -316,29 +312,21 @@ export class Objective {
     checkObjective(player, args) {
         let valid = true;
 
-        // Set the position to the player
-        // if the objective doesn't have one.
-        if (!this.pos) {
-            this.pos = player.pos;
-        }
-
-        /**
-         * Range Check First
-         */
-        if (this.type <= 5) {
+        // Normal range check.
+        // Then do a targed range check
+        // if the objective type is 4.
+        if (this.type <= objectives.ORDER && this.type !== objectives.PLAYER) {
             if (!isInRange(player, this)) valid = false;
         }
 
-        /**
-         * Target objectives have to come first.
-         */
-        // TODO: Add target objectives.
-
+        // Checks if a player is on foot.
         if (isFlagged(this.flags, modifiers.ON_FOOT) && valid) {
             if (player.vehicle) valid = false;
         }
 
+        // Checks if the player is in an job vehicle.
         if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
+            console.log('Checking Objective...');
             if (!player.vehicle) {
                 valid = false;
             } else {
@@ -346,6 +334,7 @@ export class Objective {
                     x => x.job !== undefined && x === player.vehicle
                 );
 
+                console.log(vehicles);
                 if (vehicles.length <= 0) {
                     valid = false;
                 }
@@ -355,20 +344,40 @@ export class Objective {
         /**
          * Finally check the base objective type
          */
+        // Check the capture objective type.
+        // When the user is standing in a specific area.
         if (this.type === objectives.CAPTURE && valid) {
             valid = capture(player, this);
         }
 
+        // Check the hold objective type.
+        // When the user is holding 'E'
         if (this.type === objectives.HOLD && valid) {
             valid = hold(player, this);
         }
 
+        // Check the mash objective type.
+        // When the user is mashing 'E'.
         if (this.type === objectives.MASH && valid) {
             valid = mash(player, this);
         }
 
+        // Check the order objective type
+        // When the user is pressing keys in a specific
+        // order.
         if (this.type === objectives.ORDER && valid) {
             valid = order(player, this, args);
+        }
+
+        // Check the player objective type
+        // When the user has a 'target' type.
+        if (this.type == objectives.PLAYER && valid) {
+            console.log('Checking target type.');
+            if (player.job.target) {
+                valid = targetPlayer(player, this);
+            } else {
+                valid = false;
+            }
         }
 
         return valid;
@@ -411,9 +420,6 @@ const hold = (player, objective) => {
 const mash = (player, objective) => {
     objective.progress += 1;
 
-    alt.log(objective.progress);
-    alt.log(objective.maxProgress);
-
     if (objective.progress < objective.maxProgress) {
         playAnimation(player, objective);
         playEverySound(player, objective);
@@ -423,8 +429,35 @@ const mash = (player, objective) => {
 };
 
 // TARGET: 4, // Target
-const target = (player, objective) => {
-    //
+const targetPlayer = (player, objective) => {
+    if (!player.job.target) return false;
+
+    const target = player.job.target;
+
+    let isValid = true;
+    if (isFlagged(objective.flags, modifiers.PICKUP_PLAYER)) {
+        if (!target.entity.vehicle) {
+            isValid = false;
+        } else {
+            if (target.entity.vehicle !== player.vehicle) {
+                isValid = false;
+            }
+        }
+    }
+
+    if (isFlagged(objective.flags, modifiers.DROPOFF_PLAYER)) {
+        if (distance(target.entity.pos, target.pos) >= objective.range) {
+            isValid = false;
+        }
+    }
+
+    if (isFlagged(objective.flags, modifiers.KILL_PLAYER)) {
+        if (!target.entity.hasDied) {
+            isValid = false;
+        }
+    }
+
+    return isValid;
 };
 
 // ORDER: 5, // Press Keys in Order
@@ -490,6 +523,7 @@ export class Job {
 
         this.start = Date.now();
         player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
+        player.job.available = false;
 
         if (isFlagged(this.restrictions, restrictions.TIME_LIMIT)) {
             this.end = this.start + this.timelimit;
@@ -517,6 +551,8 @@ export class Job {
         let allValid = true;
         for (let i = 0; i < this.items.length; i++) {
             if (this.items[i].hasItem) {
+                console.log(this.items[i]);
+
                 if (!player.hasItem(this.items[i].label)) {
                     allValid = false;
                     player.send('You are restricted from doing this job.');
@@ -577,8 +613,38 @@ export class Job {
             if (this.objectives[0].type === objectives.INFINITE) {
                 this.infinite = true;
                 this.objectives.shift();
+                this.objectives[0].infinite = true;
+            }
+
+            if (this.objectives[0].infinite) {
+                this.clearTarget(player);
             }
         } else {
+            player.emitMeta('job:Objective', undefined);
+            player.send('Job Complete');
+            return;
+        }
+
+        player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
+    }
+
+    /**
+     * Skip all objectives; go straight to
+     * beginning of infinite.
+     * @param player
+     */
+    skipToBeginning(player) {
+        player.emitMeta('job:ClearObjective', true);
+        while (this.objectives[0].infinite !== true) {
+            let last = this.objectives.shift();
+            this.objectives.push(last);
+
+            if (this.objectives[0] === undefined) {
+                break;
+            }
+        }
+
+        if (this.objectives[0] === undefined) {
             player.emitMeta('job:Objective', undefined);
             player.send('Job Complete');
             return;
@@ -603,6 +669,32 @@ export class Job {
 
         player.checking = false;
         this.next(player);
+    }
+
+    /**
+     * Set the entity & position if necessary.
+     * Only called from external methods;
+     * never set this directly.
+     * ===> player.job.setTarget
+     * @param entity
+     * @param position
+     */
+    setTarget(player, entity, position = undefined, message = '') {
+        this.target = {
+            entity,
+            pos: position,
+            message
+        };
+        player.emitMeta('job:Target', this.target);
+    }
+
+    /**
+     * Clear the target for this job.
+     */
+    clearTarget(player) {
+        this.target = undefined;
+        player.job.available = true;
+        player.emitMeta('job:Target', undefined);
     }
 }
 

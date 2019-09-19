@@ -149,8 +149,8 @@ function intervalObjectiveInfo() {
     if (objective.type === 3) {
         if (native.isControlJustPressed(0, 38) && Date.now() > mashingCooldown) {
             mashingCooldown = Date.now() + 125;
+            lastMash = Date.now() + 1500;
             mashing += 1;
-            lastMash = Date.now() + 2500;
         }
     }
 
@@ -247,6 +247,7 @@ function hold() {
 
 function mash() {
     if (playerSpeed >= 5 && !alt.Player.local.inScenario) {
+        alt.log('2fast 5 me');
         clearScenario();
         return false;
     }
@@ -267,7 +268,6 @@ function mash() {
         return true;
     }
 
-    native.clearPedTasks(alt.Player.local.scriptID);
     return false;
 }
 

@@ -37,6 +37,7 @@ let interaction = new Interaction(
 interaction.addBlip(126, 2, jobName);
 
 alt.on('job:AgilityWorkout', player => {
+    let pos;
     const emptyVector = { x: 0, y: 0, z: 0 };
     let job = new Job(
         player,
@@ -68,6 +69,7 @@ alt.on('job:AgilityWorkout', player => {
     obj = new Objective(objectives.INFINITE, modifiers.MIN);
     job.add(copyObjective(obj));
 
+    /*
     // Setup the rest of the points.
     trackPoints.forEach(pos => {
         obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
@@ -92,7 +94,7 @@ alt.on('job:AgilityWorkout', player => {
     });
 
     // Workout Objectives
-    let pos = { x: -1586.99072265625, y: -1187.1585693359375, z: 1.9964627027511597 };
+    pos = { x: -1586.99072265625, y: -1187.1585693359375, z: 1.9964627027511597 };
     obj = new Objective(objectives.HOLD, modifiers.ON_FOOT);
     obj.setHelpText('Do some sit ups by holding ~INPUT_CONTEXT~');
     obj.setRange(3);
@@ -114,6 +116,7 @@ alt.on('job:AgilityWorkout', player => {
     obj.setFinishSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
+    */
 
     pos = { x: -1594.2423095703125, y: -1173.86279296875, z: 1.9826781749725342 };
     obj = new Objective(objectives.MASH, modifiers.ON_FOOT);
@@ -138,6 +141,7 @@ alt.on('job:AgilityWorkout', player => {
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
 
+    /*
     pos = { x: -1607.69873046875, y: -1173.242919921875, z: 0.8695722818374634 };
     obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
     obj.setHelpText('Sprint back into the water.');
@@ -159,6 +163,7 @@ alt.on('job:AgilityWorkout', player => {
     obj.setFinishSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 25 }]);
     job.add(copyObjective(obj));
+        */
 
     job.start(player);
 });

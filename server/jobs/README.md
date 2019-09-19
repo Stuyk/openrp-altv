@@ -41,19 +41,9 @@ after infinite; and goes on forever.
 3. If you wish for the objective to be infinite with a reward; put an objective after the reward.
    3a. Obviously add the infinite type as well.
 4. Item rewards are based on the LABEL property.
+5. Item rewards must always come BEFORE xp rewards.
 
 ### Example Rewards
-
-**Experience**
-
-```
-{
-    name: 'Get XP',
-    type: 'rewardxp',
-    skill: 'agility',
-    quantity: 65
-}
-```
 
 **Item**
 
@@ -63,6 +53,17 @@ after infinite; and goes on forever.
     type: 'rewarditem',
     item: 'Drivers License',
     quantity: 1
+}
+```
+
+**Experience**
+
+```
+{
+    name: 'Get XP',
+    type: 'rewardxp',
+    skill: 'agility',
+    quantity: 65
 }
 ```
 

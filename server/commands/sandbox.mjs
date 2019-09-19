@@ -10,13 +10,16 @@ const sandboxhelp = [
     '/b, /me, /do',
     '/addveh (model)',
     '/addcash (amount)',
-    '/wep (hash)',
+    '/addwep (name)',
     '/face',
     '/granola, /coffee',
     '/tpto (rp-name)',
     '/players, /clearchat',
     '/taxi, /taxicancel',
     '/mechanic, /mechaniccancel',
+    '/quitjob, /getsector',
+    '/phonenumber',
+    '/t, /call, /addcontact, /removecontact, /hangup',
     'Press TAB for context cursor.',
     'I for Inventory'
 ];
@@ -33,14 +36,14 @@ chat.registerCmd('addcash', (player, value) => {
     player.addCash(data);
 });
 
-chat.registerCmd('wep', (player, hash) => {
-    if (hash === undefined) {
-        player.send(`Hash; such as: -270015777`);
+chat.registerCmd('addwep', (player, arg) => {
+    if (arg === undefined || arg.length == 0) {
+        player.send('Usage: /addwep (name)');
         return;
     }
 
-    if (!addWeapon(player, parseInt(hash))) {
-        player.send(`Not a valid weapon hash. -270015777`);
+    if (!addWeapon(player, arg[0])) {
+        player.send('Weapon does not exist');
         return;
     }
 
@@ -62,6 +65,11 @@ chat.registerCmd('coffee', player => {
 });
 
 chat.registerCmd('additem', (player, arg) => {
+    if (arg == undefined || arg.length == 0) {
+        player.send('Usage: /additem (item)');
+        return;
+    }
+
     let itemTemplate = configurationItems.Items[`${arg[0]}`];
     if (itemTemplate === undefined) {
         player.send('Item does not exist');
@@ -71,6 +79,11 @@ chat.registerCmd('additem', (player, arg) => {
 });
 
 chat.registerCmd('addveh', (player, arg) => {
+    if (arg == undefined || arg.length == 0) {
+        player.send('Usage: /addveh (vehicle)');
+        return;
+    }
+
     try {
         player.addVehicle(arg[0], player.pos, new alt.Vector3(0, 0, 0));
     } catch (e) {
@@ -80,7 +93,7 @@ chat.registerCmd('addveh', (player, arg) => {
 
 chat.registerCmd('coord', (player, args) => {
     if (args.length <= 2) {
-        player.send('/coord (x, y, z)');
+        player.send('Usage: /coord (x, y, z)');
         return;
     }
 
@@ -92,8 +105,8 @@ chat.registerCmd('coord', (player, args) => {
 });
 
 chat.registerCmd('tpto', (player, arg) => {
-    if (arg === undefined) {
-        player.send('/tpto (roleplay_name)');
+    if (arg === undefined || arg.length == 0) {
+        player.send('Usage: /tpto (roleplay_name)');
         return;
     }
 
@@ -116,4 +129,13 @@ chat.registerCmd('players', player => {
 chat.registerCmd('pos', player => {
     player.send(`${JSON.stringify(player.pos)}`);
     console.log(player.pos);
+});
+
+chat.registerCmd('save', player => {
+    player.data.pos = JSON.stringify(player.pos);
+    player.save();
+});
+
+chat.registerCmd('sector', player => {
+    player.send(`Current Sector -> X: ${player.sector.x}, Y: ${player.sector.y}`);
 });

@@ -8,23 +8,11 @@ import * as alt from 'alt';
 // username, encrypted password
 const accounts = {};
 
-// names
-const names = [];
-
-export function cacheName(name) {
-    names.push(name);
-}
-
 export function cacheAccount(username, id, password) {
     accounts[username] = {
         id,
         password
     };
-}
-
-export function isNameUsed(name) {
-    if (names.includes(name)) return true;
-    return false;
 }
 
 export function getAccount(username) {

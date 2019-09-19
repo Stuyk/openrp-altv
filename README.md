@@ -46,6 +46,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   [ ] Medical Clinic
 -   [ ] Door Sales System
 -   [ ] Administrative Toolkit
+-   [x] Phone System
 -   [x] Currency System
 -   [x] ATM / Bank System
     -   [ ] Transfer Money
@@ -83,7 +84,6 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Medicine (Health Healed on Player Revivals)
         -   Heal users quicker.
         -   Revive users quicker.
-        -   Only accessible through the Nobility skill.
     -   [ ] Notoriety (Gained Through Criminal Jobs, access to better jobs. Create a gang)
         -   Lose nobility xp by doing notoriety activities.
         -   Gain access to create a gang past a certain level.
@@ -186,7 +186,7 @@ After; it should be running automatically in your services on windows. You can a
 
 -   Download the latest version of this resource. You can either clone the repository or simply download it. The `resource.cfg` and the rest of the files should be directly inside of a folder called `orp`.
 
--   To configure your database, you will need the `resources/orp/server/configuration/database.mjs` file configured with the required parameters to connect to your database.  Open `database.mjs.example`, fill out the required parameters, and save it to a new file named `database.mjs`.
+-   To configure your database, you will need the `resources/orp/server/configuration/database.mjs` file configured with the required parameters to connect to your database. Open `database.mjs.example`, fill out the required parameters, and save it to a new file named `database.mjs`.
 
 **Example Database Configuration**
 

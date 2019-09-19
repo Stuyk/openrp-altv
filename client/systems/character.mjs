@@ -139,7 +139,6 @@ export function syncFace(jsonData) {
     native.setPedHeadOverlay(
         alt.Player.local.scriptID,
         2,
-        1,
         parsedData['Eyebrows'].value,
         parsedData['EyebrowsOpacity'].value
     );

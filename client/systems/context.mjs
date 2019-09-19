@@ -12,7 +12,7 @@ let cooldown = Date.now();
 
 let interactionTypes = {
     0: {
-        func: none
+        func: mapMenu
     },
     1: {
         func: pedMenu
@@ -26,8 +26,9 @@ let interactionTypes = {
 };
 
 export class ContextMenu {
-    constructor(entity, options) {
+    constructor(entity, options, coords = undefined) {
         this.entity = entity;
+        this.coords = coords;
         this.options = options;
         this.height = 0.04;
         this.width = 0.1;
@@ -37,7 +38,9 @@ export class ContextMenu {
     render() {
         if (this.options === undefined) return;
         native.setMouseCursorActiveThisFrame();
-        let coords = native.getEntityCoords(this.entity, false);
+        let coords = this.coords
+            ? this.coords
+            : native.getEntityCoords(this.entity, false);
         this.options.forEach((item, index) => {
             const [_visible, _x, _y] = native.getScreenCoordFromWorldCoord(
                 coords.x,
@@ -221,10 +224,13 @@ function useMenu() {
         if (Date.now() < cooldown) return;
 
         cooldown = Date.now() + 500;
+        const entityType = native.getEntityType(_entity);
+        if (entityType === 0) return;
+
         alt.log(`You clicked on entity: ${_entity}`);
         alt.log(`Entity has model of ${native.getEntityModel(_entity)}`);
+        alt.log(`Entity Type: ${entityType}`);
 
-        const entityType = native.getEntityType(_entity);
         let interaction = interactionTypes[entityType];
 
         if (interaction === undefined) return;
@@ -234,7 +240,10 @@ function useMenu() {
     }
 }
 
-function none() {}
+// Don't remove this.
+function mapMenu(ent, coords) {
+    // Do nothing
+}
 
 function pedMenu(ent, coords) {
     if (ent === alt.Player.local.scriptID) {

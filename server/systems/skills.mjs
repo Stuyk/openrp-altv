@@ -1,10 +1,25 @@
 import * as alt from 'alt';
 import { getLevel } from './xp.mjs';
 
+const skills = {
+    agility: { xp: 0 },
+    cooking: { xp: 0 },
+    crafting: { xp: 0 },
+    fishing: { xp: 0 },
+    gathering: { xp: 0 },
+    mechanic: { xp: 0 },
+    medicine: { xp: 0 },
+    mining: { xp: 0 },
+    nobility: { xp: 0 },
+    notoriety: { xp: 0 },
+    smithing: { xp: 0 },
+    woodcutting: { xp: 0 }
+};
+
 export function addXP(player, skill, xpToAdd) {
     let oldLevel = 1;
     let newLevel;
-    let skills = !player.data.skills ? {} : JSON.parse(player.data.skills);
+    let skills = !player.data.skills ? { ...skills } : JSON.parse(player.data.skills);
 
     if (!skills[skill]) {
         skills[skill] = {

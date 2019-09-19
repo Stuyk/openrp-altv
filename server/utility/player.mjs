@@ -196,16 +196,12 @@ export function setupPlayerFunctions(player) {
 
     // ====================================
     // Roleplay Name Dialogues
-    player.showRoleplayNameDialogue = () => {
-        alt.emitClient(player, 'roleplayname:ShowDialogue');
+    player.showRoleplayInfoDialogue = () => {
+        alt.emitClient(player, 'roleplayinfo:ShowDialogue');
     };
 
-    player.closeRoleplayNameDialogue = () => {
-        alt.emitClient(player, 'roleplayname:CloseDialogue');
-    };
-
-    player.showRoleplayNameTaken = () => {
-        alt.emitClient(player, 'roleplayname:ShowNameTaken');
+    player.closeRoleplayInfoDialogue = () => {
+        alt.emitClient(player, 'roleplayinfo:CloseDialogue');
     };
 
     // ====================================
@@ -364,12 +360,15 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     /**
-     * Set / Save the player's Roleplay name
+     * Set / Save the player's Roleplay Info
      */
-    player.saveRoleplayName = value => {
-        player.data.name = value;
+    player.saveRoleplayInfo = value => {
+        player.data.name = value.name;
+        player.data.dob = value.dob;
         player.setSyncedMeta('name', player.data.name);
+        player.setSyncedMeta('dob', player.data.dob);
         player.saveField(player.data.id, 'name', player.data.name);
+        player.saveField(player.data.id, 'dob', player.data.dob);
     };
 
     // =================================
@@ -502,11 +501,10 @@ export function setupPlayerFunctions(player) {
     };
 
     player.hasItem = itemName => {
-        let item = player.inventory.find(
-            x => x !== null && x !== undefined && x.label.includes(itemName)
-        );
-
-        if (item === undefined || item === null) return false;
+        let items = player.inventory.filter(x => x !== null && x !== undefined);
+        if (items.length <= 0) return false;
+        let item = items.find(x => x.label && x.label.includes(itemName));
+        if (!item) return false;
         return true;
     };
 
@@ -720,5 +718,41 @@ export function setupPlayerFunctions(player) {
     // Skill Funcs
     player.syncXP = () => {
         player.emitMeta('skills', player.data.skills);
+    };
+
+    // =================
+    // Phone
+    player.addContact = number => {
+        let contacts = JSON.parse(player.data.contacts);
+        if (contacts.includes(number)) {
+            return false;
+        }
+
+        contacts.push(number);
+        player.data.contacts = JSON.stringify(contacts);
+        player.saveField(player.data.id, 'contacts', player.data.contacts);
+        return true;
+    };
+
+    player.removeContact = number => {
+        let contacts = JSON.parse(player.data.contacts);
+        let index = contacts.findIndex(x => x === number);
+        if (index <= -1) {
+            return false;
+        }
+
+        contacts.splice(index, 1);
+        player.data.contacts = JSON.stringify(contacts);
+        player.saveField(player.data.id, 'contacts', player.data.contacts);
+        return true;
+    };
+
+    player.hasContact = number => {
+        let contacts = JSON.parse(player.data.contacts);
+        let index = contacts.findIndex(x => x === number);
+        if (index <= -1) {
+            return false;
+        }
+        return true;
     };
 }

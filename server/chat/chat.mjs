@@ -24,7 +24,7 @@ export function routeMessage(player, msg) {
             alt.log('[CMD] ' + player.name + ': /' + msg);
 
             let args = msg.split(' ');
-            let cmd = args.shift();
+            let cmd = args.shift().toLowerCase();
 
             const callback = cmds[cmd];
 
@@ -61,6 +61,12 @@ function handleMessage(player, msg) {
     const sender = player.data.name.replace('_', ' ');
     const message = `${sender} says: ${msg}`;
     alt.log(message);
+
+    if (player.call) {
+        if (player.call.calling && player.call.pickedup) {
+            player.call.calling.send(`{FFFF00}${sender} says: ${msg}`);
+        }
+    }
 
     for (var i = 0; i < playersInRange.length; i++) {
         playersInRange[i].send(message);

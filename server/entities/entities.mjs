@@ -35,6 +35,11 @@ export const Character = new orm.EntitySchema({
             nullable: true,
             default: null
         },
+        dob: {
+            type: 'date',
+            nullable: true,
+            default: null
+        },
         creation: {
             type: 'bigint',
             default: Date.now()
@@ -90,7 +95,24 @@ export const Character = new orm.EntitySchema({
         },
         skills: {
             type: 'text',
-            nullable: true
+            default: JSON.stringify({
+                agility: { xp: 0 },
+                cooking: { xp: 0 },
+                crafting: { xp: 0 },
+                fishing: { xp: 0 },
+                gathering: { xp: 0 },
+                mechanic: { xp: 0 },
+                medicine: { xp: 0 },
+                mining: { xp: 0 },
+                nobility: { xp: 0 },
+                notoriety: { xp: 0 },
+                smithing: { xp: 0 },
+                woodcutting: { xp: 0 }
+            })
+        },
+        contacts: {
+            type: 'text',
+            default: '[]'
         }
     }
 });

@@ -27,14 +27,11 @@ export function createAreaBlip(pos, width, length, color, alpha = 100) {
 
 export function createSectorBlip(sector) {
     let pos = {};
-    pos.x = (sector.coords.first.x + sector.coords.second.x)/2;
-    pos.y = (sector.coords.first.y + sector.coords.second.y)/2;
-    pos.z = (sector.coords.first.z + sector.coords.second.z)/2;
+    pos.x = (sector.coords.first.x + sector.coords.second.x) / 2;
+    pos.y = (sector.coords.first.y + sector.coords.second.y) / 2;
+    pos.z = (sector.coords.first.z + sector.coords.second.z) / 2;
 
-    alt.log(JSON.stringify(pos));
-    alt.log(JSON.stringify(sector));
-
-    let blip = createAreaBlip(pos, sector.width, sector.length, (sector.x + sector.y));
+    let blip = createAreaBlip(pos, sector.width, sector.length, sector.x + sector.y);
     sectorBlips.push(blip);
 }
 

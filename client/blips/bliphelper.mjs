@@ -17,6 +17,7 @@ export function createBlip(pos, type, color, label) {
     return blip;
 }
 
+// Used to create area blips for the player to see.
 export function createAreaBlip(pos, width, length, color, alpha = 100) {
     const blip = new alt.AreaBlip(pos.x, pos.y, pos.z, width, length);
     blip.color = color;
@@ -25,6 +26,7 @@ export function createAreaBlip(pos, width, length, color, alpha = 100) {
     return blip;
 }
 
+// Used to create sector blips, these are literally area blips but are also stored in a variable
 export function createSectorBlip(sector) {
     let pos = {};
     pos.x = (sector.coords.first.x + sector.coords.second.x) / 2;
@@ -32,9 +34,13 @@ export function createSectorBlip(sector) {
     pos.z = (sector.coords.first.z + sector.coords.second.z) / 2;
 
     let blip = createAreaBlip(pos, sector.width, sector.length, sector.x + sector.y);
+    alt.log(JSON.stringify(blip.scriptID));
+    alt.log(blip);
+    native.setBlipDisplay(blip.scriptID, 3);
     sectorBlips.push(blip);
 }
 
+// Destroys and removes all sector blips
 export function cleanSectorBlips() {
     sectorBlips.forEach((_, index) => {
         sectorBlips[index].destroy();

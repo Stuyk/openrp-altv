@@ -13,17 +13,19 @@ const minY = -4000;
 const maxY = 8000;
 const rows = 20;
 const cols = 13;
+const width = 600;
+const length = 600;
 
 const sectors = new Map();
 
 let pairs = [];
 for (let row = 0; row <= rows; row++) {
-    let newRow = row * 600 - Math.abs(minY);
+    let newRow = row * length - Math.abs(minY);
     pairs[row] = [];
     for (let col = 0; col < cols; col++) {
-        let newCol = col * 600 - Math.abs(minX);
+        let newCol = col * width - Math.abs(minX);
         let pos1 = { x: newCol, y: newRow };
-        let pos2 = { x: newCol + 600, y: newRow + 600 };
+        let pos2 = { x: newCol + width, y: newRow + length };
         pairs[row].push({ pos1, pos2 });
     }
 }
@@ -39,6 +41,23 @@ pairs.forEach((row, sector) => {
             column.pos2.y,
             10000
         );
-        colshape.sector = { x: index, y: sector };
+        colshape.sector = {
+            x: index,
+            y: sector,
+            coords: {
+                first: {
+                    x: column.pos1.x,
+                    y: column.pos1.y,
+                    z: -500
+                },
+                second: {
+                    x: column.pos2.x,
+                    y: column.pos2.y,
+                    z: 10000
+                }
+            },
+            width: width,
+            length: length
+        };
     });
 });

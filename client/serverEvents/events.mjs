@@ -78,8 +78,11 @@ alt.onServer('roleplayinfo:ShowDialogue', panelsInfo.showDialogue);
 alt.onServer('roleplayinfo:CloseDialogue', panelsInfo.closeDialogue);
 
 // =======================================================
-// Create Blip
+// Handle Blips
 alt.onServer('blip:CreateBlip', blipsBlipHelper.createBlip);
+alt.onServer('blip:CreateAreaBlip', blipsBlipHelper.createAreaBlip);
+alt.onServer('blip:CreateSectorBlip', blipsBlipHelper.createSectorBlip);
+alt.onServer('blip:CleanSectorBlips', blipsBlipHelper.cleanSectorBlips);
 
 // =======================================================
 // ATM Events

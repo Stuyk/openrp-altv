@@ -6,6 +6,9 @@ alt.on('entityEnterColshape', (colshape, entity) => {
     if (entity.constructor.name === 'Player') {
         if (colshape.sector) {
             entity.sector = colshape.sector;
+
+            alt.emitClient(entity, 'blip:CleanSectorBlips');
+            alt.emitClient(entity, 'blip:CreateSectorBlip', colshape.sector);
         }
 
         systemsInteraction.forwardEventToPlayer(colshape, entity);

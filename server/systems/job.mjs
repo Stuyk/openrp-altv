@@ -544,6 +544,10 @@ const playFinishedSound = (player, objective) => {
 
 export class Job {
     constructor(player, name, restrictions = 0) {
+        if (player.job) {
+            quitJob(player);
+        }
+
         this.name = name;
         this.objectives = [];
         this.restrictions = restrictions;

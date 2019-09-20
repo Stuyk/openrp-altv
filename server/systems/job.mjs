@@ -878,7 +878,7 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
         }
     }
 
-    if (player.job) delete player.job;
+    if (player.job) player.job = undefined;
     player.emitMeta('job:ClearObjective', true);
 }
 

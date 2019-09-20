@@ -6,6 +6,9 @@ alt.on('entityEnterColshape', (colshape, entity) => {
     if (entity.constructor.name === 'Player') {
         if (colshape.sector) {
             entity.sector = colshape.sector;
+
+            alt.emitClient(entity, 'blip:CleanSectorBlips'); // Remove all sector blips
+            alt.emitClient(entity, 'blip:CreateSectorBlip', colshape.sector); // Show the sector blip, the user is currently in
         }
 
         systemsInteraction.forwardEventToPlayer(colshape, entity);

@@ -64,11 +64,3 @@ chat.registerCmd('mechanic', player => {
         objectiveFare: true
     };
 });
-
-/**
- * Used to cancel a taxi fare.
- */
-chat.registerCmd('mechaniccancel', player => {
-    systemsJob.cancelTarget(player);
-    player.send('Cancelled mechanic request.');
-});

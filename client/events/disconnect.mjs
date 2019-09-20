@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as panelsCharacter from 'client/panels/character.mjs';
+import * as panelsCharacter from '/client/panels/character.mjs';
 
 alt.log('Loaded: client->events->disconnect.mjs');
 

@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as utilityText from 'client/utility/text.mjs';
+import * as utilityText from '/client/utility/text.mjs';
 
 alt.log('Loaded: client->systems->quickinteract.mjs');
 

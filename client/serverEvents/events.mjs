@@ -1,32 +1,32 @@
 import * as alt from 'alt';
 
 // Registration
-import * as panelsRegistration from 'client/panels/registration.mjs';
+import * as panelsRegistration from '/client/panels/registration.mjs';
 
 // Blips
-import * as blipsBlipHelper from 'client/blips/bliphelper.mjs';
+import * as blipsBlipHelper from '/client/blips/bliphelper.mjs';
 
 // Character
-import * as systemsCharacter from 'client/systems/character.mjs';
+import * as systemsCharacter from '/client/systems/character.mjs';
 
 // Systems
-import * as systemsInventory from 'client/systems/inventory.mjs';
-import * as systemsSound from 'client/systems/sound.mjs';
-import * as systemsAnimation from 'client/systems/animation.mjs';
-import * as systemsVehicles from 'client/systems/vehicles.mjs';
+import * as systemsInventory from '/client/systems/inventory.mjs';
+import * as systemsSound from '/client/systems/sound.mjs';
+import * as systemsAnimation from '/client/systems/animation.mjs';
+import * as systemsVehicles from '/client/systems/vehicles.mjs';
 
 // Panels
-import * as panelsChat from 'client/panels/chat.mjs';
-import * as panelsAtm from 'client/panels/atm.mjs';
-import * as panelsInfo from 'client/panels/info.mjs';
-import * as panelsInventory from 'client/panels/inventory.mjs';
-import * as panelsClothing from 'client/panels/clothing.mjs';
-import * as panelsCharacter from 'client/panels/character.mjs';
+import * as panelsChat from '/client/panels/chat.mjs';
+import * as panelsAtm from '/client/panels/atm.mjs';
+import * as panelsInfo from '/client/panels/info.mjs';
+import * as panelsInventory from '/client/panels/inventory.mjs';
+import * as panelsClothing from '/client/panels/clothing.mjs';
+import * as panelsCharacter from '/client/panels/character.mjs';
 
-import * as meta from 'client/meta/meta.mjs';
+import * as meta from '/client/meta/meta.mjs';
 
 // Utility
-import * as utilityScreenFades from 'client/utility/screenfades.mjs';
+import * as utilityScreenFades from '/client/utility/screenfades.mjs';
 
 alt.log('Loaded: client->serverEvents->events.mjs');
 

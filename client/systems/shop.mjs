@@ -1,9 +1,9 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as panelsClothing from 'client/panels/clothing.mjs';
-import * as panelsVehicleCustom from 'client/panels/vehiclecustom.mjs';
-import * as panelsBarbershop from 'client/panels/barbershop.mjs';
-import { createBlip } from 'client/blips/bliphelper.mjs';
+import * as panelsClothing from '/client/panels/clothing.mjs';
+import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
+import * as panelsBarbershop from '/client/panels/barbershop.mjs';
+import { createBlip } from '/client/blips/bliphelper.mjs';
 
 alt.log('Loaded: client->systems->shop.mjs');
 

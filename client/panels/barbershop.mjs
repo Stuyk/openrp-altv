@@ -1,8 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { View } from 'client/utility/view.mjs';
-import { Camera } from 'client/utility/camera.mjs';
-import * as utilityVector from 'client/utility/vector.mjs';
+import { View } from '/client/utility/view.mjs';
+import { Camera } from '/client/utility/camera.mjs';
+import * as utilityVector from '/client/utility/vector.mjs';
 
 alt.log('Loaded: client->panels->barbershop.mjs');
 

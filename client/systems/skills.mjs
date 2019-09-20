@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { getLevel } from 'client/systems/xp.mjs';
+import { getLevel } from '/client/systems/xp.mjs';
 
 let agilityCooldown = Date.now();
 let skills;

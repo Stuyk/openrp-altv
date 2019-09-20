@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { View } from 'client/utility/view.mjs';
+import { View } from '/client/utility/view.mjs';
 
 const url = 'http://resource/client/html/vehiclecustom/index.html';
 let webview;

@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { distance } from 'client/utility/vector.mjs';
 import { drawMarker } from 'client/utility/marker.mjs';
+import { playAudio } from 'client/systems/sound.mjs';
+import { playParticleFX } from 'client/utility/particle.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
 
@@ -97,6 +99,7 @@ function clearObjective() {
     pause = true;
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     objective = undefined;
+    clearScenario();
 
     if (objectiveInfo) {
         alt.clearInterval(objectiveInfo);
@@ -184,11 +187,11 @@ function intervalObjectiveInfo() {
         );
     }
 
-    if (objective.helpText && !target) {
+    if (objective && objective.helpText && !target) {
         native.beginTextCommandDisplayHelp('STRING');
         native.addTextComponentSubstringPlayerName(objective.helpText);
         native.endTextCommandDisplayHelp(0, false, true, -1);
-    } else {
+    } else if (target) {
         native.beginTextCommandDisplayHelp('STRING');
         native.addTextComponentSubstringPlayerName(target.message);
         native.endTextCommandDisplayHelp(0, false, true, -1);
@@ -210,7 +213,7 @@ function intervalObjectiveInfo() {
 
     playerSpeed = native.getEntitySpeed(alt.Player.local.scriptID);
 
-    if (playerSpeed >= 0.2) {
+    if (playerSpeed >= 1) {
         alt.Player.local.inAnimation = false;
     }
 
@@ -286,8 +289,6 @@ function intervalObjectiveChecking() {
         return;
     }
 
-    alt.log('Emitted check to server.');
-
     // Check Serverside
     alt.emitServer('job:Check');
 }
@@ -336,9 +337,12 @@ function hold() {
     }
 
     if (native.isControlPressed(0, 38)) {
-        native.freezeEntityPosition(alt.Player.local.scriptID, true);
         if (!alt.Player.local.inScenario) {
             playScenario();
+        }
+
+        if (!alt.Player.local.inAnimation) {
+            playAnimation();
         }
         return true;
     } else {
@@ -362,8 +366,11 @@ function mash() {
         return false;
     } else {
         if (!alt.Player.local.inScenario) {
-            native.freezeEntityPosition(alt.Player.local.scriptID, true);
             playScenario();
+        }
+
+        if (!alt.Player.local.inAnimation) {
+            playAnimation();
         }
     }
 
@@ -412,6 +419,7 @@ function player() {
 
 function playScenario() {
     if (!objective.scenario) return;
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
     alt.Player.local.inScenario = true;
     native.taskStartScenarioInPlace(
         alt.Player.local.scriptID,
@@ -422,7 +430,78 @@ function playScenario() {
 }
 
 function clearScenario() {
+    if (alt.Player.local.soundInterval) {
+        alt.clearInterval(alt.Player.local.soundInterval);
+        alt.Player.local.soundInterval = undefined;
+    }
+
     alt.Player.local.inScenario = false;
+    alt.Player.local.inAnimation = false;
     if (alt.Player.local.vehicle) return;
     native.clearPedTasks(alt.Player.local.scriptID);
+}
+
+function playAnimation() {
+    if (!objective.anim) return;
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
+    alt.Player.local.inAnimation = true;
+    loadAnim(objective.anim.dict).then(res => {
+        native.taskPlayAnim(
+            alt.Player.local.scriptID,
+            objective.anim.dict,
+            objective.anim.name,
+            1,
+            -1,
+            -1,
+            1,
+            1.0,
+            true,
+            true,
+            true
+        );
+
+        if (objective.anim.sound && !alt.Player.local.soundInterval) {
+            alt.Player.local.soundInterval = alt.setInterval(() => {
+                if (objective.particle) {
+                    playAudio(objective.anim.sound);
+                    let forwardVector = native.getEntityForwardVector(
+                        alt.Player.local.scriptID
+                    );
+
+                    let pos = {
+                        x: alt.Player.local.pos.x + forwardVector.x * 1.1,
+                        y: alt.Player.local.pos.y + forwardVector.y * 1.1,
+                        z: alt.Player.local.pos.z
+                    };
+
+                    if (objective.particle.isGround) {
+                        pos.z -= 0.8;
+                    }
+
+                    playParticleFX(
+                        objective.particle.dict,
+                        objective.particle.name,
+                        objective.particle.duration,
+                        0.5,
+                        pos.x,
+                        pos.y,
+                        pos.z
+                    );
+                }
+            }, objective.anim.soundOffset);
+        }
+    });
+}
+
+async function loadAnim(dict) {
+    return new Promise(resolve => {
+        native.requestAnimDict(dict);
+        let inter = alt.setInterval(() => {
+            if (native.hasAnimDictLoaded(dict)) {
+                resolve(true);
+                alt.clearInterval(inter);
+                return;
+            }
+        }, 5);
+    });
 }

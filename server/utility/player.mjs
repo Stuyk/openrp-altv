@@ -656,7 +656,7 @@ export function setupPlayerFunctions(player) {
         freezeZ = false
     ) => {
         alt.emitClient(
-            null,
+            player,
             'animation:PlayAnimation',
             player,
             dictionary,

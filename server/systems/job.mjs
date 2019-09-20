@@ -142,12 +142,29 @@ export class Objective {
      * @param flags number
      * @param duration numberInMS
      */
-    setAnimation(dict, name, flag, duration) {
+    setAnimation(dict, name, flag, duration, sound = undefined, soundOffset = 1000) {
         this.anim = {
             dict,
             name,
             flag,
-            duration
+            duration,
+            sound,
+            soundOffset
+        };
+    }
+
+    /**
+     * Plays particles when paired with sounds
+     * from the setAnimation function.
+     * @param dict
+     * @param name
+     */
+    setParticle(dict, name, duration, isGround = false) {
+        this.particle = {
+            dict,
+            name,
+            duration,
+            isGround
         };
     }
 
@@ -428,7 +445,6 @@ const isInRange = (player, objective) => {
 const capture = (player, objective) => {
     objective.progress += 1;
     if (objective.progress < objective.maxProgress) {
-        playAnimation(player, objective);
         playEverySound(player, objective);
         return false;
     }
@@ -439,7 +455,6 @@ const capture = (player, objective) => {
 const hold = (player, objective) => {
     objective.progress += 1;
     if (objective.progress < objective.maxProgress) {
-        playAnimation(player, objective);
         playEverySound(player, objective);
         return false;
     }
@@ -451,7 +466,6 @@ const mash = (player, objective) => {
     objective.progress += 1;
 
     if (objective.progress < objective.maxProgress) {
-        playAnimation(player, objective);
         playEverySound(player, objective);
         return false;
     }
@@ -516,12 +530,6 @@ const order = (player, objective, args) => {
 const getWord = () => {
     const word = Math.floor(Math.random() * (Dictionary.length - 1));
     return Dictionary[word];
-};
-
-const playAnimation = (player, objective) => {
-    if (objective.anim === undefined) return;
-    const anim = objective.anim;
-    player.playAnimation(anim.dict, anim.name, anim.duration, anim.flag);
 };
 
 const playEverySound = (player, objective) => {

@@ -3,9 +3,7 @@ import * as native from 'natives';
 
 alt.on('gameEntityCreate', entity => {
     if (entity.constructor.name === 'Player') {
-        alt.log('Player Entity streamed in.');
         if (entity.getSyncedMeta(`prop:37`)) {
-            alt.log('Loading Prop Slot 37');
             alt.setTimeout(() => {
                 setupSlot(37, entity, entity.getSyncedMeta(`prop:37`));
             }, 250);
@@ -15,7 +13,6 @@ alt.on('gameEntityCreate', entity => {
 
 alt.on('gameEntityDestroy', entity => {
     if (entity.constructor.name === 'Player') {
-        alt.log('Player Entity streamed out.');
         if (entity.getSyncedMeta(`prop:37`)) {
             const previous = entity.getMeta(`prop:37`);
             if (previous) {
@@ -32,8 +29,6 @@ alt.on('syncedMetaChange', (entity, key, value) => {
 });
 
 function setupSlot(propID, entity, value) {
-    alt.log(entity.scriptID);
-    alt.log(JSON.stringify(value));
     const previous = entity.getMeta(`prop:${propID}`);
     if (previous) {
         native.deleteObject(previous);

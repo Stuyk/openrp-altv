@@ -50,6 +50,11 @@ export function playAnimation(
 }
 
 function startAnimation(player, dict, name, duration, flag, frzx, frzy, frzz) {
+    alt.log(dict);
+    alt.log(name);
+    alt.log(duration);
+    alt.log(flag);
+
     if (native.hasAnimDictLoaded(dict)) {
         native.taskPlayAnim(
             player.scriptID,
@@ -67,7 +72,7 @@ function startAnimation(player, dict, name, duration, flag, frzx, frzy, frzz) {
         return;
     }
 
-    let res = loadAnim(dictionary);
+    let res = loadAnim(dict);
     res.then(() => {
         native.taskPlayAnim(
             player.scriptID,
@@ -97,3 +102,26 @@ async function loadAnim(dict) {
         }, 5);
     });
 }
+
+/*
+const dict = 'melee@large_wpn@streamed_core';
+const name = 'long_0_attack';
+const flag = 129;
+const duration = -1;
+
+game.requestAnimDict(dict);
+game.taskPlayAnim(
+            alt.Player.local.scriptID,
+            dict,
+            name,
+            1,
+            -1,
+            duration,
+            flag,
+            1.0,
+            false,
+            false,
+            false
+        );
+    });
+    */

@@ -1,7 +1,6 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.mjs';
-import * as systemsJob from '../systems/job.mjs';
-import * as utilityVector from '../utility/vector.mjs';
+import { distance, getClosestPlayer } from '../utility/vector.mjs';
 
 /**
  * Find a player with the guid of 'taxi'
@@ -10,13 +9,16 @@ import * as utilityVector from '../utility/vector.mjs';
  */
 chat.registerCmd('taxi', player => {
     if (player.data === undefined) return;
+    if (player.jobber) return;
+    if (player.job) {
+        player.send('You cannot call a taxi while on the job');
+        return;
+    }
 
     // Setup the Callback
     let callbackname = `${player.name}:Waypoint`;
     alt.onClient(callbackname, callbackWaypoint);
-
-    //
-    player.send('Requesting...');
+    player.send('Requesting taxi...');
 
     // Setup Promise
     player.taxi = (value, pos) => {
@@ -27,7 +29,7 @@ chat.registerCmd('taxi', player => {
             return;
         }
 
-        let dist = utilityVector.distance(player.pos, pos);
+        let dist = distance(player.pos, pos);
         let cost = dist * 0.03;
 
         if (player.getCash() < cost) {
@@ -39,46 +41,45 @@ chat.registerCmd('taxi', player => {
             return;
         }
 
-        let closestDriver = systemsJob.getClosestDriverByGuid(player, 'taxi');
+        let taxiDrivers = alt.Player.all.filter(
+            x => x.job !== undefined && x.job.name === 'Taxi Depot'
+        );
 
+        if (taxiDrivers.length <= 0) {
+            player.send('No taxi driver is available at this time.');
+            return;
+        }
+
+        let closestDriver = getClosestPlayer(player, taxiDrivers, true);
         if (closestDriver === undefined) {
             player.send('No taxi driver is available at this time.');
             return;
         }
 
-        if (!closestDriver.job.isAvailable) {
-            player.send('No taxi driver is vailable at this time.');
-            return;
-        }
-
-        // Set the driver to unavailable.
-        closestDriver.job.isAvailable = false;
+        closestDriver.job.setTarget(
+            closestDriver,
+            player,
+            pos,
+            'Take the target to their destination.',
+            player
+        );
 
         // Send the player a message notifying them.
+        closestDriver.send('A customer is waiting to be picked up...');
         player.send('{FFFF00}A taxi driver is now enroute.');
         player.send(
             `{FFFF00}You will be charged ${cost.toFixed(2) * 1} after this ride.`
         );
-
-        player.jobStartPosition = player.pos;
-
-        // Process the callback for the driver.
-        closestDriver.job.processTarget(player, {
+        player.send('{FFFF00}Stay in your current position to be picked up.');
+        player.jobber = {
             fare: cost.toFixed(2) * 1,
-            position: pos
-        });
+            position: player.pos,
+            employee: closestDriver
+        };
     };
 
     // Send Callback
     player.setSyncedMeta('callback:Request', { name: callbackname, type: 'waypoint' });
-});
-
-/**
- * Used to cancel a taxi fare.
- */
-chat.registerCmd('taxicancel', player => {
-    systemsJob.cancelTarget(player);
-    player.send('Cancelled taxi request.');
 });
 
 // Called from the client-side when the player wants to

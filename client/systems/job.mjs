@@ -1,563 +1,507 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as utilityVector from 'client/utility/vector.mjs';
-import * as utilityMarker from 'client/utility/marker.mjs';
+import { distance } from 'client/utility/vector.mjs';
+import { drawMarker } from 'client/utility/marker.mjs';
+import { playAudio } from 'client/systems/sound.mjs';
+import { playParticleFX } from 'client/utility/particle.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
-alt.Player.local.inAnimation = false;
 
-const objectiveTypes = [
-    { name: 'point', func: pointType },
-    { name: 'capture', func: captureType },
-    { name: 'retrieve', func: retrieveType },
-    { name: 'dropoff', func: dropOffType },
-    { name: 'hack', func: hackType },
-    { name: 'spawnvehicle', func: spawnvehicleType },
-    { name: 'drivepoint', func: drivepointType },
-    { name: 'vehicledrop', func: vehicledropType },
-    { name: 'drivecapture', func: drivecaptureType },
-    { name: 'target', func: targetType },
-    { name: 'targetdrop', func: targetDropType },
-    { name: 'targetget', func: targetGetType },
-    { name: 'targetrepair', func: targetRepairType }
-];
+/**
+ * Intervals
+ */
+let objectiveInfo;
+let objectiveChecking;
+let objective;
+let mashing;
+let mashingCooldown = Date.now();
+let lastMash = Date.now();
+let blip;
+let dist;
+let cooldown = Date.now();
+let pause = false;
+let playerSpeed = 0;
+let target;
+let targetBlip = false;
 
-const callbackTypes = [
-    { name: 'hack', func: hackCallback },
-    { name: 'spawnvehicle', func: spawnvehicleCallback }
-];
-
-const jobFunctions = {
-    'job:Start': { func: jobStart }, // Start a Job
-    'job:Clear': { func: jobClear }, // Clear a Job
-    'job:Update': { func: jobUpdate }, // Update the Job Progress
-    'job:Progress': { func: jobProgress }, // Progress to Next Job Point
-    'job:Callback': { func: jobCallback }, // Used for native callbacks.
-    'job:Target': { func: jobTarget }
+const types = {
+    0: point, // Go to Point
+    1: capture, // Stand in Point
+    2: hold, // Hold 'E'
+    3: mash, // Mash 'E'
+    4: player, // Target
+    5: order // Press Keys in Order
 };
 
-let currentJob;
-let currentPointIndex;
-let currentPoint;
-let currentBlip;
-let currentObjective;
-let currentProgress = 0;
-let currentTarget;
-let targetMessage = 'Wait for your task...';
-let pause = false;
-let cooldown = Date.now() + 2000;
-let interval;
+export const modifiers = {
+    MIN: 0,
+    ON_FOOT: 1,
+    IN_VEHICLE: 2,
+    REMOVE_VEHICLE: 4,
+    PICKUP_PLAYER: 16,
+    DROPOFF_PLAYER: 32,
+    KILL_PLAYER: 64,
+    REPAIR_PLAYER: 128,
+    GOTO_PLAYER: 256,
+    MAX: 512
+};
 
-let currentInterval;
-let isUpdateActive;
+const metaTypes = {
+    'job:Objective': setupObjective,
+    'job:ClearObjective': clearObjective,
+    'job:Progress': updateProgress,
+    'job:Target': updateTarget
+};
 
+// When the player updates their inventory.
 alt.on('meta:Changed', (key, value) => {
     if (!key.includes('job')) return;
-    // Call the job function for the synced meta change.
-    if (jobFunctions[key] !== undefined) {
-        jobFunctions[key].func(value);
-    }
+    metaTypes[key](value);
 });
 
 /**
- * Description:
- * The first thing we do to start up
- * the job process.
+ * Setup the current objective information
+ * that is passed from server-side.
+ * @param value
  */
-function jobStart() {
-    // Clear Current Job Info
-    jobClear();
-
-    // Get Current Job Info
-    currentJob = JSON.parse(alt.Player.local.getMeta('job:Job'));
-    currentPointIndex = alt.Player.local.getMeta('job:PointIndex'); // Always a number.
-
-    // Store Point Info
-    currentPoint = currentJob.points[currentPointIndex];
-    parseJobInfo(currentPoint);
-
-    // Turn on the Interval
-    currentInterval = alt.setInterval(checkPoint, 100);
-
-    // Turn on the Update
-    isUpdateActive = true;
-
-    interval = alt.setInterval(drawPointInfo, 0);
-}
-
-/**
- * Description:
- * Clear the player's current job.
- */
-function jobClear(clearTarget) {
-    alt.Player.local.inAnimation = false;
-
-    // Set current job/point info to undefined.
-    currentJob = undefined;
-    currentPoint = undefined;
-    currentPointIndex = undefined;
-    currentObjective = undefined;
-    targetMessage = '';
-
-    // Destroy Current Blip
-    if (currentBlip !== undefined) {
-        currentBlip.destroy();
-        currentBlip = undefined;
-    }
-
-    // Clear Existing Interval
-    if (currentInterval !== undefined) {
-        alt.clearInterval(currentInterval);
-        currentInterval = undefined;
-    }
-
-    // Clear Current Update Function
-    if (isUpdateActive) {
-        alt.clearInterval(interval);
-        isUpdateActive = false;
-    }
-
-    if (clearTarget) {
-        currentTarget = true;
-    }
-}
-
-/**
- *  Description:
- *  Invoked when there is a new objective.
- *  This is used to work through the objectives
- *  provided in the job configuration.
- *
- *  We pause before updating to prevent any
- *  unwanted behavior.
- */
-function jobUpdate() {
+function setupObjective(value) {
+    if (!value) return;
     pause = true;
-    currentJob = JSON.parse(alt.Player.local.getMeta('job:Job'));
-    currentPointIndex = alt.Player.local.getMeta('job:PointIndex');
-    currentPoint = currentJob.points[currentPointIndex];
+    objective = JSON.parse(value);
 
-    parseJobInfo(currentPoint);
+    alt.log(`MODIFIER FLAGS: ${objective.flags}`);
+
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
-    alt.Player.local.inAnimation = false;
+
+    if (objective.blip) {
+        if (objective.blip.pos.x + objective.blip.pos.y !== 0) {
+            blip = new alt.PointBlip(
+                objective.blip.pos.x,
+                objective.blip.pos.y,
+                objective.blip.pos.z
+            );
+            blip.shortRange = false;
+            blip.sprite = objective.blip.sprite;
+            blip.color = objective.blip.color;
+            blip.name = 'Objective';
+        }
+    }
+
+    objectiveInfo = alt.setInterval(intervalObjectiveInfo, 0);
+    objectiveChecking = alt.setInterval(intervalObjectiveChecking, 100);
     pause = false;
 }
 
 /**
- * Description:
- * Used to update objective progression.
- * Mostly used for displays and such.
- * @param value
+ * Clear the current objective.
  */
-function jobProgress(value) {
-    currentProgress = value;
-    alt.log(value);
-}
+function clearObjective() {
+    pause = true;
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
+    objective = undefined;
+    clearScenario();
 
-/**
- * Description:
- * Used to parse a job callback.
- * @param value
- */
-function jobCallback(value) {
-    const info = JSON.parse(value);
-    const type = callbackTypes.find(x => x.name === info.type);
-
-    if (type === undefined) throw new Error('Failed to parse callback type in jobs.');
-
-    type.func(info.callback);
-}
-
-/**
- * Description:
- * Parses the job target information.
- * It sets up properties and targettable data.
- * value = {
- *      player, => Whoever the target is.
- *      props => Whatever the server-side specified.
- * }
- * @param value
- */
-function jobTarget(value) {
-    currentTarget = value;
-}
-
-/**
- *  Description:
- *  Parse the information for the current
- *  point by pulling a function from the
- *  above list.
- *
- *  Also creates blips.
- * @param currentPoint
- */
-function parseJobInfo(currentPoint) {
-    // Current Objective Function
-    currentObjective = objectiveTypes.find(x => x.name === currentPoint.type).func;
-
-    if (currentBlip !== undefined) {
-        currentBlip.destroy();
-        currentBlip = undefined;
+    if (objectiveInfo) {
+        alt.clearInterval(objectiveInfo);
+        objectiveInfo = undefined;
     }
 
-    // Prevent target type from creating.
-    if (currentPoint.type === 'target') {
-        targetMessage = 'Please wait for your next task...';
+    if (objectiveChecking) {
+        alt.clearInterval(objectiveChecking);
+        objectiveChecking = undefined;
+    }
+
+    if (blip && !targetBlip) {
+        blip.destroy();
+        blip = undefined;
+    }
+
+    if (!alt.Player.local.vehicle) {
+        native.clearPedTasks(alt.Player.local.scriptID);
+    }
+
+    mashing = 0;
+    pause = false;
+}
+
+/**
+ * Update progress of a job.
+ * @param value
+ */
+function updateProgress(value) {
+    if (!objective) return;
+    objective.progress = value;
+}
+
+/**
+ * Setup a Target for the 'Player' objective type.
+ * @param jsonOrUndefined
+ */
+function updateTarget(data) {
+    if (!data) {
+        target = undefined;
+        targetBlip = false;
+        if (blip) {
+            blip.destroy();
+            blip = undefined;
+        }
         return;
     }
 
-    // Don't do anything for the 'target' type.
-    if (currentPoint.type.includes('target')) {
-        return;
+    target = data;
+
+    if (blip) {
+        blip.destroy();
+        blip = undefined;
     }
 
-    // Create Point Blip
-    currentBlip = new alt.PointBlip(
-        currentPoint.position.x,
-        currentPoint.position.y,
-        currentPoint.position.z
+    targetBlip = true;
+    blip = new alt.PointBlip(
+        target.entity.pos.x,
+        target.entity.pos.y,
+        target.entity.pos.z
     );
-    currentBlip.shortRange = false;
-    currentBlip.sprite = currentPoint.blipSprite;
-    currentBlip.color = currentPoint.blipColor;
-    currentBlip.name = currentPoint.name;
+    blip.shortRange = false;
+    blip.sprite = objective.blip.sprite;
+    blip.color = objective.blip.color;
+    blip.name = 'Objective';
 }
 
 /**
- *  Description:
- *  Checks the current objective if available.
- *  currentObjective is a function that is
- *  updated constantly by some of the above
- *  code. Once that objective is ready;
- *  we do calls to it to check if
- *  the objective is complete for a client.
+ * Constant looping and displaying.
  */
-function checkPoint() {
-    if (pause) return;
-    if (currentObjective === undefined) return;
-    if (alt.Player.local.getMeta('viewOpen')) return;
-    let isTestReady = currentObjective();
-    if (!isTestReady) return;
-    alt.emitServer('job:TestObjective');
-}
+function intervalObjectiveInfo() {
+    if (!objective || pause) return;
 
-/**
- *  Description:
- *  Draws HUD elements for the current objective.
- */
-function drawPointInfo() {
-    if (pause) return;
-    if (currentPoint === undefined) return;
-    if (alt.Player.local.getMeta('viewOpen')) return;
-
-    if (currentProgress >= 0) {
-        let prog = currentProgress / currentPoint.progressMax;
-        native.drawRect(prog / 2, 1, prog, 0.02, 0, 85, 100, 200);
-    }
-
-    // target subtype for drawing
-    if (currentPoint.type.includes('target')) {
-        if (currentTarget === undefined) {
-            native.beginTextCommandDisplayHelp('STRING');
-            native.addTextComponentSubstringPlayerName(targetMessage);
-            native.endTextCommandDisplayHelp(0, false, true, -1);
-            return;
-        }
-
-        // Draw Help Text for Target Types
-        native.beginTextCommandDisplayHelp('STRING');
-        native.addTextComponentSubstringPlayerName(currentPoint.message);
-        native.endTextCommandDisplayHelp(0, false, true, -1);
-
-        // Finds the Drop Off Point
-        if (currentPoint.type === 'targetdrop') {
-            let tPos = currentTarget.props.position;
-            if (!currentBlip) {
-                currentBlip = new alt.PointBlip(tPos.x, tPos.y, tPos.z);
-                currentBlip.sprite = 1;
-                currentBlip.color = 1;
-                currentBlip.shortRange = false;
-            } else {
-                currentBlip.position = [tPos.x, tPos.y, tPos.z];
-                utilityMarker.drawMarker(
-                    0,
-                    tPos,
-                    new alt.Vector3(0, 0, 0),
-                    new alt.Vector3(0, 0, 0),
-                    new alt.Vector3(1, 1, 1),
-                    255,
-                    0,
-                    0,
-                    150
-                );
-            }
-            return;
-        }
-
-        // Draws a marker above Target
-        if (currentPoint.type === 'targetget') {
-            let tPos = currentTarget.player.pos;
-            if (!currentBlip) {
-                currentBlip = new alt.PointBlip(tPos.x, tPos.y, tPos.z);
-                currentBlip.sprite = 1;
-                currentBlip.color = 1;
-                currentBlip.shortRange = false;
-            } else {
-                currentBlip.position = [tPos.x, tPos.y, tPos.z];
-                tPos.z += 3;
-                utilityMarker.drawMarker(
-                    0,
-                    tPos,
-                    new alt.Vector3(0, 0, 0),
-                    new alt.Vector3(0, 0, 0),
-                    new alt.Vector3(0.2, 0.2, 0.5),
-                    255,
-                    0,
-                    0,
-                    150
-                );
-            }
-            return;
-        }
-
-        if (currentPoint.type === 'targethack') {
-            let tPos = currentTarget.props.vehicle.pos;
-            if (!currentBlip) {
-                currentBlip = new alt.PointBlip(tPos.x, tPos.y, tPos.z);
-                currentBlip.sprite = 1;
-                currentBlip.color = 1;
-                currentBlip.shortRange = false;
-            } else {
-                currentBlip.position = [tPos.x, tPos.y, tPos.z];
-                tPos.z += 3;
-                utilityMarker.drawMarker(
-                    0,
-                    tPos,
-                    new alt.Vector3(0, 0, 0),
-                    new alt.Vector3(0, 0, 0),
-                    new alt.Vector3(0.2, 0.2, 0.5),
-                    255,
-                    0,
-                    0,
-                    150
-                );
-            }
-            return;
-        }
-        return;
-    }
-
-    let dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-
-    // Draw Marker
-    if (dist <= 75) {
-        utilityMarker.drawMarker(
-            currentPoint.markerType,
-            currentPoint.position,
-            new alt.Vector3(0, 0, 0),
-            new alt.Vector3(0, 0, 0),
-            new alt.Vector3(currentPoint.range, currentPoint.range, currentPoint.height),
-            currentPoint.markerColor.r,
-            currentPoint.markerColor.g,
-            currentPoint.markerColor.b,
-            currentPoint.markerColor.a
+    if (objective.marker && dist <= 100) {
+        drawMarker(
+            objective.marker.type,
+            objective.marker.pos,
+            objective.marker.dir,
+            objective.marker.rot,
+            objective.marker.scale,
+            objective.marker.r,
+            objective.marker.g,
+            objective.marker.b,
+            objective.marker.a
         );
     }
 
-    if (currentPoint.message) {
+    if (objective && objective.helpText && !target) {
         native.beginTextCommandDisplayHelp('STRING');
-        native.addTextComponentSubstringPlayerName(currentPoint.message);
+        native.addTextComponentSubstringPlayerName(objective.helpText);
+        native.endTextCommandDisplayHelp(0, false, true, -1);
+    } else if (target) {
+        native.beginTextCommandDisplayHelp('STRING');
+        native.addTextComponentSubstringPlayerName(target.message);
         native.endTextCommandDisplayHelp(0, false, true, -1);
     }
+
+    if (objective.progress >= 0) {
+        let progress = objective.progress / objective.maxProgress;
+        native.drawRect(progress / 2, 1, progress, 0.02, 255, 255, 100, 200);
+    }
+
+    // Mashing Helper
+    if (objective.type === 3) {
+        if (native.isControlJustPressed(0, 38) && Date.now() > mashingCooldown) {
+            mashingCooldown = Date.now() + 125;
+            lastMash = Date.now() + 1500;
+            mashing += 1;
+        }
+    }
+
+    playerSpeed = native.getEntitySpeed(alt.Player.local.scriptID);
+
+    if (playerSpeed >= 1) {
+        alt.Player.local.inAnimation = false;
+    }
+
+    /**
+     * Check if target is defined.
+     */
+    if (target && isFlagged(objective.flags, modifiers.DROPOFF_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.pos);
+        if (blip) {
+            blip.position = [target.pos.x, target.pos.y, target.pos.z];
+        }
+        return;
+    }
+
+    if (target && isFlagged(objective.flags, modifiers.PICKUP_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.entity.pos);
+        if (blip) {
+            blip.position = [
+                target.entity.pos.x,
+                target.entity.pos.y,
+                target.entity.pos.z
+            ];
+        }
+        return;
+    }
+
+    if (target && isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.entity.pos);
+        if (blip) {
+            blip.position = [
+                target.entity.pos.x,
+                target.entity.pos.y,
+                target.entity.pos.z
+            ];
+        }
+        return;
+    }
+
+    if (target && isFlagged(objective.flags, modifiers.GOTO_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.pos);
+        if (blip) {
+            blip.position = [
+                target.entity.pos.x,
+                target.entity.pos.y,
+                target.entity.pos.z
+            ];
+        }
+        return;
+    }
+
+    dist = distance(alt.Player.local.pos, objective.pos);
 }
 
-/**
- *  Description: Drive to Point on Foot.
- */
-function pointType() {
-    if (alt.Player.local.vehicle) return false;
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
-    return false;
-}
+function intervalObjectiveChecking() {
+    if (!objective || pause) return;
 
-/**
- *  Description: Drive to a point.
- */
-function drivepointType() {
-    if (!alt.Player.local.vehicle) return false;
+    // Check Distance
+    if (dist > objective.range) return;
 
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
-    return false;
-}
+    // Check if type exists.
+    let testType = types[objective.type];
+    if (!testType) return;
 
-/**
- *  Description: Simply spawns a vehicle.
- */
-function spawnvehicleType() {
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
-    return false;
-}
+    // Check modifier flags.
+    if (!preObjectiveCheck()) {
+        return;
+    }
 
-/**
- *  Description: Stand inside of a point for specific progression time.
- */
-function captureType() {
-    if (alt.Player.local.vehicle) return false;
-
-    if (Date.now() < cooldown) return false;
-
-    cooldown = Date.now() + 2000;
-
-    if (utilityVector.distance(alt.Player.local.pos, currentPoint.position) >= 3)
-        return false;
-    return true;
-}
-
-function drivecaptureType() {
-    if (!alt.Player.local.vehicle) return false;
-
-    if (Date.now() < cooldown) return false;
-
-    cooldown = Date.now() + 2000;
-
-    if (utilityVector.distance(alt.Player.local.vehicle.pos, currentPoint.position) >= 3)
-        return false;
-    return true;
-}
-
-/**
- *  Description: Hold 'E' to complete an objective.
- */
-function hackType() {
-    if (Date.now() < cooldown) return false;
-
-    cooldown = Date.now() + 2000;
-
-    if (!native.isDisabledControlPressed(0, 38)) {
+    // Execute Objective Test Type
+    let result = testType();
+    if (!result) {
         native.freezeEntityPosition(alt.Player.local.scriptID, false);
-        return false;
+        return;
     }
-    native.freezeEntityPosition(alt.Player.local.scriptID, true);
-    return true;
+
+    // Check Serverside
+    alt.emitServer('job:Check');
 }
 
-/**
- *  Description: Drop off a vehicle at a position.
- */
-function vehicledropType() {
-    if (!alt.Player.local.vehicle) return false;
+function preObjectiveCheck() {
+    let valid = true;
 
-    const dist = utilityVector.distance(alt.Player.local.pos, currentPoint.position);
-    if (dist <= currentPoint.range) return true;
+    if (isFlagged(objective.flags, modifiers.ON_FOOT) && valid) {
+        if (alt.Player.local.vehicle) valid = false;
+    }
+
+    if (isFlagged(objective.flags, modifiers.IN_VEHICLE) && valid) {
+        if (!alt.Player.local.vehicle) valid = false;
+    }
+
+    return valid;
+}
+
+function isFlagged(flags, flagValue) {
+    if ((flags & flagValue) === flagValue) {
+        return true;
+    }
     return false;
 }
 
-/**
- *  Description: None. Always returns false.
- */
-function targetType() {
-    return false;
-}
-
-function targetGetType() {
-    if (currentTarget === undefined) {
-        return false;
-    }
-
-    const dist = utilityVector.distance(alt.Player.local.pos, currentTarget.player.pos);
-    if (dist >= currentPoint.range) {
-        return false;
-    }
-    if (!currentTarget.player.vehicle) {
-        return false;
-    }
-
-    if (!alt.Player.local.vehicle) {
-        return false;
-    }
-
-    if (currentTarget.player.vehicle.scriptID !== alt.Player.local.vehicle.scriptID) {
-        return false;
-    }
+function point() {
     return true;
 }
 
-function targetDropType() {
-    if (currentTarget === undefined) return false;
-
-    if (!currentTarget.player.vehicle) {
-        return false;
-    }
-
-    if (!alt.Player.local.vehicle) {
-        return false;
-    }
-
-    const dist = utilityVector.distance(
-        alt.Player.local.pos,
-        currentTarget.props.position
-    );
-
-    if (dist >= currentPoint.range) {
-        return false;
-    }
-
-    return true;
-}
-
-function targetRepairType() {
-    if (currentTarget === undefined) {
-        return false;
-    }
-
-    if (!native.isDisabledControlPressed(0, 38)) {
-        return false;
-    }
-
-    if (Date.now() < cooldown) {
-        return false;
-    }
+function capture() {
+    if (Date.now() < cooldown) return false;
     cooldown = Date.now() + 2000;
 
-    const dist = utilityVector.distance(
-        alt.Player.local.pos,
-        currentTarget.props.vehicle.pos
-    );
-    if (dist >= currentPoint.range) {
-        return false;
-    }
+    if (playerSpeed >= 0.2) return false;
 
     return true;
 }
 
-// Drops off a retrieved 'object' that is 'stored' on the player.
-function dropOffType() {
-    //
+function hold() {
+    if (Date.now() < cooldown) return false;
+    cooldown = Date.now() + 2000;
+
+    if (playerSpeed >= 5) {
+        clearScenario();
+        return false;
+    }
+
+    if (native.isControlPressed(0, 38)) {
+        if (!alt.Player.local.inScenario) {
+            playScenario();
+        }
+
+        if (!alt.Player.local.inAnimation) {
+            playAnimation();
+        }
+        return true;
+    } else {
+        native.freezeEntityPosition(alt.Player.local.scriptID, false);
+        clearScenario();
+    }
+
+    native.clearPedTasks(alt.Player.local.scriptID);
+    return false;
 }
 
-// Retrieves an 'object' and stores it on the player.
-function retrieveType() {
-    //
+function mash() {
+    if (playerSpeed >= 5 && !alt.Player.local.inScenario) {
+        clearScenario();
+        return false;
+    }
+
+    if (Date.now() > lastMash) {
+        native.freezeEntityPosition(alt.Player.local.scriptID, false);
+        clearScenario();
+        return false;
+    } else {
+        if (!alt.Player.local.inScenario) {
+            playScenario();
+        }
+
+        if (!alt.Player.local.inAnimation) {
+            playAnimation();
+        }
+    }
+
+    if (mashing >= 5) {
+        mashing = 0;
+        return true;
+    }
+
+    return false;
 }
 
+function order() {}
+
 /**
- *  Description: Calls back up to the server for a 'native' check.
- * @param callbackname
+ * Check if the target has been set.
+ * Then check the modifiers that
+ * are set for the individual
+ * objective.
  */
-function hackCallback(callbackname) {
-    alt.emitServer(callbackname, callbackname, native.isDisabledControlPressed(0, 38));
+function player() {
+    if (!target) return false;
+
+    let isValid = true;
+    if (isFlagged(objective.flags, modifiers.DROPOFF_PLAYER)) {
+        if (dist > objective.range) isValid = false;
+    }
+
+    if (isFlagged(objective.flags, modifiers.PICKUP_PLAYER)) {
+        if (target.entity.vehicle !== alt.Player.local.vehicle) isValid = false;
+    }
+
+    if (isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        alt.log('Checking Repair');
+        if (dist > objective.range) isValid = false;
+        if (!hold()) {
+            isValid = false;
+        }
+    }
+
+    if (isFlagged(objective.flags, modifiers.GOTO_PLAYER)) {
+        if (dist > objective.range) isValid = false;
+    }
+
+    return isValid;
 }
-/**
- *  Description: Calls back up to the server for a 'native' get.
- * @param callbackname
- */
-function spawnvehicleCallback(callbackname) {
-    alt.emitServer(
-        callbackname,
-        callbackname,
-        native.getEntityForwardVector(alt.Player.local.scriptID)
+
+function playScenario() {
+    if (!objective.scenario) return;
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
+    alt.Player.local.inScenario = true;
+    native.taskStartScenarioInPlace(
+        alt.Player.local.scriptID,
+        objective.scenario,
+        0,
+        true
     );
+}
+
+function clearScenario() {
+    if (alt.Player.local.soundInterval) {
+        alt.clearInterval(alt.Player.local.soundInterval);
+        alt.Player.local.soundInterval = undefined;
+    }
+
+    alt.Player.local.inScenario = false;
+    alt.Player.local.inAnimation = false;
+    if (alt.Player.local.vehicle) return;
+    native.clearPedTasks(alt.Player.local.scriptID);
+}
+
+function playAnimation() {
+    if (!objective.anim) return;
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
+    alt.Player.local.inAnimation = true;
+    loadAnim(objective.anim.dict).then(res => {
+        native.taskPlayAnim(
+            alt.Player.local.scriptID,
+            objective.anim.dict,
+            objective.anim.name,
+            1,
+            -1,
+            -1,
+            1,
+            1.0,
+            true,
+            true,
+            true
+        );
+
+        if (objective.anim.sound && !alt.Player.local.soundInterval) {
+            alt.Player.local.soundInterval = alt.setInterval(() => {
+                if (objective.particle) {
+                    playAudio(objective.anim.sound);
+                    let forwardVector = native.getEntityForwardVector(
+                        alt.Player.local.scriptID
+                    );
+
+                    let pos = {
+                        x: alt.Player.local.pos.x + forwardVector.x * 1.1,
+                        y: alt.Player.local.pos.y + forwardVector.y * 1.1,
+                        z: alt.Player.local.pos.z
+                    };
+
+                    if (objective.particle.isGround) {
+                        pos.z -= 0.8;
+                    }
+
+                    playParticleFX(
+                        objective.particle.dict,
+                        objective.particle.name,
+                        objective.particle.duration,
+                        0.5,
+                        pos.x,
+                        pos.y,
+                        pos.z
+                    );
+                }
+            }, objective.anim.soundOffset);
+        }
+    });
+}
+
+async function loadAnim(dict) {
+    return new Promise(resolve => {
+        native.requestAnimDict(dict);
+        let inter = alt.setInterval(() => {
+            if (native.hasAnimDictLoaded(dict)) {
+                resolve(true);
+                alt.clearInterval(inter);
+                return;
+            }
+        }, 5);
+    });
 }

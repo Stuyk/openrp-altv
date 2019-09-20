@@ -39,3 +39,35 @@ export function randPosAround(pos, range) {
         z: pos.z
     };
 }
+
+/**
+ * Get the closest user to a player.
+ * @param player The player requesting.
+ * @param players The list of players to use.
+ * @param isJobber Is this a jobber target type?
+ */
+export function getClosestPlayer(player, players, isJobber = false) {
+    let closestPlayer;
+    let lastDistance;
+
+    // Get closest taxi driver.
+    players.forEach(p2 => {
+        const jobDistance = distance(player.pos, p2.pos);
+        if (p2.target && isJobber) return;
+        if (!p2.job.available) return;
+
+        if (closestPlayer === undefined) {
+            closestPlayer = p2;
+            lastDistance = jobDistance;
+            return;
+        }
+
+        // Get closest driver each time.
+        if (jobDistance < lastDistance) {
+            closestPlayer = p;
+            lastDistance = jobDistance;
+        }
+    });
+
+    return closestPlayer;
+}

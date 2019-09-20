@@ -20,6 +20,7 @@ import * as systemsCombat from 'client/systems/combat.mjs';
 import * as systemsJob from 'client/systems/job.mjs';
 import * as systemsShop from 'client/systems/shop.mjs';
 import * as systemsSkills from 'client/systems/skills.mjs';
+import * as systemsProps from 'client/systems/props.mjs';
 import * as utilitySandbox from 'client/utility/sandbox.mjs';
 import * as hud from 'client/hud/hud.mjs';
 

@@ -1,962 +1,888 @@
 import * as alt from 'alt';
-import * as configurationJob from '../configuration/job.mjs';
-import * as utilityVector from '../utility/vector.mjs';
-import { Interaction } from '../systems/interaction.mjs';
-import * as configurationItems from '../configuration/items.mjs';
+import * as chat from '../chat/chat.mjs';
+import { Dictionary } from '../configuration/dictionary.mjs';
+import { distance, randPosAround } from '../utility/vector.mjs';
 import { addXP } from '../systems/skills.mjs';
+import { Items } from '../configuration/items.mjs';
 
-let jobs;
+const Debug = true;
 
-export function load(loadedJobs) {
-    jobs = loadedJobs;
+export const objectives = {
+    POINT: 0, // Go to Point
+    CAPTURE: 1, // Stand in Point
+    HOLD: 2, // Hold 'E'
+    MASH: 3, // Mash 'E'
+    PLAYER: 4, // Player Type
+    ORDER: 5, // Press Keys in Order
+    INFINITE: 6 // Repeat any objectives after this.
+};
 
-    jobs.forEach((job, index) => {
-        //position, type, serverEventName, radius, height, message, indexValue)
-        let interact = new Interaction(
-            job.start,
-            'job',
-            'job:StartJob',
-            3,
-            2,
-            job.name,
-            index
-        );
-        interact.addBlip(job.blipSprite, job.blipColor, job.name);
-    });
-}
-
-/* The way these jobs work....
- 1. Load the Jobs from the Configuration.
- 2. Create Interaction points for each job.
- 3. Player visits the interaction point; and presses E to start the job.
- 4. Once the job is started...
- 5. Synchronize the Job Data with the player on client-side.
- 6. Show the markers for the points.
- 7. JobPoint is the current index of the target point in points in the configuration.
- 8. Player visits the point; it has a TYPE.
- 9. Depending on the TYPE it will invoke various functions on the server.
- 10. These functions are also checked on client-side first.
- 11. After visiting all points in the list; the job is considered complete.
- 12. Rewards are distributed on an per-objective basis.
- 13. Cleanup job after finishing. 
- */
-
-const objectiveTypes = [
-    // On Foot Point
-    { name: 'point', func: pointType },
-    // Capture Point on Foot
-    { name: 'capture', func: captureType },
-    // Retrieve Item on Foot Type
-    { name: 'retreive', func: retrieveType },
-    // Drop Off Item on Foot Type
-    { name: 'dropoff', func: dropOffType },
-    // Hold 'E' to do something.
-    { name: 'hack', func: hackType },
-    // Drive to a point.
-    { name: 'drivepoint', func: drivepointType },
-    // Drive and Capture a Point
-    { name: 'drivecapture', func: driveCaptureType },
-    // Spawn a job Vehicle.
-    { name: 'spawnvehicle', func: spawnVehicleType },
-    // Drop off a Vehicle.
-    { name: 'vehicledrop', func: vehicleDropType },
-    // Get a player's target type.
-    // Invoked through a callback.
-    { name: 'target', func: targetType },
-    // Pickup a target.
-    { name: 'targetget', func: targetGetType },
-    // Dropoff a target.
-    { name: 'targetdrop', func: targetDropType },
-    // Hack a Target
-    { name: 'targetrepair', func: targetRepairType }
-];
+export const modifiers = {
+    MIN: 0,
+    ON_FOOT: 1,
+    IN_VEHICLE: 2,
+    REMOVE_VEHICLE: 4,
+    PICKUP_PLAYER: 16,
+    DROPOFF_PLAYER: 32,
+    KILL_PLAYER: 64,
+    REPAIR_PLAYER: 128,
+    GOTO_PLAYER: 256,
+    MAX: 512
+};
 
 /**
- * Called when a user wants to start a job.
+ * These cause instant fails. :D
  */
-alt.on('job:StartJob', (player, index) => {
-    if (index === undefined) return;
-    if (player.job !== undefined) clearJob(player);
+export const restrictions = {
+    MIN: 0,
+    NO_VEHICLES: 1,
+    NO_WEAPONS: 2,
+    NO_DIEING: 4,
+    TIME_LIMIT: 8,
+    MAX: 16
+};
 
-    // Finds the job we're attempting to start.
-    let currentJob = jobs[index];
-    if (!player.job) player.job = {};
+/**
+ * Checks if a flag is being used.
+ * @param flags
+ * @param flagValue
+ */
+function isFlagged(flags, flagValue) {
+    if ((flags & flagValue) === flagValue) {
+        return true;
+    }
+    return false;
+}
 
-    // Has item requirements / or no items specifically.
-    if (currentJob.required !== undefined) {
-        let passed = true;
-        let failedItems = [];
+/**
+ * Create an objective to add to a JOB.
+ */
+export class Objective {
+    constructor(objectiveType, objectiveFlags) {
+        this.type = objectiveType;
+        this.flags = objectiveFlags;
+        this.rewards = [];
+        this.range = 5;
+        this.maxProgress = 5;
+        this.progress = -1;
 
-        currentJob.required.forEach(item => {
-            let isIn = item.inInventory;
+        if (this.type === 5) {
+            this.word = getWord();
+        }
+    }
 
-            if (isIn) {
-                if (!player.hasItem(item.name)) {
-                    passed = false;
-                    failedItems.push(item);
+    /**
+     * Set the objective position.
+     * @param pos vector3
+     */
+    setPosition(pos) {
+        pos.z -= 0.5;
+        this.pos = pos;
+    }
+
+    /**
+     * The distance the player must be in
+     * for the objective to be valid.
+     * @param pos number
+     */
+    setRange(range) {
+        if (range <= 2) range = 2;
+        this.range = range;
+    }
+
+    /**
+     * Set the objective message for info.
+     * @param msg stirng
+     */
+    setHelpText(msg) {
+        this.helpText = msg;
+    }
+
+    /**
+     * Set a scenario to be played when using
+     * any key press type.
+     * @param name
+     */
+    setScenario(name) {
+        this.scenario = name;
+    }
+
+    /**
+     * Set an array of rewards to give.
+     * [
+     * { type: 'item', prop: 'itemKey', quantity: 1 },
+     * { type: 'xp', prop: 'agility', quantity: 25 }
+     * ]
+     * @param arrayOfRewards
+     */
+    setRewards(arrayOfRewards) {
+        this.rewards = arrayOfRewards;
+    }
+
+    /**
+     * Sound played for each progress tick.
+     * @param soundName string
+     */
+    setEverySound(soundName) {
+        this.everySound = soundName;
+    }
+
+    /**
+     * Sound played at objective completion.
+     * @param soundName string
+     */
+    setFinishSound(soundName) {
+        this.finishSound = soundName;
+    }
+
+    /**
+     * Set the animation to play while doing this objective.
+     * @param dict string
+     * @param anim string
+     * @param flags number
+     * @param duration numberInMS
+     */
+    setAnimation(dict, name, flag, duration, sound = undefined, soundOffset = 1000) {
+        this.anim = {
+            dict,
+            name,
+            flag,
+            duration,
+            sound,
+            soundOffset
+        };
+    }
+
+    /**
+     * Plays particles when paired with sounds
+     * from the setAnimation function.
+     * @param dict
+     * @param name
+     */
+    setParticle(dict, name, duration, isGround = false) {
+        this.particle = {
+            dict,
+            name,
+            duration,
+            isGround
+        };
+    }
+
+    /**
+     * Display a marker?
+     * @param type number
+     * @param pos vector3
+     * @param dir vector3
+     * @param rot vector3
+     * @param scale vector3
+     * @param r number
+     * @param g number
+     * @param b number
+     * @param a number
+     */
+    setMarker(type, pos, dir, rot, scale, r, g, b, a) {
+        this.marker = {
+            type,
+            pos,
+            dir,
+            rot,
+            scale,
+            r,
+            g,
+            b,
+            a
+        };
+    }
+
+    /**
+     * The blip to set for the objective.
+     * @param type number
+     * @param color number
+     * @param pos vector3
+     */
+    setBlip(sprite, color, pos) {
+        this.blip = {
+            sprite,
+            color,
+            pos
+        };
+    }
+
+    /**
+     * [{ label: 'Pickaxe', inInventory: true, quantity: 1 }]
+     * @param arrayOfItems
+     */
+    setItemRestrictions(arrayOfItems) {
+        this.itemRestrictions = arrayOfItems;
+    }
+
+    /**
+     * Set a vehicle to be spawned after objective completion.
+     * @param type
+     * @param pos
+     */
+    setVehicle(type, pos) {
+        this.veh = {
+            type,
+            pos
+        };
+    }
+
+    /**
+     * Set the max progress to complete
+     * an objective. 10 is minimum.
+     * @param amount
+     */
+    setMaxProgress(amount = 10) {
+        if (amount <= 10) amount = 10;
+        this.maxProgress = amount;
+    }
+
+    /**
+     * Called when the user wants to attempt
+     * the objective reference they have.
+     * @param player
+     * @param args
+     */
+    attemptObjective(player, ...args) {
+        // Check job restrictions from job.
+        checkRestrictions(player);
+
+        if (!player.job) return;
+
+        // Check the Objective
+        if (!this.checkObjective(player, args)) {
+            player.emitMeta('job:Progress', this.progress);
+            return false;
+        }
+
+        // Issue Rewards
+        if (this.rewards.length >= 1) {
+            this.rewards.forEach(reward => {
+                if (reward.type === 'xp') {
+                    addXP(player, reward.prop, reward.quantity);
+                }
+
+                if (reward.type === 'item') {
+                    if (Items[reward.prop]) {
+                        if (Items[reward.prop].stackable) {
+                            player.addItem(
+                                { ...Items[reward.prop] },
+                                reward.quantity,
+                                false
+                            );
+                            player.send(
+                                `${Items[reward.prop].label} was added to your inventory.`
+                            );
+                        } else {
+                            for (let i = 0; i < reward.quantity; i++) {
+                                player.addItem({ ...Items[reward.prop] }, 1, false);
+                                player.send(
+                                    `${Items[reward.prop].label} was added to your inventory.`
+                                );
+                            }
+                        }
+                    } else {
+                        console.log(`${reward.prop} was not found for a reward.`);
+                    }
+                }
+            });
+        }
+
+        if (this.veh) {
+            let pos = randPosAround(this.veh.pos, 10);
+            const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
+
+            vehicle.job = {
+                player,
+                preventHijack: true
+            };
+
+            vehicle.engineOn = true;
+
+            player.vehicles.push(vehicle);
+        }
+
+        // Play a sound; after a user finishes their objective.
+        playFinishedSound(player, this);
+
+        // Reset progress for this objective.
+        this.progress = -1;
+
+        // Check objective modifier flags.
+        if (player.job.target && player.job.target.entity) {
+            const entity = player.job.target.entity;
+
+            if (isFlagged(this.flags, modifiers.DROPOFF_PLAYER)) {
+                if (entity) {
+                    entity.ejectSlowly();
+                    entity.jobber = undefined;
+                }
+            }
+
+            if (isFlagged(this.flags, modifiers.REPAIR_PLAYER)) {
+                let fare = player.job.target.owner.jobber.fare;
+                if (!fare) {
+                    fare = 0;
+                }
+
+                if (entity.constructor.name === 'Player') {
+                    entity.spawn(entity.pos.x, entity.pos.y, entity.pos.z, 0);
+                    entity.health = 25;
+                    player.job.target.owner.subCash(fare);
+                    player.addCash(fare);
+                    player.job.target.owner.send(`{FF0000}-$${fare}`);
+                    player.send(`{00FF00}+$${fare}`);
+                }
+
+                if (entity.constructor.name === 'Vehicle') {
+                    entity.repair();
+                    player.job.target.owner.subCash(fare);
+                    player.addCash(fare);
+                    player.job.target.owner.send(`{FF0000}-$${fare}`);
+                    player.send(`{00FF00}+$${fare}`);
+                }
+            }
+        }
+
+        // Go To Next Objective
+        // Issue Rewards Here
+        player.emitMeta('job:Objective', undefined);
+        return true;
+    }
+
+    /**
+     * Check the objective and see if it's
+     * valid.
+     * @param player
+     * @param args
+     */
+    checkObjective(player, args) {
+        let valid = true;
+
+        // Normal range check.
+        // Then do a targed range check
+        // if the objective type is 4.
+        if (this.type <= objectives.ORDER && this.type !== objectives.PLAYER) {
+            if (!isInRange(player, this)) valid = false;
+        }
+
+        // Checks if a player is on foot.
+        if (isFlagged(this.flags, modifiers.ON_FOOT) && valid) {
+            if (player.vehicle) valid = false;
+        }
+
+        // Checks if the player is in an job vehicle.
+        if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
+            console.log('Checking Objective...');
+            if (!player.vehicle) {
+                valid = false;
+            } else {
+                const vehicles = player.vehicles.filter(
+                    x => x.job !== undefined && x === player.vehicle
+                );
+
+                console.log(vehicles);
+                if (vehicles.length <= 0) {
+                    valid = false;
+                }
+            }
+        }
+
+        /**
+         * Finally check the base objective type
+         */
+        // Check the capture objective type.
+        // When the user is standing in a specific area.
+        if (this.type === objectives.CAPTURE && valid) {
+            valid = capture(player, this);
+        }
+
+        // Check the hold objective type.
+        // When the user is holding 'E'
+        if (this.type === objectives.HOLD && valid) {
+            valid = hold(player, this);
+        }
+
+        // Check the mash objective type.
+        // When the user is mashing 'E'.
+        if (this.type === objectives.MASH && valid) {
+            valid = mash(player, this);
+        }
+
+        // Check the order objective type
+        // When the user is pressing keys in a specific
+        // order.
+        if (this.type === objectives.ORDER && valid) {
+            valid = order(player, this, args);
+        }
+
+        // Check the player objective type
+        // When the user has a 'target' type.
+        if (this.type == objectives.PLAYER && valid) {
+            if (player.job.target) {
+                valid = targetPlayer(player, this);
+            } else {
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+}
+
+const isInRange = (player, objective) => {
+    if (distance(player.pos, objective.pos) >= objective.range) return false;
+    return true;
+};
+
+/**
+ * The Follow objectives
+ * are to be kept seperate; for additional objective modifiers.
+ */
+
+// CAPTURE: 1, // Stand in Point
+const capture = (player, objective) => {
+    objective.progress += 1;
+    if (objective.progress < objective.maxProgress) {
+        playEverySound(player, objective);
+        return false;
+    }
+    return true;
+};
+
+// HOLD: 2, // Hold 'E'
+const hold = (player, objective) => {
+    objective.progress += 1;
+    if (objective.progress < objective.maxProgress) {
+        playEverySound(player, objective);
+        return false;
+    }
+    return true;
+};
+
+// MASH: 3, // Mash 'E'
+const mash = (player, objective) => {
+    objective.progress += 1;
+
+    if (objective.progress < objective.maxProgress) {
+        playEverySound(player, objective);
+        return false;
+    }
+    return true;
+};
+
+// TARGET: 4, // Target
+const targetPlayer = (player, objective) => {
+    if (!player.job.target) return false;
+
+    const target = player.job.target;
+
+    let isValid = true;
+    if (isFlagged(objective.flags, modifiers.PICKUP_PLAYER)) {
+        if (!target.entity.vehicle) {
+            isValid = false;
+        } else {
+            if (target.entity.vehicle !== player.vehicle) {
+                isValid = false;
+            }
+        }
+    }
+
+    if (isFlagged(objective.flags, modifiers.DROPOFF_PLAYER)) {
+        if (distance(target.entity.pos, target.pos) >= objective.range) {
+            isValid = false;
+        }
+    }
+
+    if (isFlagged(objective.flags, modifiers.KILL_PLAYER)) {
+        if (!target.entity.hasDied) {
+            isValid = false;
+        }
+    }
+
+    /**
+     * Called for repairing a target.
+     */
+    if (isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        if (distance(target.entity.pos, player.pos) >= objective.range) {
+            isValid = false;
+        } else {
+            objective.progress += 1;
+            if (objective.progress < objective.maxProgress) {
+                isValid = false;
+            }
+        }
+    }
+
+    if (isFlagged(objectives.flags, modifiers.GOTO_PLAYER)) {
+        if (distance(target.pos, player.pos) > objective.range) isValid = false;
+    }
+
+    return isValid;
+};
+
+// ORDER: 5, // Press Keys in Order
+const order = (player, objective, args) => {
+    //
+};
+
+const getWord = () => {
+    const word = Math.floor(Math.random() * (Dictionary.length - 1));
+    return Dictionary[word];
+};
+
+const playEverySound = (player, objective) => {
+    if (objective.everySound === undefined) return;
+    player.playAudio(objective.everySound);
+};
+
+const playFinishedSound = (player, objective) => {
+    if (objective.finishSound === undefined) return;
+    player.playAudio(objective.finishSound);
+};
+
+export class Job {
+    constructor(player, name, restrictions = 0) {
+        this.name = name;
+        this.objectives = [];
+        this.restrictions = restrictions;
+        this.items = [];
+        this.timelimit = 60000;
+        player.hasDied = false;
+        player.job = this;
+    }
+
+    /**
+     * Clear the job
+     * @param player
+     */
+    clear(player) {
+        let currentJob = player.getMeta('job');
+        if (currentJob) {
+            // Clear the Job Here
+        }
+    }
+
+    /**
+     * Start the job.
+     * @param player
+     */
+    start(player) {
+        // Check Item Restrictions
+        if (!this.checkItemRestrictions(player)) {
+            quitJob(player, false, true);
+            return;
+        }
+
+        this.addUniform(player);
+
+        this.start = Date.now();
+        player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
+        player.job.available = false;
+
+        if (isFlagged(this.restrictions, restrictions.TIME_LIMIT)) {
+            this.end = this.start + this.timelimit;
+        }
+    }
+
+    setUniform(uniformKey) {
+        if (!Items[uniformKey]) {
+            console.log('That key does not exist in items.');
+            return;
+        }
+
+        this.uniform = uniformKey;
+    }
+
+    addUniform(player) {
+        if (!this.uniform) return;
+        if (player.hasItem(Items[this.uniform].label)) return;
+        player.addItem({ ...Items[this.uniform] }, 1, false);
+        player.send(`${Items[this.uniform].label} was added to your inventory.`);
+    }
+
+    checkItemRestrictions(player) {
+        if (this.items.length <= 0) return true;
+        let allValid = true;
+        for (let i = 0; i < this.items.length; i++) {
+            if (this.items[i].hasItem) {
+                console.log(this.items[i]);
+
+                if (!player.hasItem(this.items[i].label)) {
+                    allValid = false;
+                    player.send('You are restricted from doing this job.');
+                    player.send(`You don't have {FF0000}${this.items[i].label}{FFFFFF}.`);
+                    break;
                 }
             } else {
-                if (player.hasItem(item.name)) {
-                    passed = false;
-                    failedItems.push(item);
+                if (player.hasItem(this.items[i].label)) {
+                    allValid = false;
+                    player.send('You are restricted from doing this job.');
+                    player.send(`You have {FF0000}${this.items[i].label}{FFFFFF}.`);
+                    break;
                 }
             }
-        });
+        }
+        return allValid;
+    }
 
-        if (!passed) {
-            player.send(`The following is stopping you from doing this job.`);
-            failedItems.forEach(item => {
-                if (item.inInventory) {
-                    player.send(`Should have: ${item.name}`);
-                } else {
-                    player.send(`Should not have: ${item.name}`);
-                }
-            });
+    /**
+     * Set a time limit for the entire job.
+     * @param timeInMS
+     */
+    setTimelimit(timeInMS) {
+        this.timelimit = timeInMS;
+    }
+
+    /**
+     * [{ label: 'Drivers License', hasItem: false }]
+     * @param arrayOfItems
+     */
+    setItemRestrictions(arrayOfItems) {
+        this.items = arrayOfItems;
+    }
+
+    /**
+     * Add an Objective Class type to loop through.
+     * @param objectiveClass
+     */
+    add(objectiveClass) {
+        this.objectives.push(objectiveClass);
+    }
+
+    /**
+     * Go to the next objective.
+     */
+    next(player) {
+        const lastObjective = this.objectives.shift();
+        player.emitMeta('job:ClearObjective', true);
+
+        // Check if an objective is present.
+        if (this.objectives[0]) {
+            // Append Objective to End of Array
+            if (this.infinite) {
+                this.objectives.push(lastObjective);
+            }
+
+            // If the objective type is infinite; skip it.
+            if (this.objectives[0].type === objectives.INFINITE) {
+                this.infinite = true;
+                this.objectives.shift();
+                this.objectives[0].infinite = true;
+            }
+
+            if (this.objectives[0].infinite) {
+                this.clearTarget(player);
+            }
+        } else {
+            player.emitMeta('job:Objective', undefined);
+            player.send('Job Complete');
             return;
         }
+
+        player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
     }
 
-    // Setup the job information for server-side.
-    player.job.guid = currentJob.guid;
-    player.job.currentJob = currentJob;
-    player.job.currentPointIndex = 0;
-    player.job.currentPoint = currentJob.points[0];
-    player.send('Starting job.');
+    /**
+     * Skip all objectives; go straight to
+     * beginning of infinite.
+     * @param player
+     */
+    skipToBeginning(player) {
+        this.clearTarget(player);
+        player.emitMeta('job:ClearObjective', true);
+        while (this.objectives[0].infinite !== true) {
+            let last = this.objectives.shift();
+            this.objectives.push(last);
 
-    // Sync the meta.
-    syncMeta(player, 0, true);
-});
-
-/**
- *  Description:
- *  Called when a new objective must be synced.
- *  Passes the index for PointIndex
- *  Resets progress for individual objectives.
- *  Resets cooldowns
- *  Starts it as a new job if isNewJob is flagged.
- * @param player
- * @param index
- * @param isNewJob
- */
-function syncMeta(player, index, isNewJob) {
-    // Set Synced Meta
-    player.emitMeta('job:Job', JSON.stringify(player.job.currentJob));
-    player.emitMeta('job:PointIndex', index);
-    player.emitMeta('job:Progress', -1);
-    player.job.progress = -1;
-    player.job.cooldown = Date.now();
-
-    if (isNewJob) {
-        player.emitMeta('job:Start', Date.now());
-        return;
-    }
-
-    player.emitMeta('job:Update', Date.now());
-}
-
-// Used to cleanup / clear the current job the player is doing.
-export function clearJob(player) {
-    // Destroy any current vehicles.
-    if (player.job !== undefined) {
-        clearTimeout(player.job.timeout);
-        const currentVeh = player.job.currentVehicle;
-
-        if (player.vehicles) {
-            let index = player.vehicles.findIndex(x => x === currentVeh);
-            if (index !== -1) {
-                player.vehicles.splice(index, 1);
+            if (this.objectives[0] === undefined) {
+                break;
             }
         }
 
-        // Clear current vehicle.
-
-        if (currentVeh !== undefined && currentVeh !== null) {
-            currentVeh.destroy();
-        }
-    }
-
-    player.emitMeta('job:Job', undefined);
-    player.emitMeta('job:PointIndex', undefined);
-    player.emitMeta('job:Clear', true);
-    player.job = {};
-}
-
-export function getClosestDriverByGuid(player, guid) {
-    let closestDriver;
-    let lastDistance;
-
-    // Get closest taxi driver.
-    alt.Player.all.forEach(p => {
-        if (p.job === undefined) return;
-        if (p.job.guid !== guid) return;
-
-        // This is checking if they're awaiting a ped.
-        if (!p.job.isAvailable) return;
-
-        const jobDistance = utilityVector.distance(player.pos, p.pos);
-
-        if (closestDriver === undefined) {
-            closestDriver = p;
-            lastDistance = jobDistance;
+        if (this.objectives[0] === undefined) {
+            player.emitMeta('job:Objective', undefined);
+            player.send('Job Complete');
             return;
         }
 
-        // Get closest driver each time.
-        if (jobDistance < lastDistance) {
-            closestDriver = p;
-            lastDistance = jobDistance;
-        }
-    });
-
-    return closestDriver;
-}
-
-/**
- *  Description:
- *  Verifying an objective can be a long process.
- *  This is used to determine if the user is not full of shit.
- *
- *  1. Check if they're not testing already.
- *  2. Find the objective type to call.
- *  3. Call the objective type.
- *  4. Objective type verifies if parameters are met.
- *  5. If objective is complete...
- *  6. Go to the next objective.
- *
- * @param player
- */
-export function testObjective(player) {
-    // No Job Found; why are you testing?
-    if (player.job === undefined) return;
-    if (player.job.currentJob === undefined) return;
-    if (player.job.testing) return;
-
-    // Prevent testing multiple times.
-    player.job.testing = true;
-
-    // Check if the objective exists.
-    let objective = objectiveTypes.find(x => x.name === player.job.currentPoint.type);
-
-    // If the objective is bad.
-    // Clear the player's job if it is and throw.
-    if (objective === undefined) {
-        player.job.testing = false;
-        clearJob(player);
-        console.error(`!!! -> Bad Objective Type`);
-        return;
+        player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
     }
 
-    // Pass the player to objective...
-    // isComplete is a callback.
-    objective.func(player, isComplete => {
-        if (!isComplete) {
-            player.job.testing = false;
+    /**
+     * Check an objective.
+     * @param player
+     * @param args
+     */
+    check(player, ...args) {
+        if (player.checking) return;
+        player.checking = true;
+
+        if (!this.objectives[0].attemptObjective(player, ...args)) {
+            player.checking = false;
             return;
         }
 
-        goToNext(player);
-    });
+        player.checking = false;
+        this.next(player);
+    }
+
+    /**
+     * Set the entity & position if necessary.
+     * Only called from external methods;
+     * never set this directly.
+     * ===> player.job.setTarget
+     * @param entity
+     * @param position
+     */
+    setTarget(player, entity, position = undefined, message = '', owner = undefined) {
+        this.target = {
+            entity,
+            pos: position,
+            message,
+            owner
+        };
+        player.emitMeta('job:Target', this.target);
+    }
+
+    /**
+     * Clear the target for this job.
+     */
+    clearTarget(player) {
+        this.target = undefined;
+        player.job.available = true;
+        player.emitMeta('job:Target', undefined);
+    }
 }
 
-/**
- * Description:
- * Goes to the next objective but also handles...
- * infinite and target types.
- *
- * Infinite means that any objective after an
- * infinite type means it will continue on forever
- * from that specific point.
- *
- * This allows for ENDLESS jobs.
- *
- * Target means that any objective that is of the
- * target type that it comes across will automatically
- * setup a callback that can be invoked by other
- * players requesting service for a specific type
- * of job.
- *
- * Once that service is invoked; the job will continue
- * like normal but will more than likely use target
- * sub types that assist with telling the user where
- * to go with their new friend.
- * @param player
- */
-export function goToNext(player, goToInfinite) {
-    // Add reward before incrementing to next objective.
-    if (player.job.currentPoint.reward >= 1) {
-        player.addCash(player.job.currentPoint.reward);
-        player.send(`{00FF00}+$${player.job.currentPoint.reward}`);
-    }
+export function check(player) {
+    if (!player.job) return;
+    player.job.check(player);
+}
 
-    // Increment the index.
-    let index = player.job.currentPointIndex + 1;
-    let nextPoint = player.job.currentJob.points[index];
-
-    // If it's the end of the job and infinite is turned
-    // on we need to reset the objective to the beginning.
-    if (nextPoint === undefined && player.job.infinite) {
-        index = player.job.infiniteIndex;
-        nextPoint = player.job.currentJob.points[index];
-        player.job.isAvailable = true;
-    }
-
-    // Forces the objective to the inifnite start state.
-    if (goToInfinite) {
-        index = player.job.infiniteIndex;
-        nextPoint = player.job.currentJob.points[index];
-        player.job.isAvailable = true;
-    }
-
-    if (nextPoint !== undefined) {
-        if (nextPoint.type === 'rewarditem') {
-            Object.keys(configurationItems.Items).forEach(key => {
-                if (configurationItems.Items[key].label !== nextPoint.item) return;
-                let itemTemplate = configurationItems.Items[key];
-
-                if (!itemTemplate.stackable) {
-                    for (let i = 0; i < nextPoint.quantity; i++) {
-                        player.addItem({ ...itemTemplate }, 1, true);
-                        player.send(`You recieved: ${itemTemplate.label}`);
-                    }
-                } else {
-                    player.addItem({ ...itemTemplate }, nextPoint.quantity, true);
-                    player.send(`You recieved: ${itemTemplate.label}`);
-                }
-            });
-
-            index += 1;
-            nextPoint = player.job.currentJob.points[index];
+export function checkRestrictions(player) {
+    if (!player.job) return;
+    if (player.job.restrictions <= 0) return;
+    if (isFlagged(player.job.restrictions, restrictions.NO_VEHICLES)) {
+        if (player.vehicle) {
+            player.send('Failed; no vehicles allowed.');
+            quitJob(player, false, true);
+            return;
         }
     }
 
-    if (nextPoint !== undefined) {
-        if (nextPoint.type === 'rewardxp') {
-            addXP(player, nextPoint.skill, nextPoint.quantity);
-            player.send(
-                `You recieved ${nextPoint.quantity}XP for the ${nextPoint.skill} skill.`
-            );
-
-            index += 1;
-            nextPoint = player.job.currentJob.points[index];
+    if (isFlagged(player.job.restrictions, restrictions.TIME_LIMIT)) {
+        if (Date.now() > this.end) {
+            player.send('You have exhausted your time limit.');
+            quitJob(player, false, true);
+            return;
         }
     }
-    
 
-    // Finish Job if undefined point.
-    if (nextPoint === undefined && !player.job.infinite) {
-        player.send('You have finished your job.');
-        try {
-            clearJob(player);
-        } catch (err) {
-            console.log(err);
+    // Dieing Restriction
+    if (isFlagged(player.job.restrictions, restrictions.NO_DIEING)) {
+        if (player.hasDied) {
+            player.send('This job does not allow dieing; you have failed.');
+            quitJob(player, false, true);
+            return;
         }
-        return;
     }
 
-    // Setup infinite jobbing if called for.
-    // infiniteIndex is used to go back to the start of
-    // where we should begin infinite jobbing.
-    if (nextPoint.type === 'infinite') {
-        index += 1;
-        nextPoint = player.job.currentJob.points[index];
-        player.job.infinite = true;
-        player.job.infiniteIndex = index;
-    }
-
-    // Setup player data for next point.
-    player.job.currentPoint = nextPoint;
-    player.job.currentPointIndex = index;
-
-    // Special parameter for the 'target' type.
-    // Directly invoke this objective to setup
-    // a callback for player interception.
-    if (nextPoint.type === 'target') {
-        let objective = objectiveTypes.find(x => x.name === 'target');
-        objective.func(player, isComplete => {
-            if (!isComplete) {
-                player.job.testing = false;
+    // Weapon Restriction
+    if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
+        if (player.inventory[37]) {
+            if (player.inventory[37].isWeapon) {
+                player.send('This job does not allow weapons.');
+                quitJob(player, false, true);
                 return;
             }
-
-            goToNext(player);
-        });
-
-        // Sync objective data.
-        syncMeta(player, index, false);
-        return;
+        }
     }
-
-    // Sync objective data.
-    syncMeta(player, index, false);
-    player.job.testing = false;
-    return;
-}
-
-export function isTarget(player, vehicle) {
-    if (vehicle.job === undefined) return false;
-    const jobber = vehicle.job;
-
-    if (jobber.job.target === undefined) return false;
-
-    if (jobber.job.target.player !== player) return false;
-
-    return true;
 }
 
 /**
- *  Description:
- *  Charge the player for hopping out early.
+ * Called when the player quits a job as a target.
  * @param player
+ *
+ * player.jobber = {
+ *     fare: cost.toFixed(2) * 1,
+ *     position: player.pos,
+ *     jobber: closestDriver,
+ *     objectiveFare: false, // Called when the fare should only be invoked
+ *                          // when an objective is complete.
+ * };
  */
-export function exitFee(player, jobber) {
-    const dist = utilityVector.distance(player.pos, player.jobStartPosition);
-    const fare = dist * 0.03;
+export function quitTarget(player) {
+    if (!player.jobber) return;
+    const dist = distance(player.pos, player.jobber.position);
+    const employee = player.jobber.employee;
+    const fare = player.jobber.fare;
+    const isObjectiveFare = player.jobber.objectiveFare;
+    player.send('You have cancelled your request.');
 
-    if (player.isJobTarget === undefined) {
+    // Employee doesn't exist; don't pay.
+    if (!employee) {
+        player.jobber = undefined;
         return;
     }
 
-    player.subCash(fare);
-    jobber.addCash(fare);
-
-    // Reset User
-    player.isJobTarget = undefined;
-
-    jobber.send('Your customer left the taxi; he was charged accordingly.');
-    player.send('You left your cab early; you were charged accordingly.');
-
-    // Force jobber into ready state again.
-    goToNext(jobber, true);
-}
-
-export function cancelTarget(player) {
-    const players = alt.Player.all;
-    let jobber;
-
-    for (let t in players) {
-        if (players[t].job === undefined) {
-            continue;
+    if (fare && !isObjectiveFare) {
+        if (employee && dist >= 25) {
+            player.subCash(fare);
+            player.send(`{FF0000} -$${fare}`);
+            employee.addCash(fare);
+            employee.send(`{00FF00} +$${fare}`);
         }
 
-        if (players[t].job.target === undefined) {
-            continue;
-        }
-
-        if (players[t].job.target.player !== player) {
-            continue;
-        }
-
-        jobber = players[t];
-        break;
-    }
-
-    if (jobber === undefined) return;
-
-    if (player.vehicle === jobber.vehicle) {
-        player.send('You must exit the vehicle to cancel.');
-        return;
-    }
-
-    jobber.send('The customer cancelled.');
-    goToNext(jobber, true);
-}
-
-export function cancelJob(jobber) {
-    if (jobber.job === undefined) {
-        return;
-    }
-
-    if (jobber.job.target === undefined) {
-        clearJob(jobber);
-        return;
-    }
-
-    if (jobber.job.target.player === undefined) {
-        clearJob(jobber);
-        return;
-    }
-
-    jobber.job.target.player.isJobTarget = undefined;
-    jobber.job.target.player.send(
-        'The employee quit their job. Your request was not fulfilled.'
-    );
-    clearJob(jobber);
-}
-
-/**
- * Description:
- * The 'point' type is used when the user has to
- * go to a location on foot.
- * @param player
- * @param callback
- */
-function pointType(player, callback) {
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (player.vehicle) return callback(false);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-    return callback(true);
-}
-
-/**
- * Description:
- * The 'target' type is controlled by external
- * cases. ie. When a user requests a taxi.
- * However, target is the only TYPE that is
- * processed DIRECTLY after an objective is complete.
- *
- * This is because it needs to setup a callback immediately.
- *
- * You can use a 'guid' in the job type.
- * To help filter out players from the all
- * list that are currently working a job.
- *
- * Doing this allows you to easily invoke
- * a 'jobber.job.processTarget(requester, props)'.
- *
- * This will push their job forward and help
- * the requester move forward with their
- * needs.
- *
- * It's complex but the Taxi job
- * is meant to be an example of how to use
- * this very specific type.
- *
- * @param player
- * @param callback
- */
-function targetType(player, callback) {
-    player.job.isAvailable = true;
-    player.job.processTarget = (target, props) => {
-        player.job.isAvailable = false;
-        player.job.processTarget === undefined;
-        player.job.target = {
-            player: target,
-            props
-        };
-        player.emitMeta('job:Target', player.job.target);
-        return callback(true);
-    };
-    return callback(false);
-}
-
-/**
- * Description:
- * Requires 'target' type before usage.
- * Drop off a target at a specific location.
- * @param player
- * @param callback
- */
-function targetDropType(player, callback) {
-    const target = player.job.target;
-
-    if (target.props.position === undefined) {
-        console.error('!!! => position was not given to target type in jobs.');
-        return callback(false);
-    }
-
-    const dist = utilityVector.distance(target.props.position, player.pos);
-
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
-    if (player.vehicle !== target.player.vehicle) {
-        return callback(false);
-    }
-
-    if (player.job.currentVehicle !== player.vehicle) {
-        return callback(false);
-    }
-
-    // Eject the target out of the car.
-    target.player.isJobTarget = undefined;
-    target.player.send('{00FF00}You have arrived at your destination.');
-
-    // PAY THE MAN JANICE
-    if (player.job.currentPoint.fare) {
-        target.player.subCash(target.props.fare);
-        player.addCash(target.props.fare);
-        player.send(`{00FF00}+$${target.props.fare}`);
-    }
-
-    target.player.ejectSlowly();
-    return callback(true);
-}
-
-/**
- * Description:
- * Requires 'target' type before usage.
- * Pick up a target at their location.
- * @param player
- * @param callback
- */
-function targetGetType(player, callback) {
-    const target = player.job.target;
-    if (player.vehicle !== target.player.vehicle) {
-        return callback(false);
-    }
-
-    if (player.job.currentVehicle !== player.vehicle) {
-        return callback(false);
-    }
-
-    return callback(true);
-}
-
-/**
- * Description:
- * The 'drivepoint' types requires the user to...
- * drive to a specific point on the map.
- * @param player
- * @param callback
- */
-function drivepointType(player, callback) {
-    if (player.vehicle !== player.job.currentVehicle) callback(false);
-
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-    return callback(true);
-}
-
-/**
- * Description:
- * The 'capture' type requires the user to stand...
- * inside a specific region. The progress slowly
- * fills up over time.
- * @param player
- * @param callback
- */
-function captureType(player, callback) {
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
-    // Check Cooldown
-    if (Date.now() < player.job.cooldown) {
-        return callback(false);
-    }
-
-    if (player.vehicle) {
-        return callback(false);
-    }
-
-    // Set Cooldown
-    player.job.cooldown = Date.now() + 1000;
-    playJobAnimation(player);
-
-    // Add job progression.
-    player.job.progress += 1;
-    player.emitMeta('job:Progress', player.job.progress);
-
-    // Check if the job progression meets the current...
-    // points 'progressMax' value.
-    if (player.job.progress >= player.job.currentPoint.progressMax) {
-        return callback(true);
-    }
-
-    // Otherwise; wait for more progression.
-    return callback(false);
-}
-
-/**
- * Description:
- * The 'drivecapture' type requires the user to drive...
- * and stay parked in a specific area.
- * fills up over time.
- * @param player
- * @param callback
- */
-function driveCaptureType(player, callback) {
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
-    // Check Cooldown
-    if (Date.now() < player.job.cooldown) {
-        return callback(false);
-    }
-
-    if (!player.vehicle) {
-        return callback(false);
-    }
-
-    // Set Cooldown
-    player.job.cooldown = Date.now() + 1000;
-    playJobAnimation(player);
-
-    // Add job progression.
-    player.job.progress += 1;
-    player.emitMeta('job:Progress', player.job.progress);
-
-    // Check if the job progression meets the current...
-    // points 'progressMax' value.
-    if (player.job.progress >= player.job.currentPoint.progressMax) {
-        return callback(true);
-    }
-
-    // Otherwise; wait for more progression.
-    return callback(false);
-}
-
-/**
- * Description:
- * The 'hack' type forces users to hold down a key.
- * It checks if they are holding the key each time.
- * @param player
- * @param callback
- */
-function hackType(player, callback) {
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
-    // Setup Event Handling for Client Callback
-    let callbackname = `${player.name}:${player.job.currentPoint.type}`;
-    alt.onClient(callbackname, callbackHack);
-
-    // Setup a callback to invoke.
-    player.job.callback = callback;
-
-    // Send Callback
-    player.emitMeta(
-        'job:Callback',
-        JSON.stringify({ type: player.job.currentPoint.type, callback: callbackname })
-    );
-}
-
-/**
- * Description:
- * The 'spawnvehicle' type is used to spawn a vehicle.
- * It makes a request to client-side for a forward vector...
- * so that users don't get crushed.
- * @param player
- * @param callback
- */
-function spawnVehicleType(player, callback) {
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (dist > player.job.currentPoint.range) return callback(false);
-
-    // Set the Car Type to Spawn
-    if (player.job.currentPoint.vehicle === undefined) {
-        throw new Error('Vehicle is not defined for this objective.');
-    }
-
-    // Setup the data used to spawn a vehicle...
-    // if the callback is successful.
-    player.job.vehicle = player.job.currentPoint.vehicle;
-
-    // Setup Event Handling for Client Callback
-    let callbackname = `${player.name}:${player.job.currentPoint.type}`;
-    alt.onClient(callbackname, callbackSpawnVehicle);
-
-    // Setup a callback to invoke.
-    player.job.callback = callback;
-
-    // Send Callback
-    player.emitMeta(
-        'job:Callback',
-        JSON.stringify({ type: player.job.currentPoint.type, callback: callbackname })
-    );
-}
-
-/**
- * Description:
- * The 'retrieve' type places an item in the user's inventory.
- * @param player
- * @param callback
- */
-function retrieveType(player, callback) {
-    //
-}
-
-/**
- * Description:
- * The 'dropoff' type removes an item in the user's inventor.y
- * @param player
- * @param callback
- */
-function dropOffType(player, callback) {
-    //
-}
-
-/**
- * Description:
- * The 'vehicledrop' type forces the user to drop off their
- * current job vehicle. It will dissappear after.
- * @param player
- * @param callback
- */
-function vehicleDropType(player, callback) {
-    const dist = utilityVector.distance(player.pos, player.job.currentPoint.position);
-    if (dist > player.job.currentPoint.range) return callback(false);
-
-    if (player.job.currentVehicle !== player.vehicle) callback(false);
-
-    player.ejectSlowly();
-    player.job.timeout = setTimeout(() => {
-        if (player.vehicles) {
-            let index = player.vehicles.findIndex(x => x === player.job.currentVehicle);
-            if (index !== -1) {
-                player.vehicles.splice(index, 1);
+        if (employee) {
+            if (employee.job) {
+                employee.job.skipToBeginning(employee);
+                employee.send('{FF0000}Your customer has left.');
             }
         }
-
-        player.job.currentVehicle.destroy();
-        player.job.currentVehicle = undefined;
-    }, 2500);
-
-    callback(true);
-}
-
-function targetRepairType(player, callback) {
-    if (player.job.target === undefined) {
-        return callback(false);
-    }
-
-    const dist = utilityVector.distance(player.pos, player.job.target.props.vehicle.pos);
-    if (dist > player.job.currentPoint.range) {
-        return callback(false);
-    }
-
-    if (player.vehicle) {
-        return callback(false);
-    }
-
-    player.job.progress += 1;
-    player.emitMeta('job:Progress', player.job.progress);
-    playJobAnimation(player);
-
-    if (player.job.progress < player.job.currentPoint.progressMax) {
-        return callback(false);
-    }
-
-    if (player.job.currentPoint.fare) {
-        player.job.target.player.subCash(player.job.target.props.fare);
-        player.addCash(player.job.target.props.fare);
-        player.send(`{00FF00}+$${player.job.target.props.fare}`);
-    }
-
-    player.job.target.props.vehicle.repair();
-    player.job.target.props.vehicle.bodyHealth = 1000;
-    player.job.target.props.vehicle.engineHealth = 1000;
-    player.job.target.props.vehicle.saveVehicleData();
-    return callback(true);
-}
-
-function playJobAnimation(player) {
-    if (player.job.currentPoint.anim === undefined) return;
-    const anim = player.job.currentPoint.anim;
-    player.playAnimation(
-        anim.dict,
-        anim.name,
-        anim.duration,
-        anim.flag,
-        anim.freezeX,
-        anim.freezeY,
-        anim.freezeZ
-    );
-}
-
-/**
- * Description:
- * Used to process the 'hack' type for an 'E' press.
- * @param player
- * @param callbackname
- * @param value
- */
-function callbackHack(player, callbackname, value) {
-    alt.offClient(callbackname, callbackHack);
-    // Don't proceed further without a callback.
-    if (player.job.callback === undefined) {
-        return;
-    }
-
-    // Set progress is non-existant.
-    if (player.job.progress === undefined) {
-        player.job.progress = -1;
-    }
-
-    // Cooldown
-    if (player.job.cooldown) {
-        if (Date.now() < player.job.cooldown) {
-            player.job.callback(false);
-            player.job.callback = undefined;
-            return;
-        } else {
-            player.job.cooldown = Date.now() + 2000;
+    } else {
+        if (employee) {
+            if (employee.job) {
+                employee.send('{FF0000}Your customer has cancelled the request.');
+                employee.job.skipToBeginning(employee);
+            }
         }
     }
 
-    if (!player.job.cooldown) player.job.cooldown = Date.now() + 2000;
-
-    if (value) {
-        playJobAnimation(player);
-        player.job.progress += 1;
-        player.emitMeta('job:Progress', player.job.progress);
-
-        if (player.job.currentPoint.sound) {
-            player.playAudio('chop');
-        }
-
-        if (player.job.progress > player.job.currentPoint.progressMax) {
-            player.job.callback(true);
-            player.job.callback = undefined;
-            return;
-        }
-    }
-
-    player.job.callback(false);
-    player.job.callback = undefined;
+    player.jobber = undefined;
 }
 
-/**
- * Description:
- * Used to process the 'spawnvehicle' type for a
- * forward vehicle. Almost always succeeds.
- * @param player
- * @param callbackname
- * @param value
- */
-function callbackSpawnVehicle(player, callbackname, value) {
-    alt.offClient(callbackname, callbackSpawnVehicle);
-    // Don't proceed further without a callback.
-    if (player.job.callback === undefined) {
-        return;
+export function quitJob(player, loggingOut = false, playFailSound = false) {
+    if (player.job) delete player.job;
+    if (player.vehicles.length >= 1) {
+        let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
+        let jobVehicles = player.vehicles.filter(x => x.job !== undefined);
+        player.vehicles = nonJobVehicles;
+        if (jobVehicles.length >= 1) {
+            jobVehicles.forEach(veh => {
+                veh.destroy();
+            });
+        }
     }
 
-    let forwardPos = {
-        x: player.pos.x + value.x * 3,
-        y: player.pos.y + value.y * 3,
-        z: player.pos.z
-    };
-
-    player.job.currentVehicle = new alt.Vehicle(
-        player.job.vehicle.model,
-        forwardPos.x,
-        forwardPos.y,
-        forwardPos.z,
-        0,
-        0,
-        0
-    );
-
-    player.job.currentVehicle.setMeta('job:Owner', player.data.name);
-    player.job.currentVehicle.lockState = player.job.vehicle.lockState;
-    player.job.currentVehicle.engineOn = true;
-    player.vehicles.push(player.job.currentVehicle);
-
-    if (player.job.vehicle.preventHijack) {
-        player.job.currentVehicle.preventHijack = true;
+    if (playFailSound) {
+        player.playAudio('error');
     }
 
-    player.job.currentVehicle.job = player;
+    if (player.job) {
+        if (player.job.target) {
+            if (player.job.target.entity.constructor.name === 'Player') {
+                player.job.target.entity.jobber = undefined;
+                player.job.target.entity.send('The employee quit their job.');
+            }
+        }
+    }
 
-    player.job.callback(true);
+    player.emitMeta('job:ClearObjective', true);
+}
+
+export function copyObjective(original) {
+    var copied = Object.assign(Object.create(Object.getPrototypeOf(original)), original);
+    return copied;
 }

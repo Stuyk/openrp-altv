@@ -40,7 +40,8 @@ export const modifiers = {
     DROPOFF_PLAYER: 32,
     KILL_PLAYER: 64,
     REPAIR_PLAYER: 128,
-    MAX: 256
+    GOTO_PLAYER: 256,
+    MAX: 512
 };
 
 const metaTypes = {
@@ -236,6 +237,30 @@ function intervalObjectiveInfo() {
         return;
     }
 
+    if (target && isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.entity.pos);
+        if (blip) {
+            blip.position = [
+                target.entity.pos.x,
+                target.entity.pos.y,
+                target.entity.pos.z
+            ];
+        }
+        return;
+    }
+
+    if (target && isFlagged(objective.flags, modifiers.GOTO_PLAYER)) {
+        dist = distance(alt.Player.local.pos, target.pos);
+        if (blip) {
+            blip.position = [
+                target.entity.pos.x,
+                target.entity.pos.y,
+                target.entity.pos.z
+            ];
+        }
+        return;
+    }
+
     dist = distance(alt.Player.local.pos, objective.pos);
 }
 
@@ -260,6 +285,8 @@ function intervalObjectiveChecking() {
         native.freezeEntityPosition(alt.Player.local.scriptID, false);
         return;
     }
+
+    alt.log('Emitted check to server.');
 
     // Check Serverside
     alt.emitServer('job:Check');
@@ -369,6 +396,14 @@ function player() {
     }
 
     if (isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        alt.log('Checking Repair');
+        if (dist > objective.range) isValid = false;
+        if (!hold()) {
+            isValid = false;
+        }
+    }
+
+    if (isFlagged(objective.flags, modifiers.GOTO_PLAYER)) {
         if (dist > objective.range) isValid = false;
     }
 

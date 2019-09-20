@@ -1,9 +1,15 @@
 import * as alt from 'alt';
-import * as systemsJob from '../systems/job.mjs';
+import { quitTarget } from '../systems/job.mjs';
 
 console.log('Loaded: events->playerLeftVehicle.mjs');
 
 alt.on('playerLeftVehicle', (player, vehicle) => {
+    player.lastVehicle = vehicle;
+
+    if (player.jobber && vehicle.job) {
+        quitTarget(player);
+    }
+
     if (player.vehicles === undefined) return;
 
     // Not their vehicle.

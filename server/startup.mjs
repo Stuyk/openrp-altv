@@ -63,6 +63,7 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/agilityTrack.mjs');
     import('./jobs/agilityWorkout.mjs');
     import('./jobs/playerTaxi.mjs');
+    import('./jobs/playerMechanic.mjs');
 
     // Import Item Effects
     import('./itemeffects/consume.mjs');

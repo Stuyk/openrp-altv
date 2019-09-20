@@ -9,6 +9,11 @@ import { distance, getClosestPlayer } from '../utility/vector.mjs';
  */
 chat.registerCmd('taxi', player => {
     if (player.data === undefined) return;
+    if (player.jobber) return;
+    if (player.job) {
+        player.send('You cannot call a taxi while on the job');
+        return;
+    }
 
     // Setup the Callback
     let callbackname = `${player.name}:Waypoint`;
@@ -55,7 +60,8 @@ chat.registerCmd('taxi', player => {
             closestDriver,
             player,
             pos,
-            'Take the target to their destination.'
+            'Take the target to their destination.',
+            player
         );
 
         // Send the player a message notifying them.
@@ -64,23 +70,16 @@ chat.registerCmd('taxi', player => {
         player.send(
             `{FFFF00}You will be charged ${cost.toFixed(2) * 1} after this ride.`
         );
+        player.send('{FFFF00}Stay in your current position to be picked up.');
         player.jobber = {
             fare: cost.toFixed(2) * 1,
             position: player.pos,
-            jobber: closestDriver
+            employee: closestDriver
         };
     };
 
     // Send Callback
     player.setSyncedMeta('callback:Request', { name: callbackname, type: 'waypoint' });
-});
-
-/**
- * Used to cancel a taxi fare.
- */
-chat.registerCmd('taxicancel', player => {
-    systemsJob.cancelTarget(player);
-    player.send('Cancelled taxi request.');
 });
 
 // Called from the client-side when the player wants to

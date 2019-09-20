@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as registrationLogin from '../registration/login.mjs';
-import { quitJob } from '../systems/job.mjs';
+import { quitJob, quitTarget } from '../systems/job.mjs';
 import * as utilityTime from '../utility/time.mjs';
 
 console.log('Loaded: events->playerDisconnect.mjs');
@@ -33,6 +33,7 @@ alt.on('playerDisconnect', player => {
     try {
         clearTimeout(player.reviveTimeout);
         clearTimeout(player.loginHealth);
+        quitTarget(player);
         quitJob(player, true);
     } catch (err) {
         console.log(err);

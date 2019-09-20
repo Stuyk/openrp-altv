@@ -26,7 +26,8 @@ export const modifiers = {
     DROPOFF_PLAYER: 32,
     KILL_PLAYER: 64,
     REPAIR_PLAYER: 128,
-    MAX: 256
+    GOTO_PLAYER: 256,
+    MAX: 512
 };
 
 /**
@@ -291,9 +292,39 @@ export class Objective {
         // Reset progress for this objective.
         this.progress = -1;
 
-        if (player.job.target && isFlagged(this.flags, modifiers.DROPOFF_PLAYER)) {
-            if (player.job.target.entity) {
-                player.job.target.entity.ejectSlowly();
+        // Check objective modifier flags.
+        if (player.job.target && player.job.target.entity) {
+            const entity = player.job.target.entity;
+
+            if (isFlagged(this.flags, modifiers.DROPOFF_PLAYER)) {
+                if (entity) {
+                    entity.ejectSlowly();
+                    entity.jobber = undefined;
+                }
+            }
+
+            if (isFlagged(this.flags, modifiers.REPAIR_PLAYER)) {
+                let fare = player.job.target.owner.jobber.fare;
+                if (!fare) {
+                    fare = 0;
+                }
+
+                if (entity.constructor.name === 'Player') {
+                    entity.spawn(entity.pos.x, entity.pos.y, entity.pos.z, 0);
+                    entity.health = 25;
+                    player.job.target.owner.subCash(fare);
+                    player.addCash(fare);
+                    player.job.target.owner.send(`{FF0000}-$${fare}`);
+                    player.send(`{00FF00}+$${fare}`);
+                }
+
+                if (entity.constructor.name === 'Vehicle') {
+                    entity.repair();
+                    player.job.target.owner.subCash(fare);
+                    player.addCash(fare);
+                    player.job.target.owner.send(`{FF0000}-$${fare}`);
+                    player.send(`{00FF00}+$${fare}`);
+                }
             }
         }
 
@@ -372,7 +403,6 @@ export class Objective {
         // Check the player objective type
         // When the user has a 'target' type.
         if (this.type == objectives.PLAYER && valid) {
-            console.log('Checking target type.');
             if (player.job.target) {
                 valid = targetPlayer(player, this);
             } else {
@@ -455,6 +485,24 @@ const targetPlayer = (player, objective) => {
         if (!target.entity.hasDied) {
             isValid = false;
         }
+    }
+
+    /**
+     * Called for repairing a target.
+     */
+    if (isFlagged(objective.flags, modifiers.REPAIR_PLAYER)) {
+        if (distance(target.entity.pos, player.pos) >= objective.range) {
+            isValid = false;
+        } else {
+            objective.progress += 1;
+            if (objective.progress < objective.maxProgress) {
+                isValid = false;
+            }
+        }
+    }
+
+    if (isFlagged(objectives.flags, modifiers.GOTO_PLAYER)) {
+        if (distance(target.pos, player.pos) > objective.range) isValid = false;
     }
 
     return isValid;
@@ -634,6 +682,7 @@ export class Job {
      * @param player
      */
     skipToBeginning(player) {
+        this.clearTarget(player);
         player.emitMeta('job:ClearObjective', true);
         while (this.objectives[0].infinite !== true) {
             let last = this.objectives.shift();
@@ -679,11 +728,12 @@ export class Job {
      * @param entity
      * @param position
      */
-    setTarget(player, entity, position = undefined, message = '') {
+    setTarget(player, entity, position = undefined, message = '', owner = undefined) {
         this.target = {
             entity,
             pos: position,
-            message
+            message,
+            owner
         };
         player.emitMeta('job:Target', this.target);
     }
@@ -743,6 +793,58 @@ export function checkRestrictions(player) {
     }
 }
 
+/**
+ * Called when the player quits a job as a target.
+ * @param player
+ *
+ * player.jobber = {
+ *     fare: cost.toFixed(2) * 1,
+ *     position: player.pos,
+ *     jobber: closestDriver,
+ *     objectiveFare: false, // Called when the fare should only be invoked
+ *                          // when an objective is complete.
+ * };
+ */
+export function quitTarget(player) {
+    if (!player.jobber) return;
+    const dist = distance(player.pos, player.jobber.position);
+    const employee = player.jobber.employee;
+    const fare = player.jobber.fare;
+    const isObjectiveFare = player.jobber.objectiveFare;
+    player.send('You have cancelled your request.');
+
+    // Employee doesn't exist; don't pay.
+    if (!employee) {
+        player.jobber = undefined;
+        return;
+    }
+
+    if (fare && !isObjectiveFare) {
+        if (employee && dist >= 25) {
+            player.subCash(fare);
+            player.send(`{FF0000} -$${fare}`);
+            employee.addCash(fare);
+            employee.send(`{00FF00} +$${fare}`);
+        }
+
+        if (employee) {
+            if (employee.job) {
+                employee.job.skipToBeginning(employee);
+                employee.send('{FF0000}Your customer has left.');
+            }
+        }
+    } else {
+        if (employee) {
+            if (employee.job) {
+                employee.send('{FF0000}Your customer has cancelled the request.');
+                employee.job.skipToBeginning(employee);
+            }
+        }
+    }
+
+    player.jobber = undefined;
+}
+
 export function quitJob(player, loggingOut = false, playFailSound = false) {
     if (player.job) delete player.job;
     if (player.vehicles.length >= 1) {
@@ -760,172 +862,17 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
         player.playAudio('error');
     }
 
+    if (player.job) {
+        if (player.job.target) {
+            if (player.job.target.entity.constructor.name === 'Player') {
+                player.job.target.entity.jobber = undefined;
+                player.job.target.entity.send('The employee quit their job.');
+            }
+        }
+    }
+
     player.emitMeta('job:ClearObjective', true);
 }
-
-/*
-let objectivemodifiers = 0;
-objectivemodifiers |= flags.ON_FOOT;
-objectivemodifiers |= flags.PROGRESS_BAR;
-
-if (isFlagTicked(objectivemodifiers, flags.IN_VEHICLE)) {
-  console.log(true);
-} else {
-  console.log(false);
-}
-
-
-let typemodifiers = 0;
-typemodifiers |= types.POINT;
-typemodifiers |= types.HACK;
-
-if (isFlagTicked(typemodifiers, types.POINT)) {
-    console.log(true);
-}
-*/
-
-chat.registerCmd('test', player => {
-    player.pos = { x: -1694.181640625, y: 144.24208068847656, z: 63.3714828491211 };
-
-    let job = new Job(player, 'idkwtf');
-    let emptyVector = { x: 0, y: 0, z: 0 };
-
-    // 0
-    let objective = new Objective(0, 1);
-    let pos = { x: -1694.181640625, y: 144.24208068847656, z: 63.3714828491211 };
-    objective.setPosition(pos);
-    objective.setRange(5);
-    objective.setHelpText('Hey 1');
-    objective.setBlip(1, 2, pos);
-    objective.setMarker(
-        1,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(5, 5, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    job.add(copyObjective(objective));
-
-    // 1
-    pos = {
-        x: -1698.1951904296875,
-        y: 150.09451293945312,
-        z: 63.37149047851562
-    };
-    objective.setHelpText('Hey 2');
-    objective.setPosition(pos);
-    objective.setBlip(1, 2, pos);
-    objective.setMarker(
-        1,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(5, 5, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    job.add(copyObjective(objective));
-
-    /// 2
-    pos = {
-        x: -1711.4559326171875,
-        y: 168.86724853515625,
-        z: 63.37132263183594
-    };
-    objective.setHelpText('Hey 3');
-    objective.setPosition(pos);
-    objective.setBlip(1, 2, pos);
-    objective.setMarker(
-        1,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(5, 5, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    job.add(copyObjective(objective));
-
-    objective = new Objective(6, 1);
-    job.add(copyObjective(objective));
-
-    // Capture Type
-    objective = new Objective(0, 1);
-    pos = { x: -1694.181640625, y: 144.24208068847656, z: 63.3714828491211 };
-    objective.setPosition(pos);
-    objective.setRange(5);
-    objective.setHelpText('Hey 4');
-    objective.setBlip(1, 2, pos);
-    objective.setMarker(
-        1,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(5, 5, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    objective.setEverySound('tick');
-    job.add(copyObjective(objective));
-
-    // Capture Type
-    objective = new Objective(0, 1);
-    pos = {
-        x: -1698.1951904296875,
-        y: 150.09451293945312,
-        z: 63.37149047851562
-    };
-    objective.setPosition(pos);
-    objective.setRange(2);
-    objective.setHelpText('Hold ~INPUT_CONTEXT~ to capture.');
-    objective.setBlip(1, 2, pos);
-    objective.setMarker(
-        1,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(1, 1, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    objective.setEverySound('tick');
-    job.add(copyObjective(objective));
-
-    // Capture Type
-    objective = new Objective(0, 1);
-    pos = { x: -1694.181640625, y: 144.24208068847656, z: 63.3714828491211 };
-    objective.setPosition(pos);
-    objective.setRange(2);
-    objective.setHelpText('Mash ~INPUT_CONTEXT~ to capture.');
-    objective.setBlip(1, 2, pos);
-    objective.setMarker(
-        1,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(1, 1, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    objective.setEverySound('tick');
-    objective.setFinishSound('complete');
-    job.add(copyObjective(objective));
-    job.start(player);
-});
 
 export function copyObjective(original) {
     var copied = Object.assign(Object.create(Object.getPrototypeOf(original)), original);

@@ -60,7 +60,8 @@ chat.registerCmd('mechanic', player => {
     player.jobber = {
         fare: 300,
         position: player.pos,
-        employee: closestDriver
+        employee: closestDriver,
+        objectiveFare: true
     };
 });
 

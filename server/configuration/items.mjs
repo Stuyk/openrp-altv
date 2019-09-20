@@ -604,7 +604,17 @@ export const Items = {
         slot: 37,
         icon: 'pickaxe',
         props: {
-            lvl: 0
+            lvl: 0,
+            propData: {
+                name: 'prop_tool_pickaxe',
+                bone: 57005,
+                x: 0.1,
+                y: -0.1,
+                z: -0.02,
+                pitch: 80,
+                roll: 0,
+                yaw: 170
+            }
         }
     },
     Pickaxe2: {

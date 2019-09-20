@@ -76,7 +76,6 @@ export class Objective {
      * @param pos vector3
      */
     setPosition(pos) {
-        pos.z -= 0.5;
         this.pos = pos;
     }
 
@@ -86,7 +85,7 @@ export class Objective {
      * @param pos number
      */
     setRange(range) {
-        if (range <= 2) range = 2;
+        if (range <= 3) range = 3;
         this.range = range;
     }
 

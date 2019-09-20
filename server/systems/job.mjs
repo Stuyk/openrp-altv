@@ -854,7 +854,6 @@ export function quitTarget(player) {
 }
 
 export function quitJob(player, loggingOut = false, playFailSound = false) {
-    if (player.job) delete player.job;
     if (player.vehicles.length >= 1) {
         let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
         let jobVehicles = player.vehicles.filter(x => x.job !== undefined);
@@ -879,6 +878,7 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
         }
     }
 
+    if (player.job) delete player.job;
     player.emitMeta('job:ClearObjective', true);
 }
 

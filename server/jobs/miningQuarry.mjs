@@ -49,7 +49,7 @@ alt.on('job:MiningQuarry', player => {
     const emptyVector = { x: 0, y: 0, z: 0 };
     let obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
     obj.setPosition(trackStart);
-    obj.setRange(2);
+    obj.setRange(5);
     obj.setHelpText('');
     obj.setBlip(367, 2, trackStart);
     obj.setMarker(

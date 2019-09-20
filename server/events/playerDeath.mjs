@@ -3,6 +3,7 @@ import * as configurationHospitals from '../configuration/hospitals.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import { verifyWeapon } from '../systems/anticheat.mjs';
 import { Weapons, CauseOfDeath } from '../configuration/weapons.mjs';
+import { checkRestrictions } from '../systems/job.mjs';
 
 alt.on('playerDeath', (target, killer, weapon) => {
     if (target.reviving) return;
@@ -37,7 +38,9 @@ alt.on('playerDeath', (target, killer, weapon) => {
         }
     });
 
+    target.hasDied = true;
     target.revivePos = closestHospital;
     target.saveDead(true);
     target.send('Type /revive to revive at the nearest hospital.');
+    checkRestrictions(target);
 });

@@ -393,6 +393,17 @@ export function setupPlayerFunctions(player) {
 
         player.inventory = JSON.parse(player.data.inventory);
         player.emitMeta('inventory', player.data.inventory);
+
+        if (player.inventory[37]) {
+            if (player.inventory[37].props.hash) {
+                player.setWeapon(player.inventory[37].props.hash);
+            } else {
+                player.setSyncedMeta('prop:37', player.inventory[37].props.propData);
+            }
+        } else {
+            player.setSyncedMeta('prop:37', undefined);
+            player.removeAllWeapons();
+        }
     };
 
     player.addItem = (itemTemplate, quantity, isUnique = false) => {
@@ -405,7 +416,8 @@ export function setupPlayerFunctions(player) {
             useitem: itemTemplate.useitem,
             consumeable: itemTemplate.consumeable,
             droppable: itemTemplate.droppable,
-            icon: itemTemplate.icon
+            icon: itemTemplate.icon,
+            isWeapon: itemTemplate.isWeapon
         };
 
         // If the item is stackable; check if the player has it.
@@ -471,8 +483,11 @@ export function setupPlayerFunctions(player) {
         if (player.inventory[37]) {
             if (player.inventory[37].props.hash) {
                 player.setWeapon(player.inventory[37].props.hash);
+            } else {
+                player.setSyncedMeta('prop:37', player.inventory[37].props.propData);
             }
         } else {
+            player.setSyncedMeta('prop:37', undefined);
             player.removeAllWeapons();
         }
 
@@ -641,7 +656,7 @@ export function setupPlayerFunctions(player) {
         freezeZ = false
     ) => {
         alt.emitClient(
-            null,
+            player,
             'animation:PlayAnimation',
             player,
             dictionary,

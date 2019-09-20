@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import fs from 'fs';
-
+/*
 export let Configuration = [];
 const path = alt.getResourcePath('orp');
 let files = fs.readdirSync(`${path}/server/jobs`);
@@ -23,3 +23,4 @@ async function loadJobs() {
 }
 
 loadJobs();
+*/

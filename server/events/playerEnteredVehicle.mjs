@@ -1,17 +1,20 @@
 import * as alt from 'alt';
-import * as systemsJob from '../systems/job.mjs';
+import { checkRestrictions } from '../systems/job.mjs';
 
 alt.log('Loaded: events->playerEnteredVehicle.mjs');
 
 alt.on('playerEnteredVehicle', (player, vehicle, seat) => {
-    if (vehicle.preventHijack && seat === -1) {
-        if (player.job === undefined || player.job.currentVehicle !== vehicle) {
-            player.eject();
-            player.send('{FF0000} This is a job vehicle. Hijacking is prevented.');
+    player.lastVehicle = vehicle;
+
+    if (vehicle.job) {
+        if (seat === -1 && vehicle.job.preventHijack && vehicle.job.player !== player) {
+            player.pos = new alt.Vector3(playe.pos.x, player.pos.y, player.pos.z);
+            player.send('You cannot use that vehicle.');
         }
     }
 
-    if (systemsJob.isTarget(player, vehicle)) {
-        player.jobTarget = vehicle.job;
+    if (player.job) {
+        player.vehicle = vehicle;
+        checkRestrictions(player);
     }
 });

@@ -34,9 +34,6 @@ export function createSectorBlip(sector) {
     pos.z = (sector.coords.first.z + sector.coords.second.z) / 2;
 
     let blip = createAreaBlip(pos, sector.width, sector.length, sector.x + sector.y);
-    alt.log(JSON.stringify(blip.scriptID));
-    alt.log(blip);
-    native.setBlipDisplay(blip.scriptID, 3);
     sectorBlips.push(blip);
 }
 

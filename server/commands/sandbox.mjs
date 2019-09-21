@@ -5,29 +5,8 @@ import { addWeapon } from '../systems/inventory.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
-const sandboxhelp = [
-    //
-    '/b, /me, /do',
-    '/addveh (model)',
-    '/addcash (amount)',
-    '/addwep (name)',
-    '/face',
-    '/granola, /coffee',
-    '/tpto (rp-name)',
-    '/players, /clearchat',
-    '/taxi, /mechanic',
-    '/cancel',
-    '/quitjob, /getsector',
-    '/phonenumber',
-    '/t, /call, /addcontact, /removecontact, /hangup',
-    'Press TAB for context cursor.',
-    'I for Inventory'
-];
-
 chat.registerCmd('help', player => {
-    sandboxhelp.forEach(helper => {
-        player.send(`${helper}`);
-    });
+    player.showHelp();
 });
 
 chat.registerCmd('addcash', (player, value) => {

@@ -204,6 +204,12 @@ export function setupPlayerFunctions(player) {
         alt.emitClient(player, 'roleplayinfo:CloseDialogue');
     };
 
+    // =====================================
+    // Help screen
+    player.showHelp = () => {
+        alt.emitClient(player, 'chat:ShowHelp');
+    }
+
     // ====================================
     // Money Functions
     // Remove cash from the player.

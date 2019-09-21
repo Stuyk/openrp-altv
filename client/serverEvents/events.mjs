@@ -17,6 +17,7 @@ import * as systemsVehicles from '/client/systems/vehicles.mjs';
 
 // Panels
 import * as panelsChat from '/client/panels/chat.mjs';
+import * as panelsHelp from '/client/panels/help.mjs';
 import * as panelsAtm from '/client/panels/atm.mjs';
 import * as panelsInfo from '/client/panels/info.mjs';
 import * as panelsInventory from '/client/panels/inventory.mjs';
@@ -126,6 +127,7 @@ alt.onServer('vehicle:SoundHorn', systemsVehicles.soundHorn);
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
 alt.onServer('chat:SetStatus', panelsChat.setStatus);
+alt.onServer('chat:ShowHelp', panelsHelp.showDialogue)
 
 // =======================================================
 // Global

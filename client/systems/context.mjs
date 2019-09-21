@@ -1,8 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as utilityScreen2World from 'client/utility/screen2world.mjs';
-import * as utilityText from 'client/utility/text.mjs';
-import * as utilityVector from 'client/utility/vector.mjs';
+import * as utilityScreen2World from '/client/utility/screen2world.mjs';
+import * as utilityText from '/client/utility/text.mjs';
+import * as utilityVector from '/client/utility/vector.mjs';
 
 alt.log('Loaded: client->systems->context.mjs');
 

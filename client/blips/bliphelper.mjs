@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import { Atms } from 'client/locations/locations.mjs';
+import { Atms } from '/client/locations/locations.mjs';
 
 alt.log('Loaded: client->blips->bliphelper.mjs');
 

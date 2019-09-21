@@ -1,8 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { View } from 'client/utility/view.mjs';
-import { Camera } from 'client/utility/camera.mjs';
-import { Ped } from 'client/utility/ped.mjs';
+import { View } from '/client/utility/view.mjs';
+import { Camera } from '/client/utility/camera.mjs';
+import { Ped } from '/client/utility/ped.mjs';
 
 alt.log('Loaded: client->panels->character.mjs');
 

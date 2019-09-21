@@ -1,6 +1,6 @@
 import * as alt from 'alt';
-import { View } from 'client/utility/view.mjs';
-import { Camera } from 'client/utility/camera.mjs';
+import { View } from '/client/utility/view.mjs';
+import { Camera } from '/client/utility/camera.mjs';
 
 alt.log('Loaded: client->panels->registration.mjs');
 

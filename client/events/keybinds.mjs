@@ -1,10 +1,10 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as panelsInventory from 'client/panels/inventory.mjs';
-import * as panelsChat from 'client/panels/chat.mjs';
-import * as systemsVehicles from 'client/systems/vehicles.mjs';
-import * as systemsContext from 'client/systems/context.mjs';
-import * as utilityGameInfo from 'client/utility/gameinfo.mjs';
+import * as panelsInventory from '/client/panels/inventory.mjs';
+import * as panelsChat from '/client/panels/chat.mjs';
+import * as systemsVehicles from '/client/systems/vehicles.mjs';
+import * as systemsContext from '/client/systems/context.mjs';
+import * as utilityGameInfo from '/client/utility/gameinfo.mjs';
 // import * as chat from 'chat';
 
 alt.log('Loaded: client->events->keyup.mjs');

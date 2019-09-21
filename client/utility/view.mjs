@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { showCursor } from 'client/utility/cursor.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->utility->view.mjs');
 

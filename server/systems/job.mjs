@@ -76,7 +76,6 @@ export class Objective {
      * @param pos vector3
      */
     setPosition(pos) {
-        pos.z -= 0.5;
         this.pos = pos;
     }
 
@@ -86,7 +85,7 @@ export class Objective {
      * @param pos number
      */
     setRange(range) {
-        if (range <= 2) range = 2;
+        if (range <= 3) range = 3;
         this.range = range;
     }
 
@@ -544,6 +543,10 @@ const playFinishedSound = (player, objective) => {
 
 export class Job {
     constructor(player, name, restrictions = 0) {
+        if (player.job) {
+            quitJob(player);
+        }
+
         this.name = name;
         this.objectives = [];
         this.restrictions = restrictions;
@@ -854,7 +857,6 @@ export function quitTarget(player) {
 }
 
 export function quitJob(player, loggingOut = false, playFailSound = false) {
-    if (player.job) delete player.job;
     if (player.vehicles.length >= 1) {
         let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
         let jobVehicles = player.vehicles.filter(x => x.job !== undefined);
@@ -879,6 +881,7 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
         }
     }
 
+    if (player.job) player.job = undefined;
     player.emitMeta('job:ClearObjective', true);
 }
 

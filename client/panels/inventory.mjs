@@ -2,8 +2,8 @@ import * as alt from 'alt';
 import * as native from 'natives';
 //import * as panelsPanelStatus from 'client/panels/panelstatus.mjs';
 //import { WebView } from 'client/utility/webview.mjs';
-import { View } from 'client/utility/view.mjs';
-import { getLevel } from 'client/systems/xp.mjs';
+import { View } from '/client/utility/view.mjs';
+import { getLevel } from '/client/systems/xp.mjs';
 
 alt.log(`Loaded: client->panels->inventory.mjs`);
 

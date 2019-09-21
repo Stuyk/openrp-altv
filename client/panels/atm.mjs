@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 //import { WebView } from 'client/utility/webview.mjs';
-import { View } from 'client/utility/view.mjs';
+import { View } from '/client/utility/view.mjs';
 
 alt.log(`Loaded: client->panels->atm.mjs`);
 

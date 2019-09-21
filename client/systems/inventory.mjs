@@ -1,10 +1,9 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import * as systemsSound from 'client/systems/sound.mjs';
-import * as utilityVector from 'client/utility/vector.mjs';
-import * as utilityText from 'client/utility/text.mjs';
-import * as utilityMarker from 'client/utility/marker.mjs';
-
+import * as systemsSound from '/client/systems/sound.mjs';
+import * as utilityVector from '/client/utility/vector.mjs';
+import * as utilityText from '/client/utility/text.mjs';
+import * as utilityMarker from '/client/utility/marker.mjs';
 
 let itemsOnGround = [];
 let pickingUpItem = false;
@@ -61,8 +60,10 @@ function drawItems() {
                 itemData.pos,
                 new alt.Vector3(0, 0, 0),
                 new alt.Vector3(0, 0, 0),
-                new alt.Vector3(.2, .2, .2),
-                255,255,255,
+                new alt.Vector3(0.2, 0.2, 0.2),
+                255,
+                255,
+                255,
                 150
             );
         }
@@ -103,6 +104,6 @@ function drawItems() {
                     }, 500);
                 }
             }
-        }  
+        }
     });
 }

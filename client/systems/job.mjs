@@ -1,9 +1,9 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { distance } from 'client/utility/vector.mjs';
-import { drawMarker } from 'client/utility/marker.mjs';
-import { playAudio } from 'client/systems/sound.mjs';
-import { playParticleFX } from 'client/utility/particle.mjs';
+import { distance } from '/client/utility/vector.mjs';
+import { drawMarker } from '/client/utility/marker.mjs';
+import { playAudio } from '/client/systems/sound.mjs';
+import { playParticleFX } from '/client/utility/particle.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
 

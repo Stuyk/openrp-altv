@@ -95,12 +95,12 @@ alt.on('job:LumberJack', player => {
         obj.setAnimationAndSound(
             'melee@large_wpn@streamed_core',
             'car_side_attack_a',
-            -1,
             1,
+            -1,
             'chop',
-            920
+            0.21
         );
-        obj.setParticleEffect('core', 'ent_brk_wood_splinter', 50);
+        obj.setParticleEffect('core', 'ent_dst_wood_splinter', 50);
         job.add(copyObjective(obj));
     });
 

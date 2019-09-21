@@ -271,7 +271,13 @@ function intervalObjectiveChecking() {
     if (!objective || pause) return;
 
     // Check Distance
-    if (dist > objective.range) return;
+    if (dist > objective.range) {
+        if (alt.Player.local.inAnimation || alt.Player.local.inScenario) {
+            clearScenario();
+        }
+
+        return;
+    }
 
     // Check if type exists.
     let testType = types[objective.type];

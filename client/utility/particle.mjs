@@ -1,6 +1,18 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 
+alt.onServer('tryParticle', (dict, name, duration, scale) => {
+    playParticleFX(
+        dict,
+        name,
+        duration,
+        scale,
+        alt.Player.local.pos.x,
+        alt.Player.local.pos.y,
+        alt.Player.local.pos.z
+    );
+});
+
 export function playParticleFX(dict, name, duration, scale, x, y, z) {
     const particles = [];
     const interval = alt.setInterval(() => {

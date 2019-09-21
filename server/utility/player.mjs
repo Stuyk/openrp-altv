@@ -646,15 +646,7 @@ export function setupPlayerFunctions(player) {
 
     // =================================
     // Animation
-    player.playAnimation = (
-        dictionary,
-        name,
-        durationInMS,
-        flag,
-        freezeX = false,
-        freezeY = false,
-        freezeZ = false
-    ) => {
+    player.playAnimation = (dictionary, name, durationInMS, flag) => {
         alt.emitClient(
             player,
             'animation:PlayAnimation',
@@ -662,10 +654,7 @@ export function setupPlayerFunctions(player) {
             dictionary,
             name,
             durationInMS,
-            flag,
-            freezeX,
-            freezeY,
-            freezeZ
+            flag
         );
     };
 

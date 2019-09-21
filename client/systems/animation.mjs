@@ -29,27 +29,18 @@ alt.on('animation:Clear', ent => {
     native.clearPedSecondaryTask(alt.Player.local.scriptID);
 });
 
-export function playAnimation(
-    player,
-    dict,
-    name,
-    duration,
-    flag,
-    freezeX = false,
-    freezeY = false,
-    freezeZ = false
-) {
+export function playAnimation(player, dict, name, duration, flag) {
     // Local Player Version
     if (player.scriptID === alt.Player.local.scriptID) {
         if (alt.Player.local.inAnimation) return;
         alt.Player.local.inAnimation = true;
-        startAnimation(player, dict, name, duration, flag, freezeX, freezeY, freezeZ);
+        startAnimation(player, dict, name, duration, flag);
     } else {
-        startAnimation(player, dict, name, duration, flag, freezeX, freezeY, freezeZ);
+        startAnimation(player, dict, name, duration, flag);
     }
 }
 
-function startAnimation(player, dict, name, duration, flag, frzx, frzy, frzz) {
+function startAnimation(player, dict, name, duration, flag) {
     alt.log(dict);
     alt.log(name);
     alt.log(duration);
@@ -65,9 +56,9 @@ function startAnimation(player, dict, name, duration, flag, frzx, frzy, frzz) {
             duration,
             flag,
             1.0,
-            frzx,
-            frzy,
-            frzz
+            false,
+            false,
+            false
         );
         return;
     }
@@ -83,9 +74,9 @@ function startAnimation(player, dict, name, duration, flag, frzx, frzy, frzz) {
             duration,
             flag,
             1.0,
-            frzx,
-            frzy,
-            frzz
+            false,
+            false,
+            false
         );
     });
 }
@@ -102,26 +93,3 @@ async function loadAnim(dict) {
         }, 5);
     });
 }
-
-/*
-const dict = 'melee@large_wpn@streamed_core';
-const name = 'long_0_attack';
-const flag = 129;
-const duration = -1;
-
-game.requestAnimDict(dict);
-game.taskPlayAnim(
-            alt.Player.local.scriptID,
-            dict,
-            name,
-            1,
-            -1,
-            duration,
-            flag,
-            1.0,
-            false,
-            false,
-            false
-        );
-    });
-    */

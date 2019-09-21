@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import * as panelsInventory from '/client/panels/inventory.mjs';
 import * as panelsChat from '/client/panels/chat.mjs';
+import * as panelsHelp from '/client/panels/help.mjs';
 import * as systemsVehicles from '/client/systems/vehicles.mjs';
 import * as systemsContext from '/client/systems/context.mjs';
 import * as utilityGameInfo from '/client/utility/gameinfo.mjs';
@@ -22,6 +23,7 @@ let keybinds = {
         shiftModifier: true,
         func: systemsVehicles.toggleEngine
     },
+    // H - Toggle Vehicle Lock
     72: {
         altModifier: false,
         shiftModifier: true,

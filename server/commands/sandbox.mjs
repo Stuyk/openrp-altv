@@ -6,6 +6,7 @@ import { addXP, setXP } from '../systems/skills.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
+<<<<<<< HEAD
 const sandboxhelp = [
     //
     '/b, /me, /do',
@@ -26,10 +27,10 @@ const sandboxhelp = [
     'I for Inventory'
 ];
 
+=======
+>>>>>>> adding help dialogue
 chat.registerCmd('help', player => {
-    sandboxhelp.forEach(helper => {
-        player.send(`${helper}`);
-    });
+    player.showHelp();
 });
 
 chat.registerCmd('addcash', (player, value) => {

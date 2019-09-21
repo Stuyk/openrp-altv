@@ -30,9 +30,6 @@ export const modifiers = {
     MAX: 512
 };
 
-/**
- * These cause instant fails. :D
- */
 export const restrictions = {
     MIN: 0,
     NO_VEHICLES: 1,
@@ -42,11 +39,6 @@ export const restrictions = {
     MAX: 16
 };
 
-/**
- * Checks if a flag is being used.
- * @param flags
- * @param flagValue
- */
 function isFlagged(flags, flagValue) {
     if ((flags & flagValue) === flagValue) {
         return true;
@@ -54,9 +46,6 @@ function isFlagged(flags, flagValue) {
     return false;
 }
 
-/**
- * Create an objective to add to a JOB.
- */
 export class Objective {
     constructor(objectiveType, objectiveFlags) {
         this.type = objectiveType;
@@ -71,38 +60,20 @@ export class Objective {
         }
     }
 
-    /**
-     * Set the objective position.
-     * @param pos vector3
-     */
     setPosition(pos) {
         this.pos = pos;
     }
 
-    /**
-     * The distance the player must be in
-     * for the objective to be valid.
-     * @param pos number
-     */
     setRange(range) {
         if (range <= 3) range = 3;
         this.range = range;
     }
 
-    /**
-     * Set the objective message for info.
-     * @param msg stirng
-     */
     setHelpText(msg) {
         this.helpText = msg;
     }
 
-    /**
-     * Set a scenario to be played when using
-     * any key press type.
-     * @param name
-     */
-    setScenario(name) {
+    setAnimationScenario(name) {
         this.scenario = name;
     }
 
@@ -118,11 +89,7 @@ export class Objective {
         this.rewards = arrayOfRewards;
     }
 
-    /**
-     * Sound played for each progress tick.
-     * @param soundName string
-     */
-    setEverySound(soundName) {
+    setSoundEveryProgressTick(soundName) {
         this.everySound = soundName;
     }
 
@@ -130,7 +97,7 @@ export class Objective {
      * Sound played at objective completion.
      * @param soundName string
      */
-    setFinishSound(soundName) {
+    setFinishedObjectiveSound(soundName) {
         this.finishSound = soundName;
     }
 
@@ -141,7 +108,14 @@ export class Objective {
      * @param flags number
      * @param duration numberInMS
      */
-    setAnimation(dict, name, flag, duration, sound = undefined, soundOffset = 1000) {
+    setAnimationAndSound(
+        dict,
+        name,
+        flag,
+        duration,
+        sound = undefined,
+        soundOffset = 1000
+    ) {
         this.anim = {
             dict,
             name,
@@ -152,13 +126,7 @@ export class Objective {
         };
     }
 
-    /**
-     * Plays particles when paired with sounds
-     * from the setAnimation function.
-     * @param dict
-     * @param name
-     */
-    setParticle(dict, name, duration, isGround = false) {
+    setParticleEffect(dict, name, duration, isGround = false) {
         this.particle = {
             dict,
             name,

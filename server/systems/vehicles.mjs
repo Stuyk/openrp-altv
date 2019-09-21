@@ -163,9 +163,13 @@ export function toggleEngine(player, vehicle) {
 
     if (!player.vehicles.includes(vehicle)) return;
 
-    vehicle.engineOn = !vehicle.engineOn;
+    if (!vehicle.isEngineOn) {
+        vehicle.isEngineOn = true;
+    } else {
+        vehicle.isEngineOn = !vehicle.isEngineOn;
+    }
 
-    alt.emitClient(player, 'vehicle:StartEngine', vehicle.engineOn);
+    alt.emitClient(player, 'vehicle:StartEngine', vehicle.isEngineOn);
 }
 
 export function toggleSafetyLock(player, vehicle) {

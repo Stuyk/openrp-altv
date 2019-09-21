@@ -47,6 +47,9 @@ export function repair(vehicle) {
 
 export function startEngine(value) {
     if (!alt.Player.local.vehicle) return;
+
+    alt.log('Starting engine...');
+    alt.log(value);
     native.setVehicleEngineOn(alt.Player.local.vehicle.scriptID, value, false, true);
 }
 

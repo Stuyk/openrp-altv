@@ -17,21 +17,42 @@ export function playParticleFX(dict, name, duration, scale, x, y, z) {
     const particles = [];
     const interval = alt.setInterval(() => {
         native.requestPtfxAsset(dict);
+        if (!native.hasPtfxAssetLoaded(dict));
         native.useParticleFxAsset(dict);
-        const particle = native.startParticleFxLoopedAtCoord(
-            name,
-            x,
-            y,
-            z,
-            0,
-            0,
-            0,
-            scale,
-            false,
-            false,
-            false,
-            false
-        );
+
+        let particle;
+        if (name.includes('scr')) {
+            native.startParticleFxLoopedOnEntity(
+                name,
+                alt.Player.local.scriptID,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                scale,
+                false,
+                false,
+                false
+            );
+        } else {
+            particle = native.startParticleFxLoopedAtCoord(
+                name,
+                x,
+                y,
+                z,
+                0,
+                0,
+                0,
+                scale,
+                false,
+                false,
+                false,
+                false
+            );
+        }
+
         particles.push(particle);
     }, 0);
 

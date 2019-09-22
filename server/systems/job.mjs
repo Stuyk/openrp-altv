@@ -114,7 +114,7 @@ export class Objective {
         flag,
         duration,
         sound = undefined,
-        soundOffset = 1000
+        animationHitTime
     ) {
         this.anim = {
             dict,
@@ -122,7 +122,7 @@ export class Objective {
             flag,
             duration,
             sound,
-            soundOffset
+            animationHitTime
         };
     }
 

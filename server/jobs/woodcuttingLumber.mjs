@@ -86,7 +86,7 @@ alt.on('job:LumberJack', player => {
             0,
             100
         );
-        obj.setFinishedObjectiveSound('complete');
+        obj.setFinishedSound('complete');
         obj.setRewards([
             { type: 'xp', prop: 'woodcutting', quantity: 20 },
             { type: 'item', prop: 'UnrefinedWood', quantity: 1 }

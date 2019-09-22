@@ -709,6 +709,12 @@ export function setupPlayerFunctions(player) {
     };
 
     // =================
+    //
+    player.animatedText = (text, duration) => {
+        alt.emitClient(player, 'text:Animated', text, duration);
+    };
+
+    // =================
     // Vehicle Funcs
     player.eject = () => {
         alt.emitClient(player, 'vehicle:Eject');

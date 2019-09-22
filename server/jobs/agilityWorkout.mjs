@@ -87,7 +87,7 @@ alt.on('job:AgilityWorkout', player => {
             0,
             100
         );
-        obj.setFinishedObjectiveSound('complete');
+        obj.setFinishedSound('complete');
         obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 25 }]);
         job.add(copyObjective(obj));
     });
@@ -112,7 +112,7 @@ alt.on('job:AgilityWorkout', player => {
     );
     obj.setAnimationScenario('world_human_sit_ups');
     obj.setMaxProgress(2);
-    obj.setFinishedObjectiveSound('complete');
+    obj.setFinishedSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
 
@@ -135,7 +135,7 @@ alt.on('job:AgilityWorkout', player => {
     );
     obj.setAnimationScenario('world_human_push_ups');
     obj.setMaxProgress(8);
-    obj.setFinishedObjectiveSound('complete');
+    obj.setFinishedSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
 

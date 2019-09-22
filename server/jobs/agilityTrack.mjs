@@ -82,7 +82,7 @@ alt.on('job:AgilityTrack', player => {
             0,
             100
         );
-        obj.setFinishedObjectiveSound('complete');
+        obj.setFinishedSound('complete');
         obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 20 }]);
         job.add(copyObjective(obj));
     });

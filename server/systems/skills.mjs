@@ -41,9 +41,11 @@ export function addXP(player, skill, xpToAdd) {
     if (newLevel > oldLevel) {
         player.send(`${skill} is now level: ${newLevel}`);
         player.playAudio('levelup');
+        player.animatedText(`LEVEL ${newLevel} ${skill.toUpperCase()}`, 3000);
+    } else {
+        player.animatedText(`+${xpToAdd * 1}XP ${skill.toUpperCase()}`, 3000);
     }
 
-    player.emitMeta('gainxp', xpToAdd * 1);
     player.data.skills = JSON.stringify(skills);
     player.emitMeta('skills', player.data.skills);
     player.saveField(player.data.id, 'skills', player.data.skills);

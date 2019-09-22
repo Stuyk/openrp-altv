@@ -97,7 +97,7 @@ export class Objective {
      * Sound played at objective completion.
      * @param soundName string
      */
-    setFinishedObjectiveSound(soundName) {
+    setFinishedSound(soundName) {
         this.finishSound = soundName;
     }
 

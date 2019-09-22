@@ -16,7 +16,7 @@ export function showDialogue() {
 
     // Setup Webview
     webview.open(url, true);
-    webview.on('setinfo', setRoleplayInfo);
+    webview.on('roleplay:SetInfo', setRoleplayInfo);
 }
 
 // Finish using this webview.

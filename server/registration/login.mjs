@@ -127,14 +127,7 @@ export function sync(player) {
     if (player.data.face === null) {
         player.model = 'mp_f_freemode_01';
         player.isNewPlayer = true;
-
-        let timeout = setTimeout(() => {
-            if (!player) {
-                clearTimeout(timeout);
-                return;
-            }
-            player.showFaceCustomizerDialogue(lastPos);
-        }, 1500);
+        player.showFaceCustomizerDialogue(lastPos);
     } else {
         player.applyFace(player.data.face);
 

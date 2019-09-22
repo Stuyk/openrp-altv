@@ -36,9 +36,8 @@ export const Character = new orm.EntitySchema({
             default: null
         },
         dob: {
-            type: 'date',
-            nullable: true,
-            default: null
+            type: 'bigint',
+            nullable: true
         },
         creation: {
             type: 'bigint',

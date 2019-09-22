@@ -17,6 +17,7 @@ export function playParticleFX(dict, name, duration, scale, x, y, z) {
     const particles = [];
     const interval = alt.setInterval(() => {
         native.requestPtfxAsset(dict);
+        native.requestNamedPtfxAsset(dict);
         if (!native.hasPtfxAssetLoaded(dict));
         native.useParticleFxAsset(dict);
 

@@ -10,6 +10,8 @@ console.log('Loaded: character->info.mjs');
 export function setRoleplayInfo(player, info) {
     player.needsRoleplayInfo = false;
 
+    console.log(info);
+
     // Saves Name, DOB, and a ID HASH.
     player.saveRoleplayInfo({
         name: info.name,

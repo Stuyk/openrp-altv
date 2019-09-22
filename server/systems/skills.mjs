@@ -24,12 +24,17 @@ export function addXP(player, skill, xpToAdd) {
 
     if (!skills[skill]) {
         skills[skill] = {
-            xp: xpToAdd
+            xp: xpToAdd * 1
         };
         newLevel = getLevel(skills[skill].xp);
     } else {
         oldLevel = getLevel(skills[skill].xp);
-        skills[skill].xp += xpToAdd;
+        skills[skill].xp += xpToAdd * 1;
+
+        if (skills[skill].xp > Number.MAX_SAFE_INTEGER) {
+            skills[skill].xp = Number.MAX_SAFE_INTEGER;
+        }
+
         newLevel = getLevel(skills[skill].xp);
     }
 
@@ -38,7 +43,16 @@ export function addXP(player, skill, xpToAdd) {
         player.playAudio('levelup');
     }
 
-    player.emitMeta('gainxp', xpToAdd);
+    player.emitMeta('gainxp', xpToAdd * 1);
+    player.data.skills = JSON.stringify(skills);
+    player.emitMeta('skills', player.data.skills);
+    player.saveField(player.data.id, 'skills', player.data.skills);
+}
+
+export function setXP(player, skill, amount) {
+    let skills = !player.data.skills ? { ...skills } : JSON.parse(player.data.skills);
+    skills[skill].xp = parseInt(amount);
+    player.emitMeta('gainxp', amount);
     player.data.skills = JSON.stringify(skills);
     player.emitMeta('skills', player.data.skills);
     player.saveField(player.data.id, 'skills', player.data.skills);

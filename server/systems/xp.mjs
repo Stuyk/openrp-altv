@@ -10,8 +10,13 @@ for (let lvl = 1; lvl <= maxLevel; lvl++) {
     xp = Math.floor(points / 4);
 }
 
-export function getLevel(xp) {
+export function getLevel(passedXP) {
+    const xp = parseInt(passedXP) * 1;
     let closest = curve.findIndex(x => x.xp >= xp);
+
+    if (xp > 13034431) {
+        return maxLevel;
+    }
 
     if (curve[closest].xp > xp) {
         let result = curve[closest - 1];

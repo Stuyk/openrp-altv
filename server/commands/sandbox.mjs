@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as chat from '../chat/chat.mjs';
 import * as configurationItems from '../configuration/items.mjs';
 import { addWeapon } from '../systems/inventory.mjs';
+import { addXP, setXP } from '../systems/skills.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
@@ -11,13 +12,14 @@ const sandboxhelp = [
     '/addveh (model)',
     '/addcash (amount)',
     '/addwep (name)',
-    '/face',
+    '/face, /addxp, /setxp',
     '/granola, /coffee',
     '/tpto (rp-name)',
     '/players, /clearchat',
     '/taxi, /mechanic',
     '/cancel',
     '/quitjob, /getsector',
+    '/tryparticle',
     '/phonenumber',
     '/t, /call, /addcontact, /removecontact, /hangup',
     'Press TAB for context cursor.',
@@ -138,4 +140,49 @@ chat.registerCmd('save', player => {
 
 chat.registerCmd('sector', player => {
     player.send(`Current Sector -> X: ${player.sector.x}, Y: ${player.sector.y}`);
+});
+
+chat.registerCmd('addxp', (player, args) => {
+    const _skill = args[0];
+    const _amount = parseInt(args[1]);
+
+    if (!_skill || !_amount) {
+        player.send(`/addxp <skill> <amount>`);
+        return;
+    }
+
+    addXP(player, _skill, _amount);
+});
+
+chat.registerCmd('setxp', (player, args) => {
+    const _skill = args[0];
+    const _amount = parseInt(args[1]);
+
+    if (!_skill || !_amount) {
+        player.send(`/setxp <skill> <amount>`);
+        return;
+    }
+
+    setXP(player, _skill, _amount);
+});
+
+chat.registerCmd('tryparticle', (player, args) => {
+    const _dict = args[0];
+    const _name = args[1];
+    const _duration = args[2];
+    const _scale = args[3];
+
+    if (!_dict || !_name || !_duration || !_scale) {
+        player.send(`/tryparticle <dict> <name> <duration> <scale>`);
+        return;
+    }
+
+    alt.emitClient(
+        player,
+        'tryParticle',
+        _dict,
+        _name,
+        parseFloat(_duration),
+        parseFloat(_scale)
+    );
 });

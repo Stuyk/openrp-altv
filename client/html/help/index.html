@@ -1,123 +1,24 @@
 <!DOCTYPE html>
 
 <head>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 	<link rel="stylesheet/less" type="text/css" href="style.less" />
+    <script src="../preact.min.js"></script>
 	<script src="../less.min.js" ></script>
-
-	<script>
-	window.addEventListener('keyup', e => {
-		if (e.keyCode == 27) {
-			if ('alt' in window) {
-				alt.emit('close');
+	<style>
+			#render {
+				display: none;
 			}
-		}
-	});
-	</script>
+	</style>
 </head>
 
-<body>
-	<div id="helpcontainer" class="container">
-		<h3>Open:RP Help</h3>
-		<div class="row">
-			<div class="col">
-				<table class="table table-sm table-striped table-dark">
-					<tr>
-						<td>TAB</td>
-						<td>Context Menu Toggle</td>
-					</tr>
-					<tr>
-						<td>I</td>
-						<td>Inventory</td>
-					</tr>
-					<tr>
-						<td>F</td>
-						<td>Enter/Exit Vehicle</td>
-					</tr>
-					<tr>
-						<td>H</td>
-						<td>Toggle Vehicle Lock</td>
-					</tr>
-					<tr>
-						<td>T</td>
-						<td>Toggle Chat Window</td>
-					</tr>
-				</table>
-			</div>
-			<div class="col">
-				<table class="table table-sm table-striped table-dark">
-					<tr>
-						<td>/me [action]</td>
-						<td>Perform action</td>
-					</tr>
-					<tr>
-						<td>/b [message]</td>
-						<td>Speak out of character</td>
-					</tr>	
-					<tr>
-						<td>/addveh [model_name]</td>
-						<td>Spawn a vehicle</td>
-					</tr>
-					<tr>
-						<td>/addcash [amount]</td>
-						<td>Add cash</td>
-					</tr>
-					<tr>
-						<td>/addwep [weapon_name]</td>
-						<td>Spawn a weapon</td>
-					</tr>
-					<tr>
-						<td>/face</td>
-						<td>Customize your character</td>
-					</tr>
-					<tr>
-						<td>/granola, /coffee</td>
-						<td>Spawn an item</td>
-					</tr>
-					<tr>
-						<td>/tpto [roleplay_name]</td>
-						<td>Teleport to another player</td>
-					</tr>
-					<tr>
-						<td>/players</td>
-						<td>List online players</td>
-					</tr>
-					<tr>
-						<td>/taxi</td>
-						<td>Call a taxi</td>
-					</tr>
-					<tr>
-						<td>/cancel</td>
-						<td>Cancel last job</td>
-					</tr>
-					<tr>
-						<td>/quitjob</td>
-						<td>Quit active job</td>
-					</tr>
-					<tr>
-						<td>/getsector</td>
-						<td>Get current sector</td>
-					</tr>
-					<tr>
-						<td>/phonenumber</td>
-						<td>Show your phone number</td>
-					</tr>
-					<tr>
-						<td>/t, /call [number], /hangup</td>
-						<td>Text, call, or hangup</td>
-					</tr>
-					<tr>
-						<td>/addcontact [number]</td>
-						<td>Add number to contact list</td>
-					</tr>
-					<tr>
-						<td>/removecontact</td>
-						<td>Remove number from contact list</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
+<body id="render" class="help">
+	<script src="./app.js" type="text/javascript"></script>
+	<script>
+	 	less.pageLoadFinished.then(() => {
+			document.querySelector('#render').style.display = 'block';
+		});
+	</script>
 </body>
+
 </html>

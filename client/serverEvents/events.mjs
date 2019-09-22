@@ -127,7 +127,6 @@ alt.onServer('vehicle:SoundHorn', systemsVehicles.soundHorn);
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
 alt.onServer('chat:SetStatus', panelsChat.setStatus);
-alt.onServer('chat:ShowHelp', panelsHelp.showDialogue)
 
 // =======================================================
 // Global

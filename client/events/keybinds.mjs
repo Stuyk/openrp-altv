@@ -64,6 +64,12 @@ let keybinds = {
         altModifier: false,
         shiftModifier: false,
         func: systemsContext.toggleInterval
+    },
+    // F1 - Help
+    112: {
+        altModifier: false,
+        shiftModifier: false,
+        func: panelsHelp.toggleHelp
     }
 };
 let cooldown = false;

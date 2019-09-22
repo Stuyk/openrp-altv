@@ -7,14 +7,14 @@ const url = 'http://resource/client/html/help/index.html';
 let webview;
 
 // Show the help dialogue
-export function showDialogue() {
+export function toggleHelp() {
     if (!webview) {
         webview = new View();
+        webview.open(url, false);
+    } else {
+        webview.close();
+        webview = undefined;
     }
 
-    if (alt.Player.local.getMeta('viewOpen')) return;
-
-    // Setup Webview
-    webview.open(url, true);
 }
 

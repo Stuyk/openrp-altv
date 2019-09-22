@@ -7,6 +7,7 @@ import { addXP, setXP } from '../systems/skills.mjs';
 console.log('Loaded: commands->sandbox.mjs');
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const sandboxhelp = [
     //
     '/b, /me, /do',
@@ -33,6 +34,8 @@ chat.registerCmd('help', player => {
     player.showHelp();
 });
 
+=======
+>>>>>>> reworking help; using preact and different design
 chat.registerCmd('addcash', (player, value) => {
     let data = value * 1;
     if (value > 600000) return;

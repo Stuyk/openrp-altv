@@ -6,6 +6,31 @@ import { addXP, setXP } from '../systems/skills.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
+// Development sandbox commands
+const sandboxhelp = [	
+    //	
+    '/b, /me, /do',	
+    '/addveh (model)',	
+    '/addcash (amount)',	
+    '/addwep (name)',	
+    '/face, /addxp, /setxp',	
+    '/granola, /coffee',	
+    '/tpto (rp-name)',	
+    '/players, /clearchat',	
+    '/taxi, /mechanic',	
+    '/cancel',	
+    '/quitjob, /getsector',	
+    '/tryparticle',	
+    '/phonenumber',	
+    '/t, /call, /addcontact, /removecontact, /hangup'
+];
+
+chat.registerCmd('help', player => {
+    sandboxhelp.forEach(helper => {
+        player.send(`${helper}`);
+    });
+});
+
 chat.registerCmd('addcash', (player, value) => {
     let data = value * 1;
     if (value > 600000) return;

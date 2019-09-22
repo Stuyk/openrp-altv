@@ -20,6 +20,7 @@ const helpCommands = {
     '/t, /call <number>, /hangup': 'Text, Call, or Hangup',
     '/addcontact <id>': 'Add player to contacts',
     '/removecontact <id>': 'Remove player from contacts',
+    '/tryparticle': 'wtfisstuykdoing?'
 };
 
 /* eslint-disable no-undef */

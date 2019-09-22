@@ -176,6 +176,8 @@ export class ContextMenu {
 let interval;
 
 export function toggleInterval() {
+    if (alt.Player.local.getMeta('viewOpen')) return;
+
     if (interval) {
         alt.clearInterval(interval);
         interval = undefined;

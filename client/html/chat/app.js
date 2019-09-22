@@ -76,7 +76,7 @@ class App extends Component {
         this.state = {
             messages: [
                 {
-                    message: `Use /help for help.`,
+                    message: `Hit F1 to toggle help.`,
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 },
                 {

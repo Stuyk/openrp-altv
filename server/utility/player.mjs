@@ -654,10 +654,7 @@ export function setupPlayerFunctions(player) {
             dictionary,
             name,
             durationInMS,
-            flag,
-            freezeX,
-            freezeY,
-            freezeZ
+            flag
         );
     };
 

@@ -71,12 +71,12 @@ export const Weapons = {
     MarksmanRifleMkII: 1785463520,
     RPG: 2982836145,
     GrenadeLauncher: 2726580491,
-    GrenadeLauncherSmoke: 13056645,
+    GrenadeLauncherSmoke: 1305664598,
     Minigun: 1119849093,
     FireworkLauncher: 2138347493,
     Railgun: 1834241177,
     HomingLauncher: 1672152130,
-    CompactGrenadeLauncher: 125959,
+    CompactGrenadeLauncher: 125959754,
     Widowmaker: 3056410471,
     Grenade: 2481070269,
     BZGas: 2694266206,
@@ -87,10 +87,10 @@ export const Weapons = {
     PipeBombs: 2874559379,
     Baseball: 126349499,
     TearGas: 3125143736,
-    Flare: 600439132,
-    JerryCan: 314298409,
+    Flare: 1233104067,
+    JerryCan: 883325847,
     Parachute: 1940617049,
-    FireExtinguisher: 1532858877
+    FireExtinguisher: 101631238
 };
 
 export const CauseOfDeath = {

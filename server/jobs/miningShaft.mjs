@@ -41,7 +41,7 @@ alt.on('job:MiningShaft', player => {
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };
-    let obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
+    let obj = new Objective(objectives.POINT, modifiers.ON_FOOT | modifiers.REMOVE_ITEM);
     obj.setPosition(trackStart);
     obj.setRange(5);
     obj.setHelpText('');

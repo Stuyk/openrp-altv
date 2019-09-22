@@ -108,6 +108,8 @@ export function rename(player, hash, newName) {
         return;
     }
 
+    newName = newName.replace(' ', '_');
+
     player.inventory[index].label = newName;
     player.data.inventory = JSON.stringify(player.inventory);
     player.setSyncedMeta('inventory', player.data.inventory);

@@ -27,7 +27,8 @@ export const modifiers = {
     KILL_PLAYER: 64,
     REPAIR_PLAYER: 128,
     GOTO_PLAYER: 256,
-    MAX: 512
+    REMOVE_ITEM: 512,
+    MAX: 1024
 };
 
 export const restrictions = {
@@ -206,6 +207,14 @@ export class Objective {
     }
 
     /**
+     * [{ label: 'Pickaxe', quantity: 1 }]
+     * @param data Item array.
+     */
+    setRemoveItem(arrayOfItems) {
+        this.removeItem = arrayOfItems;
+    }
+
+    /**
      * Called when the user wants to attempt
      * the objective reference they have.
      * @param player
@@ -222,6 +231,39 @@ export class Objective {
             player.emitMeta('job:Progress', this.progress);
             return false;
         }
+
+        // Item Removal Check
+        if (isFlagged(this.flags, modifiers.REMOVE_ITEM) && this.removeItem) {
+            let allValid = true;
+            let itemsToRemove = [];
+            for (let i = 0; i < this.removeItem.length; i++) {
+                let result = player.getItemQuantity(this.removeItem[i].label);
+                if (result.count < this.removeItem[i].quantity) {
+                    if (!player.job.itemWarning) {
+                        player.send(
+                            `You need ${this.removeItem[i].quantity} of the item ${this.removeItem[i].label}`
+                        );
+                    }
+
+                    allValid = false;
+                    continue;
+                } else {
+                    itemsToRemove = itemsToRemove.concat(result.items);
+                }
+            }
+
+            player.job.itemWarning = true;
+
+            if (!allValid) {
+                return false;
+            } else {
+                itemsToRemove.forEach(item => {
+                    player.subItemByHash(item.hash, item.quantity);
+                });
+            }
+        }
+
+        player.job.itemWarning = false;
 
         // Issue Rewards
         if (this.rewards.length >= 1) {
@@ -327,8 +369,6 @@ export class Objective {
      */
     checkObjective(player, args) {
         let valid = true;
-
-        console.log('Checking...');
 
         // Normal range check.
         // Then do a targed range check

@@ -169,6 +169,7 @@ function updateTarget(data) {
  */
 function intervalObjectiveInfo() {
     if (!objective || pause) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (objective.marker && dist <= 100) {
         drawMarker(
@@ -266,6 +267,7 @@ function intervalObjectiveInfo() {
 
 function intervalObjectiveChecking() {
     if (!objective || pause) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
 
     // Check Distance
     if (dist > objective.range) {

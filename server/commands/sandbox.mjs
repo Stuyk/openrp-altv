@@ -6,24 +6,23 @@ import { addXP, setXP } from '../systems/skills.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 
-const sandboxhelp = [
-    //
-    '/b, /me, /do',
-    '/addveh (model)',
-    '/addcash (amount)',
-    '/addwep (name)',
-    '/face, /addxp, /setxp',
-    '/granola, /coffee',
-    '/tpto (rp-name)',
-    '/players, /clearchat',
-    '/taxi, /mechanic',
-    '/cancel',
-    '/quitjob, /getsector',
-    '/tryparticle',
-    '/phonenumber',
-    '/t, /call, /addcontact, /removecontact, /hangup',
-    'Press TAB for context cursor.',
-    'I for Inventory'
+// Development sandbox commands
+const sandboxhelp = [	
+    //	
+    '/b, /me, /do',	
+    '/addveh (model)',	
+    '/addcash (amount)',	
+    '/addwep (name)',	
+    '/face, /addxp, /setxp',	
+    '/granola, /coffee',	
+    '/tpto (rp-name)',	
+    '/players, /clearchat',	
+    '/taxi, /mechanic',	
+    '/cancel',	
+    '/quitjob, /getsector',	
+    '/tryparticle',	
+    '/phonenumber',	
+    '/t, /call, /addcontact, /removecontact, /hangup'
 ];
 
 chat.registerCmd('help', player => {

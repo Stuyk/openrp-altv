@@ -21,13 +21,6 @@ const tagOrComment = new RegExp(
     'gi'
 );
 
-let appendMessageSpecial;
-let appendMessage;
-let appendTask;
-let setHide;
-let clearTask;
-let clearChatBox;
-
 function colorify(text) {
     if (!text) return text;
     if (text.length <= 0) return text;
@@ -73,6 +66,8 @@ class App extends Component {
         super(props);
         this.lastMessage = preact.createRef();
         this.messagesBlock = preact.createRef();
+        this.chatInput = preact.createRef();
+        this.page = preact.createRef();
         this.state = {
             messages: [
                 {
@@ -90,39 +85,6 @@ class App extends Component {
             speed: '0 MPH',
             hide: false
         };
-
-        appendMessageSpecial = msg => {
-            if (!msg) return;
-            this.appendMessage(msg);
-        };
-
-        appendMessage = msg => {
-            if (!msg) return;
-            msg = colorify(msg);
-            this.appendMessage({ message: msg });
-        };
-
-        clearChatBox = () => {
-            this.clearChatBox();
-        };
-
-        appendTask = msg => {
-            this.appendTask(msg);
-        };
-
-        clearTask = () => {
-            this.clearTask();
-        };
-
-        setHide = value => {
-            this.hide(value);
-        };
-
-        if ('alt' in window) {
-            alt.on('chat:SetCash', this.setCash.bind(this));
-            alt.on('chat:SetLocation', this.setLocation.bind(this));
-            alt.on('chat:SetSpeed', this.setSpeed.bind(this));
-        }
     }
 
     setCash(cash) {
@@ -137,21 +99,109 @@ class App extends Component {
         this.setState({ location });
     }
 
-    componentDidUpdate() {
-        //if (this.state.hide) return;
-        //this.scrollToBottom();
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('chat:ShowChatInput', this.showChatInput.bind(this)); // Show the input.
+            alt.on('chat:AppendMessage', this.appendMessage.bind(this)); // Non Formatted Messages
+            alt.on('chat:AppendMessageSpecial', this.appendMessageSpecial.bind(this)); // Preformated Objects
+            //alt.on('appendMessageClickable'); // Soon ^tm;
+            alt.on('chat:ClearChatBox', this.clearChatBox.bind(this)); // Clears the chat box.
+            alt.on('chat:Hide', this.hide.bind(this));
+            //alt.on('chat:AppendTask', appendTask);
+            alt.on('chat:SetCash', this.setCash.bind(this));
+            alt.on('chat:SetLocation', this.setLocation.bind(this));
+            alt.on('chat:SetSpeed', this.setSpeed.bind(this));
+            alt.emit('chat:Ready');
+        } else {
+            setInterval(() => {
+                this.appendMessage(`${Math.random() * 500000}`);
+            }, 200);
+
+            document.getElementById('chat-input').classList.remove('hidden');
+        }
+
+        this.setState({ ready: true });
+        document.addEventListener('keyup', e => {
+            // Enter
+            if (e.key === 'Enter') {
+                const input = this.chatInput.current;
+                if (!input) return;
+
+                input.classList.add('hidden');
+                if (input.value.length <= 0) {
+                    if ('alt' in window) {
+                        alt.emit('routeMessage');
+                    }
+                } else {
+                    let result = removeTags(input.value);
+                    if ('alt' in window) {
+                        alt.emit('routeMessage', result);
+                    }
+                }
+                input.value = '';
+            }
+
+            // Escape
+            if (e.key === 'Escape') {
+                let input = this.chatInput.current;
+                if (!input) return;
+                input.classList.add('hidden');
+                input.value = '';
+                if ('alt' in window) {
+                    alt.emit('routeMessage');
+                }
+            }
+        });
+
+        document.addEventListener('scroll', e => {
+            console.log('scrolling');
+
+            if (this.state.scrollTimeout) {
+                clearTimeout(this.state.scrollTimeout);
+            }
+
+            if (!this.state.scrolling) {
+                let timeout = setTimeout(() => {
+                    this.setState({ scrolling: false, scrollTimeout: undefined });
+                }, 10000);
+
+                this.setState({ scrolling: true, scrollTimeout: timeout });
+            }
+        });
+    }
+
+    showChatInput() {
+        this.chatInput.current.classList.remove('hidden');
+        this.chatInput.current.focus();
     }
 
     scrollToBottom() {
-        setTimeout(() => {
-            if (this.state.hide || this.lastMessage.current === null) return;
+        if (this.state.scrolling) return;
+        if (this.state.hide || this.lastMessage.current === null) return;
+        this.lastMessage.current.scrollIntoView({ behavior: 'instant' });
+    }
 
-            this.lastMessage.current.scrollIntoView({ behavior: 'smooth' });
-        }, 500);
+    scrolling() {
+        console.log('Reee');
     }
 
     appendMessage(msg) {
         let messages = [...this.state.messages];
+        if (!msg) return;
+        msg = colorify(msg);
+        messages.push({ message: msg });
+
+        if (messages.length >= 50) {
+            messages.pop();
+        }
+
+        this.setState({ messages });
+        this.scrollToBottom();
+    }
+
+    appendMessageSpecial(msg) {
+        let messages = [...this.state.messages];
+        if (!msg) return;
         messages.push(msg);
         this.setState({ messages });
         this.scrollToBottom();
@@ -170,56 +220,61 @@ class App extends Component {
     }
 
     hide(value) {
-        this.setState({ hide: value });
+        this.setState({ hidden: value });
+    }
 
-        if (!value) {
-            this.appendMessage({ message: '' });
+    componentDidUpdate() {
+        if (this.state.hidden) {
+            this.page.current.classList.add('hidden');
+        } else {
+            this.page.current.classList.remove('hidden');
+            this.scrollToBottom();
         }
     }
 
     render() {
-        return (
-            !this.state.hide &&
+        return h(
+            'div',
+            {
+                ref: this.page
+            },
+            h(Messages, {
+                messages: this.state.messages,
+                lastMessageRef: this.lastMessage,
+                messagesBlockRef: this.messagesBlock
+            }),
             h(
                 'div',
-                null,
-                h(Messages, {
-                    messages: this.state.messages,
-                    lastMessageRef: this.lastMessage,
-                    messagesBlockRef: this.messagesBlock
-                }),
+                { id: 'chat-input-wrapper' },
+                h(
+                    'input',
+                    {
+                        class: 'hidden',
+                        id: 'chat-input',
+                        type: 'text',
+                        maxlength: '255',
+                        ref: this.chatInput
+                    },
+                    'test'
+                )
+            ),
+            h(
+                'div',
+                { class: 'hud' },
                 h(
                     'div',
-                    { id: 'chat-input-wrapper' },
-                    h(
-                        'input',
-                        {
-                            class: 'hidden',
-                            id: 'chat-input',
-                            type: 'text',
-                            maxlength: '255'
-                        },
-                        'test'
-                    )
+                    { class: 'element' },
+                    h('div', { class: 'label money' }, `$${this.state.cash}`)
                 ),
                 h(
                     'div',
-                    { class: 'hud' },
-                    h(
-                        'div',
-                        { class: 'element' },
-                        h('div', { class: 'label money' }, `$${this.state.cash}`)
-                    ),
-                    h(
-                        'div',
-                        { class: 'element' },
-                        h('div', { class: 'label location' }, `${this.state.location}`)
-                    ),
-                    this.state.task !== '' &&
-                        h('div', { class: 'element' }, `${this.state.task}`)
+                    { class: 'element' },
+                    h('div', { class: 'label location' }, `${this.state.location}`)
                 ),
-                h('div', { class: 'speed' }, `${this.state.speed}`)
-            )
+                this.state.task !== '' &&
+                    h('div', { class: 'element' }, `${this.state.task}`)
+            ),
+            h('div', { class: 'speed' }, `${this.state.speed}`)
         );
         // Render HTML / Components and Shit Here
     }
@@ -228,6 +283,18 @@ class App extends Component {
 const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
     const msgs = messages.map((msgData, index) => {
         if (messages.length - 1 === index) {
+            if (!msgData.message) {
+                return h(
+                    'div',
+                    {
+                        class: 'msg',
+                        id: 'lastmsg',
+                        ref: lastMessageRef
+                    },
+                    ''
+                );
+            }
+
             if (msgData.message.includes('<font')) {
                 return h(
                     'div',
@@ -267,7 +334,10 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
 
         return h(
             'div',
-            { class: 'slideInLeft msg', style: msgData.style },
+            {
+                class: 'msg',
+                style: msgData.style
+            },
             msgData.message
         );
     });
@@ -276,60 +346,3 @@ const Messages = ({ messages, lastMessageRef, messagesBlockRef }) => {
 };
 
 render(h(App), document.querySelector('#render'));
-
-// eslint-disable-next-line no-unused-vars
-function ready() {
-    if ('alt' in window) {
-        alt.emit('chat:Ready');
-    }
-
-    document.getElementById('chat-input').focus();
-    document.addEventListener('keyup', e => {
-        // Enter
-        if (e.key === 'Enter') {
-            let input = document.querySelector('#chat-input');
-            if (input === undefined || input === null) return;
-
-            input.classList.add('hidden');
-            if (input.value.length <= 0) {
-                alt.emit('routeMessage');
-            } else {
-                let result = removeTags(input.value);
-                alt.emit('routeMessage', result);
-            }
-            input.value = '';
-        }
-
-        // Escape
-        if (e.key === 'Escape') {
-            let input = document.querySelector('#chat-input');
-            if (input === null || input === undefined) return;
-            input.classList.add('hidden');
-            input.value = '';
-            alt.emit('routeMessage');
-        }
-    });
-
-    const showChatInput = () => {
-        document.getElementById('chat-input').classList.remove('hidden');
-        document.getElementById('chat-input').focus();
-    };
-
-    if ('alt' in window) {
-        alt.on('chat:ShowChatInput', showChatInput); // Show the input.
-        alt.on('chat:AppendMessage', appendMessage); // Non Formatted Messages
-        alt.on('chat:AppendMessageSpecial', appendMessageSpecial); // Preformated Objects
-        //alt.on('appendMessageClickable'); // Soon ^tm;
-        alt.on('chat:ClearChatBox', clearChatBox); // Clears the chat box.
-        alt.on('chat:Hide', setHide);
-        alt.on('chat:AppendTask', appendTask);
-    }
-}
-
-/*
-for (let i = 0; i < 25; i++) {
-    appendMessage('test');
-}
-
-document.getElementById('chat-input').classList.remove('hidden');
-*/

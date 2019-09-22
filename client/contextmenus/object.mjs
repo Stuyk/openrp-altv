@@ -158,6 +158,10 @@ let objectInteractions = {
     },
     506770882: {
         func: atm
+    },
+    // Mineshaft Door
+    3053754761: {
+        func: mineshaft
     }
 };
 
@@ -274,6 +278,17 @@ function atm(ent) {
             event: 'use:Atm'
         }
     ]);
+}
+
+function mineshaft(ent) {
+    // Inside Model -> 3053754761
+    // Inside Entity -> 111131
+    // Outside Entity -> 145179
+    // Outside Model -> 3053754761
+
+    native.deleteEntity(ent);
+    native.setEntityCollision(ent, false, false);
+    native.setEntityAlpha(ent, 0, false);
 }
 
 function chair(ent) {

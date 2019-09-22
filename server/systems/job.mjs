@@ -257,7 +257,7 @@ export class Objective {
         }
 
         if (this.veh) {
-            let pos = randPosAround(this.veh.pos, 10);
+            let pos = randPosAround(this.veh.pos, 2);
             const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
 
             vehicle.job = {
@@ -266,8 +266,9 @@ export class Objective {
             };
 
             vehicle.engineOn = true;
-
-            player.vehicles.push(vehicle);
+            const vehicles = [...player.vehicles];
+            vehicles.push(vehicle);
+            player.vehicles = vehicles;
         }
 
         // Play a sound; after a user finishes their objective.
@@ -327,6 +328,8 @@ export class Objective {
     checkObjective(player, args) {
         let valid = true;
 
+        console.log('Checking...');
+
         // Normal range check.
         // Then do a targed range check
         // if the objective type is 4.
@@ -341,17 +344,25 @@ export class Objective {
 
         // Checks if the player is in an job vehicle.
         if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
-            console.log('Checking Objective...');
+            console.log('Checking vehicle flag.');
             if (!player.vehicle) {
                 valid = false;
             } else {
-                const vehicles = player.vehicles.filter(
-                    x => x.job !== undefined && x === player.vehicle
-                );
+                console.log('Checking vehicles list.');
 
-                console.log(vehicles);
-                if (vehicles.length <= 0) {
+                const vehicles = player.vehicles.filter(x => x.job !== undefined);
+
+                let isVehicleUsed = false;
+                vehicles.forEach(veh => {
+                    if (veh === player.vehicle) {
+                        isVehicleUsed = true;
+                    }
+                });
+
+                if (!isVehicleUsed) {
                     valid = false;
+                } else {
+                    console.log('Valid vehicle.');
                 }
             }
         }
@@ -649,6 +660,7 @@ export class Job {
         } else {
             player.emitMeta('job:Objective', undefined);
             player.send('Job Complete');
+            quitJob(player);
             return;
         }
 
@@ -828,12 +840,15 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
     if (player.vehicles.length >= 1) {
         let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
         let jobVehicles = player.vehicles.filter(x => x.job !== undefined);
+
         player.vehicles = nonJobVehicles;
         if (jobVehicles.length >= 1) {
             jobVehicles.forEach(veh => {
                 veh.destroy();
             });
         }
+
+        console.log(player.vehicles);
     }
 
     if (playFailSound) {

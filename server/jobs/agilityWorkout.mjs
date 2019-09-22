@@ -87,7 +87,7 @@ alt.on('job:AgilityWorkout', player => {
             0,
             100
         );
-        obj.setFinishSound('complete');
+        obj.setFinishedObjectiveSound('complete');
         obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 25 }]);
         job.add(copyObjective(obj));
     });
@@ -110,9 +110,9 @@ alt.on('job:AgilityWorkout', player => {
         0,
         100
     );
-    obj.setScenario('world_human_sit_ups');
+    obj.setAnimationScenario('world_human_sit_ups');
     obj.setMaxProgress(2);
-    obj.setFinishSound('complete');
+    obj.setFinishedObjectiveSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
 
@@ -133,35 +133,11 @@ alt.on('job:AgilityWorkout', player => {
         0,
         100
     );
-    obj.setScenario('world_human_push_ups');
+    obj.setAnimationScenario('world_human_push_ups');
     obj.setMaxProgress(8);
-    obj.setFinishSound('complete');
+    obj.setFinishedObjectiveSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 35 }]);
     job.add(copyObjective(obj));
-
-    /*
-    pos = { x: -1607.69873046875, y: -1173.242919921875, z: 0.8695722818374634 };
-    obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
-    obj.setHelpText('Sprint back into the water.');
-    obj.setRange(3);
-    obj.setPosition(pos);
-    obj.setBlip(1, 2, pos);
-    obj.setMarker(
-        0,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(1, 1, 1),
-        0,
-        255,
-        0,
-        100
-    );
-    obj.setMaxProgress(8);
-    obj.setFinishSound('complete');
-    obj.setRewards([{ type: 'xp', prop: 'agility', quantity: 25 }]);
-    job.add(copyObjective(obj));
-        */
 
     job.start(player);
 });

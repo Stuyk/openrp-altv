@@ -69,7 +69,7 @@ alt.on('job:MechanicJob', player => {
     obj.setPosition(emptyVector);
     obj.setBlip(1, 1, new alt.Vector3(0, 0, 0));
     obj.setHelpText('Wait for a customer...');
-    obj.setScenario('world_human_vehicle_mechanic');
+    obj.setAnimationScenario('world_human_vehicle_mechanic');
     job.add(copyObjective(obj));
 
     // Begin Searching for Player
@@ -78,7 +78,7 @@ alt.on('job:MechanicJob', player => {
     obj.setPosition(emptyVector);
     obj.setBlip(1, 1, new alt.Vector3(0, 0, 0));
     obj.setHelpText('Go to your customer...');
-    obj.setScenario('world_human_vehicle_mechanic');
+    obj.setAnimationScenario('world_human_vehicle_mechanic');
     job.add(copyObjective(obj));
 
     job.start(player);

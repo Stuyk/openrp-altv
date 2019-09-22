@@ -421,12 +421,14 @@ function playScenario() {
     if (!objective.scenario) return;
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
     alt.Player.local.inScenario = true;
-    native.taskStartScenarioInPlace(
-        alt.Player.local.scriptID,
-        objective.scenario,
-        0,
-        true
-    );
+    alt.nextTick(() => {
+        native.taskStartScenarioInPlace(
+            alt.Player.local.scriptID,
+            objective.scenario,
+            0,
+            true
+        );
+    });
 }
 
 function clearScenario() {
@@ -446,19 +448,21 @@ function playAnimation() {
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
     alt.Player.local.inAnimation = true;
     loadAnim(objective.anim.dict).then(res => {
-        native.taskPlayAnim(
-            alt.Player.local.scriptID,
-            objective.anim.dict,
-            objective.anim.name,
-            1,
-            -1,
-            -1,
-            1,
-            1.0,
-            true,
-            true,
-            true
-        );
+        alt.nextTick(() => {
+            native.taskPlayAnim(
+                alt.Player.local.scriptID,
+                objective.anim.dict,
+                objective.anim.name,
+                1,
+                -1,
+                -1,
+                1,
+                1.0,
+                false,
+                false,
+                false
+            );
+        });
 
         if (objective.anim.sound && !alt.Player.local.soundInterval) {
             alt.Player.local.soundInterval = alt.setInterval(() => {

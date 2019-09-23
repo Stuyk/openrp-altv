@@ -523,6 +523,19 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    player.getItemQuantity = itemName => {
+        let items = player.inventory.filter(x => x !== null && x !== undefined);
+        if (items.length <= 0) return 0;
+        let count = 0;
+        let foundItems = [];
+        items.forEach(item => {
+            if (!item.label.includes(itemName)) return;
+            count += item.quantity;
+            foundItems.push({ hash: item.hash, quantity: item.quantity });
+        });
+        return { count, items: foundItems };
+    };
+
     player.subItemByHash = (itemHash, quantity) => {
         let index = player.inventory.findIndex(
             x => x !== null && x !== undefined && x.hash === itemHash

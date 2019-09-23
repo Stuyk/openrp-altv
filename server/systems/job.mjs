@@ -27,7 +27,8 @@ export const modifiers = {
     KILL_PLAYER: 64,
     REPAIR_PLAYER: 128,
     GOTO_PLAYER: 256,
-    MAX: 512
+    REMOVE_ITEM: 512,
+    MAX: 1024
 };
 
 export const restrictions = {
@@ -206,6 +207,14 @@ export class Objective {
     }
 
     /**
+     * [{ label: 'Pickaxe', quantity: 1 }]
+     * @param data Item array.
+     */
+    setRemoveItem(arrayOfItems) {
+        this.removeItem = arrayOfItems;
+    }
+
+    /**
      * Called when the user wants to attempt
      * the objective reference they have.
      * @param player
@@ -222,6 +231,39 @@ export class Objective {
             player.emitMeta('job:Progress', this.progress);
             return false;
         }
+
+        // Item Removal Check
+        if (isFlagged(this.flags, modifiers.REMOVE_ITEM) && this.removeItem) {
+            let allValid = true;
+            let itemsToRemove = [];
+            for (let i = 0; i < this.removeItem.length; i++) {
+                let result = player.getItemQuantity(this.removeItem[i].label);
+                if (result.count < this.removeItem[i].quantity) {
+                    if (!player.job.itemWarning) {
+                        player.send(
+                            `You need ${this.removeItem[i].quantity} of the item ${this.removeItem[i].label}`
+                        );
+                    }
+
+                    allValid = false;
+                    continue;
+                } else {
+                    itemsToRemove = itemsToRemove.concat(result.items);
+                }
+            }
+
+            player.job.itemWarning = true;
+
+            if (!allValid) {
+                return false;
+            } else {
+                itemsToRemove.forEach(item => {
+                    player.subItemByHash(item.hash, item.quantity);
+                });
+            }
+        }
+
+        player.job.itemWarning = false;
 
         // Issue Rewards
         if (this.rewards.length >= 1) {
@@ -257,7 +299,7 @@ export class Objective {
         }
 
         if (this.veh) {
-            let pos = randPosAround(this.veh.pos, 10);
+            let pos = randPosAround(this.veh.pos, 2);
             const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
 
             vehicle.job = {
@@ -266,8 +308,9 @@ export class Objective {
             };
 
             vehicle.engineOn = true;
-
-            player.vehicles.push(vehicle);
+            const vehicles = [...player.vehicles];
+            vehicles.push(vehicle);
+            player.vehicles = vehicles;
         }
 
         // Play a sound; after a user finishes their objective.
@@ -341,17 +384,25 @@ export class Objective {
 
         // Checks if the player is in an job vehicle.
         if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
-            console.log('Checking Objective...');
+            console.log('Checking vehicle flag.');
             if (!player.vehicle) {
                 valid = false;
             } else {
-                const vehicles = player.vehicles.filter(
-                    x => x.job !== undefined && x === player.vehicle
-                );
+                console.log('Checking vehicles list.');
 
-                console.log(vehicles);
-                if (vehicles.length <= 0) {
+                const vehicles = player.vehicles.filter(x => x.job !== undefined);
+
+                let isVehicleUsed = false;
+                vehicles.forEach(veh => {
+                    if (veh === player.vehicle) {
+                        isVehicleUsed = true;
+                    }
+                });
+
+                if (!isVehicleUsed) {
                     valid = false;
+                } else {
+                    console.log('Valid vehicle.');
                 }
             }
         }
@@ -649,6 +700,7 @@ export class Job {
         } else {
             player.emitMeta('job:Objective', undefined);
             player.send('Job Complete');
+            quitJob(player);
             return;
         }
 
@@ -828,12 +880,15 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
     if (player.vehicles.length >= 1) {
         let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
         let jobVehicles = player.vehicles.filter(x => x.job !== undefined);
+
         player.vehicles = nonJobVehicles;
         if (jobVehicles.length >= 1) {
             jobVehicles.forEach(veh => {
                 veh.destroy();
             });
         }
+
+        console.log(player.vehicles);
     }
 
     if (playFailSound) {

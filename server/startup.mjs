@@ -62,7 +62,9 @@ alt.on('ConnectionComplete', () => {
     // Jobs
     import('./jobs/agilityTrack.mjs');
     import('./jobs/agilityWorkout.mjs');
+    import('./jobs/agilityMtnBike1.mjs');
     import('./jobs/miningQuarry.mjs');
+    import('./jobs/miningShaft.mjs');
     import('./jobs/playerTaxi.mjs');
     import('./jobs/playerMechanic.mjs');
     import('./jobs/woodcuttingLumber.mjs');

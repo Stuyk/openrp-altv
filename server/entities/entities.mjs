@@ -37,7 +37,7 @@ export const Character = new orm.EntitySchema({
         },
         dob: {
             type: 'bigint',
-            nullable: true
+            default: Date.now()
         },
         creation: {
             type: 'bigint',

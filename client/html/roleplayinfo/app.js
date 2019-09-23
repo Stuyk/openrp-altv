@@ -9,7 +9,9 @@ const regex = new RegExp(
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            date: 0
+        };
     }
 
     nameChange(e) {

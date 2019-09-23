@@ -293,9 +293,7 @@ export class Objective {
             }
 
             filteredItems.forEach(item => {
-                console.log(item);
                 let res = player.subItemByHash(item.hash, item.quantity);
-                console.log(res);
             });
         }
 
@@ -428,12 +426,9 @@ export class Objective {
 
         // Checks if the player is in an job vehicle.
         if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
-            console.log('Checking vehicle flag.');
             if (!player.vehicle) {
                 valid = false;
             } else {
-                console.log('Checking vehicles list.');
-
                 const vehicles = player.vehicles.filter(x => x.job !== undefined);
 
                 let isVehicleUsed = false;
@@ -673,8 +668,6 @@ export class Job {
         let allValid = true;
         for (let i = 0; i < this.items.length; i++) {
             if (this.items[i].hasItem) {
-                console.log(this.items[i]);
-
                 if (!player.hasItem(this.items[i].label)) {
                     allValid = false;
                     player.send('You are restricted from doing this job.');
@@ -931,8 +924,6 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
                 veh.destroy();
             });
         }
-
-        console.log(player.vehicles);
     }
 
     if (playFailSound) {

@@ -55,6 +55,18 @@ alt.on('job:SmithingRefinery', player => {
         0,
         100
     );
+    obj.setProps([
+        {
+            name: 'prop_welding_mask_01',
+            bone: 12844,
+            x: 0.11,
+            y: 0.01,
+            z: 0,
+            pitch: 180,
+            roll: 270,
+            yaw: 0
+        }
+    ]);
     job.add(copyObjective(obj));
 
     // Infinite Loop
@@ -179,3 +191,5 @@ alt.on('job:SmithingRefinery', player => {
 
     job.start(player);
 });
+
+// markanim amb@world_human_welding@male@idle_a idle_a

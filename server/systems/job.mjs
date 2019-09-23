@@ -28,7 +28,8 @@ export const modifiers = {
     REPAIR_PLAYER: 128,
     GOTO_PLAYER: 256,
     REMOVE_ITEM: 512,
-    MAX: 1024
+    CLEAR_PROPS: 1024,
+    MAX: 2048
 };
 
 export const restrictions = {
@@ -156,6 +157,14 @@ export class Objective {
             b,
             a
         };
+    }
+
+    /**
+     * [{name: 'prop_fncwood_14a', bone: 57005, x: 0, y: 0, z: 0, pitch: 0, roll: 0, yaw: 0}]
+     * @param propsArray
+     */
+    setProps(propsArray) {
+        this.props = propsArray;
     }
 
     /**
@@ -380,6 +389,14 @@ export class Objective {
                     player.send(`{00FF00}+$${fare}`);
                 }
             }
+        }
+
+        if (isFlagged(this.flags, modifiers.CLEAR_PROPS)) {
+            player.setSyncedMeta('job:Props', undefined);
+        }
+
+        if (this.props) {
+            player.setSyncedMeta('job:Props', this.props);
         }
 
         // Go To Next Objective
@@ -933,6 +950,7 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
 
     if (player.job) player.job = undefined;
     player.emitMeta('job:ClearObjective', true);
+    player.setSyncedMeta('job:Props', undefined);
 }
 
 export function copyObjective(original) {

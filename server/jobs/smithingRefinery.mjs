@@ -35,6 +35,7 @@ alt.on('job:SmithingRefinery', player => {
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
+    job.setItemRestrictions([{ label: 'Unrefined Rock', hasItem: true }]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };
@@ -54,6 +55,18 @@ alt.on('job:SmithingRefinery', player => {
         0,
         100
     );
+    obj.setProps([
+        {
+            name: 'prop_welding_mask_01',
+            bone: 12844,
+            x: 0.11,
+            y: 0.01,
+            z: 0,
+            pitch: 180,
+            roll: 270,
+            yaw: 0
+        }
+    ]);
     job.add(copyObjective(obj));
 
     // Infinite Loop
@@ -62,7 +75,7 @@ alt.on('job:SmithingRefinery', player => {
 
     let pos = { x: 1084.591552734375, y: -2002.2899169921875, z: 31.398618698120117 };
     obj = new Objective(objectives.HOLD, modifiers.ON_FOOT | modifiers.REMOVE_ITEM);
-    obj.setHelpText('Load Ore Into the Hopper');
+    obj.setHelpText('Hold ~INPUT_CONTEXT~ to load ore into the hopper.');
     obj.setPosition(pos);
     obj.setBlip(367, 2, pos);
     obj.setRange(3);
@@ -87,10 +100,10 @@ alt.on('job:SmithingRefinery', player => {
     obj.setParticleEffect([
         {
             dict: 'core',
-            name: 'ent_amb_smoke_gaswork',
-            duration: 575,
+            name: 'fire_wrecked_train',
+            duration: 800,
             scale: 1,
-            offset: { x: 0, y: 1, z: 0.8 },
+            offset: { x: 0, y: 1.2, z: 0.5 },
             time: 0.38 // Animation times to play at.
         }
     ]);
@@ -178,3 +191,5 @@ alt.on('job:SmithingRefinery', player => {
 
     job.start(player);
 });
+
+// markanim amb@world_human_welding@male@idle_a idle_a

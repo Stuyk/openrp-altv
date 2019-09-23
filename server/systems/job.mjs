@@ -28,7 +28,8 @@ export const modifiers = {
     REPAIR_PLAYER: 128,
     GOTO_PLAYER: 256,
     REMOVE_ITEM: 512,
-    MAX: 1024
+    CLEAR_PROPS: 1024,
+    MAX: 2048
 };
 
 export const restrictions = {
@@ -159,6 +160,14 @@ export class Objective {
     }
 
     /**
+     * [{name: 'prop_fncwood_14a', bone: 57005, x: 0, y: 0, z: 0, pitch: 0, roll: 0, yaw: 0}]
+     * @param propsArray
+     */
+    setProps(propsArray) {
+        this.props = propsArray;
+    }
+
+    /**
      * The blip to set for the objective.
      * @param type number
      * @param color number
@@ -284,9 +293,7 @@ export class Objective {
             }
 
             filteredItems.forEach(item => {
-                console.log(item);
                 let res = player.subItemByHash(item.hash, item.quantity);
-                console.log(res);
             });
         }
 
@@ -382,6 +389,14 @@ export class Objective {
             }
         }
 
+        if (isFlagged(this.flags, modifiers.CLEAR_PROPS)) {
+            player.setSyncedMeta('job:Props', undefined);
+        }
+
+        if (this.props) {
+            player.setSyncedMeta('job:Props', this.props);
+        }
+
         // Go To Next Objective
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
@@ -411,12 +426,9 @@ export class Objective {
 
         // Checks if the player is in an job vehicle.
         if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
-            console.log('Checking vehicle flag.');
             if (!player.vehicle) {
                 valid = false;
             } else {
-                console.log('Checking vehicles list.');
-
                 const vehicles = player.vehicles.filter(x => x.job !== undefined);
 
                 let isVehicleUsed = false;
@@ -656,8 +668,6 @@ export class Job {
         let allValid = true;
         for (let i = 0; i < this.items.length; i++) {
             if (this.items[i].hasItem) {
-                console.log(this.items[i]);
-
                 if (!player.hasItem(this.items[i].label)) {
                     allValid = false;
                     player.send('You are restricted from doing this job.');
@@ -914,8 +924,6 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
                 veh.destroy();
             });
         }
-
-        console.log(player.vehicles);
     }
 
     if (playFailSound) {
@@ -933,6 +941,7 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
 
     if (player.job) player.job = undefined;
     player.emitMeta('job:ClearObjective', true);
+    player.setSyncedMeta('job:Props', undefined);
 }
 
 export function copyObjective(original) {

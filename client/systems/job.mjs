@@ -25,6 +25,7 @@ let target;
 let targetBlip = false;
 let soundCooldown = Date.now();
 let projectileCooldown = Date.now();
+let props = [];
 
 const types = {
     0: point, // Go to Point
@@ -45,7 +46,9 @@ export const modifiers = {
     KILL_PLAYER: 64,
     REPAIR_PLAYER: 128,
     GOTO_PLAYER: 256,
-    MAX: 512
+    REMOVE_ITEM: 512,
+    CLEAR_PROPS: 1024,
+    MAX: 2048
 };
 
 const metaTypes = {
@@ -89,6 +92,13 @@ function setupObjective(value) {
     objectiveInfo = alt.setInterval(intervalObjectiveInfo, 0);
     objectiveChecking = alt.setInterval(intervalObjectiveChecking, 100);
     pause = false;
+}
+
+function clearProps() {
+    props.forEach(prop => {
+        native.deleteEntity(prop);
+    });
+    props = [];
 }
 
 /**

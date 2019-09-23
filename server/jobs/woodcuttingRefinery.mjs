@@ -21,14 +21,14 @@ interactionPoint.z -= 0.5;
 let interaction = new Interaction(
     interactionPoint,
     'job',
-    'job:SmithingRefinery',
+    'job:LumberRefinery',
     3,
     3,
     'to begin the refinery process.'
 );
 interaction.addBlip(648, 2, jobName);
 
-alt.on('job:SmithingRefinery', player => {
+alt.on('job:LumberRefinery', player => {
     let job = new Job(
         player,
         jobName,

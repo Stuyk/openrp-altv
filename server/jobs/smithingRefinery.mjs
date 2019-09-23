@@ -80,7 +80,9 @@ alt.on('job:SmithingRefinery', player => {
     obj.setFinishedSound('complete');
     obj.setRewards([{ type: 'xp', prop: 'smithing', quantity: 5 }]);
     obj.setMaxProgress(5);
-    obj.setAnimationAndSound('anim@heists@load_box', 'load_box_2', 1, -1, '', 0.36);
+    obj.setAnimationAndSound('anim@heists@load_box', 'load_box_2', 1, -1, [
+        { name: 'incinerate', time: 0.38 }
+    ]);
     // markanim anim@heists@load_box load_box_2
     obj.setParticleEffect([
         {

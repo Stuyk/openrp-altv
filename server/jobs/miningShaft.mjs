@@ -92,10 +92,26 @@ alt.on('job:MiningShaft', player => {
             'ground_attack_on_spot',
             1,
             -1,
-            'dirt',
-            0.35
-        );
-        obj.setParticleEffect('core', 'ent_col_rocks', 100, true);
+            [{ name: 'dirt', time: 0.35 }]
+        ); // markanim melee@large_wpn@streamed_core ground_attack_on_spot
+        obj.setParticleEffect([
+            {
+                dict: 'core',
+                name: 'ent_dst_rocks',
+                duration: 20,
+                scale: 1,
+                offset: { x: 0, y: 0.8, z: -1 },
+                time: 0.35 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_anim_dusty_hands',
+                duration: 5,
+                scale: 3.5,
+                offset: { x: 0, y: -0.2, z: 1 },
+                time: 0.65
+            }
+        ]);
         job.add(copyObjective(obj));
     });
     job.start(player);

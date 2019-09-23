@@ -65,3 +65,36 @@ function setupSlot(propID, entity, value) {
     );
     entity.setMeta(`prop:${propID}`, object);
 }
+
+alt.onServer('tryprop', (prop, bone, x, y, z, pitch, roll, yaw) => {
+    const object = native.createObject(
+        native.getHashKey(prop),
+        0,
+        0,
+        0,
+        true,
+        true,
+        true
+    );
+    native.attachEntityToEntity(
+        object,
+        alt.Player.local.scriptID,
+        native.getPedBoneIndex(alt.Player.local.scriptID, bone),
+        x,
+        y,
+        z,
+        pitch,
+        roll,
+        yaw,
+        true,
+        true,
+        false,
+        true,
+        1,
+        true
+    );
+
+    alt.setTimeout(() => {
+        native.deleteEntity(object);
+    }, 5000);
+});

@@ -97,10 +97,27 @@ alt.on('job:MiningQuarry', player => {
             'ground_attack_on_spot',
             1,
             -1,
-            'dirt',
-            0.35
+            [{ name: 'dirt', time: 0.35 }]
         );
-        obj.setParticleEffect('core', 'ent_col_rocks', 100, true);
+        // core ent_dst_rocks 20 1 0 0.8 -1
+        obj.setParticleEffect([
+            {
+                dict: 'core',
+                name: 'ent_dst_rocks',
+                duration: 20,
+                scale: 1,
+                offset: { x: 0, y: 0.8, z: -1 },
+                time: 0.35 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_anim_dusty_hands',
+                duration: 5,
+                scale: 2.5,
+                offset: { x: 0, y: -0.2, z: 1 },
+                time: 0.65
+            }
+        ]);
         job.add(copyObjective(obj));
     });
 

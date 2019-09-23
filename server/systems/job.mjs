@@ -121,6 +121,21 @@ export class Objective {
     }
 
     /**
+     * Force an animation from start of objective; to next.
+     * @param dict
+     * @param name
+     * @param flag
+     */
+    setForcedAnim(dict, name, flag) {
+        this.forcedAnim = {
+            dict,
+            name,
+            flag,
+            duration: -1
+        };
+    }
+
+    /**
      * Requires Animiation to Work
      * @param dict
      * @param name

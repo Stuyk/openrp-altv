@@ -27,7 +27,7 @@ let interaction = new Interaction(
     3,
     'to begin the refinery process.'
 );
-interaction.addBlip(648, 2, jobName);
+interaction.addBlip(648, 6, jobName);
 
 alt.on('job:SmithingRefinery', player => {
     let job = new Job(
@@ -139,7 +139,7 @@ alt.on('job:SmithingRefinery', player => {
             {
                 dict: 'core',
                 name: 'ent_brk_metal_frag',
-                duration: 10,
+                duration: 100,
                 scale: 1,
                 offset: { x: 0.2, y: 0.5, z: 0.8 },
                 time: 0.06 // Animation times to play at.
@@ -147,7 +147,7 @@ alt.on('job:SmithingRefinery', player => {
             {
                 dict: 'core',
                 name: 'ent_brk_metal_frag',
-                duration: 10,
+                duration: 100,
                 scale: 1,
                 offset: { x: 0.2, y: 0.5, z: 0.8 },
                 time: 0.23 // Animation times to play at.
@@ -155,7 +155,7 @@ alt.on('job:SmithingRefinery', player => {
             {
                 dict: 'core',
                 name: 'ent_brk_metal_frag',
-                duration: 10,
+                duration: 100,
                 scale: 1,
                 offset: { x: 0.2, y: 0.5, z: 0.8 },
                 time: 0.4 // Animation times to play at.
@@ -163,7 +163,7 @@ alt.on('job:SmithingRefinery', player => {
             {
                 dict: 'core',
                 name: 'ent_brk_metal_frag',
-                duration: 10,
+                duration: 100,
                 scale: 1,
                 offset: { x: 0.2, y: 0.5, z: 0.8 },
                 time: 0.55 // Animation times to play at.
@@ -171,7 +171,7 @@ alt.on('job:SmithingRefinery', player => {
             {
                 dict: 'core',
                 name: 'ent_brk_metal_frag',
-                duration: 10,
+                duration: 100,
                 scale: 1,
                 offset: { x: 0.2, y: 0.5, z: 0.8 },
                 time: 0.71 // Animation times to play at.
@@ -179,7 +179,7 @@ alt.on('job:SmithingRefinery', player => {
             {
                 dict: 'core',
                 name: 'ent_brk_metal_frag',
-                duration: 10,
+                duration: 100,
                 scale: 1,
                 offset: { x: 0.2, y: 0.5, z: 0.8 },
                 time: 0.87 // Animation times to play at.

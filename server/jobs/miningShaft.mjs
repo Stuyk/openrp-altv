@@ -33,7 +33,7 @@ let interaction = new Interaction(
     3,
     'to begin mining for ore.'
 );
-interaction.addBlip(78, 2, jobName);
+interaction.addBlip(78, 6, jobName);
 
 alt.on('job:MiningShaft', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
@@ -98,7 +98,7 @@ alt.on('job:MiningShaft', player => {
             {
                 dict: 'core',
                 name: 'ent_dst_rocks',
-                duration: 20,
+                duration: 200,
                 scale: 1,
                 offset: { x: 0, y: 0.8, z: -1 },
                 time: 0.35 // Animation times to play at.
@@ -106,7 +106,7 @@ alt.on('job:MiningShaft', player => {
             {
                 dict: 'core',
                 name: 'ent_anim_dusty_hands',
-                duration: 5,
+                duration: 200,
                 scale: 3.5,
                 offset: { x: 0, y: -0.2, z: 1 },
                 time: 0.65

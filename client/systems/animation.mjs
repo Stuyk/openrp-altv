@@ -25,8 +25,11 @@ alt.on('animation:Play', (player, data) => {
 });
 
 alt.on('animation:Clear', ent => {
-    native.clearPedTasks(alt.Player.local.scriptID);
-    native.clearPedSecondaryTask(alt.Player.local.scriptID);
+    alt.Player.local.inAnimation = false;
+    if (!alt.Player.local.vehicle) {
+        native.clearPedTasks(alt.Player.local.scriptID);
+        native.clearPedSecondaryTask(alt.Player.local.scriptID);
+    }
 });
 
 export function playAnimation(player, dict, name, duration, flag) {

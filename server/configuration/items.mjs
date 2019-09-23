@@ -606,6 +606,21 @@ export const Items = {
             description: 'A hunk of unrefined wood.'
         }
     },
+    RefinedWood: {
+        label: 'Refined Wood',
+        stackable: true,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        icon: 'planks',
+        props: {
+            description: 'A stack of refined wood.'
+        }
+    },
     Pickaxe1: {
         label: 'Bad Pickaxe',
         stackable: false,

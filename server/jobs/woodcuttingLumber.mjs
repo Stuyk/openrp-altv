@@ -34,7 +34,7 @@ let interaction = new Interaction(
     3,
     'to begin cutting wood.'
 );
-interaction.addBlip(77, 2, jobName);
+interaction.addBlip(77, 6, jobName);
 
 alt.on('job:LumberJack', player => {
     let job = new Job(
@@ -103,7 +103,7 @@ alt.on('job:LumberJack', player => {
             {
                 dict: 'core',
                 name: 'ent_dst_wood_splinter',
-                duration: 20,
+                duration: 25,
                 scale: 0.8,
                 offset: { x: 0, y: 1, z: 0 },
                 time: 0.2

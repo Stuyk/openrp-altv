@@ -523,17 +523,23 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
-    player.getItemQuantity = itemName => {
-        let items = player.inventory.filter(x => x !== null && x !== undefined);
-        if (items.length <= 0) return 0;
-        let count = 0;
-        let foundItems = [];
+    player.getItemsByLabel = label => {
+        const items = player.inventory.filter(x => x && x.label === label);
+
+        if (items.length <= 0) {
+            return [];
+        }
+
+        let filteredItems = [];
         items.forEach(item => {
-            if (!item.label.includes(itemName)) return;
-            count += item.quantity;
-            foundItems.push({ hash: item.hash, quantity: item.quantity });
+            filteredItems.push({
+                label: item.label,
+                quantity: item.quantity,
+                hash: item.hash
+            });
         });
-        return { count, items: foundItems };
+
+        return filteredItems;
     };
 
     player.subItemByHash = (itemHash, quantity) => {

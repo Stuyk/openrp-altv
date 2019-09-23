@@ -7,21 +7,21 @@ import { addXP, setXP } from '../systems/skills.mjs';
 console.log('Loaded: commands->sandbox.mjs');
 
 // Development sandbox commands
-const sandboxhelp = [	
-    //	
-    '/b, /me, /do',	
-    '/addveh (model)',	
-    '/addcash (amount)',	
-    '/addwep (name)',	
-    '/face, /addxp, /setxp',	
-    '/granola, /coffee',	
-    '/tpto (rp-name)',	
-    '/players, /clearchat',	
-    '/taxi, /mechanic',	
-    '/cancel',	
-    '/quitjob, /getsector',	
-    '/tryparticle',	
-    '/phonenumber',	
+const sandboxhelp = [
+    //
+    '/b, /me, /do',
+    '/addveh (model)',
+    '/addcash (amount)',
+    '/addwep (name)',
+    '/face, /addxp, /setxp',
+    '/granola, /coffee',
+    '/tpto (rp-name)',
+    '/players, /clearchat',
+    '/taxi, /mechanic',
+    '/cancel',
+    '/quitjob, /getsector',
+    '/tryparticle',
+    '/phonenumber',
     '/t, /call, /addcontact, /removecontact, /hangup'
 ];
 
@@ -165,14 +165,19 @@ chat.registerCmd('setxp', (player, args) => {
     setXP(player, _skill, _amount);
 });
 
+// /tryparticle core ent_dst_gen_gobstop 5000 1 0 0 0
+// /tryparticle core ent_dst_rocks 20 1 0 1.2 -1
 chat.registerCmd('tryparticle', (player, args) => {
     const _dict = args[0];
     const _name = args[1];
     const _duration = args[2];
     const _scale = args[3];
+    const _x = parseFloat(args[4]);
+    const _y = parseFloat(args[5]);
+    const _z = parseFloat(args[6]);
 
-    if (!_dict || !_name || !_duration || !_scale) {
-        player.send(`/tryparticle <dict> <name> <duration> <scale>`);
+    if (args.length < 6) {
+        player.send(`/tryparticle dict name duration scale x y z`);
         return;
     }
 
@@ -182,6 +187,27 @@ chat.registerCmd('tryparticle', (player, args) => {
         _dict,
         _name,
         parseFloat(_duration),
-        parseFloat(_scale)
+        parseFloat(_scale),
+        _x,
+        _y,
+        _z
     );
+});
+
+// /tryprop prop_tool_mallet 57005 0.10 0.1 0 80 0 180
+chat.registerCmd('tryprop', (player, args) => {
+    const _prop = args[0];
+    const _bone = args[1];
+    const _x = parseFloat(args[2]);
+    const _y = parseFloat(args[3]);
+    const _z = parseFloat(args[4]);
+    const _pitch = parseFloat(args[5]);
+    const _roll = parseFloat(args[6]);
+    const _yaw = parseFloat(args[7]);
+    if (args.length < 7) {
+        player.send(`/tryprop prop bone x y z pitch roll yaw`);
+        return;
+    }
+
+    alt.emitClient(player, 'tryprop', _prop, _bone, _x, _y, _z, _pitch, _roll, _yaw);
 });

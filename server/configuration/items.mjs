@@ -576,6 +576,21 @@ export const Items = {
             description: 'A hunk of unrefined rock.'
         }
     },
+    RefinedMetal: {
+        label: 'Refined Metal',
+        stackable: true,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        icon: 'metal',
+        props: {
+            description: 'A hunk of refined metal.'
+        }
+    },
     UnrefinedWood: {
         label: 'Unrefined Wood',
         stackable: false,
@@ -592,7 +607,7 @@ export const Items = {
         }
     },
     Pickaxe1: {
-        label: 'Garbage Pickaxe',
+        label: 'Bad Pickaxe',
         stackable: false,
         consumeable: false,
         useitem: false,
@@ -644,7 +659,7 @@ export const Items = {
         }
     },
     Axe1: {
-        label: 'Garbage Axe',
+        label: 'Bad Axe',
         stackable: false,
         consumeable: false,
         useitem: false,
@@ -666,6 +681,32 @@ export const Items = {
                 pitch: 80,
                 roll: 0,
                 yaw: 170
+            }
+        }
+    },
+    Hammer1: {
+        label: 'Bad Hammer',
+        stackable: false,
+        consumeable: false,
+        useitem: false,
+        droppable: true,
+        eventcall: '',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        icon: 'hammer',
+        props: {
+            lvl: 0,
+            propData: {
+                name: 'prop_tool_mallet',
+                bone: 57005,
+                x: 0.1,
+                y: 0.1,
+                z: 0,
+                pitch: 80,
+                roll: 0,
+                yaw: 180
             }
         }
     }

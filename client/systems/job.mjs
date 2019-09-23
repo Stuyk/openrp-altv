@@ -24,6 +24,7 @@ let playerSpeed = 0;
 let target;
 let targetBlip = false;
 let soundCooldown = Date.now();
+let projectileCooldown = Date.now();
 
 const types = {
     0: point, // Go to Point
@@ -434,9 +435,9 @@ function playScenario() {
 }
 
 function clearScenario() {
-    if (alt.Player.local.soundInterval) {
-        alt.clearInterval(alt.Player.local.soundInterval);
-        alt.Player.local.soundInterval = undefined;
+    if (alt.Player.local.jobEffectInterval) {
+        alt.clearInterval(alt.Player.local.jobEffectInterval);
+        alt.Player.local.jobEffectInterval = undefined;
     }
 
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
@@ -472,8 +473,8 @@ function playAnimation() {
             )
         );
 
-        if (objective.anim.sound && !alt.Player.local.soundInterval) {
-            alt.Player.local.soundInterval = alt.setInterval(() => {
+        if (!alt.Player.local.jobEffectInterval) {
+            alt.Player.local.jobEffectInterval = alt.setInterval(() => {
                 native.freezeEntityPosition(alt.Player.local.scriptID, true);
                 let time = native.getEntityAnimCurrentTime(
                     alt.Player.local.scriptID,
@@ -482,38 +483,38 @@ function playAnimation() {
                 );
 
                 time = time.toFixed(2) * 1;
-                if (
-                    time === objective.anim.animationHitTime &&
-                    Date.now() > soundCooldown
-                ) {
-                    soundCooldown = Date.now() + 100;
-                    playAudio(objective.anim.sound);
+                if (objective.anim.sounds) {
+                    objective.anim.sounds.forEach(sound => {
+                        if (!sound.time) return;
+                        if (time !== sound.time) return;
+                        if (!sound.name) return;
+                        if (Date.now() < soundCooldown) return;
+                        soundCooldown = Date.now() + 100;
+                        playAudio(sound.name);
+                    });
+                }
 
-                    if (objective.particle) {
-                        let forwardVector = native.getEntityForwardVector(
-                            alt.Player.local.scriptID
-                        );
-
-                        let pos = {
-                            x: alt.Player.local.pos.x + forwardVector.x * 1.1,
-                            y: alt.Player.local.pos.y + forwardVector.y * 1.1,
-                            z: alt.Player.local.pos.z
-                        };
-
-                        if (objective.particle.isGround) {
-                            pos.z -= 0.8;
-                        }
-
+                if (objective.particles) {
+                    objective.particles.forEach(particle => {
+                        if (!particle.dict) return;
+                        if (!particle.name) return;
+                        if (!particle.duration) return;
+                        if (!particle.scale) return;
+                        if (!particle.offset) return;
+                        if (!particle.time) return;
+                        if (time !== particle.time) return;
+                        if (Date.now() < projectileCooldown) return;
+                        projectileCooldown = Date.now() + 10;
                         playParticleFX(
-                            objective.particle.dict,
-                            objective.particle.name,
-                            objective.particle.duration,
-                            0.5,
-                            pos.x,
-                            pos.y,
-                            pos.z
+                            particle.dict,
+                            particle.name,
+                            particle.duration,
+                            particle.scale,
+                            particle.offset.x,
+                            particle.offset.y,
+                            particle.offset.z
                         );
-                    }
+                    });
                 }
             }, 3);
         }
@@ -584,3 +585,6 @@ function keyHelper(e) {
         alt.log(`Logged: ${animTime}`);
     }
 }
+
+// markanim weapons@projectile@ drop_underhand
+// 35

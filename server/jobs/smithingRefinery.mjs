@@ -1,0 +1,178 @@
+import * as alt from 'alt';
+import {
+    Job,
+    Objective,
+    copyObjective,
+    objectives,
+    modifiers,
+    restrictions
+} from '../systems/job.mjs';
+import { Interaction } from '../systems/interaction.mjs';
+
+const jobName = 'Smeltery';
+const trackStart = { x: 1080.951171875, y: -1995.028076171875, z: 30.987693786621094 };
+const trackPoints = [
+    { x: 1084.63134765625, y: -1991.0196533203125, z: 29.6242618560791 },
+    { x: 1096.5064697265625, y: -1994.29638671875, z: 29.37691879272461 },
+    { x: 1102.3404541015625, y: -2004.3143310546875, z: 29.43343734741211 }
+];
+
+const interactionPoint = { ...trackStart };
+interactionPoint.z -= 0.5;
+let interaction = new Interaction(
+    interactionPoint,
+    'job',
+    'job:SmithingRefinery',
+    3,
+    3,
+    'to begin the refinery process.'
+);
+interaction.addBlip(648, 2, jobName);
+
+alt.on('job:SmithingRefinery', player => {
+    let job = new Job(
+        player,
+        jobName,
+        restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
+    );
+
+    // Set First Objective
+    const emptyVector = { x: 0, y: 0, z: 0 };
+    let obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
+    obj.setPosition(trackStart);
+    obj.setRange(5);
+    obj.setHelpText('');
+    obj.setBlip(367, 2, trackStart);
+    obj.setMarker(
+        0,
+        trackStart,
+        emptyVector,
+        emptyVector,
+        new alt.Vector3(1, 1, 1),
+        0,
+        255,
+        0,
+        100
+    );
+    job.add(copyObjective(obj));
+
+    // Infinite Loop
+    obj = new Objective(objectives.INFINITE, modifiers.MIN);
+    job.add(copyObjective(obj));
+
+    let pos = { x: 1084.591552734375, y: -2002.2899169921875, z: 31.398618698120117 };
+    obj = new Objective(objectives.HOLD, modifiers.ON_FOOT | modifiers.REMOVE_ITEM);
+    obj.setHelpText('Load Ore Into the Hopper');
+    obj.setPosition(pos);
+    obj.setBlip(367, 2, pos);
+    obj.setRange(3);
+    obj.setMarker(
+        0,
+        pos,
+        emptyVector,
+        emptyVector,
+        new alt.Vector3(1, 1, 1),
+        0,
+        255,
+        0,
+        100
+    );
+    obj.setFinishedSound('complete');
+    obj.setRewards([{ type: 'xp', prop: 'smithing', quantity: 5 }]);
+    obj.setMaxProgress(5);
+    obj.setAnimationAndSound('anim@heists@load_box', 'load_box_2', 1, -1, '', 0.36);
+    // markanim anim@heists@load_box load_box_2
+    obj.setParticleEffect([
+        {
+            dict: 'core',
+            name: 'ent_amb_smoke_gaswork',
+            duration: 575,
+            scale: 1,
+            offset: { x: 0, y: 1, z: 0.8 },
+            time: 0.38 // Animation times to play at.
+        }
+    ]);
+    obj.setRemoveItem([{ label: 'Unrefined Rock', quantity: 1 }]);
+    job.add(copyObjective(obj));
+
+    // Setup the rest of the points.
+    trackPoints.forEach(pos => {
+        obj = new Objective(objectives.MASH, modifiers.ON_FOOT);
+        obj.setHelpText('Mine ore by mashing ~INPUT_CONTEXT~');
+        obj.setPosition(pos);
+        obj.setBlip(367, 2, pos);
+        obj.setRange(3);
+        obj.setMarker(
+            0,
+            pos,
+            emptyVector,
+            emptyVector,
+            new alt.Vector3(1, 1, 1),
+            0,
+            255,
+            0,
+            100
+        );
+        obj.setFinishedSound('complete');
+        obj.setRewards([
+            { type: 'xp', prop: 'smithing', quantity: 20 },
+            { type: 'item', prop: 'RefinedMetal', quantity: 1 }
+        ]);
+        obj.setMaxProgress(10);
+        obj.setAnimationAndSound('amb@world_human_hammering@male@base', 'base', 1, -1);
+        obj.setParticleEffect([
+            {
+                dict: 'core',
+                name: 'ent_brk_metal_frag',
+                duration: 10,
+                scale: 1,
+                offset: { x: 0.2, y: 0.5, z: 0.8 },
+                time: 0.06 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_brk_metal_frag',
+                duration: 10,
+                scale: 1,
+                offset: { x: 0.2, y: 0.5, z: 0.8 },
+                time: 0.23 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_brk_metal_frag',
+                duration: 10,
+                scale: 1,
+                offset: { x: 0.2, y: 0.5, z: 0.8 },
+                time: 0.4 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_brk_metal_frag',
+                duration: 10,
+                scale: 1,
+                offset: { x: 0.2, y: 0.5, z: 0.8 },
+                time: 0.55 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_brk_metal_frag',
+                duration: 10,
+                scale: 1,
+                offset: { x: 0.2, y: 0.5, z: 0.8 },
+                time: 0.71 // Animation times to play at.
+            },
+            {
+                dict: 'core',
+                name: 'ent_brk_metal_frag',
+                duration: 10,
+                scale: 1,
+                offset: { x: 0.2, y: 0.5, z: 0.8 },
+                time: 0.87 // Animation times to play at.
+            }
+        ]);
+        job.add(copyObjective(obj));
+        // markanim amb@world_human_hammering@male@base base
+    });
+
+    job.start(player);
+});

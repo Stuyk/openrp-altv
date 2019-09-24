@@ -4,12 +4,14 @@ import { distance } from '/client/utility/vector.mjs';
 import { drawMarker } from '/client/utility/marker.mjs';
 import { playAudio } from '/client/systems/sound.mjs';
 import { playParticleFX } from '/client/utility/particle.mjs';
+import { drawText3d } from '/client/utility/text.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
 
 /**
  * Intervals
  */
+const regex = new RegExp('^[a-zA-Z]{1}$');
 let objectiveInfo;
 let objectiveChecking;
 let objective;
@@ -25,7 +27,6 @@ let target;
 let targetBlip = false;
 let soundCooldown = Date.now();
 let projectileCooldown = Date.now();
-let props = [];
 
 const types = {
     0: point, // Go to Point
@@ -33,7 +34,8 @@ const types = {
     2: hold, // Hold 'E'
     3: mash, // Mash 'E'
     4: player, // Target
-    5: order // Press Keys in Order
+    5: order, // Press Keys in Order
+    7: wait
 };
 
 export const modifiers = {
@@ -106,15 +108,44 @@ function setupObjective(value) {
         });
     }
 
+    if (objective.type === 5) {
+        alt.Player.local.setMeta('job:KeyPressEvent', true);
+        alt.on('keyup', keyPressEvents);
+    }
+
     objectiveInfo = alt.setInterval(intervalObjectiveInfo, 0);
     objectiveChecking = alt.setInterval(intervalObjectiveChecking, 100);
     pause = false;
+}
+
+function keyPressEvents(e) {
+    if (!objective) return;
+    if (pause) return;
+    let key = String.fromCharCode(e).toLowerCase();
+
+    if (!key.match(regex)) {
+        return;
+    }
+
+    if (key !== objective.word[0].toLowerCase()) {
+        alt.off('keyup', keyPressEvents);
+        alt.emitServer('job:SkipToBeginning');
+        return;
+    }
+
+    objective.word.shift();
+    if (objective.word.length <= 0) {
+        alt.emitServer('job:Check');
+        return;
+    }
 }
 
 /**
  * Clear the current objective.
  */
 function clearObjective() {
+    alt.off('keyup', keyPressEvents);
+    alt.Player.local.setMeta('job:KeyPressEvent', false);
     pause = true;
     objective = undefined;
     clearScenario();
@@ -208,6 +239,24 @@ function intervalObjectiveInfo() {
             objective.marker.g,
             objective.marker.b,
             objective.marker.a
+        );
+    }
+
+    if (objective.word && objective.word.length >= 1 && objective.marker) {
+        native.disableAllControlActions(0);
+        native.disableAllControlActions(1);
+        drawText3d(
+            objective.word.join(''),
+            objective.marker.pos.x,
+            objective.marker.pos.y,
+            objective.marker.pos.z + 1,
+            0.5,
+            4,
+            255,
+            255,
+            255,
+            255,
+            true
         );
     }
 
@@ -410,7 +459,28 @@ function mash() {
     return false;
 }
 
-function order() {}
+function wait() {
+    if (playerSpeed >= 5 && !alt.Player.local.inScenario) {
+        clearScenario();
+        return false;
+    }
+
+    if (Date.now() < objective.modifiedWaitTime) {
+        if (!alt.Player.local.inAnimation) {
+            playAnimation();
+        }
+        return false;
+    }
+
+    return true;
+}
+
+function order() {
+    if (!alt.Player.local.inAnimation) {
+        playAnimation();
+    }
+    return false;
+}
 
 /**
  * Check if the target has been set.
@@ -486,7 +556,7 @@ function playAnimation() {
             objective.anim.name,
             1,
             -1,
-            -1,
+            objective.anim.duration,
             objective.anim.flag,
             1.0,
             false,
@@ -560,7 +630,12 @@ let _name;
 
 alt.on('consoleCommand', (cmd, ...args) => {
     if (cmd === 'markanim') {
-        [_dict, _name] = args;
+        let [_dict, _name, _time] = args;
+        if (!_time) {
+            _time = 8000;
+        }
+
+        alt.log(`markanim ${_dict} ${_name}`);
         loadAnim(_dict).then(res => {
             native.taskPlayAnim(
                 alt.Player.local.scriptID,
@@ -576,21 +651,23 @@ alt.on('consoleCommand', (cmd, ...args) => {
                 false
             );
 
-            alt.nextTick(() => {
-                const totalTime = native.getEntityAnimTotalTime(
-                    alt.Player.local.scriptID,
-                    _dict,
-                    _name
-                );
-                alt.log(`Total Time: ${totalTime}`);
+            alt.setTimeout(() => {
+                alt.nextTick(() => {
+                    const totalTime = native.getEntityAnimTotalTime(
+                        alt.Player.local.scriptID,
+                        _dict,
+                        _name
+                    );
+                    alt.log(`Total Time: ${totalTime}`);
 
-                alt.on('keydown', keyHelper);
-                alt.setTimeout(() => {
-                    alt.log('Cleared');
-                    alt.off('keydown', keyHelper);
-                    native.clearPedTasksImmediately(alt.Player.local.scriptID);
-                }, 8000);
-            });
+                    alt.on('keydown', keyHelper);
+                    alt.setTimeout(() => {
+                        alt.log('Cleared');
+                        alt.off('keydown', keyHelper);
+                        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+                    }, _time * 1);
+                });
+            }, 20);
         });
     }
 });
@@ -608,4 +685,49 @@ function keyHelper(e) {
 }
 
 // markanim weapons@projectile@ drop_underhand
-// 35
+
+/**
+ * Creates a 'fish'
+ * and then drops the fish into the water.
+ * Then it checks if the fish is in the water.
+ * If it's not then it returns false.
+ */
+alt.onServer('job:isInWater', callbackName => {
+    const id = alt.Player.local.scriptID;
+    const fwd = native.getEntityForwardVector(id);
+    const pPos = alt.Player.local.pos;
+    let pos = {
+        x: pPos.x + fwd.x * 10,
+        y: pPos.y + fwd.y * 10,
+        z: pPos.z
+    };
+
+    const [_, height] = native.testVerticalProbeAgainstAllWater(
+        pos.x,
+        pos.y,
+        pos.z,
+        undefined,
+        undefined
+    );
+
+    if (height === 0) {
+        alt.emitServer(callbackName, callbackName, false);
+        return;
+    }
+
+    const hash = native.getHashKey('a_c_fish');
+    native.requestModel(hash);
+    alt.nextTick(() => {
+        const entity = native.createPed(1, hash, pos.x, pos.y, pos.z, 0, false, false);
+        native.setEntityAlpha(entity, 0, true);
+
+        alt.setTimeout(() => {
+            alt.nextTick(() => {
+                const inWater = native.isEntityInWater(entity);
+                pos.z = height;
+                alt.emitServer(callbackName, callbackName, inWater, pos);
+                native.deleteEntity(entity);
+            });
+        }, 3500);
+    });
+});

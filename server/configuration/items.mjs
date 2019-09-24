@@ -724,5 +724,35 @@ export const Items = {
                 yaw: 180
             }
         }
+    },
+    FishingRod1: {
+        label: 'Fishing Rod',
+        stackable: false,
+        consumeable: false,
+        useitem: true,
+        droppable: true,
+        eventcall: 'job:Fishing',
+        sellable: true,
+        message: '',
+        quantity: 0,
+        slot: 37,
+        icon: 'fishingrod',
+        props: {
+            lvl: 0,
+            propData: {
+                name: 'prop_fishing_rod_01',
+                bone: 18905,
+                x: 0.1,
+                y: 0.05,
+                z: 0,
+                pitch: 80,
+                roll: 120,
+                yaw: 160
+            }
+        }
+        // /tryprop prop_fishing_rod_01 18905 0.1 0.05 0 80 120 160
+        // /tryprop prop_fishing_rod_01 18905 0.11 0.18 -0.1 90 90 150
+        //  API.playPlayerAnimation(player, 1, "amb@world_human_stand_fishing@idle_a", "idle_c");
+        // markanim amb@world_human_stand_fishing@base base
     }
 };

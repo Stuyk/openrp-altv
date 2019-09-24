@@ -104,7 +104,7 @@ alt.on('job:MiningQuarry', player => {
             {
                 dict: 'core',
                 name: 'ent_dst_rocks',
-                duration: 200,
+                duration: 50,
                 scale: 1,
                 offset: { x: 0, y: 0.8, z: -1 },
                 time: 0.35 // Animation times to play at.

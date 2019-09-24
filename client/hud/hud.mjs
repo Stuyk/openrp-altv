@@ -22,6 +22,7 @@ function loadInterval(key, value) {
 
 function startInterval() {
     if (Date.now() > cooldown) {
+        native.invalidateIdleCam();
         cooldown = Date.now() + 2500;
         isMetric = native.getProfileSetting(227);
         updateLocation();

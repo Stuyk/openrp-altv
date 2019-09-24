@@ -60,6 +60,7 @@ alt.on('ConnectionComplete', () => {
     import('./systems/grid.mjs');
 
     // Jobs
+    import('./jobs/fishing.mjs');
     import('./jobs/agilityTrack.mjs');
     import('./jobs/agilityWorkout.mjs');
     import('./jobs/agilityMtnBike1.mjs');

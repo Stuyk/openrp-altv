@@ -78,6 +78,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [ ] Skill System
     -   [x] Agility (Sprint Modifier)
         -   Increase Stamina
+        -   Increase Level of Stamina
+        -   Run Longer / Swim Longer
     -   [ ] Cooking (Craft Better Food)
         -   Create Better Healing Food
         -   Create Better Healing Drinks
@@ -99,19 +101,28 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   Medicinal Jobs
         -   Police Jobs
         -   Firefighter Jobs
-    -   [ ] Mining (Gather more items from Mining, use better equipment)
-        -   Basically better pickaxes that mine more.
     -   [ ] Gathering (Gather more items for Drug Crafting)
         -   Basically use better gathering items.
-    -   [ ] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
+    -   [x] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
         -   Repair Quicker on Mechanic Job
         -   Use Repair Kits After Level 75+
     -   [ ] Crafting (Better Quality Items)
+        -   Craft Weapons
         -   Craft Better Pickaxes
-        -   Craft Better Guns
         -   Craft Better Gathering Items
+        -   Craft Better Hammers
         -   Craft Repair Kits
         -   All Crafting Items Take Metal
+    -   [x] Woodcutting
+        -   Craft Refined Wood for Weapons / Tools
+        -   Unrefined Wood
+        -   Refined Wood
+    -   [x] Smithing
+        -   Craft Metal for Weapons / Tools
+        -   Refined Metal
+    -   [x] Mining (Gather more items from Mining, use better equipment)
+        -   Basically better pickaxes that mine faster.
+        -   Unrefined Rock
 -   [ ] Drug System
     -   [ ] Drugs for Health (Healium)
     -   [ ] Drugs for Armor (Kevlarium)

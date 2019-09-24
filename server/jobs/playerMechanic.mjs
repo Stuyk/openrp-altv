@@ -79,6 +79,7 @@ alt.on('job:MechanicJob', player => {
     obj.setBlip(1, 1, new alt.Vector3(0, 0, 0));
     obj.setHelpText('Go to your customer...');
     obj.setAnimationScenario('world_human_vehicle_mechanic');
+    obj.obj.setRewards([{ type: 'xp', prop: 'mechanic', quantity: 500 }]);
     job.add(copyObjective(obj));
 
     job.start(player);

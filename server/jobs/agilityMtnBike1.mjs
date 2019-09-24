@@ -58,7 +58,7 @@ interactionPoint.z -= 0.5;
 let interaction = new Interaction(
     interactionPoint,
     'job',
-    'job:AgilityTrack',
+    'job:MtnBike1',
     3,
     3,
     'to begin training agility.'
@@ -96,7 +96,7 @@ alt.on('teleport:GondolaBottom', player => {
     player.pos = gondolaBottom;
 });
 
-alt.on('job:AgilityTrack', player => {
+alt.on('job:MtnBike1', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
 
     // Set First Objective

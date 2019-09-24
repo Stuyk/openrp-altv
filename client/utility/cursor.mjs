@@ -17,5 +17,7 @@ export function showCursor(value) {
         return;
     }
 
-    alt.showCursor(false);
+    try {
+        alt.showCursor(false);
+    } catch (e) {}
 }

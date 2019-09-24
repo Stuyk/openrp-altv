@@ -16,7 +16,7 @@ alt.on('meta:Changed', loadInterval);
 // Only starts the interval after the player has logged in.
 function loadInterval(key, value) {
     if (key !== 'loggedin') return;
-    alt.setInterval(startInterval, 100);
+    alt.setInterval(startInterval, 0);
     alt.off('meta:Changed', loadInterval);
 }
 
@@ -33,6 +33,21 @@ function startInterval() {
     } else {
         alt.emit('hud:SetSpeed', '');
     }
+
+    if (!alt.Player.local.vehicle) {
+        const sprintTime = native.getPlayerSprintStaminaRemaining(
+            alt.Player.local.scriptID
+        );
+        const timeLeft = 100 - sprintTime;
+        if (timeLeft !== 100) {
+            sprint(timeLeft);
+        }
+    }
+}
+
+function sprint(sprintTimeLeft) {
+    let progress = sprintTimeLeft / 100;
+    native.drawRect(progress / 2, 0, progress, 0.01, 255, 255, 255, 150);
 }
 
 function vehicleHudData() {

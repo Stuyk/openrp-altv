@@ -10,7 +10,13 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: 0
+            date: false,
+            roleplayname: '',
+            currentYear: new Date().getFullYear(),
+            errors: {
+                name: false,
+                dob: false
+            }
         };
     }
 
@@ -18,58 +24,43 @@ class App extends Component {
         const result = regex.test(e.target.value);
 
         if (!result) {
-            this.setState({
-                feedback: 'Username is not roleplay format. ie. Joe_Don',
-                usernamevalid: false,
-                allvalid: false
-            });
+            this.state.errors.name = true;
+            this.setState();
             return;
         }
 
-        this.setState({
-            roleplayname: e.target.value,
-            feedback: 'Username is valid.',
-            usernamevalid: true,
-            allvalid: false
-        });
-
-        if (this.state.datevalid && this.state.usernamevalid) {
-            this.setState({ allvalid: true });
-        }
+        this.state.errors.name = false;
+        this.setState({ roleplayname: e.target.value });
     }
 
     dateChange(e) {
-        const currentYear = new Date().getFullYear();
-        const year = new Date(e.target.value).getFullYear();
-        if (year <= 1920 || year > currentYear) {
-            this.setState({
-                feedback: `Date is invalid. Year must be between 1920 and ${currentYear}`,
-                datevalid: false,
-                allvalid: false
-            });
+        if (!this.dateValid(e.target.value)) {
+            this.state.errors.dob = true;
+            this.setState();
             return;
         }
 
-        this.setState({
-            date: new Date(e.target.value).getTime(),
-            feedback: 'Date is valid.',
-            datevalid: true,
-            allvalid: false
-        });
+        this.state.errors.dob = false;
+        this.setState({ date: e.target.value });
+    }
 
-        if (this.state.datevalid && this.state.usernamevalid) {
-            this.setState({ allvalid: true });
-        }
+    dateValid(date) {
+        date = new Date(date);
+
+        if (!date || isNaN(date.getTime())) return false;
+
+        if (date.getFullYear() <= 1920) return false;
+
+        if (date.getFullYear() > this.state.currentYear) return false;
+
+        return true;
     }
 
     submit() {
         const result = regex.test(this.state.roleplayname);
         if (!result) {
-            this.setState({
-                feedback: 'Username is not roleplay format. ie. Joe_Don',
-                usernamevalid: false,
-                allvalid: false
-            });
+            this.state.errors.name = true;
+            this.setState();
             return;
         }
 
@@ -78,6 +69,8 @@ class App extends Component {
                 name: this.state.roleplayname,
                 dob: this.state.date
             });
+        } else {
+            console.log([this.state.roleplayname, this.state.date]);
         }
     }
 
@@ -90,11 +83,7 @@ class App extends Component {
                 { class: 'header' },
                 h('div', { class: 'logo' }, 'Set Roleplay Info')
             ),
-            h(
-                'div',
-                { class: 'animated flash container' },
-                h('p', { class: 'center-feedback', id: 'feedback' }, this.state.feedback)
-            ),
+            h('div', { class: 'animated flash container' }, ''), // @FIXME - Personally like it as a placeholder, lol
             h(
                 'div',
                 {
@@ -107,7 +96,8 @@ class App extends Component {
                     h(
                         'div',
                         {
-                            class: 'content'
+                            class: this.state.errors.name ? 'content error' : 'content',
+                            id: 'name'
                         },
                         h('p', {}, 'Roleplay Name'),
                         h('input', {
@@ -115,7 +105,8 @@ class App extends Component {
                             name: 'value',
                             placerholder: 'value',
                             oninput: this.nameChange.bind(this)
-                        })
+                        }),
+                        h('span', {}, 'Username is not roleplay format. ie. Joe_Don')
                     )
                 ),
                 h(
@@ -124,7 +115,8 @@ class App extends Component {
                     h(
                         'div',
                         {
-                            class: 'content'
+                            class: this.state.errors.dob ? 'content error' : 'content',
+                            id: 'dob'
                         },
                         h('p', {}, 'Date of Birth'),
                         h('input', {
@@ -132,13 +124,20 @@ class App extends Component {
                             name: 'value',
                             placerholder: 'value',
                             oninput: this.dateChange.bind(this)
-                        })
+                        }),
+                        h(
+                            'span',
+                            {},
+                            `Date is invalid. Date must be between 1920 and ${this.state.currentYear}`
+                        )
                     )
                 ),
                 h(
                     'div',
                     { class: 'container' },
-                    this.state.allvalid &&
+                    !this.state.errors.name &&
+                        !this.state.errors.dob &&
+                        this.state.date &&
                         h(
                             'div',
                             { class: 'center' },

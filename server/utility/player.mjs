@@ -483,6 +483,7 @@ export function setupPlayerFunctions(player) {
         if (player.inventory[37]) {
             if (player.inventory[37].props.hash) {
                 player.setWeapon(player.inventory[37].props.hash);
+                player.setSyncedMeta('prop:37', undefined);
             } else {
                 player.setSyncedMeta('prop:37', player.inventory[37].props.propData);
             }

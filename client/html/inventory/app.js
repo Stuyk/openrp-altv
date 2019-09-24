@@ -16,6 +16,7 @@ const itemIcons = {
     phone: 'phone',
     metal: 'metal',
     hammer: 'hammer',
+    planks: 'planks',
     28: 'hat',
     29: 'bandana',
     30: 'shirt',

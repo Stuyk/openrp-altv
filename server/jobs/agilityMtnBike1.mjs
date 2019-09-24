@@ -58,12 +58,12 @@ interactionPoint.z -= 0.5;
 let interaction = new Interaction(
     interactionPoint,
     'job',
-    'job:AgilityTrack',
+    'job:MtnBike1',
     3,
     3,
     'to begin training agility.'
 );
-interaction.addBlip(126, 2, jobName);
+interaction.addBlip(126, 6, jobName);
 
 let gondolaBottom = { x: -738.5142211914062, y: 5595.1279296875, z: 40.65458297729492 };
 let gondolaTop = { x: 444.1629333496094, y: 5571.96533203125, z: 780.1889038085938 };
@@ -96,7 +96,7 @@ alt.on('teleport:GondolaBottom', player => {
     player.pos = gondolaBottom;
 });
 
-alt.on('job:AgilityTrack', player => {
+alt.on('job:MtnBike1', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
 
     // Set First Objective

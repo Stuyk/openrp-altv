@@ -74,7 +74,6 @@ function setupObjective(value) {
     pause = true;
     objective = JSON.parse(value);
 
-    alt.log(`MODIFIER FLAGS: ${objective.flags}`);
     if (objective.blip) {
         if (objective.blip.pos.x + objective.blip.pos.y !== 0) {
             blip = new alt.PointBlip(
@@ -89,16 +88,27 @@ function setupObjective(value) {
         }
     }
 
+    if (objective.forcedAnim) {
+        loadAnim(objective.forcedAnim.dict).then(res => {
+            native.taskPlayAnim(
+                alt.Player.local.scriptID,
+                objective.forcedAnim.dict,
+                objective.forcedAnim.name,
+                1,
+                -1,
+                -1,
+                objective.forcedAnim.flag,
+                1.0,
+                false,
+                false,
+                false
+            );
+        });
+    }
+
     objectiveInfo = alt.setInterval(intervalObjectiveInfo, 0);
     objectiveChecking = alt.setInterval(intervalObjectiveChecking, 100);
     pause = false;
-}
-
-function clearProps() {
-    props.forEach(prop => {
-        native.deleteEntity(prop);
-    });
-    props = [];
 }
 
 /**
@@ -108,6 +118,15 @@ function clearObjective() {
     pause = true;
     objective = undefined;
     clearScenario();
+
+    if (
+        !alt.Player.local.vehicle &&
+        !native.isPedSwimming(alt.Player.local.scriptID) &&
+        native.isPedStill(alt.Player.local.scriptID)
+    ) {
+        native.clearPedTasks(alt.Player.local.scriptID);
+        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+    }
 
     if (objectiveInfo) {
         alt.clearInterval(objectiveInfo);
@@ -122,10 +141,6 @@ function clearObjective() {
     if (blip && !targetBlip) {
         blip.destroy();
         blip = undefined;
-    }
-
-    if (!alt.Player.local.vehicle) {
-        native.clearPedTasks(alt.Player.local.scriptID);
     }
 
     mashing = 0;
@@ -450,6 +465,10 @@ function clearScenario() {
         alt.Player.local.jobEffectInterval = undefined;
     }
 
+    if (objective) {
+        if (objective.forcedAnim) return;
+    }
+
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     alt.Player.local.inScenario = false;
     alt.Player.local.inAnimation = false;
@@ -473,14 +492,6 @@ function playAnimation() {
             false,
             false,
             false
-        );
-
-        alt.log(
-            native.getEntityAnimTotalTime(
-                alt.Player.local.scriptID,
-                objective.anim.dict,
-                objective.anim.name
-            )
         );
 
         if (!alt.Player.local.jobEffectInterval) {

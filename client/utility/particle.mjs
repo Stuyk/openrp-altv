@@ -29,13 +29,6 @@ export function playParticleFX(dict, name, duration, scale, x = 0, y = 0, z = 0)
     }, 0);
 
     alt.setTimeout(() => {
-        particles.forEach(particle => {
-            alt.nextTick(() => {
-                native.removeParticleFxFromEntity(alt.Player.local.scriptID);
-                native.removeParticleFx(particle, false);
-                native.stopParticleFxLooped(particle, false);
-            });
-        });
         alt.clearInterval(interval);
         native.stopFireInRange(
             alt.Player.local.pos.x,
@@ -43,5 +36,15 @@ export function playParticleFX(dict, name, duration, scale, x = 0, y = 0, z = 0)
             alt.Player.local.pos.z,
             10
         );
+
+        alt.setTimeout(() => {
+            particles.forEach(particle => {
+                alt.nextTick(() => {
+                    //native.removeParticleFxFromEntity(alt.Player.local.scriptID);
+                    //native.removeParticleFx(particle, false);
+                    native.stopParticleFxLooped(particle, false);
+                });
+            });
+        }, duration * 2);
     }, duration);
 }

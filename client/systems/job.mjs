@@ -119,7 +119,11 @@ function clearObjective() {
     objective = undefined;
     clearScenario();
 
-    if (!alt.Player.local.vehicle) {
+    if (
+        !alt.Player.local.vehicle &&
+        !native.isPedSwimming(alt.Player.local.scriptID) &&
+        native.isPedStill(alt.Player.local.scriptID)
+    ) {
         native.clearPedTasks(alt.Player.local.scriptID);
         native.clearPedTasksImmediately(alt.Player.local.scriptID);
     }

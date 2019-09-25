@@ -92,6 +92,7 @@ function keyup(key) {
 
     if (!alt.Player.local.getMeta('loggedin')) return;
     if (alt.Player.local.getMeta('chat')) return;
+    if (alt.Player.local.getMeta('job:KeyPressEvent')) return;
 
     if (cooldown) return;
     if (keybinds[key] !== undefined) {

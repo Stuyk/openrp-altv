@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import { RandomNumberGenerator } from '../utility/encryption.mjs';
 
 // Furthest Y Land Coordinate is +8000
 // Lowest Y Land Coordinate is -4000
@@ -59,5 +60,9 @@ pairs.forEach((row, sector) => {
             width: width,
             length: length
         };
+        colshape.sector.seed = new RandomNumberGenerator(
+            JSON.stringify(colshape.sector),
+            false
+        );
     });
 });

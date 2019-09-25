@@ -30,6 +30,7 @@ export function toggleDialogue() {
         return;
     }
 
+    if (alt.Player.local.getMeta('job:KeyPressEvent')) return;
     if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (!isActive) {

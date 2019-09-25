@@ -193,3 +193,20 @@ alt.on('job:SmithingRefinery', player => {
 });
 
 // markanim amb@world_human_welding@male@idle_a idle_a
+/*
+let cooldown = Date.now();
+let interval = alt.setInterval(() => {
+    if (
+        Date.now() > cooldown &&
+        game.isEntityInWater(alt.Player.local.scriptID) &&
+        !game.isPedSwimming(alt.Player.local.scriptID)
+    ) {
+        cooldown = Date.now() + 500;
+        alt.log(`This is probably water...`);
+    }
+}, 0);
+
+alt.setTimeout(() => {
+    alt.clearInterval(interval);
+}, 5000);
+*/

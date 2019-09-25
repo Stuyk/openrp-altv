@@ -8,7 +8,18 @@ let skills;
 // When the player updates their inventory.
 alt.on('meta:Changed', loadInterval);
 function loadInterval(key, value) {
-    if (key === 'skills') skills = JSON.parse(value);
+    if (key === 'skills') {
+        skills = JSON.parse(value);
+
+        const agilityLevel = getLevel(skills['agility'].xp);
+        if (alt.getStat('stamina') !== agilityLevel) {
+            alt.log('Agility stat set to: ' + agilityLevel);
+            alt.resetStat('stamina');
+            alt.setStat('stamina', Math.floor(agilityLevel / 1.3));
+        }
+        return;
+    }
+
     if (key !== 'loggedin') return;
     alt.setInterval(skillInterval, 1000);
 }
@@ -40,12 +51,6 @@ function agilitySkill() {
         validateAgility(speedVector.z)
     ) {
         alt.emitServer('skill:Agility');
-        if (skills && skills['agility']) {
-            native.restorePlayerStamina(
-                alt.Player.local.scriptID,
-                parseFloat(getLevel(skills['agility'].xp) * 0.01)
-            );
-        }
     }
 }
 

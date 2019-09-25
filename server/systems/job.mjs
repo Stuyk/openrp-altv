@@ -14,7 +14,8 @@ export const objectives = {
     MASH: 3, // Mash 'E'
     PLAYER: 4, // Player Type
     ORDER: 5, // Press Keys in Order
-    INFINITE: 6 // Repeat any objectives after this.
+    INFINITE: 6, // Repeat any objectives after this.
+    WAIT: 7
 };
 
 export const modifiers = {
@@ -56,9 +57,11 @@ export class Objective {
         this.range = 5;
         this.maxProgress = 5;
         this.progress = -1;
+        this.waitTime = 0;
+        this.useSectorWaitTime = -1;
 
-        if (this.type === 5) {
-            this.word = getWord();
+        if (this.type === objectives.ORDER) {
+            this.word = getWord().split('');
         }
     }
 
@@ -77,6 +80,18 @@ export class Objective {
 
     setAnimationScenario(name) {
         this.scenario = name;
+    }
+
+    /**
+     * Time to wait in ms before this objective is ready.
+     * @param ms
+     */
+    setWaitTime(ms) {
+        this.waitTime = ms;
+    }
+
+    useSectorForWaitTime(maxValue = 100000) {
+        this.useSectorWaitTime = maxValue;
     }
 
     /**
@@ -221,8 +236,8 @@ export class Objective {
      * an objective. 10 is minimum.
      * @param amount
      */
-    setMaxProgress(amount = 5) {
-        if (amount <= 5) amount = 5;
+    setMaxProgress(amount = 1) {
+        if (amount <= 1) amount = 1;
         this.maxProgress = amount;
     }
 
@@ -482,11 +497,9 @@ export class Objective {
             valid = mash(player, this);
         }
 
-        // Check the order objective type
-        // When the user is pressing keys in a specific
-        // order.
-        if (this.type === objectives.ORDER && valid) {
-            valid = order(player, this, args);
+        // Wait Time
+        if (this.type === objectives.WAIT && valid) {
+            valid = wait(player, this);
         }
 
         // Check the player objective type
@@ -594,14 +607,14 @@ const targetPlayer = (player, objective) => {
     return isValid;
 };
 
-// ORDER: 5, // Press Keys in Order
-const order = (player, objective, args) => {
-    //
-};
-
 const getWord = () => {
     const word = Math.floor(Math.random() * (Dictionary.length - 1));
     return Dictionary[word];
+};
+
+const wait = (player, objective) => {
+    if (objective.modifiedWaitTime > Date.now()) return false;
+    return true;
 };
 
 const playEverySound = (player, objective) => {
@@ -746,6 +759,23 @@ export class Job {
                 this.objectives[0].infinite = true;
             }
 
+            if (this.objectives[0].type === objectives.WAIT) {
+                if (this.objectives[0].useSectorWaitTime !== -1) {
+                    this.objectives[0].modifiedWaitTime =
+                        Date.now() +
+                        player.sector.seed.getNumber(
+                            this.objectives[0].useSectorWaitTime
+                        );
+                } else {
+                    this.objectives[0].modifiedWaitTime =
+                        Date.now() + this.objectives[0].waitTime;
+                }
+            }
+
+            if (this.objectives[0].type === objectives.ORDER) {
+                this.objectives[0].word = getWord().split('');
+            }
+
             if (this.objectives[0].infinite) {
                 this.clearTarget(player);
             }
@@ -834,6 +864,16 @@ export class Job {
 export function check(player) {
     if (!player.job) return;
     player.job.check(player);
+}
+
+export function skipToBeginning(player) {
+    if (!player.job) {
+        quitJob(player);
+        return;
+    }
+
+    player.playAudio('error');
+    player.job.skipToBeginning(player);
 }
 
 export function checkRestrictions(player) {

@@ -364,7 +364,7 @@ export function setupPlayerFunctions(player) {
      */
     player.saveRoleplayInfo = value => {
         player.data.name = value.name;
-        player.data.dob = value.dob;
+        player.data.dob = `${value.dob}`;
         player.setSyncedMeta('name', player.data.name);
         player.setSyncedMeta('dob', player.data.dob);
         player.saveField(player.data.id, 'name', player.data.name);

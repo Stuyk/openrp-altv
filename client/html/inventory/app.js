@@ -965,7 +965,7 @@ const Stats = ({ stats, hover }) => {
             h('div', { class: 'level' }, `${stat.lvl}/99`),
             h('svg', {
                 type: 'image/svg+xml',
-                class: `statsvg ${stat.name}`,
+                class: `svg ${stat.name}`,
                 style: `background: url('../icons/${stat.name}.svg');`
             })
         );

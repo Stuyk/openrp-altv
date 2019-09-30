@@ -22,6 +22,7 @@ export function createAreaBlip(pos, width, length, color, alpha = 100) {
     const blip = new alt.AreaBlip(pos.x, pos.y, pos.z, width, length);
     blip.color = color;
     blip.alpha = alpha;
+    blip.rotation = 0;
 
     return blip;
 }

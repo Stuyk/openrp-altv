@@ -6,6 +6,7 @@ import * as configurationPlayer from '../configuration/player.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsTime from '../systems/time.mjs';
 import * as utilityTime from '../utility/time.mjs';
+import { objectToNull } from '../utility/object.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 
 console.log('Loaded: utility->player.mjs');
@@ -160,7 +161,7 @@ export function setupPlayerFunctions(player) {
     player.applyFace = valueJSON => {
         const data = JSON.parse(valueJSON);
 
-        if (data['Sex'].value === 0) {
+        if (data.Sex.value === 0) {
             player.model = 'mp_f_freemode_01';
         } else {
             player.model = 'mp_m_freemode_01';
@@ -173,18 +174,10 @@ export function setupPlayerFunctions(player) {
         const data = JSON.parse(valueJSON);
 
         if (!isBarbershop) {
-            if (data['Sex'].value === 0) {
-                player.model = 'mp_f_freemode_01';
-                if (player.isNewPlayer) {
-                    player.addStarterItems();
-                    player.isNewPlayer = false;
-                }
-            } else {
-                player.model = 'mp_m_freemode_01';
-                if (player.isNewPlayer) {
-                    player.addStarterItems();
-                    player.isNewPlayer = false;
-                }
+            player.model = data.Sex.value === 0 ? 'mp_f_freemode_01' : 'mp_m_freemode_01';
+            if (player.isNewPlayer) {
+                player.addStarterItems();
+                player.isNewPlayer = false;
             }
         }
 
@@ -459,22 +452,12 @@ export function setupPlayerFunctions(player) {
         let newIndexItem = { ...player.inventory[newIndexPos] };
         let oldIndexItem = { ...player.inventory[oldIndexPos] };
 
-        // Handle Empty Object
         if (newIndexItem) {
-            if (
-                newIndexItem.constructor === Object &&
-                Object.entries(newIndexItem).length === 0
-            )
-                newIndexItem = null;
+            newIndexItem = objectToNull(newIndexItem);
         }
 
-        // Handle Empty Object
         if (oldIndexItem) {
-            if (
-                oldIndexItem.constructor === Object &&
-                Object.entries(oldIndexItem).length === 0
-            )
-                oldIndexItem = null;
+            oldIndexItem = objectToNull(oldIndexItem);
         }
 
         player.inventory[newIndexPos] = oldIndexItem;
@@ -621,7 +604,7 @@ export function setupPlayerFunctions(player) {
     };
 
     player.addStarterItems = () => {
-        let shirt = { ...configurationItems.Items['Shirt'] };
+        let shirt = { ...configurationItems.Items.Shirt };
         shirt.props = {
             description: 'Starter Shirt',
             restriction: -1,
@@ -637,7 +620,7 @@ export function setupPlayerFunctions(player) {
             ]
         };
 
-        let pants = { ...configurationItems.Items['Pants'] };
+        let pants = { ...configurationItems.Items.Pants };
         pants.props = {
             description: 'Starter Pants',
             restriction: -1,
@@ -645,7 +628,7 @@ export function setupPlayerFunctions(player) {
             male: [{ id: 4, value: 0, texture: 0 }]
         };
 
-        let shoes = { ...configurationItems.Items['Shoes'] };
+        let shoes = { ...configurationItems.Items.Shoes };
         shoes.props = {
             description: 'Starter Pants',
             restriction: -1,

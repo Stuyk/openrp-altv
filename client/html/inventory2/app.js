@@ -111,7 +111,7 @@ class App extends Component {
                 // Profile
                 this.state.tabIndex == 0 && h('div', {}, 'profile'),
                 // Stats
-                this.state.tabIndex == 1 && h('div', {}, 'stats'),
+                this.state.tabIndex == 1 && h(Stats),
                 // Inventory
                 this.state.tabIndex == 2 && h(Inventory),
                 // Idk Yet
@@ -147,6 +147,8 @@ class Inventory extends Component {
         this.state = {
             inventory: new Array(128)
         };
+        this.mouseMoveEvent = this.mousemove.bind(this);
+        this.hoverContextMenu = this.hoverWhileContextMenu.bind(this);
     }
 
     componentDidMount() {
@@ -156,43 +158,48 @@ class Inventory extends Component {
             const items = new Array(128).fill(null);
             items[0] = {
                 name: 'Taco',
+                base: 'Food',
                 hash: '90840921921',
                 icon: 'fish'
             };
             items[1] = {
-                name: 'Fish Taco',
+                name: 'Fish Taco That Is Super Delicious',
+                base: 'Food',
                 hash: '90840921922',
                 icon: 'fish'
             };
             items[2] = {
                 name: 'Fishing Rod',
+                base: 'Hand',
                 hash: '149214',
                 icon: 'fishingrod'
+            };
+            items[3] = {
+                name: 'Refined Metal',
+                base: 'metal',
+                quantity: 5000,
+                hash: '1492174',
+                icon: 'metal'
             };
 
             this.setState({ inventory: items });
         }
 
-        document.addEventListener('mouseover', this.mouseover.bind(this));
         document.addEventListener('mousedown', this.mousedown.bind(this));
         document.addEventListener('mouseup', this.mouseup.bind(this));
-        document.addEventListener('mousemove', this.mousemove.bind(this));
         document.addEventListener('keydown', this.keydown.bind(this));
         document.addEventListener('keyup', this.keyup.bind(this));
     }
 
     mouseover(e) {
-        if (this.state.context) {
-            this.hoverWhileContextMenu(e);
-        } else {
-            this.hoverWhileDragging(e);
-        }
+        this.hoverItem(e);
     }
 
     hoverWhileContextMenu(e) {
         const classList = e.target.classList;
 
         if (this.state.context && !classList.contains('contextOption')) {
+            document.removeEventListener('mouseover', this.hoverContextMenu);
             this.setState({ context: false });
             return;
         } else if (this.state.context) {
@@ -200,18 +207,18 @@ class Inventory extends Component {
         }
     }
 
-    hoverWhileDragging(e) {
+    hoverItem(e) {
         const classList = e.target.classList;
         const id = e.target.id;
 
         if (!classList.contains('item')) {
-            this.setState({ hoveredItem: -1 });
+            this.setState({ draggedItem: -1 });
             return;
         }
 
         if (this.state.held) {
-            if (this.state.hoveredItem === parseInt(id)) return;
-            this.setState({ hoveredItem: parseInt(id) });
+            if (this.state.draggedItem === parseInt(id)) return;
+            this.setState({ draggedItem: parseInt(id) });
             return;
         }
     }
@@ -246,6 +253,7 @@ class Inventory extends Component {
             return;
         }
 
+        document.addEventListener('mousemove', this.mouseMoveEvent);
         this.setState({
             held: true,
             doubleClickTime: Date.now() + 200,
@@ -257,11 +265,13 @@ class Inventory extends Component {
         if (this.state.context) return;
         const list = e.target.classList;
         if (!list.contains('item') || list.contains('item-place')) return;
+
+        document.addEventListener('mouseover', this.hoverContextMenu);
         this.setState({
             context: true,
             contextItem: parseInt(e.target.id),
-            contextX: this.state.x - 25,
-            contextY: this.state.y - 10
+            contextX: e.clientX - 75,
+            contextY: e.clientY - 15
         });
     }
 
@@ -273,7 +283,8 @@ class Inventory extends Component {
 
         const list = e.target.classList;
         if (!list.contains('item') && !list.contains('item-place')) {
-            this.setState({ held: false, heldItem: -1, hoveredItem: -1 });
+            document.removeEventListener('mousemove', this.mouseMoveEvent);
+            this.setState({ held: false, heldItem: -1, draggedItem: -1 });
             return;
         }
 
@@ -297,6 +308,7 @@ class Inventory extends Component {
 
     moveItem(heldIndex, dropIndex) {
         if (heldIndex <= -1 || dropIndex <= -1) {
+            document.removeEventListener('mousemove', this.mouseMoveEvent);
             this.setState({ held: false, heldItem: -1 });
             return;
         }
@@ -310,7 +322,8 @@ class Inventory extends Component {
 
         inventory[heldIndex] = dropItem;
         inventory[dropIndex] = heldItem;
-        this.setState({ held: false, heldItem: -1, inventory, hoveredItem: -1 });
+        document.removeEventListener('mousemove', this.mouseMoveEvent);
+        this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
 
         if ('alt' in window) {
             alt.emitServer('inventory:SwapItem', heldIndex, dropIndex);
@@ -338,47 +351,38 @@ class Inventory extends Component {
         return item;
     }
 
-    renderItems() {
-        const items = this.state.inventory.map((item, index) => {
-            if (index >= 28) return;
-            return h(this.renderItem, {
-                item,
-                index,
-                hoveredItem: this.state.hoveredItem
-            });
-        });
-
-        return h(
-            'div',
-            { class: 'inventory' },
-            items,
-            this.state.held &&
-                h(this.renderItemHeld, {
-                    x: this.state.x,
-                    y: this.state.y,
-                    item: this.state.inventory[parseInt(this.state.heldItem)]
-                }),
-            this.state.context &&
-                h(this.contextMenu.bind(this), {
-                    x: this.state.contextX,
-                    y: this.state.contextY
-                })
-        );
-    }
-
     useItem() {
-        this.setState({ context: false });
+        if ('alt' in window) {
+            alt.emit('inventory:Use', this.state.inventory[this.state.contextItem].hash);
+        }
+
+        document.removeEventListener('mouseover', this.hoverContextMenu);
+        this.setState({ context: false, contextItem: -1 });
     }
 
     dropItem() {
-        this.setState({ context: false });
+        if ('alt' in window) {
+            alt.emit('inventory:Drop', this.state.inventory[this.state.contextItem].hash);
+        }
+
+        document.removeEventListener('mouseover', this.hoverContextMenu);
+        this.setState({ context: false, contextItem: -1 });
     }
 
     destroyItem() {
-        this.setState({ context: false });
+        if ('alt' in window) {
+            alt.emit(
+                'inventory:Destroy',
+                this.state.inventory[this.state.contextItem].hash
+            );
+        }
+
+        document.removeEventListener('mouseover', this.hoverContextMenu);
+        this.setState({ context: false, contextItem: -1 });
     }
 
     renameItem() {
+        document.removeEventListener('mouseover', this.hoverContextMenu);
         this.setState({ context: false });
     }
 
@@ -428,7 +432,7 @@ class Inventory extends Component {
         );
     }
 
-    renderItem({ index, item, hoveredItem }) {
+    renderItem({ index, item, draggedItem, mouseover }) {
         let icon;
         if (item && item.icon) {
             icon = icons.includes(item.icon) ? item.icon : 'unknown';
@@ -439,7 +443,7 @@ class Inventory extends Component {
             classData += ' item-place';
         }
 
-        if (index === hoveredItem) {
+        if (index === draggedItem) {
             classData += ' item-hovered';
         }
 
@@ -447,23 +451,158 @@ class Inventory extends Component {
             'div',
             {
                 class: classData,
-                id: index
+                id: index,
+                onmouseover: mouseover.bind(this)
             },
             item &&
                 h('svg', {
                     type: 'image/svg+xml',
                     style: `background: url('../icons/${icon}.svg');`
                 }),
-            item && h('name', {}, item.name),
+            item && h('div', { class: 'itemname' }, item.name),
+            item &&
+                parseInt(item.quantity) >= 2 &&
+                h(
+                    'div',
+                    { class: 'itemquantity' },
+                    `${parseInt(item.quantity).toLocaleString()}`
+                ),
+            item &&
+                h(
+                    'div',
+                    { class: 'tooltip' },
+                    h(
+                        'span',
+                        { class: 'tooltiptext' },
+                        h('h4', {}, item.name),
+                        h('p', {}, `Base: ${item.base}`)
+                    )
+                ),
             !item && 'empty'
         );
         return newItem;
+    }
+
+    renderItems() {
+        const items = this.state.inventory.map((item, index) => {
+            if (index >= 28) return;
+            return h(this.renderItem, {
+                item,
+                index,
+                draggedItem: this.state.draggedItem,
+                mouseover: this.mouseover.bind(this)
+            });
+        });
+
+        return h(
+            'div',
+            { class: 'inventory' },
+            items,
+            this.state.held &&
+                h(this.renderItemHeld, {
+                    x: this.state.x,
+                    y: this.state.y,
+                    item: this.state.inventory[parseInt(this.state.heldItem)]
+                }),
+            this.state.context &&
+                h(this.contextMenu.bind(this), {
+                    x: this.state.contextX,
+                    y: this.state.contextY
+                })
+        );
     }
 
     render() {
         return h(this.renderItems.bind(this));
     }
 }
+
+class Stats extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            stats: []
+        };
+    }
+
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('inventory:AddStat', this.addStat.bind(this));
+        } else {
+            this.addStat('agility', 1, 55);
+            this.addStat('cooking', 25, 859215);
+            this.addStat('crafting', 25, 859215);
+            this.addStat('mechanic', 25, 859215);
+            this.addStat('notoriety', 25, 859215);
+            this.addStat('nobility', 25, 859215);
+            this.addStat('fishing', 25, 859215);
+            this.addStat('smithing', 25, 859215);
+            this.addStat('woodcutting', 25, 859215);
+            this.addStat('medicine', 25, 859215);
+            this.addStat('gathering', 25, 859215);
+            this.addStat('mining', 25, 859215);
+        }
+    }
+
+    addStat(...args) {
+        let stats = [...this.state.stats];
+        const [name, lvl, xp] = args;
+
+        stats.push({
+            name,
+            lvl,
+            xp
+        });
+
+        this.setState({ stats });
+    }
+
+    renderStats() {
+        const stats = this.state.stats.map(stat => {
+            let icon;
+            if (stat) {
+                icon = icons.includes(stat.name) ? stat.name : 'unknown';
+            }
+
+            const currentXP = parseInt(stat.xp);
+            const xpForNextLvl = getXP(getLevel(currentXP) + 1);
+            const xpDifference = xpForNextLvl - currentXP;
+
+            return h(
+                'div',
+                { class: 'stat' },
+                h('div', { class: 'statlvl' }, stat.lvl),
+                h('div', { class: 'statname' }, stat.name),
+                h('svg', {
+                    type: 'image/svg+xml',
+                    style: `background: url('../icons/${icon}.svg');`
+                }),
+                h(
+                    'div',
+                    { class: 'stattip' },
+                    h(
+                        'span',
+                        { class: 'stattiptext' },
+                        h(
+                            'p',
+                            {},
+                            `${stat.xp.toLocaleString()}/${xpForNextLvl.toLocaleString()}`
+                        ),
+                        h('p', {}, `Diff: ${xpDifference.toLocaleString()}`)
+                    )
+                )
+            );
+        });
+
+        return h('div', { class: 'stats' }, stats);
+    }
+
+    render() {
+        return h(this.renderStats.bind(this));
+    }
+}
+
+class Profile extends Component {}
 
 render(h(App), document.querySelector('#render'));
 

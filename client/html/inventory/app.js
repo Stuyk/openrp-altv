@@ -188,6 +188,10 @@ class Inventory extends Component {
         this.hoverContextMenu = this.hoverWhileContextMenu.bind(this);
         this.clearItemsBind = this.clearItems.bind(this);
         this.addItemBind = this.addItem.bind(this);
+        this.mouseDownBind = this.mousedown.bind(this);
+        this.mouseUpBind = this.mouseup.bind(this);
+        this.keydownBind = this.keydown.bind(this);
+        this.keyupBind = this.keyup.bind(this);
     }
 
     componentDidMount() {
@@ -225,10 +229,10 @@ class Inventory extends Component {
             this.setState({ inventory: items });
         }
 
-        document.addEventListener('mousedown', this.mousedown.bind(this));
-        document.addEventListener('mouseup', this.mouseup.bind(this));
-        document.addEventListener('keydown', this.keydown.bind(this));
-        document.addEventListener('keyup', this.keyup.bind(this));
+        document.addEventListener('mousedown', this.mouseDownBind);
+        document.addEventListener('mouseup', this.mouseUpBind);
+        document.addEventListener('keydown', this.keydownBind);
+        document.addEventListener('keyup', this.keyupBind);
 
         if ('alt' in window) {
             setTimeout(() => {
@@ -238,10 +242,10 @@ class Inventory extends Component {
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this.mousedown.bind(this));
-        document.removeEventListener('mouseup', this.mouseup.bind(this));
-        document.removeEventListener('keydown', this.keydown.bind(this));
-        document.removeEventListener('keyup', this.keyup.bind(this));
+        document.removeEventListener('mousedown', this.mouseDownBind);
+        document.removeEventListener('mouseup', this.mouseUpBind);
+        document.removeEventListener('keydown', this.keydownBind);
+        document.removeEventListener('keyup', this.keyupBind);
         alt.off('inventory:ClearItems', this.clearItemsBind);
         alt.off('inventory:AddItem', this.addItemBind);
     }
@@ -361,6 +365,7 @@ class Inventory extends Component {
         }
 
         const list = e.target.classList;
+        document.removeEventListener('mousemove', this.mouseMoveEvent);
         if (!list.contains('item') && !list.contains('item-place')) {
             document.removeEventListener('mousemove', this.mouseMoveEvent);
             this.setState({ held: false, heldItem: -1, draggedItem: -1 });
@@ -392,11 +397,15 @@ class Inventory extends Component {
             return;
         }
 
+        console.log('1 moving...');
+
         if (heldIndex === dropIndex) {
             document.removeEventListener('mousemove', this.mouseMoveEvent);
             this.setState({ held: false, heldItem: -1, draggedItem: -1 });
             return;
         }
+
+        console.log('2 moving...');
 
         let inventory = [...this.state.inventory];
         let heldItem = { ...inventory[heldIndex] };
@@ -410,13 +419,23 @@ class Inventory extends Component {
         document.removeEventListener('mousemove', this.mouseMoveEvent);
         this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
 
+        console.log('3 moving...');
+
         if ('alt' in window) {
             alt.emit('inventory:SwapItem', heldIndex, dropIndex);
         }
     }
 
     doubleClick(e) {
-        if (!e.target.id) return;
+        if (!e.target.id) {
+            this.setState({
+                held: false,
+                heldItem: -1,
+                draggedItem: -1
+            });
+            document.removeEventListener('mousemove', this.mouseMoveEvent);
+            return;
+        }
 
         if ('alt' in window) {
             alt.emit('inventory:Use', this.state.inventory[parseInt(e.target.id)].hash);
@@ -426,7 +445,6 @@ class Inventory extends Component {
 
         this.setState({
             held: false,
-            doubleClickTime: Date.now() + 200,
             heldItem: -1,
             draggedItem: -1
         });
@@ -445,7 +463,7 @@ class Inventory extends Component {
     }
 
     cleanseItem(item) {
-        if (item.constructor === Object && Object.keys(item).length <= 0) return null;
+        if (item.constructor === Object && Object.entries(item).length <= 0) return null;
         return item;
     }
 

@@ -367,7 +367,13 @@ export function setupPlayerFunctions(player) {
     // =================================
     // INVENTORY
     // Add an item to a player.
-    player.addItem = (key, quantity, props = {}, skipStackable = false) => {
+    player.addItem = (
+        key,
+        quantity,
+        props = {},
+        skipStackable = false,
+        skipSave = false
+    ) => {
         const item = Items[key];
         const base = BaseItems[item.base];
 
@@ -406,7 +412,10 @@ export function setupPlayerFunctions(player) {
         }
 
         player.inventory[nullIndex] = clonedItem;
-        player.saveInventory();
+
+        if (!skipSave) {
+            player.saveInventory();
+        }
         return true;
     };
 
@@ -517,6 +526,7 @@ export function setupPlayerFunctions(player) {
             return true;
         }
 
+        player.syncInventory();
         return false;
     };
 
@@ -575,9 +585,10 @@ export function setupPlayerFunctions(player) {
         }
 
         player.inventory[index] = null;
-        player.addItem(item.key, parseInt(split), item.props, true);
-        player.addItem(item.key, parseInt(remainder), item.props, true);
+        player.addItem(item.key, parseInt(split), item.props, true, true);
+        player.addItem(item.key, parseInt(remainder), item.props, true, true);
 
+        player.saveInventory();
         player.splitting = false;
         return true;
     };

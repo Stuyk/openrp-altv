@@ -15,7 +15,8 @@ export function itemDrop(player, item, randomPos) {
     }
 
     itemsOnGround.push({ pos: randomPos, item });
-    alt.setInterval(drawItems, 1);
+    const intervalID = alt.setInterval(drawItems, 1);
+    alt.log(`inventory.mjs ${intervalID}`);
 }
 
 export function itemPickup(hash) {

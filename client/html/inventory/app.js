@@ -229,6 +229,12 @@ class Inventory extends Component {
         document.addEventListener('mouseup', this.mouseup.bind(this));
         document.addEventListener('keydown', this.keydown.bind(this));
         document.addEventListener('keyup', this.keyup.bind(this));
+
+        if ('alt' in window) {
+            setTimeout(() => {
+                alt.emit('inventory:FetchItems');
+            }, 50);
+        }
     }
 
     componentWillUnmount() {
@@ -242,15 +248,20 @@ class Inventory extends Component {
 
     addItem(...args) {
         let inventory = [...this.state.inventory];
-        const [name, index, base, hash, quantity, props] = args;
+        const [name, index, base, hash, quantity, props, icon] = args;
 
-        inventory[index] = {
-            name,
-            base,
-            hash,
-            quantity,
-            props
-        };
+        if (name) {
+            inventory[index] = {
+                name,
+                base,
+                hash,
+                quantity,
+                props,
+                icon
+            };
+        } else {
+            inventory[index] = null;
+        }
 
         this.setState({ inventory });
     }
@@ -377,7 +388,13 @@ class Inventory extends Component {
     moveItem(heldIndex, dropIndex) {
         if (heldIndex <= -1 || dropIndex <= -1) {
             document.removeEventListener('mousemove', this.mouseMoveEvent);
-            this.setState({ held: false, heldItem: -1 });
+            this.setState({ held: false, heldItem: -1, draggedItem: -1 });
+            return;
+        }
+
+        if (heldIndex === dropIndex) {
+            document.removeEventListener('mousemove', this.mouseMoveEvent);
+            this.setState({ held: false, heldItem: -1, draggedItem: -1 });
             return;
         }
 
@@ -394,19 +411,32 @@ class Inventory extends Component {
         this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
 
         if ('alt' in window) {
-            alt.emitServer('inventory:SwapItem', heldIndex, dropIndex);
+            alt.emit('inventory:SwapItem', heldIndex, dropIndex);
         }
     }
 
     doubleClick(e) {
+        if (!e.target.id) return;
+
         if ('alt' in window) {
             alt.emit('inventory:Use', this.state.inventory[parseInt(e.target.id)].hash);
         } else {
             console.log('Double Clicked');
         }
+
+        this.setState({
+            held: false,
+            doubleClickTime: Date.now() + 200,
+            heldItem: -1,
+            draggedItem: -1
+        });
+        document.removeEventListener('mousemove', this.mouseMoveEvent);
     }
 
     shiftClick(e) {
+        if (!this.state.inventory[parseInt(e.target.id)]) return;
+        if (this.state.inventory[parseInt(e.target.id)].quantity <= 1) return;
+
         if ('alt' in window) {
             alt.emit('inventory:Split', this.state.inventory[parseInt(e.target.id)].hash);
         } else {
@@ -420,6 +450,8 @@ class Inventory extends Component {
     }
 
     useItem() {
+        if (!this.state.inventory[this.state.contextItem]) return;
+
         if ('alt' in window) {
             alt.emit('inventory:Use', this.state.inventory[this.state.contextItem].hash);
         }
@@ -429,21 +461,31 @@ class Inventory extends Component {
     }
 
     dropItem() {
+        if (!this.state.inventory[this.state.contextItem]) return;
+
         if ('alt' in window) {
             alt.emit('inventory:Drop', this.state.inventory[this.state.contextItem].hash);
         }
+
+        let inventory = [...this.state.inventory];
+        inventory[this.state.contextItem] = null;
 
         document.removeEventListener('mouseover', this.hoverContextMenu);
         this.setState({ context: false, contextItem: -1 });
     }
 
     destroyItem() {
+        if (!this.state.inventory[this.state.contextItem]) return;
+
         if ('alt' in window) {
             alt.emit(
                 'inventory:Destroy',
                 this.state.inventory[this.state.contextItem].hash
             );
         }
+
+        let inventory = [...this.state.inventory];
+        inventory[this.state.contextItem] = null;
 
         document.removeEventListener('mouseover', this.hoverContextMenu);
         this.setState({ context: false, contextItem: -1 });
@@ -619,7 +661,6 @@ class Stats extends Component {
     }
 
     addStat(...args) {
-        console.log(`Adding Stat: ${args[0]}`);
         let stats = [...this.state.stats];
         const [name, lvl, xp] = args;
 
@@ -697,6 +738,11 @@ class Profile extends Component {
             this.equipItem('Shoes', 13);
         }
 
+        if ('alt' in window) {
+            setTimeout(() => {
+                alt.emit('inventory:FetchEquipment');
+            }, 100);
+        }
         document.addEventListener('mousedown', this.mousedown.bind(this));
     }
 
@@ -712,15 +758,33 @@ class Profile extends Component {
     equipItem(...args) {
         let equipment = [...this.state.equipment];
         const [name, index, hash] = args;
-        equipment[index] = { name, index };
+
+        if (name) {
+            equipment[index] = { name, index, hash };
+        } else {
+            equipment[index] = null;
+        }
+
         this.setState({ equipment });
     }
 
     mousedown(e) {
-        if (e.which !== 3) return;
         if (this.state.context) return;
         const list = e.target.classList;
         if (!list.contains('profileitem') || !list.contains('equipitem')) return;
+
+        if (e.which !== 3) {
+            if (Date.now() < this.state.doubleClickTime) {
+                this.unequipItem();
+                return;
+            }
+
+            this.setState({
+                doubleClickTime: Date.now() + 200,
+                contextItem: parseInt(e.target.id)
+            });
+            return;
+        }
 
         document.addEventListener('mouseover', this.hoverContextMenu);
         this.setState({
@@ -743,36 +807,28 @@ class Profile extends Component {
         }
     }
 
-    useItem(e) {
-        if ('alt' in window) {
-            alt.emit('inventory:Use', this.state.equipment[this.state.contextItem].hash);
-        }
+    unequipItem() {
+        if (!this.state.contextItem) return;
+        if (!this.state.equipment[parseInt(this.state.contextItem)]) return;
 
-        document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1 });
-    }
-
-    unequipItem(e) {
         if ('alt' in window) {
             alt.emit(
-                'inventory:Unequip',
-                this.state.inventory[this.state.contextItem].hash
+                'inventory:UnequipItem',
+                this.state.equipment[parseInt(this.state.contextItem)].hash
             );
         }
 
+        let equipment = [...this.state.equipment];
+        equipment[parseInt(this.state.contextItem)] = null;
+
         document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1 });
+        this.setState({ context: false, contextItem: undefined, equipment });
     }
 
     contextMenu({ x, y }) {
         return h(
             'div',
             { class: 'contextMenu', style: `left: ${x}px; top: ${y}px;` },
-            h(
-                'button',
-                { class: 'contextOption', onclick: this.useItem.bind(this) },
-                'Use'
-            ),
             h(
                 'button',
                 { class: 'contextOption', onclick: this.unequipItem.bind(this) },

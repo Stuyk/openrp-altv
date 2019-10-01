@@ -115,6 +115,9 @@ function setupObjective(value) {
 
     objectiveInfo = alt.setInterval(intervalObjectiveInfo, 0);
     objectiveChecking = alt.setInterval(intervalObjectiveChecking, 100);
+
+    alt.log(`job.mjs ${objectiveInfo}`);
+    alt.log(`job.mjs ObjChecking ${objectiveChecking}`);
     pause = false;
 }
 

@@ -367,7 +367,7 @@ export function setupPlayerFunctions(player) {
     // =================================
     // INVENTORY
     // Add an item to a player.
-    player.addItem = (key, quantity, props = {}, isUnique = false) => {
+    player.addItem = (key, quantity, props = {}, skipStackable = false) => {
         const item = Items[key];
         const base = BaseItems[item.base];
 
@@ -382,14 +382,17 @@ export function setupPlayerFunctions(player) {
         }
 
         const clonedItem = { ...item };
-        const inventoryIndex = player.inventory.findIndex(item => {
-            if (item && item.key === clonedItem.key) return item;
-        });
 
-        if (base.abilities.stack && inventoryIndex >= 0) {
-            player.inventory[inventoryIndex].quantity += quantity;
-            player.saveInventory();
-            return true;
+        if (!skipStackable) {
+            const inventoryIndex = player.inventory.findIndex(item => {
+                if (item && item.key === clonedItem.key) return item;
+            });
+
+            if (base.abilities.stack && inventoryIndex >= 0) {
+                player.inventory[inventoryIndex].quantity += quantity;
+                player.saveInventory();
+                return true;
+            }
         }
 
         clonedItem.props = props;
@@ -403,7 +406,6 @@ export function setupPlayerFunctions(player) {
         }
 
         player.inventory[nullIndex] = clonedItem;
-        console.log(player.inventory);
         player.saveInventory();
         return true;
     };
@@ -427,9 +429,11 @@ export function setupPlayerFunctions(player) {
             return false;
         }
 
+        quantity = parseInt(quantity);
+
         let total = 0;
         indexes.forEach(currIndex => {
-            total += player.inventory[currIndex].quantity;
+            total += parseInt(player.inventory[currIndex].quantity);
         });
 
         if (total < quantity) {
@@ -439,11 +443,12 @@ export function setupPlayerFunctions(player) {
         indexes.forEach(currIndex => {
             if (quantity === 0) return;
             if (player.inventory[currIndex].quantity < quantity) {
-                const currQuantity = player.inventory[currIndex].quantity;
-                player.inventory[currIndex].quantity -= currQuantity;
-                quantity -= currQuantity;
+                const currQuantity = parseInt(player.inventory[currIndex].quantity);
+                player.inventory[currIndex].quantity -= parseInt(currQuantity);
+                quantity -= parseInt(currQuantity);
             } else {
-                player.inventory[currIndex].quantity -= quantity;
+                player.inventory[currIndex].quantity -= parseInt(quantity);
+                quantity -= parseInt(quantity);
             }
 
             if (player.inventory[currIndex].quantity <= 0) {
@@ -457,76 +462,124 @@ export function setupPlayerFunctions(player) {
 
     player.saveInventory = () => {
         player.data.inventory = JSON.stringify(player.inventory);
+        player.data.equipment = JSON.stringify(player.equipment);
         player.saveField(player.data.id, 'inventory', player.data.inventory);
-        player.syncInventory();
+        player.saveField(player.data.id, 'equipment', player.data.equipment);
+        player.syncInventory(true);
     };
 
     player.syncInventory = (cleanse = false) => {
         if (cleanse) {
             const inventory = JSON.parse(player.data.inventory);
             inventory.forEach(item => {
-                if (!item) {
-                    item = null;
-                    return;
-                }
-
-                if (item.constructor === Object && Object.entries(item).length <= 0) {
-                    item = null;
-                    return;
+                if (item) {
+                    item = objectToNull(item);
                 }
             });
             player.data.inventory = JSON.stringify(inventory);
         }
 
+        player.equipment = JSON.parse(player.data.equipment);
         player.inventory = JSON.parse(player.data.inventory);
         player.emitMeta('inventory', player.data.inventory);
-
-        /*
-        if (player.inventory[37]) {
-            if (player.inventory[37].props.hash) {
-                player.setWeapon(player.inventory[37].props.hash);
-            } else {
-                player.setSyncedMeta('prop:37', player.inventory[37].props.propData);
-            }
-        } else {
-            player.setSyncedMeta('prop:37', undefined);
-            player.removeAllWeapons();
-        }
-        */
+        player.emitMeta('equipment', player.data.equipment);
     };
 
-    player.swapItems = (newIndexPos, oldIndexPos) => {
-        /*
-        let newIndexItem = { ...player.inventory[newIndexPos] };
-        let oldIndexItem = { ...player.inventory[oldIndexPos] };
+    player.equipItem = (itemIndex, equipmentIndex) => {
+        let equippedItem = { ...player.equipment[equipmentIndex] };
+        let inventoryItem = { ...player.inventory[itemIndex] };
 
-        if (newIndexItem) {
-            newIndexItem = objectToNull(newIndexItem);
+        if (equippedItem) {
+            equippedItem = objectToNull(equippedItem);
         }
 
-        if (oldIndexItem) {
-            oldIndexItem = objectToNull(oldIndexItem);
+        if (inventoryItem) {
+            inventoryItem = objectToNull(inventoryItem);
         }
 
-        player.inventory[newIndexPos] = oldIndexItem;
-        player.inventory[oldIndexPos] = newIndexItem;
+        player.equipment[equipmentIndex] = inventoryItem;
+        player.inventory[itemIndex] = equippedItem;
+        player.saveInventory();
+    };
 
-        if (player.inventory[37]) {
-            if (player.inventory[37].props.hash) {
-                player.setWeapon(player.inventory[37].props.hash);
-                player.setSyncedMeta('prop:37', undefined);
-            } else {
-                player.setSyncedMeta('prop:37', player.inventory[37].props.propData);
+    player.unequipItem = equipmentIndex => {
+        let equippedItem = { ...player.equipment[equipmentIndex] };
+
+        if (equippedItem) {
+            equippedItem = objectToNull(equippedItem);
+        }
+
+        if (!equippedItem) return false;
+
+        if (player.addItem(equippedItem.base, 1, equippedItem.props)) {
+            player.equipment[equipmentIndex] = null;
+            player.saveInventory();
+            return true;
+        }
+
+        return false;
+    };
+
+    player.swapItems = (heldIndex, dropIndex) => {
+        let heldItem = { ...player.inventory[heldIndex] };
+        let dropItem = { ...player.inventory[dropIndex] };
+        if (heldIndex === dropIndex) return;
+
+        if (heldItem) {
+            heldItem = objectToNull(heldItem);
+        }
+
+        if (dropItem) {
+            dropItem = objectToNull(dropItem);
+        }
+
+        if (heldItem && dropItem) {
+            const heldBase = BaseItems[heldItem.base];
+            if (heldItem.name === dropItem.name && heldBase.abilities.stack) {
+                player.inventory[dropIndex].quantity += parseInt(heldItem.quantity);
+                player.inventory[heldIndex] = null;
+                player.saveInventory();
+                return;
             }
-        } else {
-            player.setSyncedMeta('prop:37', undefined);
-            player.removeAllWeapons();
         }
 
-        player.data.inventory = JSON.stringify(player.inventory);
-        player.saveField(player.data.id, 'inventory', player.data.inventory);
-        player.syncInventory();
-        */
+        player.inventory[heldIndex] = dropItem;
+        player.inventory[dropIndex] = heldItem;
+        player.saveInventory();
+    };
+
+    player.splitItem = index => {
+        if (player.splitting) return;
+        player.splitting = true;
+
+        if (!player.inventory[index]) {
+            player.syncInventory();
+            player.splitting = false;
+            return false;
+        }
+
+        if (player.inventory[index].quantity <= 1) {
+            player.syncInventory();
+            player.splitting = false;
+            return false;
+        }
+
+        const item = { ...player.inventory[index] };
+        const split = Math.floor(parseInt(item.quantity) / 2);
+        const remainder = parseInt(item.quantity) - split;
+        const nullIndexes = player.inventory.filter(item => !item);
+        if (nullIndexes.length <= 1) {
+            player.send('{FF0000} No room for item split.');
+            player.splitting = false;
+            return false;
+        }
+
+        player.inventory[index] = null;
+        player.addItem(item.key, parseInt(split), item.props, true);
+        player.addItem(item.key, parseInt(remainder), item.props, true);
+
+        player.splitting = false;
+        return true;
     };
 
     player.setWeapon = hash => {

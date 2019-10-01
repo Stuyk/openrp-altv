@@ -77,7 +77,11 @@ chat.registerCmd('additem', (player, arg) => {
         return;
     }
 
-    if (player.addItem(arg[0], 1)) {
+    if (!arg[1]) {
+        arg[1] = 1;
+    }
+
+    if (player.addItem(arg[0], parseInt(arg[1]))) {
         player.send('Added Item');
     } else {
         player.send('Did not add item.');

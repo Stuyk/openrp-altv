@@ -10,6 +10,14 @@ alt.log(`Loaded: client->panels->inventory.mjs`);
 const url = 'http://resource/client/html/inventory/index.html';
 let webview;
 
+alt.on('meta:Changed', (key, value) => {
+    if (key !== 'equipment' && key !== 'inventory') return;
+    if (webview === undefined) return;
+    fetchEquipment();
+    fetchStats();
+    fetchItems();
+});
+
 // Show the Dialogue for the Inventory
 export function showDialogue() {
     if (!webview) {
@@ -24,25 +32,39 @@ export function showDialogue() {
     webview.on('inventory:Use', use);
     webview.on('inventory:Destroy', destroy);
     webview.on('inventory:FetchItems', fetchItems);
-    webview.on('inventory:SetPosition', setPosition);
+    webview.on('inventory:SwapItem', swapItem);
     webview.on('inventory:Rename', rename);
     webview.on('inventory:Exit', exit);
     webview.on('inventory:FetchStats', fetchStats);
     webview.on('inventory:FetchEquipment', fetchEquipment);
+    webview.on('inventory:UnequipItem', unequipItem);
+    webview.on('inventory:Split', split);
 }
 
-function setPosition(newIndexPosition, oldIndexPosition) {
-    alt.emitServer('inventory:UpdatePosition', newIndexPosition, oldIndexPosition);
+function swapItem(heldIndex, dropIndex) {
+    alt.emitServer('inventory:SwapItem', heldIndex, dropIndex);
 }
 
 export function fetchEquipment() {
-    // pls set this up
+    if (webview === undefined) return;
+    const equipmentJSON = alt.Player.local.getMeta('equipment');
+    const equipmentArray = JSON.parse(equipmentJSON);
+    webview.emit('inventory:ClearEquips');
+
+    equipmentArray.forEach((item, index) => {
+        if (!item) {
+            webview.emit('inventory:EquipItem', null, index, null);
+            return;
+        }
+
+        webview.emit('inventory:EquipItem', item.name, index, item.hash);
+    });
 }
 
 export function fetchStats() {
     if (webview === undefined) return;
-    let statJSON = alt.Player.local.getMeta('skills');
-    let statArray = JSON.parse(statJSON);
+    const statJSON = alt.Player.local.getMeta('skills');
+    const statArray = JSON.parse(statJSON);
 
     Object.keys(statArray).forEach(key => {
         webview.emit(
@@ -56,9 +78,8 @@ export function fetchStats() {
 
 export function fetchItems() {
     if (webview === undefined) return;
-
-    let itemJSON = alt.Player.local.getMeta('inventory');
-    let itemArray = JSON.parse(itemJSON);
+    const itemJSON = alt.Player.local.getMeta('inventory');
+    const itemArray = JSON.parse(itemJSON);
 
     webview.emit('inventory:ClearItems');
 
@@ -68,24 +89,20 @@ export function fetchItems() {
             return;
         }
 
-        const canuse = item.useitem ? true : item.consumeable ? true : false;
-
+        // const [name, index, base, hash, quantity, props] = args;
         webview.emit(
             'inventory:AddItem',
+            item.name,
             index,
-            item.label,
+            item.base,
             item.hash,
-            item.props,
             item.quantity,
-            item.slot,
-            item.rename,
-            canuse,
-            item.droppable,
+            item.props,
             item.icon
         );
     });
 
-    webview.emit('enablebuttons');
+    //webview.emit('enablebuttons');
 }
 
 function exit() {
@@ -106,4 +123,12 @@ function drop(hash, quantity) {
 
 function rename(hash, name) {
     alt.emitServer('inventory:RenameItem', hash, name);
+}
+
+function unequipItem(hash) {
+    alt.emitServer('inventory:UnequipItem', hash);
+}
+
+function split(hash) {
+    alt.emitServer('inventory:Split', hash);
 }

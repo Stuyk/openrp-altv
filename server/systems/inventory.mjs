@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import * as utilityEncryption from '../utility/encryption.mjs';
+import { BaseItems, Items } from '../configuration/items.mjs';
 import { Weapons } from '../configuration/weapons.mjs';
 console.log('Loaded: systems->inventory.mjs');
 
@@ -117,24 +118,49 @@ export function rename(player, hash, newName) {
 }
 
 export function use(player, hash) {
-    let item = player.inventory.find(
-        x => x !== null && x !== undefined && x.hash === hash
-    );
+    const item = player.inventory.find(item => {
+        if (item && item.hash === hash) return item;
+    });
 
-    if (item === undefined) {
-        player.updateInventory();
+    if (!item) {
+        player.syncInventory();
         return;
     }
 
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== item.label) return;
+    const baseItem = BaseItems[item.base];
 
-        if (configurationItems.Items[key].consumeable) {
-            player.consumeItem(hash);
-        } else {
-            player.useItem(hash);
-        }
+    if (!baseItem) {
+        console.log(`${baseItem} is not defined for use.`);
+        return;
+    }
+
+    alt.emit(baseItem.eventcall, player, item, hash);
+}
+
+export function unequipItem(player, hash) {
+    const index = player.equipment.findIndex(item => {
+        if (item && item.hash === hash) return item;
     });
+
+    if (index <= -1) {
+        player.syncInventory();
+        return;
+    }
+
+    player.unequipItem(index);
+}
+
+export function splitItem(player, hash) {
+    const index = player.inventory.findIndex(item => {
+        if (item && item.hash === hash) return item;
+    });
+
+    if (index <= -1) {
+        player.syncInventory();
+        return;
+    }
+
+    player.splitItem(index);
 }
 
 export function dropNewItem(player, item) {
@@ -239,8 +265,8 @@ export function pickup(player, hash) {
     player.pickingUpItem = false;
 }
 
-export function updatePosition(player, newIndex, oldIndex) {
-    player.swapItems(newIndex, oldIndex);
+export function swapItem(player, heldIndex, dropIndex) {
+    player.swapItems(heldIndex, dropIndex);
 }
 
 export function addWeapon(player, weaponName) {

@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 	<head>
-        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-        <link rel="stylesheet/less" type="text/css" href="style.less" />
+		<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+		<link rel="stylesheet/less" type="text/css" href="style.less" />
 		<style>
 			#render {
 				display: none;
 			}
 		</style>
 	</head>
-	  
 	<body>
-        <div class="menu" id="render"></div>
+		<div class="menu" id="render"></div>
         <script src="../preact.min.js"></script>
+        <script src="../svg-inject.min.js"></script>
+        <script src="./xp.js" type="text/javascript"></script>
 		<script src="./app.js" type="text/javascript"></script>
 		<script src="../less.min.js" ></script>
 		<script>
-		  less.pageLoadFinished.then(() => {
-            document.querySelector('#render').style.display = 'block'
-            ready();
-          });
+		  less.pageLoadFinished.then(() => document.querySelector('#render').style.display = 'block');
 		</script>
 	</body>
 </html>

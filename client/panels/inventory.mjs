@@ -27,10 +27,31 @@ export function showDialogue() {
     webview.on('inventory:SetPosition', setPosition);
     webview.on('inventory:Rename', rename);
     webview.on('inventory:Exit', exit);
+    webview.on('inventory:FetchStats', fetchStats);
+    webview.on('inventory:FetchEquipment', fetchEquipment);
 }
 
 function setPosition(newIndexPosition, oldIndexPosition) {
     alt.emitServer('inventory:UpdatePosition', newIndexPosition, oldIndexPosition);
+}
+
+export function fetchEquipment() {
+    // pls set this up
+}
+
+export function fetchStats() {
+    if (webview === undefined) return;
+    let statJSON = alt.Player.local.getMeta('skills');
+    let statArray = JSON.parse(statJSON);
+
+    Object.keys(statArray).forEach(key => {
+        webview.emit(
+            'inventory:AddStat',
+            key,
+            getLevel(statArray[key].xp),
+            statArray[key].xp
+        );
+    });
 }
 
 export function fetchItems() {
@@ -39,7 +60,7 @@ export function fetchItems() {
     let itemJSON = alt.Player.local.getMeta('inventory');
     let itemArray = JSON.parse(itemJSON);
 
-    webview.emit('clearitems');
+    webview.emit('inventory:ClearItems');
 
     itemArray.forEach((item, index) => {
         if (!item) {
@@ -61,18 +82,6 @@ export function fetchItems() {
             canuse,
             item.droppable,
             item.icon
-        );
-    });
-
-    let statJSON = alt.Player.local.getMeta('skills');
-    let statArray = JSON.parse(statJSON);
-
-    Object.keys(statArray).forEach(key => {
-        webview.emit(
-            'inventory:AddStat',
-            key,
-            getLevel(statArray[key].xp),
-            statArray[key].xp
         );
     });
 

@@ -68,6 +68,10 @@ export const Character = new orm.EntitySchema({
             type: 'text',
             default: `${JSON.stringify(new Array(128).fill(null))}`
         },
+        equipment: {
+            type: 'text',
+            default: `${JSON.stringify(new Array(15).fill(null))}`
+        },
         lastposition: {
             type: 'text',
             nullable: true

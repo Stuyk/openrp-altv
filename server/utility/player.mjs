@@ -527,8 +527,9 @@ export function setupPlayerFunctions(player) {
 
         player.equipment = JSON.parse(player.data.equipment);
         player.inventory = JSON.parse(player.data.inventory);
-        player.emitMeta('inventory', player.data.inventory);
+
         player.emitMeta('equipment', player.data.equipment);
+        player.emitMeta('inventory', player.data.inventory);
 
         if (player.equipment[11]) {
             if (player.equipment[11].base === 'weapon') {

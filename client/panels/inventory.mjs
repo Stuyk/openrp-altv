@@ -11,11 +11,18 @@ const url = 'http://resource/client/html/inventory/index.html';
 let webview;
 
 alt.on('meta:Changed', (key, value) => {
-    if (key !== 'equipment' && key !== 'inventory') return;
-    if (webview === undefined) return;
-    fetchEquipment();
-    fetchStats();
-    fetchItems();
+    if (key !== 'equipment' && key !== 'inventory' && key !== 'skills') return;
+    switch (key) {
+        case 'equipment':
+            fetchEquipment(value);
+            break;
+        case 'inventory':
+            fetchItems(value);
+            break;
+        case 'skills':
+            fetchStats(value);
+            break;
+    }
 });
 
 // Show the Dialogue for the Inventory
@@ -45,10 +52,13 @@ function swapItem(heldIndex, dropIndex) {
     alt.emitServer('inventory:SwapItem', heldIndex, dropIndex);
 }
 
-export function fetchEquipment() {
+export function fetchEquipment(value) {
     if (webview === undefined) return;
-    const equipmentJSON = alt.Player.local.getMeta('equipment');
-    const equipmentArray = JSON.parse(equipmentJSON);
+    if (!value) {
+        value = alt.Player.local.getMeta('equipment');
+    }
+
+    const equipmentArray = JSON.parse(value);
 
     equipmentArray.forEach((item, index) => {
         if (!item) {
@@ -60,10 +70,12 @@ export function fetchEquipment() {
     });
 }
 
-export function fetchStats() {
+export function fetchStats(value) {
     if (webview === undefined) return;
-    const statJSON = alt.Player.local.getMeta('skills');
-    const statArray = JSON.parse(statJSON);
+    if (!value) {
+        value = alt.Player.local.getMeta('skills');
+    }
+    const statArray = JSON.parse(value);
 
     Object.keys(statArray).forEach(key => {
         webview.emit(
@@ -75,10 +87,13 @@ export function fetchStats() {
     });
 }
 
-export function fetchItems() {
+export function fetchItems(value) {
     if (webview === undefined) return;
-    const itemJSON = alt.Player.local.getMeta('inventory');
-    const itemArray = JSON.parse(itemJSON);
+    if (!value) {
+        value = alt.Player.local.getMeta('inventory');
+    }
+
+    const itemArray = JSON.parse(value);
 
     itemArray.forEach((item, index) => {
         if (!item) {
@@ -99,7 +114,7 @@ export function fetchItems() {
         );
     });
 
-    //webview.emit('enablebuttons');
+    webview.emit('inventory:ForceUpdate');
 }
 
 function exit() {

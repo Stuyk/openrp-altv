@@ -189,12 +189,13 @@ class Inventory extends Component {
         this.addItemBind = this.addItem.bind(this);
         this.keydownBind = this.keydown.bind(this);
         this.keyupBind = this.keyup.bind(this);
+        this.forceUpdateBind = this.forceUpdate.bind(this);
     }
 
     componentDidMount() {
         if ('alt' in window) {
-            alt.on('inventory:ClearItems', this.clearItemsBind);
             alt.on('inventory:AddItem', this.addItemBind);
+            alt.on('inventory:ForceUpdate', this.forceUpdateBind);
         } else {
             const items = new Array(128).fill(null);
             items[0] = {
@@ -242,7 +243,12 @@ class Inventory extends Component {
 
         if ('alt' in window) {
             alt.off('inventory:AddItem', this.addItemBind);
+            alt.off('inventory:ForceUpdate', this.forceUpdateBind);
         }
+    }
+
+    forceUpdate() {
+        this.setState({ forceUpdate: true });
     }
 
     addItem(...args) {
@@ -395,20 +401,26 @@ class Inventory extends Component {
         }
 
         let inventory = [...this.state.inventory];
-        let heldItem = { ...inventory[heldIndex] };
-        let dropItem = { ...inventory[dropIndex] };
-
-        dropItem = this.cleanseItem(dropItem);
-        heldItem = this.cleanseItem(heldItem);
-
-        inventory[heldIndex] = dropItem;
-        inventory[dropIndex] = heldItem;
-        document.removeEventListener('mousemove', this.mouseMoveEvent);
-        this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
 
         if ('alt' in window) {
             alt.emit('inventory:SwapItem', heldIndex, dropIndex);
         }
+
+        if (inventory[heldIndex] && inventory[dropIndex]) {
+            const heldName = inventory[heldIndex].name;
+            const dropName = inventory[dropIndex].name;
+
+            if (heldName === dropName) {
+                inventory[dropIndex].quantity += inventory[heldIndex].quantity;
+                inventory[heldIndex] = null;
+            }
+        } else {
+            inventory[heldIndex] = inventory[dropIndex];
+            inventory[dropIndex] = inventory[heldIndex];
+        }
+
+        document.removeEventListener('mousemove', this.mouseMoveEvent);
+        this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
     }
 
     doubleClick(e) {
@@ -422,6 +434,10 @@ class Inventory extends Component {
             return;
         }
 
+        document.removeEventListener('mousemove', this.mouseMoveEvent);
+        let inventory = [...this.state.inventory];
+        inventory[parseInt(e.target.id)] = null;
+
         if ('alt' in window) {
             alt.emit('inventory:Use', this.state.inventory[parseInt(e.target.id)].hash);
         } else {
@@ -431,9 +447,9 @@ class Inventory extends Component {
         this.setState({
             held: false,
             heldItem: -1,
-            draggedItem: -1
+            draggedItem: -1,
+            inventory
         });
-        document.removeEventListener('mousemove', this.mouseMoveEvent);
     }
 
     shiftClick(e) {
@@ -445,6 +461,10 @@ class Inventory extends Component {
         } else {
             console.log('Shift Clicked');
         }
+
+        let inventory = [...this.state.inventory];
+        inventory[parseInt(e.target.id)] = null;
+        this.setState({ inventory });
     }
 
     cleanseItem(item) {
@@ -459,8 +479,15 @@ class Inventory extends Component {
             alt.emit('inventory:Use', this.state.inventory[this.state.contextItem].hash);
         }
 
+        let inventory = [...this.state.inventory];
+        inventory[parseInt(this.state.contextItem)] = null;
+
         document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1 });
+        this.setState({
+            context: false,
+            contextItem: -1,
+            inventory
+        });
     }
 
     dropItem() {
@@ -474,7 +501,7 @@ class Inventory extends Component {
         inventory[this.state.contextItem] = null;
 
         document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1 });
+        this.setState({ context: false, contextItem: -1, inventory });
     }
 
     destroyItem() {
@@ -491,7 +518,7 @@ class Inventory extends Component {
         inventory[this.state.contextItem] = null;
 
         document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1 });
+        this.setState({ context: false, contextItem: -1, inventory });
     }
 
     renameItem() {

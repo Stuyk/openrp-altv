@@ -129,7 +129,6 @@ const equipItem = (item, slot) => {
     }
 
     if (itemArray === undefined) {
-        alt.log('This item is not equippable for you.');
         return;
     }
 

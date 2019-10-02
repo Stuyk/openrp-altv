@@ -790,7 +790,6 @@ class Profile extends Component {
                 alt.emit('inventory:FetchEquipment');
             }, 100);
         }
-        document.addEventListener('mousedown', this.mousedown.bind(this));
     }
 
     componentWillUnmount() {
@@ -856,6 +855,7 @@ class Profile extends Component {
             return;
 
         if (!this.state.equipment[parseInt(this.state.contextItem)]) return;
+        document.removeEventListener('mouseover', this.hoverContextMenu);
 
         if ('alt' in window) {
             alt.emit(
@@ -866,8 +866,6 @@ class Profile extends Component {
 
         let equipment = [...this.state.equipment];
         equipment[parseInt(this.state.contextItem)] = null;
-
-        document.removeEventListener('mouseover', this.hoverContextMenu);
         this.setState({ context: false, contextItem: undefined, equipment });
     }
 
@@ -890,7 +888,11 @@ class Profile extends Component {
 
                 return h(
                     'div',
-                    { class: 'profileitem equipitem', id: index },
+                    {
+                        class: 'profileitem equipitem',
+                        id: index,
+                        onmousedown: this.mousedown.bind(this)
+                    },
                     h('svg', {
                         class: 'equipped',
                         type: 'image/svg+xml',

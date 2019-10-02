@@ -252,7 +252,7 @@ export const BaseItems = {
         slot: 11
     },
     fishingrod: {
-        eventcall: 'job:Fishing',
+        eventcall: ['itemeffects:EquipItem', 'job:Fishing'],
         abilities: {
             drop: true,
             use: true,

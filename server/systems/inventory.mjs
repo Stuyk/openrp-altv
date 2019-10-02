@@ -135,7 +135,13 @@ export function use(player, hash) {
         return;
     }
 
-    alt.emit(baseItem.eventcall, player, item, hash);
+    if (Array.isArray(baseItem.eventcall)) {
+        baseItem.eventcall.forEach(event => {
+            alt.emit(event, player, item, hash);
+        });
+    } else {
+        alt.emit(baseItem.eventcall, player, item, hash);
+    }
 }
 
 export function unequipItem(player, hash) {

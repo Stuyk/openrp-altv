@@ -186,10 +186,7 @@ class Inventory extends Component {
         };
         this.mouseMoveEvent = this.mousemove.bind(this);
         this.hoverContextMenu = this.hoverWhileContextMenu.bind(this);
-        this.clearItemsBind = this.clearItems.bind(this);
         this.addItemBind = this.addItem.bind(this);
-        //this.mouseDownBind = this.mousedown.bind(this);
-        //this.mouseUpBind = this.mouseup.bind(this);
         this.keydownBind = this.keydown.bind(this);
         this.keyupBind = this.keyup.bind(this);
     }
@@ -229,8 +226,6 @@ class Inventory extends Component {
             this.setState({ inventory: items });
         }
 
-        //document.addEventListener('mousedown', this.mouseDownBind);
-        //document.addEventListener('mouseup', this.mouseUpBind);
         document.addEventListener('keydown', this.keydownBind);
         document.addEventListener('keyup', this.keyupBind);
 
@@ -242,13 +237,10 @@ class Inventory extends Component {
     }
 
     componentWillUnmount() {
-        //document.removeEventListener('mousedown', this.mouseDownBind);
-        //document.removeEventListener('mouseup', this.mouseUpBind);
         document.removeEventListener('keydown', this.keydownBind);
         document.removeEventListener('keyup', this.keyupBind);
 
         if ('alt' in window) {
-            alt.off('inventory:ClearItems', this.clearItemsBind);
             alt.off('inventory:AddItem', this.addItemBind);
         }
     }
@@ -271,10 +263,6 @@ class Inventory extends Component {
         }
 
         this.setState({ inventory });
-    }
-
-    clearItems() {
-        this.setState({ inventory: new Array(128).fill(null) });
     }
 
     mouseover(e) {
@@ -758,13 +746,11 @@ class Profile extends Component {
             equipment: new Array(15).fill(null)
         };
         this.hoverContextMenu = this.hoverWhileContextMenu.bind(this);
-        this.clearEquipsBind = this.clearEquips.bind(this);
         this.equipItemBind = this.equipItem.bind(this);
     }
 
     componentDidMount() {
         if ('alt' in window) {
-            alt.on('inventory:ClearEquips', this.clearEquipsBind);
             alt.on('inventory:EquipItem', this.equipItemBind);
         } else {
             this.equipItem('Accessory', 0);
@@ -782,13 +768,8 @@ class Profile extends Component {
 
     componentWillUnmount() {
         if ('alt' in window) {
-            alt.off('inventory:ClearEquips', this.clearEquipsBind);
             alt.off('inventory:EquipItem', this.equipItemBind);
         }
-    }
-
-    clearEquips() {
-        this.setState({ equipment: new Array(15).fill(null) });
     }
 
     equipItem(...args) {

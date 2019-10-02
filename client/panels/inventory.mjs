@@ -49,7 +49,6 @@ export function fetchEquipment() {
     if (webview === undefined) return;
     const equipmentJSON = alt.Player.local.getMeta('equipment');
     const equipmentArray = JSON.parse(equipmentJSON);
-    webview.emit('inventory:ClearEquips');
 
     equipmentArray.forEach((item, index) => {
         if (!item) {
@@ -80,8 +79,6 @@ export function fetchItems() {
     if (webview === undefined) return;
     const itemJSON = alt.Player.local.getMeta('inventory');
     const itemArray = JSON.parse(itemJSON);
-
-    webview.emit('inventory:ClearItems');
 
     itemArray.forEach((item, index) => {
         if (!item) {

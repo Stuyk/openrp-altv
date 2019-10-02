@@ -48,8 +48,6 @@ function setupSlot(propID, entity, value) {
 
     if (!value) return;
 
-    alt.log(entity);
-
     const object = native.createObject(
         native.getHashKey(value.name),
         0,

@@ -376,7 +376,7 @@ export function setupPlayerFunctions(player) {
         name = undefined
     ) => {
         const item = Items[key];
-        const base = BaseItems[item.base];
+        const base = BaseItems[Items[key].base];
 
         if (!item) {
             console.log('Item does not exist.');
@@ -470,6 +470,39 @@ export function setupPlayerFunctions(player) {
         });
 
         player.saveInventory();
+        return true;
+    };
+
+    player.hasQuantityOfItem = (key, quantity) => {
+        const indexes = [];
+        const entries = player.inventory.entries();
+        for (let entry of entries) {
+            const [_index, _data] = entry;
+            if (_data && _data.key === key) {
+                indexes.push(_index);
+                continue;
+            }
+        }
+
+        console.log(entries);
+        console.log(indexes);
+
+        if (indexes.length <= 0) {
+            return false;
+        }
+
+        quantity = parseInt(quantity);
+
+        let total = 0;
+        indexes.forEach(currIndex => {
+            total += parseInt(player.inventory[currIndex].quantity);
+        });
+
+        console.log(`Total: ${total}`);
+
+        if (total < quantity) {
+            return false;
+        }
         return true;
     };
 
@@ -630,18 +663,41 @@ export function setupPlayerFunctions(player) {
     };
 
     player.hasItem = base => {
+        // Check for matching base.
         let index = player.inventory.findIndex(item => {
             if (item && item.base === base) return item;
         });
 
-        if (index <= -1) {
-            index = player.equipment.findIndex(item => {
-                if (item && item.base === base) return item;
-            });
-
-            if (index === -1) return false;
+        if (index !== -1) {
+            return true;
         }
-        return true;
+
+        // Check for matching key.
+        index = player.inventory.findIndex(item => {
+            if (item && item.key === base) return item;
+        });
+
+        if (index !== -1) {
+            return true;
+        }
+
+        index = player.equipment.findIndex(item => {
+            if (item && item.key === base) return item;
+        });
+
+        if (index !== -1) {
+            return true;
+        }
+
+        index = player.equipment.findIndex(item => {
+            if (item && item.base === base) return item;
+        });
+
+        if (index !== -1) {
+            return true;
+        }
+
+        return false;
     };
 
     player.addStarterItems = () => {

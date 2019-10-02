@@ -269,62 +269,10 @@ export class Objective {
 
         // Item Removal Check
         if (isFlagged(this.flags, modifiers.REMOVE_ITEM) && this.removeItem) {
-            let allValid = true;
-            const removeItemParams = this.removeItem;
-            let filteredItems = [];
-            for (let i = 0; i < removeItemParams.length; i++) {
-                let itemsFound = player.getItemsByLabel(removeItemParams[i].label);
-                if (itemsFound.length <= 0) {
-                    if (!player.job.itemWarning) {
-                        player.send(
-                            `Missing ${removeItemParams[i].quantity}x ${removeItemParams[i].label}`
-                        );
-                    }
-                    allValid = false;
-                    continue;
-                }
-
-                // Stackable Type
-                if (itemsFound[0].quantity >= 2) {
-                    if (itemsFound[0].quantity < removeItemParams[i].quantity) {
-                        if (!player.job.itemWarning) {
-                            player.send(
-                                `Missing ${removeItemParams[i].quantity}x ${removeItemParams[i].label}`
-                            );
-                        }
-                        allValid = false;
-                        continue;
-                    }
-                } else {
-                    if (itemsFound.length < removeItemParams[i].quantity) {
-                        if (!player.job.itemWarning) {
-                            player.send(
-                                `Missing ${removeItemParams[i].quantity}x ${removeItemParams[i].label}`
-                            );
-                        }
-                        allValid = false;
-                        continue;
-                    }
-
-                    while (itemsFound.length > removeItemParams[i].quantity) {
-                        itemsFound.pop();
-                        if (itemsFound.length === removeItemParams[i].quantity) {
-                            break;
-                        }
-                    }
-                }
-
-                filteredItems = filteredItems.concat(itemsFound);
-            }
-
-            if (!allValid) {
-                player.job.itemWarning = true;
+            const isValid = this.removeItems(player);
+            if (!isValid) {
                 return false;
             }
-
-            filteredItems.forEach(item => {
-                let res = player.subItemByHash(item.hash, item.quantity);
-            });
         }
 
         player.job.itemWarning = false;
@@ -391,6 +339,28 @@ export class Objective {
         // Go To Next Objective
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
+        return true;
+    }
+
+    removeItems(player) {
+        let allValid = true;
+        const removeItemParams = this.removeItem;
+        removeItemParams.forEach(item => {
+            if (!allValid) return;
+            if (!player.hasQuantityOfItem(item.key, item.quantity)) {
+                allValid = false;
+                player.send(`Missing ${item.quantity}x of ${item.key}`);
+                return;
+            }
+        });
+
+        if (!allValid) {
+            return false;
+        }
+
+        removeItemParams.forEach(item => {
+            player.subItem(item.key, item.quantity);
+        });
         return true;
     }
 
@@ -689,33 +659,36 @@ export class Job {
 
     addUniform(player) {
         if (!this.uniform) return;
-        if (player.hasItem(Items[this.uniform].label)) return;
-        player.addItem({ ...Items[this.uniform] }, 1, false);
-        player.send(`${Items[this.uniform].label} was added to your inventory.`);
+        if (!Items[this.uniform]) return;
+        if (player.hasItem(Items[this.uniform].key)) return;
+        player.addItem(Items[this.uniform].key, 1, Items[this.uniform].props);
+        player.send(`${Items[this.uniform].name} was added to your inventory.`);
     }
 
     checkItemRestrictions(player) {
         if (this.items.length <= 0) return true;
         let allValid = true;
         for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].hasItem) {
-                if (!player.hasItem(this.items[i].base)) {
-                    allValid = false;
-                    player.send('You are restricted from doing this job.');
-                    player.send(`You don't have {FF0000}${this.items[i].base}{FFFFFF}.`);
-                    break;
-                }
-            } else {
-                if (player.hasItem(this.items[i].base)) {
-                    allValid = false;
-                    player.send('You are restricted from doing this job.');
-                    player.send(`You have {FF0000}${this.items[i].base}{FFFFFF}.`);
-                    break;
-                }
+            const valid = player.hasItem(this.items[i].key);
+
+            if (this.items[i].hasItem && !valid) {
+                allValid = false;
+                player.send('You are restricted from doing this job.');
+                player.send(`You don't have {FF0000}${this.items[i].key}{FFFFFF}.`);
+                break;
+            }
+
+            if (!this.items[i].hasItem && valid) {
+                allValid = false;
+                player.send('You are restricted from doing this job.');
+                player.send(`You don't have {FF0000}${this.items[i].key}{FFFFFF}.`);
+                break;
             }
         }
         return allValid;
     }
+
+    checkItemRestriction(player, hasItem) {}
 
     /**
      * Set a time limit for the entire job.
@@ -909,12 +882,10 @@ export function checkRestrictions(player) {
 
     // Weapon Restriction
     if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
-        if (player.inventory[37]) {
-            if (player.inventory[37].isWeapon) {
-                player.send('This job does not allow weapons.');
-                quitJob(player, false, true);
-                return;
-            }
+        if (player.inventory[37] && player.inventory[37].isWeapon) {
+            player.send('This job does not allow weapons.');
+            quitJob(player, false, true);
+            return;
         }
     }
 }
@@ -989,11 +960,9 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
     }
 
     if (player.job) {
-        if (player.job.target) {
-            if (player.job.target.entity.constructor.name === 'Player') {
-                player.job.target.entity.jobber = undefined;
-                player.job.target.entity.send('The employee quit their job.');
-            }
+        if (player.job.target && player.job.target.entity.constructor.name === 'Player') {
+            player.job.target.entity.jobber = undefined;
+            player.job.target.entity.send('The employee quit their job.');
         }
     }
 

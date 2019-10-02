@@ -36,6 +36,7 @@ function startFishing(player, callbackEventName, isNearWater, castLocation) {
         'Fishing',
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
+    job.setItemRestrictions([{ key: 'fishingrod', hasItem: true }]);
     let obj;
 
     obj = new Objective(objectives.POINT, modifiers.ON_FOOT);

@@ -271,7 +271,7 @@ export const BaseItems = {
             destroy: true,
             sell: true,
             rename: false,
-            stack: true
+            stack: false
         },
         slot: -1
     },

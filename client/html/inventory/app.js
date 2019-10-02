@@ -188,8 +188,8 @@ class Inventory extends Component {
         this.hoverContextMenu = this.hoverWhileContextMenu.bind(this);
         this.clearItemsBind = this.clearItems.bind(this);
         this.addItemBind = this.addItem.bind(this);
-        this.mouseDownBind = this.mousedown.bind(this);
-        this.mouseUpBind = this.mouseup.bind(this);
+        //this.mouseDownBind = this.mousedown.bind(this);
+        //this.mouseUpBind = this.mouseup.bind(this);
         this.keydownBind = this.keydown.bind(this);
         this.keyupBind = this.keyup.bind(this);
     }
@@ -229,8 +229,8 @@ class Inventory extends Component {
             this.setState({ inventory: items });
         }
 
-        document.addEventListener('mousedown', this.mouseDownBind);
-        document.addEventListener('mouseup', this.mouseUpBind);
+        //document.addEventListener('mousedown', this.mouseDownBind);
+        //document.addEventListener('mouseup', this.mouseUpBind);
         document.addEventListener('keydown', this.keydownBind);
         document.addEventListener('keyup', this.keyupBind);
 
@@ -242,12 +242,15 @@ class Inventory extends Component {
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this.mouseDownBind);
-        document.removeEventListener('mouseup', this.mouseUpBind);
+        //document.removeEventListener('mousedown', this.mouseDownBind);
+        //document.removeEventListener('mouseup', this.mouseUpBind);
         document.removeEventListener('keydown', this.keydownBind);
         document.removeEventListener('keyup', this.keyupBind);
-        alt.off('inventory:ClearItems', this.clearItemsBind);
-        alt.off('inventory:AddItem', this.addItemBind);
+
+        if ('alt' in window) {
+            alt.off('inventory:ClearItems', this.clearItemsBind);
+            alt.off('inventory:AddItem', this.addItemBind);
+        }
     }
 
     addItem(...args) {
@@ -397,15 +400,11 @@ class Inventory extends Component {
             return;
         }
 
-        console.log('1 moving...');
-
         if (heldIndex === dropIndex) {
             document.removeEventListener('mousemove', this.mouseMoveEvent);
             this.setState({ held: false, heldItem: -1, draggedItem: -1 });
             return;
         }
-
-        console.log('2 moving...');
 
         let inventory = [...this.state.inventory];
         let heldItem = { ...inventory[heldIndex] };
@@ -418,8 +417,6 @@ class Inventory extends Component {
         inventory[dropIndex] = heldItem;
         document.removeEventListener('mousemove', this.mouseMoveEvent);
         this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
-
-        console.log('3 moving...');
 
         if ('alt' in window) {
             alt.emit('inventory:SwapItem', heldIndex, dropIndex);
@@ -560,7 +557,7 @@ class Inventory extends Component {
         );
     }
 
-    renderItem({ index, item, draggedItem, mouseover }) {
+    renderItem({ index, item, draggedItem, mouseover, mousedown, mouseup, held }) {
         let icon;
         if (item && item.icon) {
             icon = icons.includes(item.icon) ? item.icon : 'unknown';
@@ -580,15 +577,19 @@ class Inventory extends Component {
             {
                 class: classData,
                 id: index,
-                onmouseover: mouseover.bind(this)
+                onmouseover: mouseover.bind(this),
+                onmouseup: mouseup.bind(this),
+                onmousedown: mousedown.bind(this)
             },
             item &&
                 h('svg', {
                     type: 'image/svg+xml',
                     style: `background: url('../icons/${icon}.svg');`
                 }),
-            item && h('div', { class: 'itemname' }, item.name),
+            item && !held && h('div', { class: 'itemname' }, item.name),
+            item && held && h('div', { class: 'itemnameheld' }, item.name),
             item &&
+                !held &&
                 parseInt(item.quantity) >= 2 &&
                 h(
                     'div',
@@ -596,6 +597,15 @@ class Inventory extends Component {
                     `${parseInt(item.quantity).toLocaleString()}`
                 ),
             item &&
+                held &&
+                parseInt(item.quantity) >= 2 &&
+                h(
+                    'div',
+                    { class: 'itemquantityheld' },
+                    `${parseInt(item.quantity).toLocaleString()}`
+                ),
+            item &&
+                !held &&
                 h(
                     'div',
                     { class: 'tooltip' },
@@ -618,7 +628,10 @@ class Inventory extends Component {
                 item,
                 index,
                 draggedItem: this.state.draggedItem,
-                mouseover: this.mouseover.bind(this)
+                mouseover: this.mouseover.bind(this),
+                mousedown: this.mousedown.bind(this),
+                mouseup: this.mouseup.bind(this),
+                held: this.state.held
             });
         });
 
@@ -675,7 +688,9 @@ class Stats extends Component {
     }
 
     componentWillUnmount() {
-        alt.off('inventory:AddStat', this.addStatBind);
+        if ('alt' in window) {
+            alt.off('inventory:AddStat', this.addStatBind);
+        }
     }
 
     addStat(...args) {
@@ -752,6 +767,7 @@ class Profile extends Component {
             alt.on('inventory:ClearEquips', this.clearEquipsBind);
             alt.on('inventory:EquipItem', this.equipItemBind);
         } else {
+            this.equipItem('Accessory', 0);
             this.equipItem('Shirt', 7);
             this.equipItem('Shoes', 13);
         }
@@ -765,8 +781,10 @@ class Profile extends Component {
     }
 
     componentWillUnmount() {
-        alt.off('inventory:ClearEquips', this.clearEquipsBind);
-        alt.off('inventory:EquipItem', this.equipItemBind);
+        if ('alt' in window) {
+            alt.off('inventory:ClearEquips', this.clearEquipsBind);
+            alt.off('inventory:EquipItem', this.equipItemBind);
+        }
     }
 
     clearEquips() {
@@ -826,7 +844,9 @@ class Profile extends Component {
     }
 
     unequipItem() {
-        if (!this.state.contextItem) return;
+        if (this.state.contextItem === null || this.state.contextItem === undefined)
+            return;
+
         if (!this.state.equipment[parseInt(this.state.contextItem)]) return;
 
         if ('alt' in window) {

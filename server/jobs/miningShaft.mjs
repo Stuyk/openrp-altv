@@ -37,7 +37,7 @@ interaction.addBlip(78, 6, jobName);
 
 alt.on('job:MiningShaft', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
-    job.setItemRestrictions([{ label: 'Pickaxe', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'pickaxe', hasItem: true }]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };

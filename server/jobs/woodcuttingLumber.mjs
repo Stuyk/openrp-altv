@@ -42,7 +42,7 @@ alt.on('job:LumberJack', player => {
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
-    job.setItemRestrictions([{ base: 'axe', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'axe', hasItem: true }]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };

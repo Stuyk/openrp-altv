@@ -231,7 +231,7 @@ function intervalObjectiveInfo() {
     if (!objective || pause) return;
     if (alt.Player.local.getMeta('viewOpen')) return;
 
-    if (objective.marker && dist <= 100) {
+    if (objective.marker && dist <= 100 && dist >= 5) {
         drawMarker(
             objective.marker.type,
             objective.marker.pos,

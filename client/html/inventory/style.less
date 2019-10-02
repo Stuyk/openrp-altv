@@ -103,6 +103,24 @@ html {
             pointer-events: none;
         }
 
+        .itemnameheld {
+            text-align: center;
+            width: 90%;
+            position: absolute;
+            top: 60px;
+            color: white;
+            text-transform: uppercase;
+            font-size: 9px;
+            text-shadow: 1px 1px black;
+            background: @dark;
+            padding: 2px 5%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            z-index: 2;
+            pointer-events: none;
+        }
+
         .tooltip {
             height: auto;
             width: 130px;
@@ -133,6 +151,17 @@ html {
         }
 
         .itemquantity {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            color: white;
+            text-transform: uppercase;
+            font-size: 9px;
+            pointer-events: none;
+            text-align: right;
+        }
+
+        .itemquantityheld {
             position: absolute;
             top: 2px;
             right: 2px;
@@ -347,6 +376,7 @@ html {
     color: white;
     background: rgba(0, 0, 0, 0.5);
     pointer-events: none;
+    z-index: 55;
 
     svg {
         width: 75%;
@@ -355,6 +385,7 @@ html {
         pointer-events: none;
         object-fit: contain;
         user-select: none;
+        opacity: 0.5;
     }
 }
 

@@ -12,7 +12,8 @@ function loadInterval(key) {
     if (key !== 'loggedin') return;
     alt.off('meta:Changed', loadInterval);
 
-    alt.setInterval(drawPlayerNames, 0);
+    const intervalID = alt.setInterval(drawPlayerNames, 0);
+    alt.log(`update.mjs ${intervalID}`);
 }
 
 function drawPlayerNames() {

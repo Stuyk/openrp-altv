@@ -8,7 +8,7 @@ export function sodaMachine(player) {
         return;
     }
 
-    let itemTemplate = configurationItems.Items['Soda'];
+    let itemTemplate = configurationItems.Items.soda;
     let clonedTemplate = { ...itemTemplate }; // Clone the template.
 
     player.addItem(clonedTemplate, 1);

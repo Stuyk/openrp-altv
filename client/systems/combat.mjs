@@ -11,7 +11,9 @@ const disableControls = [
 function startInterval(key, value) {
     if (key !== 'pedflags') return;
     alt.off('meta:Changed', startInterval);
-    alt.setInterval(disableCombat, 0);
+
+    const intervalID = alt.setInterval(disableCombat, 0);
+    alt.log(`combat.mjs ${intervalID}`);
 }
 
 function disableCombat() {

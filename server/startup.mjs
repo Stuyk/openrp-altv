@@ -75,6 +75,7 @@ alt.on('ConnectionComplete', () => {
     // Import Item Effects
     import('./itemeffects/consume.mjs');
     import('./itemeffects/showlicense.mjs');
+    import('./itemeffects/equipitem.mjs');
 
     cacheInformation();
 });

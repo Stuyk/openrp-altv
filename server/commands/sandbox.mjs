@@ -72,11 +72,20 @@ chat.registerCmd('additem', (player, arg) => {
     }
 
     let itemTemplate = configurationItems.Items[`${arg[0]}`];
-    if (itemTemplate === undefined) {
+    if (!itemTemplate) {
         player.send('Item does not exist');
         return;
     }
-    player.addItem(itemTemplate, 1);
+
+    if (!arg[1]) {
+        arg[1] = 1;
+    }
+
+    if (player.addItem(arg[0], parseInt(arg[1]), itemTemplate.props)) {
+        player.send('Added Item');
+    } else {
+        player.send('Did not add item.');
+    }
 });
 
 chat.registerCmd('addveh', (player, arg) => {

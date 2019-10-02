@@ -2,6 +2,8 @@ import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as utilityVector from '../utility/vector.mjs';
 import * as utilityEncryption from '../utility/encryption.mjs';
+import { generateHash } from '../utility/encryption.mjs';
+import { BaseItems, Items } from '../configuration/items.mjs';
 import { Weapons } from '../configuration/weapons.mjs';
 console.log('Loaded: systems->inventory.mjs');
 
@@ -117,24 +119,49 @@ export function rename(player, hash, newName) {
 }
 
 export function use(player, hash) {
-    let item = player.inventory.find(
-        x => x !== null && x !== undefined && x.hash === hash
-    );
+    const item = player.inventory.find(item => {
+        if (item && item.hash === hash) return item;
+    });
 
-    if (item === undefined) {
-        player.updateInventory();
+    if (!item) {
+        player.syncInventory();
         return;
     }
 
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== item.label) return;
+    const baseItem = BaseItems[item.base];
 
-        if (configurationItems.Items[key].consumeable) {
-            player.consumeItem(hash);
-        } else {
-            player.useItem(hash);
-        }
+    if (!baseItem) {
+        console.log(`${baseItem} is not defined for use.`);
+        return;
+    }
+
+    alt.emit(baseItem.eventcall, player, item, hash);
+}
+
+export function unequipItem(player, hash) {
+    const index = player.equipment.findIndex(item => {
+        if (item && item.hash === hash) return item;
     });
+
+    if (index <= -1) {
+        player.syncInventory();
+        return;
+    }
+
+    player.unequipItem(index);
+}
+
+export function splitItem(player, hash) {
+    const index = player.inventory.findIndex(item => {
+        if (item && item.hash === hash) return item;
+    });
+
+    if (index <= -1) {
+        player.syncInventory();
+        return;
+    }
+
+    player.splitItem(index);
 }
 
 export function dropNewItem(player, item) {
@@ -162,85 +189,95 @@ export function dropNewItem(player, item) {
     alt.emitClient(null, 'inventory:ItemDrop', player, item, randomPos);
 }
 
-export function drop(player, hash, quantity) {
+export function drop(player, hash) {
+    if (player.isDropping) {
+        player.syncInventory();
+        return;
+    }
+
+    player.isDropping = true;
+
     if (player.vehicle) {
-        player.updateInventory();
+        player.syncInventory();
+        player.isDropping = false;
         return;
     }
 
-    let item = player.inventory.find(
-        x => x !== null && x !== undefined && x.hash === hash
-    );
-
-    if (item === undefined) return;
-
-    if (item.quantity < quantity) {
-        player.updateInventory();
-        return;
-    }
-
-    let isDroppable = true;
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== item.label) return;
-        isDroppable = configurationItems.Items[key].droppable;
+    let index = player.inventory.findIndex(i => {
+        if (i && i.hash === hash) return i;
     });
 
-    if (!isDroppable) {
-        player.send('You cannot drop that item.');
-        player.updateInventory();
+    if (index <= -1) {
+        player.syncInventory();
+        player.isDropping = false;
+        return;
+    }
+
+    const baseItem = BaseItems[player.inventory[index].base];
+
+    if (!baseItem) {
+        player.syncInventory();
+        player.isDropping = false;
+        return;
+    }
+
+    if (!baseItem.abilities.drop) {
+        player.send(`You cannot drop this item.`);
+        player.syncInventory();
+        player.isDropping = false;
         return;
     }
 
     // Generate a clone of the object.
-    let clonedItem = { ...item };
-    clonedItem.quantity = parseInt(quantity);
-    if (!player.subItemByHash(hash, parseInt(quantity))) return;
+    const clonedItem = { ...player.inventory[index] };
+    player.removeItem(index);
 
     // Regenerate new hash for each dropped item.
-    let newHash = utilityEncryption.generateHash(JSON.stringify({ hash, clonedItem }));
+    let newHash = generateHash(JSON.stringify({ hash, clonedItem }));
     clonedItem.hash = newHash;
 
     // Setup the dropped item.
     ItemDrops.set(newHash, clonedItem);
-
-    let randomPos = utilityVector.randPosAround(player.pos, 2);
-
+    const randomPos = utilityVector.randPosAround(player.pos, 2);
     alt.emitClient(null, 'inventory:ItemDrop', player, clonedItem, randomPos);
+    player.isDropping = false;
 }
 
 export function destroy(player, hash) {
-    player.destroyItem(hash);
+    const index = player.inventory.findIndex(item => {
+        if (item && item.hash === hash) return item;
+    });
+
+    if (index <= -1) {
+        player.syncInventory();
+        return;
+    }
+
+    player.removeItem(index);
 }
 
 export function pickup(player, hash) {
     if (player.pickingUpItem) return;
-
     if (!ItemDrops.has(hash)) return;
-
     player.pickingUpItem = true;
 
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);
 
-    alt.emitClient(null, 'inventory:ItemPickup', hash);
+    if (!player.addItem(item.key, item.quantity, item.props)) {
+        ItemDrops.set(hash, item);
+        player.pickingUpItem = false;
+        return;
+    }
 
+    alt.emitClient(null, 'inventory:ItemPickup', hash);
     player.playAudio('pickup');
     player.playAnimation('random@mugging4', 'pickup_low', 1200, 33);
-
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== item.label) return;
-
-        let clonedTemplate = { ...configurationItems.Items[key] };
-        clonedTemplate.props = item.props;
-
-        player.addItem(clonedTemplate, item.quantity);
-    });
-
     player.pickingUpItem = false;
 }
 
-export function updatePosition(player, newIndex, oldIndex) {
-    player.swapItems(newIndex, oldIndex);
+export function swapItem(player, heldIndex, dropIndex) {
+    player.swapItems(heldIndex, dropIndex);
 }
 
 export function addWeapon(player, weaponName) {
@@ -255,11 +292,10 @@ export function addWeapon(player, weaponName) {
 
     if (!weapon) return false;
 
-    const itemTemplate = { ...configurationItems.Items['Weapon'] };
-    itemTemplate.label = weapon.name;
-    itemTemplate.props = {
+    const props = {
         hash: weapon.value
     };
-    player.addItem(itemTemplate, 1);
+
+    player.addItem('weapon', 1, props, false, false, weapon.name);
     return true;
 }

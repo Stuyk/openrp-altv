@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import * as configurationItems from '../configuration/items.mjs';
+import { Items } from '../configuration/items.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
 
 console.log('Loaded: character->clothing.mjs');
@@ -22,20 +22,20 @@ console.log('Loaded: character->clothing.mjs');
 */
 
 const items = {
-    4: configurationItems.Items['Pants'],
-    5: configurationItems.Items['Backpack'],
-    6: configurationItems.Items['Shoes'],
-    7: configurationItems.Items['Accessory'],
-    9: configurationItems.Items['BodyArmour'],
-    11: configurationItems.Items['Shirt']
+    4: Items.pants,
+    5: Items.backpack,
+    6: Items.shoes,
+    7: Items.accessory,
+    9: Items.bodyarmour,
+    11: Items.shirt
 };
 
 const itemProps = {
-    0: configurationItems.Items['Hat'],
-    1: configurationItems.Items['Glasses'],
-    2: configurationItems.Items['Earrings'],
-    6: configurationItems.Items['Watch'],
-    7: configurationItems.Items['Bracelet']
+    0: Items.hat,
+    1: Items.glasses,
+    2: Items.earrings,
+    6: Items.watch,
+    7: Items.bracelet
 };
 
 // TODO: Implement cost.
@@ -60,8 +60,10 @@ export function purchase(player, jsonData) {
         return;
     }
 
-    itemClone.props = props;
-    if (!player.addItem(itemClone, 1)) {
+    delete props.label;
+    delete props.description;
+
+    if (!player.addItem(itemClone.key, 1, props)) {
         player.playAudio('error');
         return;
     }

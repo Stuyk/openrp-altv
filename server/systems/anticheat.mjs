@@ -6,13 +6,13 @@ import { Weapons } from '../configuration/weapons.mjs';
  * @param player
  */
 export function verifyWeapon(player) {
-    if (!player.inventory[37]) {
+    if (!player.equipment[11]) {
         alt.log(`!KICKED => ${player.name} does not have a weapon equipped.`);
         player.kick();
         return false;
     }
 
-    if (player.inventory[37].props.hash !== player.currentWeapon) {
+    if (player.equipment[11].props.hash !== player.currentWeapon) {
         alt.log(`!KICKED => ${player.name} does not have a weapon equipped.`);
         player.kick();
         return false;

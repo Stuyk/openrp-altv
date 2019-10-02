@@ -35,7 +35,7 @@ alt.on('job:SmithingRefinery', player => {
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
-    job.setItemRestrictions([{ label: 'Unrefined Rock', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'unrefinedmetal', hasItem: true }]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };
@@ -107,13 +107,13 @@ alt.on('job:SmithingRefinery', player => {
             time: 0.38 // Animation times to play at.
         }
     ]);
-    obj.setRemoveItem([{ label: 'Unrefined Rock', quantity: 1 }]);
+    obj.setRemoveItem([{ key: 'unrefinedmetal', quantity: 1 }]);
     job.add(copyObjective(obj));
 
     // Setup the rest of the points.
     trackPoints.forEach(pos => {
         obj = new Objective(objectives.MASH, modifiers.ON_FOOT);
-        obj.setHelpText('Mine ore by mashing ~INPUT_CONTEXT~');
+        obj.setHelpText('Refine metal by mashing ~INPUT_CONTEXT~');
         obj.setPosition(pos);
         obj.setBlip(367, 2, pos);
         obj.setRange(3);
@@ -131,7 +131,7 @@ alt.on('job:SmithingRefinery', player => {
         obj.setFinishedSound('complete');
         obj.setRewards([
             { type: 'xp', prop: 'smithing', quantity: 20 },
-            { type: 'item', prop: 'RefinedMetal', quantity: 1 }
+            { type: 'item', prop: 'refinedmetal', quantity: 1 }
         ]);
         obj.setMaxProgress(10);
         obj.setAnimationAndSound('amb@world_human_hammering@male@base', 'base', 1, -1);

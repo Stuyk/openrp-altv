@@ -3,19 +3,19 @@ import * as native from 'natives';
 
 alt.log('Loaded: client->systems->inventory.mjs');
 
-const slots = [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41];
 let currentSlots = new Map();
-
 let isPedMale;
 
 // When the player updates their inventory.
 alt.on('meta:Changed', (key, value) => {
-    if (key !== 'inventory') return;
+    if (key !== 'equipment') return;
 
     const invData = JSON.parse(value);
-    slots.forEach(key => {
-        equipItem(invData[parseInt(key)], key);
-    });
+
+    // Equippable Item Count
+    for (let i = 0; i < 15; i++) {
+        equipItem(invData[i], i);
+    }
 });
 
 const equipItem = (item, slot) => {
@@ -25,14 +25,21 @@ const equipItem = (item, slot) => {
         isPedMale = native.isPedMale(alt.Player.local.scriptID);
 
         // Hat
-        if (slot === 28) {
+        if (slot === 1) {
             native.clearPedProp(ped, 0, -1);
             native.setPedPropIndex(ped, 0, -1, 0, 0);
             alt.emit('face:UpdateHair');
         }
 
+        // Helmet === 4?
+
+        // Accessory
+        if (slot === 0) {
+            native.setPedComponentVariation(ped, 7, -1, 0, 0);
+        }
+
         // Shirt
-        if (slot === 30) {
+        if (slot === 7) {
             if (isPedMale) {
                 native.setPedComponentVariation(ped, 11, 15, 0, 0);
                 native.setPedComponentVariation(ped, 8, 15, 0, 0);
@@ -45,7 +52,7 @@ const equipItem = (item, slot) => {
         }
 
         // Pants
-        if (slot === 31) {
+        if (slot === 10) {
             if (isPedMale) {
                 native.setPedComponentVariation(ped, 4, 21, 0, 0);
             } else {
@@ -54,7 +61,7 @@ const equipItem = (item, slot) => {
         }
 
         // Shoes
-        if (slot === 32) {
+        if (slot === 13) {
             if (isPedMale) {
                 native.setPedComponentVariation(ped, 6, 34, 0, 0);
             } else {
@@ -63,46 +70,41 @@ const equipItem = (item, slot) => {
         }
 
         // Body Armor
-        if (slot === 33) {
+        if (slot === 8) {
             native.setPedComponentVariation(ped, 9, -1, 0, 0);
         }
 
-        // Accessory
-        if (slot === 34) {
-            native.setPedComponentVariation(ped, 7, -1, 0, 0);
-        }
-
         // Ears
-        if (slot === 35) {
+        if (slot === 2) {
             native.clearPedProp(ped, 2, -1);
             native.setPedPropIndex(ped, 2, -1, 0, 0);
             alt.emit('face:UpdateHair');
         }
 
         // Backpack
-        if (slot === 36) {
+        if (slot === 6) {
             native.setPedComponentVariation(ped, 5, -1, 0, 0);
         }
 
-        if (slot === 37) {
+        if (slot === 11) {
             // Hand
         }
 
         // Watch
-        if (slot === 38) {
+        if (slot === 5) {
             native.clearPedProp(ped, 6, -1);
             native.setPedPropIndex(ped, 6, -1, 0, 0);
         }
 
         // Bracelet
-        if (slot === 39) {
+        if (slot === 9) {
             native.clearPedProp(ped, 7, -1);
             native.setPedPropIndex(ped, 7, -1, 0, 0);
             alt.emit('face:UpdateHair');
         }
 
         // Glasses
-        if (slot === 40) {
+        if (slot === 3) {
             native.clearPedProp(ped, 1, -1);
             native.setPedPropIndex(ped, 1, -1, 0, 0);
             alt.emit('face:UpdateHair');

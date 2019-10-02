@@ -42,7 +42,7 @@ alt.on('job:MiningQuarry', player => {
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
-    job.setItemRestrictions([{ label: 'Pickaxe', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'pickaxe', hasItem: true }]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };
@@ -89,7 +89,7 @@ alt.on('job:MiningQuarry', player => {
         obj.setFinishedSound('complete');
         obj.setRewards([
             { type: 'xp', prop: 'mining', quantity: 20 },
-            { type: 'item', prop: 'UnrefinedRock', quantity: 1 }
+            { type: 'item', prop: 'unrefinedmetal', quantity: 1 }
         ]);
         obj.setMaxProgress(10);
         obj.setAnimationAndSound(

@@ -72,7 +72,7 @@ const slots = [
     'bracelet', // 9
     'trousers', // 10
     'hand', // 11
-    'unknown', // 12
+    'outfit', // 12
     'chelsea-boot', // 13
     'unknown' // 14
 ];
@@ -775,10 +775,10 @@ class Profile extends Component {
 
     equipItem(...args) {
         let equipment = [...this.state.equipment];
-        const [name, index, hash] = args;
+        const [name, index, hash, icon] = args;
 
         if (name) {
-            equipment[index] = { name, index, hash };
+            equipment[index] = { name, index, hash, icon };
         } else {
             equipment[index] = null;
         }
@@ -858,13 +858,15 @@ class Profile extends Component {
     renderProfile() {
         const equips = this.state.equipment.map((item, index) => {
             if (item) {
+                const icon = icons.includes(item.icon) ? item.icon : 'unknown';
+
                 return h(
                     'div',
                     { class: 'profileitem equipitem', id: index },
                     h('svg', {
                         class: 'equipped',
                         type: 'image/svg+xml',
-                        style: `background: url('../icons/${slots[index]}.svg');`
+                        style: `background: url('../icons/${icon}.svg');`
                     }),
                     h('div', { class: 'itemname' }, item.name)
                 );

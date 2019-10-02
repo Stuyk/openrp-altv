@@ -72,7 +72,7 @@ function drawItems() {
         // Closer up, we can recognize the item
         if (dist <= 5) {
             utilityText.drawText3d(
-                itemData.item.label,
+                `${itemData.item.name} x${itemData.item.quantity}`,
                 itemData.pos.x,
                 itemData.pos.y,
                 itemData.pos.z - 1,
@@ -91,7 +91,7 @@ function drawItems() {
             if (dist <= 1) {
                 native.beginTextCommandDisplayHelp('STRING');
                 native.addTextComponentSubstringPlayerName(
-                    `Press ~INPUT_CONTEXT~ to pick up the ${itemData.item.label}`
+                    `Press ~INPUT_CONTEXT~ to pickup (${itemData.item.name})`
                 );
                 native.endTextCommandDisplayHelp(0, false, true, -1);
 

@@ -1,4 +1,16 @@
 export const BaseItems = {
+    weapon: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
     food: {
         eventcall: 'itemeffects:Consume',
         abilities: {
@@ -165,7 +177,7 @@ export const BaseItems = {
             rename: true,
             stack: false
         },
-        slot: 12
+        slot: 14
     },
     shoes: {
         eventcall: 'itemeffects:EquipItem',
@@ -179,21 +191,113 @@ export const BaseItems = {
         },
         slot: 13
     },
-    unk2: {
+    uniform: {
         eventcall: 'itemeffects:EquipItem',
         abilities: {
-            drop: true,
+            drop: false,
             use: true,
             destroy: true,
             sell: true,
             rename: true,
             stack: false
         },
-        slot: 14
+        slot: 12
+    },
+    pickaxe: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    shovel: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    axe: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    hammer: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    fishingrod: {
+        eventcall: 'job:Fishing',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    unrefined: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
+    refined: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: true
+        },
+        slot: -1
     }
 };
 
 export const Items = {
+    weapon: {
+        name: '',
+        base: 'weapon',
+        key: 'weapon',
+        props: {},
+        quantity: 0,
+        icon: 'weapon'
+    },
     granolabar: {
         name: 'Granola Bar',
         base: 'food',
@@ -305,5 +409,183 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'glasses'
+    },
+    unrefinedwood: {
+        name: 'Unrefined Wood',
+        base: 'unrefined',
+        key: 'unrefinedwood',
+        props: {},
+        quantity: 0,
+        icon: 'wood'
+    },
+    refinedwood: {
+        name: 'Refined Wood',
+        base: 'refined',
+        key: 'refinedwood',
+        props: {},
+        quantity: 0,
+        icon: 'planks'
+    },
+    unrefinedmetal: {
+        name: 'Unrefined Metal',
+        base: 'unrefined',
+        key: 'unrefinedmetal',
+        props: {},
+        quantity: 0,
+        icon: 'rock'
+    },
+    refinedmetal: {
+        name: 'Refined Metal',
+        base: 'refined',
+        key: 'refinedmetal',
+        props: {},
+        quantity: 0,
+        icon: 'metal'
+    },
+    pickaxe1: {
+        name: 'Rusty Pickaxe',
+        base: 'pickaxe',
+        key: 'pickaxe1',
+        props: {
+            lvl: {
+                skill: 'mining',
+                requirement: 1,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_tool_pickaxe',
+                bone: 57005,
+                x: 0.1,
+                y: -0.1,
+                z: -0.02,
+                pitch: 80,
+                roll: 0,
+                yaw: 170
+            }
+        },
+        quantity: 0,
+        icon: 'pickaxe'
+    },
+    axe1: {
+        name: 'Rusty Axe',
+        base: 'axe',
+        key: 'axe1',
+        props: {
+            lvl: {
+                skill: 'woodcutting',
+                requirement: 0,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_tool_fireaxe',
+                bone: 57005,
+                x: 0.1,
+                y: -0.1,
+                z: -0.02,
+                pitch: 80,
+                roll: 0,
+                yaw: 170
+            }
+        },
+        quantity: 0,
+        icon: 'axe'
+    },
+    hammer1: {
+        name: 'Rusty Hammer',
+        base: 'hammer',
+        key: 'hammer1',
+        props: {
+            lvl: {
+                skill: 'smithing',
+                requirement: 0,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_tool_mallet',
+                bone: 57005,
+                x: 0.1,
+                y: 0.1,
+                z: 0,
+                pitch: 80,
+                roll: 0,
+                yaw: 180
+            }
+        },
+        quantity: 0,
+        icon: 'hammer'
+    },
+    fishingrod1: {
+        name: 'Rusty Fishing Rod',
+        base: 'fishingrod',
+        key: 'fishingrod1',
+        props: {
+            lvl: {
+                skill: 'fishing',
+                requirement: 0,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_fishing_rod_01',
+                bone: 18905,
+                x: 0.1,
+                y: 0.05,
+                z: 0,
+                pitch: 80,
+                roll: 120,
+                yaw: 160
+            }
+        },
+        quantity: 0,
+        icon: 'fishingrod'
+    },
+    tracksuit: {
+        name: 'Track Suit',
+        base: 'uniform',
+        key: 'tracksuit',
+        props: {
+            restriction: -1,
+            female: [
+                { id: 3, value: 15 },
+                { id: 4, value: 16 },
+                { id: 6, value: 4 },
+                { id: 8, value: 9 },
+                { id: 11, value: 16 }
+            ],
+            male: [
+                { id: 3, value: 15 },
+                { id: 4, value: 18 },
+                { id: 6, value: 31 },
+                { id: 8, value: 15 },
+                { id: 11, value: 5 }
+            ]
+        },
+        quantity: 0,
+        icon: 'outfit'
+    },
+    hikingoutfit: {
+        name: 'Hiking Outfit',
+        base: 'uniform',
+        key: 'hikingoutfit',
+        props: {
+            restriction: -1,
+            female: [
+                { id: 3, value: 1 },
+                { id: 4, value: 25 },
+                { id: 5, value: 33 },
+                { id: 6, value: 65 },
+                { id: 8, value: 26 },
+                { id: 11, value: 1 }
+            ],
+            male: [
+                { id: 3, value: 1 },
+                { id: 4, value: 15 },
+                { id: 5, value: 33 },
+                { id: 6, value: 62 },
+                { id: 8, value: 15 },
+                { id: 11, value: 41 }
+            ]
+        },
+        quantity: 0,
+        icon: 'outfit'
     }
 };

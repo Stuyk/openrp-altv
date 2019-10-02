@@ -84,7 +84,7 @@ alt.on('job:MiningShaft', player => {
         obj.setFinishedSound('complete');
         obj.setRewards([
             { type: 'xp', prop: 'mining', quantity: 20 },
-            { type: 'item', prop: 'UnrefinedRock', quantity: 2 }
+            { type: 'item', prop: 'unrefinedmetal', quantity: 2 }
         ]);
         obj.setMaxProgress(10);
         obj.setAnimationAndSound(

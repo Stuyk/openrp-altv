@@ -57,7 +57,7 @@ export function fetchEquipment() {
             return;
         }
 
-        webview.emit('inventory:EquipItem', item.name, index, item.hash);
+        webview.emit('inventory:EquipItem', item.name, index, item.hash, item.icon);
     });
 }
 
@@ -118,7 +118,7 @@ function use(hash) {
 }
 
 function drop(hash, quantity) {
-    alt.emitServer('inventory:DropItem', hash, quantity);
+    alt.emitServer('inventory:DropItem', hash);
 }
 
 function rename(hash, name) {

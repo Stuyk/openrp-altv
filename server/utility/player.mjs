@@ -372,7 +372,8 @@ export function setupPlayerFunctions(player) {
         quantity,
         props = {},
         skipStackable = false,
-        skipSave = false
+        skipSave = false,
+        name = undefined
     ) => {
         const item = Items[key];
         const base = BaseItems[item.base];
@@ -388,6 +389,9 @@ export function setupPlayerFunctions(player) {
         }
 
         const clonedItem = { ...item };
+        if (name) {
+            clonedItem.name = name;
+        }
 
         if (!skipStackable) {
             const inventoryIndex = player.inventory.findIndex(item => {
@@ -492,6 +496,19 @@ export function setupPlayerFunctions(player) {
         player.inventory = JSON.parse(player.data.inventory);
         player.emitMeta('inventory', player.data.inventory);
         player.emitMeta('equipment', player.data.equipment);
+
+        if (player.equipment[11]) {
+            if (player.equipment[11].base === 'weapon') {
+                player.setSyncedMeta('prop:11', undefined);
+                player.setWeapon(player.equipment[11].props.hash);
+            } else {
+                player.removeAllWeapons();
+                player.setSyncedMeta('prop:11', player.equipment[11].props.propData);
+            }
+        } else {
+            player.setSyncedMeta('prop:11', undefined);
+            player.removeAllWeapons();
+        }
     };
 
     player.equipItem = (itemIndex, equipmentIndex) => {
@@ -520,7 +537,16 @@ export function setupPlayerFunctions(player) {
 
         if (!equippedItem) return false;
 
-        if (player.addItem(equippedItem.base, 1, equippedItem.props)) {
+        if (
+            player.addItem(
+                equippedItem.key,
+                1,
+                equippedItem.props,
+                false,
+                false,
+                equippedItem.name
+            )
+        ) {
             player.equipment[equipmentIndex] = null;
             player.saveInventory();
             return true;
@@ -593,131 +619,29 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    player.removeItem = index => {
+        player.inventory[index] = null;
+        player.saveInventory();
+    };
+
     player.setWeapon = hash => {
-        /*
         player.removeAllWeapons();
         player.giveWeapon(hash, 999, true);
-        */
     };
 
-    player.hasItem = itemName => {
-        /*
-        let items = player.inventory.filter(x => x !== null && x !== undefined);
-        if (items.length <= 0) return false;
-        let item = items.find(x => x.label && x.label.includes(itemName));
-        if (!item) return false;
-        return true;
-        */
-    };
-
-    player.getItemsByLabel = label => {
-        /*
-        const items = player.inventory.filter(x => x && x.label === label);
-
-        if (items.length <= 0) {
-            return [];
-        }
-
-        let filteredItems = [];
-        items.forEach(item => {
-            filteredItems.push({
-                label: item.label,
-                quantity: item.quantity,
-                hash: item.hash
-            });
+    player.hasItem = base => {
+        let index = player.inventory.findIndex(item => {
+            if (item && item.base === base) return item;
         });
 
-        return filteredItems;
-        */
-    };
+        if (index <= -1) {
+            index = player.equipment.findIndex(item => {
+                if (item && item.base === base) return item;
+            });
 
-    player.subItemByHash = (itemHash, quantity) => {
-        /*
-        let index = player.inventory.findIndex(
-            x => x !== null && x !== undefined && x.hash === itemHash
-        );
-
-        if (index <= -1) return false;
-
-        if (player.inventory[index].quantity < quantity) return false;
-
-        alt.emit('inventory:SubItem', player, index, quantity);
+            if (index === -1) return false;
+        }
         return true;
-        */
-    };
-
-    player.addItemByHash = (itemHash, quantity) => {
-        /*
-        let index = player.inventory.findIndex(
-            x => x !== null && x !== undefined && x.hash === itemHash
-        );
-
-        if (index <= -1) return false;
-
-        alt.emit('inventory:AddItem', player, index, quantity);
-        */
-    };
-
-    player.destroyItem = itemHash => {
-        /*
-        let index = player.inventory.findIndex(
-            x => x !== null && x !== undefined && x.hash === itemHash
-        );
-
-        if (index <= -1) return false;
-
-        player.send(`${player.inventory[index].label} was destroyed.`);
-        player.subItemByHash(itemHash, 1);
-        return true;
-        */
-    };
-
-    // Mostly for consumption / item effects.
-    player.consumeItem = itemHash => {
-        /*
-        let index = player.inventory.findIndex(
-            x => x !== null && x !== undefined && x.hash === itemHash
-        );
-
-        if (index <= -1) return false;
-
-        let consumedItem = {
-            label: player.inventory[index].label,
-            props: player.inventory[index].props
-        };
-
-        // Failed to consume.
-        if (!player.subItemByHash(itemHash, 1)) return false;
-        alt.emit('item:Consume', player, consumedItem);
-        return true;
-        */
-    };
-
-    // Mostly for displaying items.
-    player.useItem = itemHash => {
-        /*
-        let index = player.inventory.findIndex(
-            x => x !== null && x !== undefined && x.hash === itemHash
-        );
-
-        if (index <= -1) return false;
-
-        let consumedItem = {
-            label: player.inventory[index].label,
-            props: player.inventory[index].props
-        };
-
-        alt.emit('item:Use', player, consumedItem);
-        player.updateInventory();
-        return true;
-        */
-    };
-
-    player.updateInventory = () => {
-        /*
-        player.syncInventory();
-        alt.emitClient(player, 'inventory:FetchItems');
-        */
     };
 
     player.addStarterItems = () => {

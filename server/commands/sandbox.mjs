@@ -81,29 +81,10 @@ chat.registerCmd('additem', (player, arg) => {
         arg[1] = 1;
     }
 
-    if (player.addItem(arg[0], parseInt(arg[1]))) {
+    if (player.addItem(arg[0], parseInt(arg[1]), itemTemplate.props)) {
         player.send('Added Item');
     } else {
         player.send('Did not add item.');
-    }
-});
-
-chat.registerCmd('subitem', (player, args) => {
-    if (args == undefined || args.length == 0) {
-        player.send('Usage: /subitem (item)');
-        return;
-    }
-
-    let itemTemplate = configurationItems.Items[`${args[0]}`];
-    if (!itemTemplate) {
-        player.send('Item does not exist');
-        return;
-    }
-
-    if (player.subItem(args[0], 1)) {
-        player.send('Removed Item');
-    } else {
-        player.send('Did not remove item.');
     }
 });
 

@@ -3,7 +3,7 @@ import * as chat from '../chat/chat.mjs';
 import { Dictionary } from '../configuration/dictionary.mjs';
 import { distance, randPosAround } from '../utility/vector.mjs';
 import { addXP } from '../systems/skills.mjs';
-import { Items } from '../configuration/items.mjs';
+import { Items, BaseItems } from '../configuration/items.mjs';
 
 const Debug = true;
 
@@ -331,50 +331,11 @@ export class Objective {
 
         // Issue Rewards
         if (this.rewards.length >= 1) {
-            this.rewards.forEach(reward => {
-                if (reward.type === 'xp') {
-                    addXP(player, reward.prop, reward.quantity);
-                }
-
-                if (reward.type === 'item') {
-                    if (Items[reward.prop]) {
-                        if (Items[reward.prop].stackable) {
-                            player.addItem(
-                                { ...Items[reward.prop] },
-                                reward.quantity,
-                                false
-                            );
-                            player.send(
-                                `${Items[reward.prop].label} was added to your inventory.`
-                            );
-                        } else {
-                            for (let i = 0; i < reward.quantity; i++) {
-                                player.addItem({ ...Items[reward.prop] }, 1, false);
-                                player.send(
-                                    `${Items[reward.prop].label} was added to your inventory.`
-                                );
-                            }
-                        }
-                    } else {
-                        console.log(`${reward.prop} was not found for a reward.`);
-                    }
-                }
-            });
+            this.giveRewards(player);
         }
 
         if (this.veh) {
-            let pos = randPosAround(this.veh.pos, 2);
-            const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
-
-            vehicle.job = {
-                player,
-                preventHijack: true
-            };
-
-            vehicle.engineOn = true;
-            const vehicles = [...player.vehicles];
-            vehicles.push(vehicle);
-            player.vehicles = vehicles;
+            this.spawnVehicles(player);
         }
 
         // Play a sound; after a user finishes their objective.
@@ -431,6 +392,48 @@ export class Objective {
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
         return true;
+    }
+
+    spawnVehicles(player) {
+        let pos = randPosAround(this.veh.pos, 2);
+        const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
+
+        vehicle.job = {
+            player,
+            preventHijack: true
+        };
+
+        vehicle.engineOn = true;
+        const vehicles = [...player.vehicles];
+        vehicles.push(vehicle);
+        player.vehicles = vehicles;
+    }
+
+    giveRewards(player) {
+        this.rewards.forEach(reward => {
+            if (reward.type === 'xp') {
+                addXP(player, reward.prop, reward.quantity);
+                return;
+            }
+
+            if (reward.type === 'item') {
+                if (!Items[reward.prop]) return;
+                const baseItem = BaseItems[Items[reward.prop].base];
+                if (baseItem.abilities.stack) {
+                    player.addItem(Items[reward.prop].key, reward.quantity);
+                    player.send(
+                        `${Items[reward.prop].name} was added to your inventory.`
+                    );
+                } else {
+                    for (let i = 0; i < reward.quantity; i++) {
+                        player.addItem(Items[reward.prop].key, 1);
+                        player.send(
+                            `${Items[reward.prop].name} was added to your inventory.`
+                        );
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -696,17 +699,17 @@ export class Job {
         let allValid = true;
         for (let i = 0; i < this.items.length; i++) {
             if (this.items[i].hasItem) {
-                if (!player.hasItem(this.items[i].label)) {
+                if (!player.hasItem(this.items[i].base)) {
                     allValid = false;
                     player.send('You are restricted from doing this job.');
-                    player.send(`You don't have {FF0000}${this.items[i].label}{FFFFFF}.`);
+                    player.send(`You don't have {FF0000}${this.items[i].base}{FFFFFF}.`);
                     break;
                 }
             } else {
-                if (player.hasItem(this.items[i].label)) {
+                if (player.hasItem(this.items[i].base)) {
                     allValid = false;
                     player.send('You are restricted from doing this job.');
-                    player.send(`You have {FF0000}${this.items[i].label}{FFFFFF}.`);
+                    player.send(`You have {FF0000}${this.items[i].base}{FFFFFF}.`);
                     break;
                 }
             }

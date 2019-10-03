@@ -8,6 +8,8 @@ import * as systemsTime from '../systems/time.mjs';
 import * as utilityTime from '../utility/time.mjs';
 import { objectToNull } from '../utility/object.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
+import { spawnVehicle } from '../systems/vehicles.mjs';
+import { appendNewVehicle } from '../systems/vehicles.mjs';
 
 console.log('Loaded: utility->player.mjs');
 
@@ -84,6 +86,12 @@ export function setupPlayerFunctions(player) {
 
     player.saveDead = value => {
         player.data.dead = value;
+
+        if (!value) {
+            player.saveField(player.data.id, 'health', 200);
+            player.saveField(player.data.id, 'armour', 0);
+        }
+
         player.saveField(player.data.id, 'dead', value);
     };
 
@@ -776,7 +784,7 @@ export function setupPlayerFunctions(player) {
 
             vehicles.forEach(veh => {
                 if (!player) return;
-                alt.emit('vehicles:SpawnVehicle', player, veh);
+                spawnVehicle(player, veh);
             });
         });
     };
@@ -791,22 +799,25 @@ export function setupPlayerFunctions(player) {
             }
         }
 
-        // Spawn a reference vehicle. Then destroy it.
-        let tempVeh = new alt.Vehicle(model, 0, 0, 0, 0, 0, 0);
-        let health = tempVeh.getHealthDataBase64();
-        tempVeh.destroy();
-
-        db.upsertData(
+        const veh = {
+            guid: player.data.id,
+            model,
+            position: JSON.stringify(pos),
+            rotation: JSON.stringify(rot),
+            stats: null,
+            customization: null
+        };
+        const spawnedVehicle = spawnVehicle(player, veh, true);
+        db.insertData(
             {
                 guid: player.data.id,
                 position: JSON.stringify(pos),
                 rotation: JSON.stringify(rot),
-                model,
-                health
+                model
             },
             'Vehicle',
-            veh => {
-                alt.emit('vehicles:SpawnVehicle', player, veh);
+            newVehicle => {
+                appendNewVehicle(newVehicle.identifiers[0].id, spawnedVehicle);
             }
         );
     };

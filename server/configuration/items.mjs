@@ -314,9 +314,21 @@ export const Items = {
         name: 'Granola Bar',
         base: 'food',
         key: 'granolabar',
-        props: {},
+        props: {
+            health: 2
+        },
         quantity: 0,
         icon: 'chocolate-bar'
+    },
+    soda: {
+        name: 'Soda',
+        base: 'food',
+        key: 'soda',
+        props: {
+            health: 2
+        },
+        quantity: 0,
+        icon: 'soda'
     },
     hat: {
         name: 'Hat',

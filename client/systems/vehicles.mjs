@@ -5,6 +5,75 @@ alt.log('Loaded: client->systems->vehicles.mjs');
 
 alt.on('meta:Changed', startInterval);
 
+alt.on('gameEntityCreate', entity => {
+    if (entity.constructor.name === 'Vehicle') {
+        const primaryPaint = entity.getSyncedMeta('primaryPaint');
+        const secondaryPaint = entity.getSyncedMeta('secondaryPaint');
+        const primaryColor = entity.getSyncedMeta('primaryColor');
+        const secondaryColor = entity.getSyncedMeta('secondaryColor');
+
+        alt.setTimeout(() => {
+            if (primaryPaint) {
+                native.setVehicleModColor1(entity.scriptID, primaryPaint, 0, 0);
+            }
+
+            if (secondaryPaint) {
+                native.setVehicleModColor2(entity.scriptID, secondaryPaint, 0, 0);
+            }
+
+            if (primaryColor) {
+                native.setVehicleCustomPrimaryColour(
+                    entity.scriptID,
+                    primaryColor[0],
+                    primaryColor[1],
+                    primaryColor[2]
+                );
+            }
+
+            if (secondaryColor) {
+                native.setVehicleCustomSecondaryColour(
+                    entity.scriptID,
+                    secondaryColor[0],
+                    secondaryColor[1],
+                    secondaryColor[2]
+                );
+            }
+        }, 1000);
+    }
+});
+
+alt.on('syncedMetaChange', (entity, key, value) => {
+    if (entity.constructor.name !== 'Vehicle') return;
+
+    alt.setTimeout(() => {
+        if (key === 'primaryPaint') {
+            native.setVehicleModColor1(entity.scriptID, value, 0, 0);
+        }
+
+        if (key === 'secondaryPaint') {
+            native.setVehicleModColor2(entity.scriptID, value, 0, 0);
+        }
+
+        if (key === 'primaryColor') {
+            native.setVehicleCustomPrimaryColour(
+                entity.scriptID,
+                value[0],
+                value[1],
+                value[2]
+            );
+        }
+
+        if (key === 'secondaryColor') {
+            native.setVehicleCustomSecondaryColour(
+                entity.scriptID,
+                value[0],
+                value[1],
+                value[2]
+            );
+        }
+    }, 1000);
+});
+
 function startInterval(key, value) {
     if (key !== 'pedflags') return;
     alt.off('meta:Changed', startInterval);
@@ -117,10 +186,4 @@ export function soundHorn(vehicle, state) {
             native.setVehicleLights(id, 0);
         }, 50);
     }
-}
-
-export function setIntoVehicle(vehicle) {
-    alt.setTimeout(() => {
-        native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle.scriptID, -1);
-    }, 200);
 }

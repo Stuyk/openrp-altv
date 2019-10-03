@@ -6,6 +6,8 @@ const url = 'http://resource/client/html/vehiclecustom/index.html';
 let webview;
 let vehicleChanges = {};
 let previousVehicle = {};
+let previousColors = {};
+let colors = {};
 
 const modTypes = [
     'Spoiler', // 0
@@ -65,11 +67,13 @@ export function showDialogue() {
     }
 
     if (alt.Player.local.getMeta('viewOpen')) return;
+    if (!alt.Player.local.vehicle) return;
 
     // Setup Webview
     webview.open(url, true);
     webview.on('vehicle:FetchModList', buildModList);
     webview.on('vehicle:UpdateLocalVehicle', updateLocalVehicle);
+    webview.on('vehicle:UpdateColor', updateVehicleColor);
     webview.on('vehicle:SaveChanges', saveChanges);
     webview.on('vehicle:Exit', exit);
     getPreviousVehicleMods();
@@ -84,6 +88,49 @@ function getPreviousVehicleMods() {
         let value = native.getVehicleMod(vehID, i);
         previousVehicle[i] = value;
     }
+
+    getPreviousVehicleColors(vehID);
+}
+
+function getPreviousVehicleColors(vehID) {
+    const [_null1, pr, pg, pb] = native.getVehicleCustomPrimaryColour(
+        vehID,
+        undefined,
+        undefined,
+        undefined
+    );
+
+    const [_null2, sr, sg, sb] = native.getVehicleCustomSecondaryColour(
+        vehID,
+        undefined,
+        undefined,
+        undefined
+    );
+
+    const [_null3, primaryPaintType] = native.getVehicleModColor1(
+        vehID,
+        undefined,
+        undefined,
+        undefined
+    );
+
+    const [_null4, secondaryPaintType] = native.getVehicleModColor2(
+        vehID,
+        undefined,
+        undefined,
+        undefined
+    );
+
+    previousColors = {
+        primary: {
+            type: primaryPaintType,
+            color: [pr, pg, pb]
+        },
+        secondary: {
+            type: secondaryPaintType,
+            color: [sr, sg, sb]
+        }
+    };
 }
 
 function buildModList() {
@@ -148,6 +195,8 @@ function buildModList() {
             }
         }
     }
+
+    webview.emit('parseColors', previousColors);
 }
 
 function isToggleMod(modNumber) {
@@ -158,36 +207,59 @@ function isTuningMod(modNumber) {
     return modNumber >= 11 && modNumber <= 16;
 }
 
-function updateLocalVehicle({ modType, modIndex }) {
+function updateLocalVehicle(modType, modIndex) {
     const veh = alt.Player.local.vehicle.scriptID;
-
-    if (modType === 'color') {
-        native.setVehicleCustomPrimaryColour(
-            vehicle_number,
-            modIndex.r,
-            modIndex.g,
-            modIndex.b
-        );
-
-        vehicleChanges[modType] = modIndex;
-        return;
-    }
-
-    if (modType === 'color2') {
-        native.native.setVehicleCustomSecondaryColour(
-            vehicle_number,
-            modIndex.r,
-            modIndex.g,
-            modIndex.b
-        );
-
-        vehicleChanges[modType] = modIndex;
-        return;
-    }
 
     native.setVehicleModKit(veh, 0);
     native.setVehicleMod(veh, modType, modIndex, false);
     vehicleChanges[modType] = modIndex;
+}
+
+function updateVehicleColor(
+    primaryPaintType,
+    secondaryPaintType,
+    primaryColor,
+    secondaryColor
+) {
+    const veh = alt.Player.local.vehicle.scriptID;
+
+    /**
+     * 0: Normal
+     * 1: Metallic
+     * 2: Pearl
+     * 3: Matte
+     * 4: Metal
+     * 5: Chrome
+     */
+
+    native.setVehicleModColor1(veh, primaryPaintType, 0, 0);
+    native.setVehicleCustomPrimaryColour(
+        veh,
+        primaryColor[0],
+        primaryColor[1],
+        primaryColor[2]
+    );
+
+    native.setVehicleModColor2(veh, secondaryPaintType, 0, 0);
+    native.setVehicleCustomSecondaryColour(
+        veh,
+        secondaryColor[0],
+        secondaryColor[1],
+        secondaryColor[2]
+    );
+
+    // This is stored at the top of the file.
+    // Set it; when the player enters the shop.
+    colors = {
+        primary: {
+            type: primaryPaintType,
+            color: primaryColor
+        },
+        secondary: {
+            type: secondaryPaintType,
+            color: secondaryColor
+        }
+    };
 }
 
 function saveChanges() {
@@ -202,6 +274,12 @@ function saveChanges() {
         if (previousVehicle[key] === -1) delete previousVehicle[key];
     });
 
+    /*
+        Need to add colors into this event here; for the previousVehicle data.
+        The server-side mod distribution; also needs to handle this.
+    */
+    previousVehicle.colors = colors;
+
     // New modification list is sent up.
     alt.emitServer(
         'vehicle:SaveChanges',
@@ -213,13 +291,25 @@ function saveChanges() {
 function exit() {
     webview.close();
     webview = undefined;
+    const scriptID = alt.Player.local.vehicle.scriptID;
 
     Object.keys(previousVehicle).forEach(key => {
-        native.setVehicleMod(
-            alt.Player.local.vehicle.scriptID,
-            key,
-            previousVehicle[key],
-            false
-        );
+        native.setVehicleMod(scriptID, key, previousVehicle[key], false);
     });
+
+    native.setVehicleModColor1(scriptID, previousColors.primary.type, 0, 0);
+    native.setVehicleCustomPrimaryColour(
+        scriptID,
+        previousColors.primary.color[0],
+        previousColors.primary.color[1],
+        previousColors.primary.color[2]
+    );
+
+    native.setVehicleModColor2(scriptID, previousColors.secondary.type, 0, 0);
+    native.setVehicleCustomSecondaryColour(
+        scriptID,
+        previousColors.secondary.color[0],
+        previousColors.secondary.color[1],
+        previousColors.secondary.color[2]
+    );
 }

@@ -31,7 +31,7 @@ alt.on('job:TaxiJob', player => {
     let pos;
     const emptyVector = { x: 0, y: 0, z: 0 };
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
-    job.setItemRestrictions([{ label: 'Drivers License', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'driverslicense', hasItem: true }]);
     //job.setUniform('TrackSuit');
 
     // Starting Point

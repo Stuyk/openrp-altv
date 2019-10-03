@@ -286,6 +286,18 @@ export const BaseItems = {
             stack: true
         },
         slot: -1
+    },
+    license: {
+        eventcall: 'itemeffects:ShowLicense',
+        abilities: {
+            drop: false,
+            use: true,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: false
+        },
+        slot: -1
     }
 };
 
@@ -587,5 +599,13 @@ export const Items = {
         },
         quantity: 0,
         icon: 'outfit'
+    },
+    driverslicense: {
+        name: 'Drivers License',
+        base: 'license',
+        key: 'driverslicense',
+        props: {},
+        quantity: 0,
+        icon: 'id-card'
     }
 };

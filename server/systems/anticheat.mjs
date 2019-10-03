@@ -12,6 +12,10 @@ export function verifyWeapon(player) {
         return false;
     }
 
+    if (!player.equipment[11].props) {
+        return true;
+    }
+
     if (player.equipment[11].props.hash !== player.currentWeapon) {
         alt.log(`!KICKED => ${player.name} does not have a weapon equipped.`);
         player.kick();

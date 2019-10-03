@@ -12,9 +12,9 @@ let VehicleMap = new Map();
  * Vehicle positions are saved after the player exits the vehicle.
  * Only the owner can save the position; after they exit.
  */
-alt.on('vehicles:SpawnVehicle', (player, veh) => {
+export function spawnVehicle(player, veh, newVehicle = false) {
     // Existing Vehicle; Player Rejoined
-    if (VehicleMap.has(veh.id)) {
+    if (!newVehicle && VehicleMap.has(veh.id)) {
         let mappedVehicle = VehicleMap.get(veh.id);
 
         if (!Array.isArray(player.vehicles)) {
@@ -77,8 +77,10 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
         vehicle.syncCustom();
     }
 
-    // Set the vehicle into the map.
-    VehicleMap.set(veh.id, vehicle);
+    if (!newVehicle) {
+        // Set the vehicle into the map.
+        VehicleMap.set(veh.id, vehicle);
+    }
 
     // Create the vehicles array for the player.
     if (!Array.isArray(player.vehicles)) {
@@ -88,7 +90,14 @@ alt.on('vehicles:SpawnVehicle', (player, veh) => {
         // Keep track of player vehicles.
         player.vehicles.push(vehicle);
     }
-});
+
+    return vehicle;
+}
+
+export function appendNewVehicle(id, vehicle) {
+    vehicle.data.id = id;
+    VehicleMap.set(id, vehicle);
+}
 
 // Save Vehicle Data
 setInterval(() => {

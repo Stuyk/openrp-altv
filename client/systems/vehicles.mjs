@@ -187,3 +187,9 @@ export function soundHorn(vehicle, state) {
         }, 50);
     }
 }
+
+export function setIntoVehicle(vehicle) {
+    alt.setTimeout(() => {
+        native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle.scriptID, -1);
+    }, 200);
+}

@@ -67,8 +67,6 @@ export function setupVehicleFunctions(vehicle) {
         if (!vehicle.data.customization) return;
         let mods = JSON.parse(vehicle.data.customization);
         Object.keys(mods).forEach(key => {
-            console.log(key);
-
             if (key !== 'colors') {
                 vehicle.modKit = 1;
                 let index = parseInt(key);

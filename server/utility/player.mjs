@@ -95,6 +95,13 @@ export function setupPlayerFunctions(player) {
         player.saveField(player.data.id, 'dead', value);
     };
 
+    player.saveData = () => {
+        player.data.health = player.health;
+        player.data.armour = player.armour;
+        player.data.lastposition = JSON.stringify(player.pos);
+        player.save();
+    };
+
     // ====================================
     // Sync Interaction Blips
     player.syncInteractionBlips = () => {

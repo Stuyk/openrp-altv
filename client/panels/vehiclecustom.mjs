@@ -207,7 +207,7 @@ function isTuningMod(modNumber) {
     return modNumber >= 11 && modNumber <= 16;
 }
 
-function updateLocalVehicle(modType, modIndex) {
+function updateLocalVehicle({ modType, modIndex }) {
     const veh = alt.Player.local.vehicle.scriptID;
 
     native.setVehicleModKit(veh, 0);

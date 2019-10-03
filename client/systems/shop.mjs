@@ -80,6 +80,7 @@ function startShopInterval(key, value) {
     if (key !== 'loggedin' && !value) return;
     if (!shopCheckInterval) {
         shopCheckInterval = alt.setInterval(shopInterval, 250);
+        alt.log(`shop.mjs ${shopCheckInterval}`);
         shops.forEach(shop => {
             shop.ids.forEach(id => {
                 let [_null, _shopPos] = native.getInteriorInfo(id, undefined, undefined);
@@ -120,6 +121,7 @@ function shopInterval() {
     // Turn on the shop key update function.
     inShop = true;
     interval = alt.setInterval(shopKey, 0);
+    alt.log(`shop.mjs shopKey ${interval}`);
 }
 
 function clearShop() {

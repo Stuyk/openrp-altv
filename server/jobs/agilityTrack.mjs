@@ -39,7 +39,7 @@ alt.on('job:AgilityTrack', player => {
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
-    job.setUniform('TrackSuit');
+    job.setUniform('tracksuit');
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };

@@ -1,518 +1,560 @@
-/*
-    Animations:
-	Flags need to be added together for desired effects.
-	ie. Upper Body + Last Frame = 16 + 2 = 18 <-- This value.
-    Normal = 0
-    Repeat = 1
-	Stop on Last Frame = 2
-	Just Upper Body = 16
-	Enable Player Control = 32
-	Cancel Animation on Key Press = 128
-    
-    // Common Ones
-    17 - Repeat + Just Upper Body
-    49 - Repeat + Just Upper Body + Enable Player Control
-    18 - Stop Last Frame + Just Upper Body
-*/
+export const BaseItems = {
+    weapon: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    food: {
+        eventcall: 'itemeffects:Consume',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
+    accessory: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 0
+    },
+    hat: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 1
+    },
+    earrings: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 2
+    },
+    glasses: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 3
+    },
+    helmet: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 4
+    },
+    watch: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 5
+    },
+    backpack: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 6
+    },
+    shirt: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 7
+    },
+    bodyarmour: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 8
+    },
+    bracelet: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 9
+    },
+    pants: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 10
+    },
+    hand: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 11
+    },
+    unk: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 14
+    },
+    shoes: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 13
+    },
+    uniform: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: false,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 12
+    },
+    pickaxe: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    shovel: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    axe: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    hammer: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    fishingrod: {
+        eventcall: ['itemeffects:EquipItem', 'job:Fishing'],
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    unrefined: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: -1
+    },
+    refined: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
+    license: {
+        eventcall: 'itemeffects:ShowLicense',
+        abilities: {
+            drop: false,
+            use: true,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: false
+        },
+        slot: -1
+    }
+};
 
 export const Items = {
-    Weapon: {
-        label: '',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        isWeapon: true,
-        message: '',
+    weapon: {
+        name: '',
+        base: 'weapon',
+        key: 'weapon',
+        props: {},
         quantity: 0,
-        slot: 37,
-        icon: 'weapon',
-        props: {
-            hash: 0
-        }
+        icon: 'weapon'
     },
-    GranolaBar: {
-        label: 'Granola Bar',
-        stackable: true,
-        consumeable: true,
-        useitem: false,
-        droppable: true,
-        eventcall: 'itemeffects:Consume',
-        sellable: true,
-        message: 'You eat the granola the bar. It tastes great.',
+    granolabar: {
+        name: 'Granola Bar',
+        base: 'food',
+        key: 'granolabar',
+        props: {},
         quantity: 0,
-        sound: 'eat',
-        icon: 'granolabar',
-        anim: {
-            dict: 'mp_player_inteat@burger',
-            name: 'mp_player_int_eat_burger_fp',
-            duration: 3500,
-            flag: 49
+        icon: 'chocolate-bar'
+    },
+    hat: {
+        name: 'Hat',
+        base: 'hat',
+        key: 'hat',
+        props: {},
+        quantity: 0,
+        icon: 'hat'
+    },
+    helmet: {
+        name: 'Helmet',
+        base: 'helmet',
+        key: 'helmet',
+        props: {},
+        quantity: 0,
+        icon: 'bandana'
+    },
+    shirt: {
+        name: 'Shirt',
+        base: 'shirt',
+        key: 'shirt',
+        props: {},
+        quantity: 0,
+        icon: 'shirt'
+    },
+    pants: {
+        name: 'Pants',
+        base: 'pants',
+        key: 'pants',
+        props: {},
+        quantity: 0,
+        icon: 'trousers'
+    },
+    shoes: {
+        name: 'Shoes',
+        base: 'shoes',
+        key: 'shoes',
+        props: {},
+        quantity: 0,
+        icon: 'chelsea-boot'
+    },
+    bodyarmour: {
+        name: 'Body Armour',
+        base: 'bodyarmour',
+        key: 'bodyarmour',
+        props: {},
+        quantity: 0,
+        icon: 'body-armour'
+    },
+    accessory: {
+        name: 'Accessory',
+        base: 'accessory',
+        key: 'accessory',
+        props: {},
+        quantity: 0,
+        icon: 'accessory'
+    },
+    earrings: {
+        name: 'Earrings',
+        base: 'earrings',
+        key: 'earrings',
+        props: {},
+        quantity: 0,
+        icon: 'earring'
+    },
+    backpack: {
+        name: 'Backpack',
+        base: 'backpack',
+        key: 'backpack',
+        props: {},
+        quantity: 0,
+        icon: 'backpack'
+    },
+    hand: {
+        name: 'Hand',
+        base: 'hand',
+        key: 'hand',
+        props: {},
+        quantity: 0,
+        icon: 'hand'
+    },
+    watch: {
+        name: 'Watch',
+        base: 'watch',
+        key: 'watch',
+        props: {},
+        quantity: 0,
+        icon: 'watch'
+    },
+    bracelet: {
+        name: 'Bracelet',
+        base: 'bracelet',
+        key: 'bracelet',
+        props: {},
+        quantity: 0,
+        icon: 'bracelet'
+    },
+    glasses: {
+        name: 'Glasses',
+        base: 'glasses',
+        key: 'glasses',
+        props: {},
+        quantity: 0,
+        icon: 'glasses'
+    },
+    unrefinedwood: {
+        name: 'Unrefined Wood',
+        base: 'unrefined',
+        key: 'unrefinedwood',
+        props: {},
+        quantity: 0,
+        icon: 'wood'
+    },
+    refinedwood: {
+        name: 'Refined Wood',
+        base: 'refined',
+        key: 'refinedwood',
+        props: {},
+        quantity: 0,
+        icon: 'planks'
+    },
+    unrefinedmetal: {
+        name: 'Unrefined Metal',
+        base: 'unrefined',
+        key: 'unrefinedmetal',
+        props: {},
+        quantity: 0,
+        icon: 'rock'
+    },
+    refinedmetal: {
+        name: 'Refined Metal',
+        base: 'refined',
+        key: 'refinedmetal',
+        props: {},
+        quantity: 0,
+        icon: 'metal'
+    },
+    pickaxe1: {
+        name: 'Rusty Pickaxe',
+        base: 'pickaxe',
+        key: 'pickaxe1',
+        props: {
+            lvl: {
+                skill: 'mining',
+                requirement: 1,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_tool_pickaxe',
+                bone: 57005,
+                x: 0.1,
+                y: -0.1,
+                z: -0.02,
+                pitch: 80,
+                roll: 0,
+                yaw: 170
+            }
         },
+        quantity: 0,
+        icon: 'pickaxe'
+    },
+    axe1: {
+        name: 'Rusty Axe',
+        base: 'axe',
+        key: 'axe1',
         props: {
-            health: 5
-        }
-    },
-    Coffee: {
-        label: 'Coffee',
-        stackable: true,
-        consumeable: true,
-        useitem: false,
-        droppable: true,
-        eventcall: 'itemeffects:Consume',
-        sellable: true,
-        message: 'You drink the hot coffee.',
+            lvl: {
+                skill: 'woodcutting',
+                requirement: 0,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_tool_fireaxe',
+                bone: 57005,
+                x: 0.1,
+                y: -0.1,
+                z: -0.02,
+                pitch: 80,
+                roll: 0,
+                yaw: 170
+            }
+        },
         quantity: 0,
-        sound: 'drink',
-        icon: 'coffee',
+        icon: 'axe'
+    },
+    hammer1: {
+        name: 'Rusty Hammer',
+        base: 'hammer',
+        key: 'hammer1',
         props: {
-            health: 5,
-            armor: 5
-        }
-    },
-    Soda: {
-        label: 'Soda',
-        stackable: true,
-        consumeable: true,
-        useitem: false,
-        eventcall: 'itemeffects:Consume',
-        sellable: true,
-        droppable: true,
-        message: 'You drink the soda.',
+            lvl: {
+                skill: 'smithing',
+                requirement: 0,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_tool_mallet',
+                bone: 57005,
+                x: 0.1,
+                y: 0.1,
+                z: 0,
+                pitch: 80,
+                roll: 0,
+                yaw: 180
+            }
+        },
         quantity: 0,
-        sound: 'drink',
-        icon: 'soda',
+        icon: 'hammer'
+    },
+    fishingrod1: {
+        name: 'Rusty Fishing Rod',
+        base: 'fishingrod',
+        key: 'fishingrod1',
         props: {
-            health: 3
-        }
-    },
-    Phone: {
-        label: 'Phone',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        eventcall: '',
-        sellable: true,
-        droppable: true,
-        message: '',
+            lvl: {
+                skill: 'fishing',
+                requirement: 0,
+                bonus: 0
+            },
+            propData: {
+                name: 'prop_fishing_rod_01',
+                bone: 18905,
+                x: 0.1,
+                y: 0.05,
+                z: 0,
+                pitch: 80,
+                roll: 120,
+                yaw: 160
+            }
+        },
         quantity: 0,
-        icon: 'phone',
-        props: {}
+        icon: 'fishingrod'
     },
-    DriversLicense: {
-        label: 'Drivers License',
-        stackable: false,
-        consumeable: false,
-        useitem: true,
-        droppable: false,
-        eventcall: 'itemeffects:ShowLicense',
-        sellable: false,
-        message: '',
-        quantity: 0,
-        icon: 'license',
-        props: {}
-    },
-    PilotsLicense: {
-        label: 'Pilots License',
-        stackable: false,
-        consumeable: false,
-        useitem: true,
-        droppable: false,
-        eventcall: 'itemeffects:ShowLicense',
-        sellable: false,
-        message: '',
-        quantity: 0,
-        icon: 'license',
-        props: {}
-    },
-    OpenCarryLicense: {
-        label: 'Open Carry License',
-        stackable: false,
-        consumeable: false,
-        useitem: true,
-        droppable: false,
-        eventcall: 'itemeffects:ShowLicense',
-        sellable: false,
-        message: '',
-        quantity: 0,
-        icon: 'license',
-        props: {}
-    },
-    WeaponLicense: {
-        label: 'Weapon License',
-        stackable: false,
-        consumeable: false,
-        useitem: true,
-        droppable: false,
-        eventcall: 'itemeffects:ShowLicense',
-        sellable: false,
-        message: '',
-        quantity: 0,
-        icon: 'license',
-        props: {}
-    },
-    MilitaryLicense: {
-        label: 'Military License',
-        stackable: false,
-        consumeable: false,
-        useitem: true,
-        droppable: false,
-        eventcall: 'itemeffects:ShowLicense',
-        sellable: false,
-        message: '',
-        quantity: 0,
-        icon: 'license',
-        props: {}
-    },
-    Hat: {
-        label: 'Hat',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 28,
-        props: {}
-    },
-    Helmet: {
-        label: 'Helmet',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 29,
-        props: {}
-    },
-    Shirt: {
-        label: 'Shirt',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 30,
-        props: {}
-    },
-    Pants: {
-        label: 'Pants',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 31,
-        props: {}
-    },
-    Shoes: {
-        label: 'Shoes',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 32,
-        props: {}
-    },
-    BodyArmour: {
-        label: 'BodyArmour',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 33,
-        props: {}
-    },
-    Accessory: {
-        label: 'Accessory',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 34,
-        props: {}
-    },
-    Earrings: {
-        label: 'Earrings',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 35,
-        props: {}
-    },
-    Backpack: {
-        label: 'Backpack',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 36,
-        props: {}
-    },
-    Hand: {
-        label: 'Hand',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 37,
-        props: {}
-    },
-    Watch: {
-        label: 'Watch',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 38,
-        props: {}
-    },
-    Bracelet: {
-        label: 'Bracelet',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 39,
-        props: {}
-    },
-    Glasses: {
-        label: 'Glasses',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: true,
-        rename: true,
-        message: '',
-        quantity: 0,
-        slot: 40,
-        props: {}
-    },
-    PoliceUniform: {
-        label: 'Police Uniform',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: false,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 41,
+    tracksuit: {
+        name: 'Track Suit',
+        base: 'uniform',
+        key: 'tracksuit',
         props: {
-            description: 'Standard Issue Police Uniform',
-            restriction: -1,
-            female: [
-                { id: 3, value: 9 },
-                { id: 4, value: 30 },
-                { id: 6, value: 24 },
-                { id: 8, value: 35 },
-                { id: 11, value: 48 }
-            ],
-            male: [
-                { id: 3, value: 0 },
-                { id: 4, value: 31 },
-                { id: 6, value: 24 },
-                { id: 8, value: 58 },
-                { id: 11, value: 55 }
-            ]
-        }
-    },
-    SkiMask: {
-        label: 'Ski Mask',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 28,
-        props: {
-            description: 'Conceal Your Identity',
-            restriction: -1,
-            female: [
-                {
-                    id: 1,
-                    value: 35
-                }
-            ],
-            male: [
-                {
-                    id: 1,
-                    value: 35
-                }
-            ]
-        }
-    },
-    LooseSkiMask: {
-        label: 'Loose Ski Mask',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 28,
-        props: {
-            description: 'Conceal Your Identity',
-            restriction: -1,
-            female: [
-                {
-                    id: 1,
-                    value: 37
-                }
-            ],
-            male: [
-                {
-                    id: 1,
-                    value: 37
-                }
-            ]
-        }
-    },
-    Bandana: {
-        label: 'Bandana',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 28,
-        props: {
-            description: 'Conceal Your Identity',
-            restriction: -1,
-            female: [
-                {
-                    id: 1,
-                    value: 51
-                }
-            ],
-            male: [
-                {
-                    id: 1,
-                    value: 51
-                }
-            ]
-        }
-    },
-    OpenMotorcycleHelmet: {
-        label: 'Open Motorcycle Helmet',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 28,
-        props: {
-            description: 'Protect Your Face',
-            isProp: true,
-            restriction: -1,
-            female: [
-                {
-                    id: 0,
-                    value: 48
-                }
-            ],
-            male: [
-                {
-                    id: 0,
-                    value: 48
-                }
-            ]
-        }
-    },
-    ClosedMotorcycleHelmet: {
-        label: 'Closed Motorcycle Helmet',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 28,
-        props: {
-            description: 'Protect Your Face',
-            isProp: true,
-            restriction: -1,
-            female: [
-                {
-                    id: 0,
-                    value: 81
-                }
-            ],
-            male: [
-                {
-                    id: 0,
-                    value: 82
-                }
-            ]
-        }
-    },
-    TrackSuit: {
-        label: 'Track Suit',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: false,
-        sellable: false,
-        message: '',
-        quantity: 0,
-        slot: 41,
-        props: {
-            description: 'Standard Issue Track Suit',
             restriction: -1,
             female: [
                 { id: 3, value: 15 },
@@ -528,20 +570,15 @@ export const Items = {
                 { id: 8, value: 15 },
                 { id: 11, value: 5 }
             ]
-        }
-    },
-    HikingOutfit: {
-        label: 'Hiking Outfit',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: false,
-        sellable: false,
-        message: '',
+        },
         quantity: 0,
-        slot: 41,
+        icon: 'outfit'
+    },
+    hikingoutfit: {
+        name: 'Hiking Outfit',
+        base: 'uniform',
+        key: 'hikingoutfit',
         props: {
-            description: 'Standard Issue Mountain Gear',
             restriction: -1,
             female: [
                 { id: 3, value: 1 },
@@ -559,200 +596,16 @@ export const Items = {
                 { id: 8, value: 15 },
                 { id: 11, value: 41 }
             ]
-        }
-    },
-    UnrefinedRock: {
-        label: 'Unrefined Rock',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
+        },
         quantity: 0,
-        icon: 'rock',
-        props: {
-            description: 'A hunk of unrefined rock.'
-        }
+        icon: 'outfit'
     },
-    RefinedMetal: {
-        label: 'Refined Metal',
-        stackable: true,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
+    driverslicense: {
+        name: 'Drivers License',
+        base: 'license',
+        key: 'driverslicense',
+        props: {},
         quantity: 0,
-        icon: 'metal',
-        props: {
-            description: 'A hunk of refined metal.'
-        }
-    },
-    UnrefinedWood: {
-        label: 'Unrefined Wood',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        icon: 'wood',
-        props: {
-            description: 'A hunk of unrefined wood.'
-        }
-    },
-    RefinedWood: {
-        label: 'Refined Wood',
-        stackable: true,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        icon: 'planks',
-        props: {
-            description: 'A stack of refined wood.'
-        }
-    },
-    Pickaxe1: {
-        label: 'Bad Pickaxe',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        slot: 37,
-        icon: 'pickaxe',
-        props: {
-            lvl: 0,
-            propData: {
-                name: 'prop_tool_pickaxe',
-                bone: 57005,
-                x: 0.1,
-                y: -0.1,
-                z: -0.02,
-                pitch: 80,
-                roll: 0,
-                yaw: 170
-            }
-        }
-    },
-    Pickaxe2: {
-        label: 'Shoddy Pickaxe',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        slot: 37,
-        icon: 'pickaxe',
-        props: {
-            lvl: 10,
-            propData: {
-                name: 'prop_tool_pickaxe',
-                bone: 57005,
-                x: 0.1,
-                y: -0.1,
-                z: -0.02,
-                pitch: 80,
-                roll: 0,
-                yaw: 170
-            }
-        }
-    },
-    Axe1: {
-        label: 'Bad Axe',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        slot: 37,
-        icon: 'axe',
-        props: {
-            lvl: 0,
-            propData: {
-                name: 'prop_tool_fireaxe',
-                bone: 57005,
-                x: 0.1,
-                y: -0.1,
-                z: -0.02,
-                pitch: 80,
-                roll: 0,
-                yaw: 170
-            }
-        }
-    },
-    Hammer1: {
-        label: 'Bad Hammer',
-        stackable: false,
-        consumeable: false,
-        useitem: false,
-        droppable: true,
-        eventcall: '',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        slot: 37,
-        icon: 'hammer',
-        props: {
-            lvl: 0,
-            propData: {
-                name: 'prop_tool_mallet',
-                bone: 57005,
-                x: 0.1,
-                y: 0.1,
-                z: 0,
-                pitch: 80,
-                roll: 0,
-                yaw: 180
-            }
-        }
-    },
-    FishingRod1: {
-        label: 'Fishing Rod',
-        stackable: false,
-        consumeable: false,
-        useitem: true,
-        droppable: true,
-        eventcall: 'job:Fishing',
-        sellable: true,
-        message: '',
-        quantity: 0,
-        slot: 37,
-        icon: 'fishingrod',
-        props: {
-            lvl: 0,
-            propData: {
-                name: 'prop_fishing_rod_01',
-                bone: 18905,
-                x: 0.1,
-                y: 0.05,
-                z: 0,
-                pitch: 80,
-                roll: 120,
-                yaw: 160
-            }
-        }
-        // /tryprop prop_fishing_rod_01 18905 0.1 0.05 0 80 120 160
-        // /tryprop prop_fishing_rod_01 18905 0.11 0.18 -0.1 90 90 150
-        //  API.playPlayerAnimation(player, 1, "amb@world_human_stand_fishing@idle_a", "idle_c");
-        // markanim amb@world_human_stand_fishing@base base
+        icon: 'id-card'
     }
 };

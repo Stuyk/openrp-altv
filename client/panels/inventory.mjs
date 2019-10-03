@@ -10,6 +10,21 @@ alt.log(`Loaded: client->panels->inventory.mjs`);
 const url = 'http://resource/client/html/inventory/index.html';
 let webview;
 
+alt.on('meta:Changed', (key, value) => {
+    if (key !== 'equipment' && key !== 'inventory' && key !== 'skills') return;
+    switch (key) {
+        case 'equipment':
+            fetchEquipment(value);
+            break;
+        case 'inventory':
+            fetchItems(value);
+            break;
+        case 'skills':
+            fetchStats(value);
+            break;
+    }
+});
+
 // Show the Dialogue for the Inventory
 export function showDialogue() {
     if (!webview) {
@@ -24,48 +39,43 @@ export function showDialogue() {
     webview.on('inventory:Use', use);
     webview.on('inventory:Destroy', destroy);
     webview.on('inventory:FetchItems', fetchItems);
-    webview.on('inventory:SetPosition', setPosition);
+    webview.on('inventory:SwapItem', swapItem);
     webview.on('inventory:Rename', rename);
     webview.on('inventory:Exit', exit);
+    webview.on('inventory:FetchStats', fetchStats);
+    webview.on('inventory:FetchEquipment', fetchEquipment);
+    webview.on('inventory:UnequipItem', unequipItem);
+    webview.on('inventory:Split', split);
 }
 
-function setPosition(newIndexPosition, oldIndexPosition) {
-    alt.emitServer('inventory:UpdatePosition', newIndexPosition, oldIndexPosition);
+function swapItem(heldIndex, dropIndex) {
+    alt.emitServer('inventory:SwapItem', heldIndex, dropIndex);
 }
 
-export function fetchItems() {
+export function fetchEquipment(value) {
     if (webview === undefined) return;
+    if (!value) {
+        value = alt.Player.local.getMeta('equipment');
+    }
 
-    let itemJSON = alt.Player.local.getMeta('inventory');
-    let itemArray = JSON.parse(itemJSON);
+    const equipmentArray = JSON.parse(value);
 
-    webview.emit('clearitems');
-
-    itemArray.forEach((item, index) => {
+    equipmentArray.forEach((item, index) => {
         if (!item) {
-            webview.emit('inventory:AddItem', index, null);
+            webview.emit('inventory:EquipItem', null, index, null);
             return;
         }
 
-        const canuse = item.useitem ? true : item.consumeable ? true : false;
-
-        webview.emit(
-            'inventory:AddItem',
-            index,
-            item.label,
-            item.hash,
-            item.props,
-            item.quantity,
-            item.slot,
-            item.rename,
-            canuse,
-            item.droppable,
-            item.icon
-        );
+        webview.emit('inventory:EquipItem', item.name, index, item.hash, item.icon);
     });
+}
 
-    let statJSON = alt.Player.local.getMeta('skills');
-    let statArray = JSON.parse(statJSON);
+export function fetchStats(value) {
+    if (webview === undefined) return;
+    if (!value) {
+        value = alt.Player.local.getMeta('skills');
+    }
+    const statArray = JSON.parse(value);
 
     Object.keys(statArray).forEach(key => {
         webview.emit(
@@ -75,8 +85,36 @@ export function fetchItems() {
             statArray[key].xp
         );
     });
+}
 
-    webview.emit('enablebuttons');
+export function fetchItems(value) {
+    if (webview === undefined) return;
+    if (!value) {
+        value = alt.Player.local.getMeta('inventory');
+    }
+
+    const itemArray = JSON.parse(value);
+
+    itemArray.forEach((item, index) => {
+        if (!item) {
+            webview.emit('inventory:AddItem', index, null);
+            return;
+        }
+
+        // const [name, index, base, hash, quantity, props] = args;
+        webview.emit(
+            'inventory:AddItem',
+            item.name,
+            index,
+            item.base,
+            item.hash,
+            item.quantity,
+            item.props,
+            item.icon
+        );
+    });
+
+    webview.emit('inventory:ForceUpdate');
 }
 
 function exit() {
@@ -92,9 +130,17 @@ function use(hash) {
 }
 
 function drop(hash, quantity) {
-    alt.emitServer('inventory:DropItem', hash, quantity);
+    alt.emitServer('inventory:DropItem', hash);
 }
 
 function rename(hash, name) {
     alt.emitServer('inventory:RenameItem', hash, name);
+}
+
+function unequipItem(hash) {
+    alt.emitServer('inventory:UnequipItem', hash);
+}
+
+function split(hash) {
+    alt.emitServer('inventory:Split', hash);
 }

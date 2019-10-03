@@ -59,7 +59,7 @@ let keybinds = {
         shiftModifier: true,
         func: panelsChat.toggleHide
     },
-    // Tab - Toggle Cursor
+    // Tab - Hold for Context Cursor
     9: {
         altModifier: false,
         shiftModifier: false,
@@ -89,6 +89,12 @@ function loadInterval(key) {
 function keyup(key) {
     if (key === 16) shiftModified = false;
     if (key === 18) altModified = false;
+
+    // Release TAB to exit Context Cursor
+    if (key === 9) {
+        keybinds[key].func();
+        return;
+    }
 
     if (!alt.Player.local.getMeta('loggedin')) return;
     if (alt.Player.local.getMeta('chat')) return;
@@ -125,4 +131,7 @@ function keyup(key) {
 function keydown(key) {
     if (key === 16) shiftModified = true;
     if (key === 18) altModified = true;
+
+    // Hold TAB for Context Cursor
+    if (key === 9) keybinds[key].func();
 }

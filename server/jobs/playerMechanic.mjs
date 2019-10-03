@@ -31,7 +31,7 @@ alt.on('job:MechanicJob', player => {
     let pos;
     const emptyVector = { x: 0, y: 0, z: 0 };
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
-    job.setItemRestrictions([{ label: 'Drivers License', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'driverslicense', hasItem: true }]);
     //job.setUniform('TrackSuit');
 
     // Starting Point
@@ -79,7 +79,7 @@ alt.on('job:MechanicJob', player => {
     obj.setBlip(1, 1, new alt.Vector3(0, 0, 0));
     obj.setHelpText('Go to your customer...');
     obj.setAnimationScenario('world_human_vehicle_mechanic');
-    obj.obj.setRewards([{ type: 'xp', prop: 'mechanic', quantity: 500 }]);
+    obj.setRewards([{ type: 'xp', prop: 'mechanic', quantity: 500 }]);
     job.add(copyObjective(obj));
 
     job.start(player);

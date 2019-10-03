@@ -64,6 +64,7 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/agilityTrack.mjs');
     import('./jobs/agilityWorkout.mjs');
     import('./jobs/agilityMtnBike1.mjs');
+    import('./jobs/agilityMtnBike2.mjs');
     import('./jobs/miningQuarry.mjs');
     import('./jobs/miningShaft.mjs');
     import('./jobs/playerTaxi.mjs');
@@ -71,10 +72,12 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/smithingRefinery.mjs');
     import('./jobs/woodcuttingLumber.mjs');
     import('./jobs/woodcuttingRefinery.mjs');
+    import('./jobs/drivingSchool.mjs');
 
     // Import Item Effects
     import('./itemeffects/consume.mjs');
     import('./itemeffects/showlicense.mjs');
+    import('./itemeffects/equipitem.mjs');
 
     cacheInformation();
 });

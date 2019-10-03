@@ -30,7 +30,7 @@ alt.on('job:LumberRefinery', player => {
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
-    job.setItemRestrictions([{ label: 'Unrefined Wood', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'unrefinedwood', hasItem: true }]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };
@@ -108,7 +108,7 @@ alt.on('job:LumberRefinery', player => {
             yaw: 20
         }
     ]);
-    obj.setRemoveItem([{ label: 'Unrefined Wood', quantity: 1 }]);
+    obj.setRemoveItem([{ key: 'unrefinedwood', quantity: 1 }]);
     job.add(copyObjective(obj));
 
     // Walk to Point
@@ -154,7 +154,7 @@ alt.on('job:LumberRefinery', player => {
     obj.setFinishedSound('complete');
     obj.setRewards([
         { type: 'xp', prop: 'woodcutting', quantity: 15 },
-        { type: 'item', prop: 'RefinedWood', quantity: 2 }
+        { type: 'item', prop: 'refinedwood', quantity: 2 }
     ]);
     obj.setMaxProgress(10);
     obj.setAnimationAndSound('mp_safehousevagos@', 'package_dropoff', 1, -1, [

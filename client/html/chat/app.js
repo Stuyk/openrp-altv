@@ -75,7 +75,7 @@ class App extends Component {
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 },
                 {
-                    message: 'Press TAB to use context cursor.',
+                    message: 'Hold TAB to use context cursor.',
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 }
             ],

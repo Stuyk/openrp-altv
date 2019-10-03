@@ -17,7 +17,7 @@ const weatherRotation = [
     0 // sunny
 ];
 
-const weatherMultiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+const weatherMultiplier = [8, 6, 4, 2, 1, 1, 1, 1, 1, 2, 4, 6];
 
 alt.setWeatherSyncActive(true);
 alt.setWeatherCycle(weatherRotation, weatherMultiplier);

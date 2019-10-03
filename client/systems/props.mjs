@@ -3,9 +3,9 @@ import * as native from 'natives';
 
 alt.on('gameEntityCreate', entity => {
     if (entity.constructor.name === 'Player') {
-        if (entity.getSyncedMeta(`prop:37`)) {
+        if (entity.getSyncedMeta(`prop:11`)) {
             alt.setTimeout(() => {
-                setupSlot(37, entity, entity.getSyncedMeta(`prop:37`));
+                setupSlot(11, entity, entity.getSyncedMeta(`prop:11`));
             }, 250);
         }
 

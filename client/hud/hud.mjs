@@ -16,7 +16,8 @@ alt.on('meta:Changed', loadInterval);
 // Only starts the interval after the player has logged in.
 function loadInterval(key, value) {
     if (key !== 'loggedin') return;
-    alt.setInterval(startInterval, 0);
+    const intervalID = alt.setInterval(startInterval, 0);
+    alt.log(`hud.mjs ${intervalID}`);
     alt.off('meta:Changed', loadInterval);
 }
 

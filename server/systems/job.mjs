@@ -3,7 +3,7 @@ import * as chat from '../chat/chat.mjs';
 import { Dictionary } from '../configuration/dictionary.mjs';
 import { distance, randPosAround } from '../utility/vector.mjs';
 import { addXP } from '../systems/skills.mjs';
-import { Items } from '../configuration/items.mjs';
+import { Items, BaseItems } from '../configuration/items.mjs';
 
 const Debug = true;
 
@@ -30,7 +30,8 @@ export const modifiers = {
     GOTO_PLAYER: 256,
     REMOVE_ITEM: 512,
     CLEAR_PROPS: 1024,
-    MAX: 2048
+    NO_DAMAGE_VEHICLE: 2048,
+    MAX: 4096
 };
 
 export const restrictions = {
@@ -269,112 +270,21 @@ export class Objective {
 
         // Item Removal Check
         if (isFlagged(this.flags, modifiers.REMOVE_ITEM) && this.removeItem) {
-            let allValid = true;
-            const removeItemParams = this.removeItem;
-            let filteredItems = [];
-            for (let i = 0; i < removeItemParams.length; i++) {
-                let itemsFound = player.getItemsByLabel(removeItemParams[i].label);
-                if (itemsFound.length <= 0) {
-                    if (!player.job.itemWarning) {
-                        player.send(
-                            `Missing ${removeItemParams[i].quantity}x ${removeItemParams[i].label}`
-                        );
-                    }
-                    allValid = false;
-                    continue;
-                }
-
-                // Stackable Type
-                if (itemsFound[0].quantity >= 2) {
-                    if (itemsFound[0].quantity < removeItemParams[i].quantity) {
-                        if (!player.job.itemWarning) {
-                            player.send(
-                                `Missing ${removeItemParams[i].quantity}x ${removeItemParams[i].label}`
-                            );
-                        }
-                        allValid = false;
-                        continue;
-                    }
-                } else {
-                    if (itemsFound.length < removeItemParams[i].quantity) {
-                        if (!player.job.itemWarning) {
-                            player.send(
-                                `Missing ${removeItemParams[i].quantity}x ${removeItemParams[i].label}`
-                            );
-                        }
-                        allValid = false;
-                        continue;
-                    }
-
-                    while (itemsFound.length > removeItemParams[i].quantity) {
-                        itemsFound.pop();
-                        if (itemsFound.length === removeItemParams[i].quantity) {
-                            break;
-                        }
-                    }
-                }
-
-                filteredItems = filteredItems.concat(itemsFound);
-            }
-
-            if (!allValid) {
-                player.job.itemWarning = true;
+            const isValid = this.removeItems(player);
+            if (!isValid) {
                 return false;
             }
-
-            filteredItems.forEach(item => {
-                let res = player.subItemByHash(item.hash, item.quantity);
-            });
         }
 
         player.job.itemWarning = false;
 
         // Issue Rewards
         if (this.rewards.length >= 1) {
-            this.rewards.forEach(reward => {
-                if (reward.type === 'xp') {
-                    addXP(player, reward.prop, reward.quantity);
-                }
-
-                if (reward.type === 'item') {
-                    if (Items[reward.prop]) {
-                        if (Items[reward.prop].stackable) {
-                            player.addItem(
-                                { ...Items[reward.prop] },
-                                reward.quantity,
-                                false
-                            );
-                            player.send(
-                                `${Items[reward.prop].label} was added to your inventory.`
-                            );
-                        } else {
-                            for (let i = 0; i < reward.quantity; i++) {
-                                player.addItem({ ...Items[reward.prop] }, 1, false);
-                                player.send(
-                                    `${Items[reward.prop].label} was added to your inventory.`
-                                );
-                            }
-                        }
-                    } else {
-                        console.log(`${reward.prop} was not found for a reward.`);
-                    }
-                }
-            });
+            this.giveRewards(player);
         }
 
         if (this.veh) {
-            let pos = randPosAround(this.veh.pos, 2);
-            const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
-
-            vehicle.job = {
-                player,
-                preventHijack: true
-            };
-
-            vehicle.engineOn = true;
-            const vehicles = [...player.vehicles];
-            vehicles.push(vehicle);
-            player.vehicles = vehicles;
+            this.spawnVehicles(player);
         }
 
         // Play a sound; after a user finishes their objective.
@@ -433,6 +343,76 @@ export class Objective {
         return true;
     }
 
+    removeItems(player) {
+        let allValid = true;
+        const removeItemParams = this.removeItem;
+        removeItemParams.forEach(item => {
+            if (!allValid) return;
+            if (!player.hasQuantityOfItem(item.key, item.quantity)) {
+                allValid = false;
+                player.send(`Missing ${item.quantity}x of ${item.key}`);
+                return;
+            }
+        });
+
+        if (!allValid) {
+            return false;
+        }
+
+        removeItemParams.forEach(item => {
+            player.subItem(item.key, item.quantity);
+        });
+        return true;
+    }
+
+    spawnVehicles(player) {
+        let pos = randPosAround(this.veh.pos, 2);
+        const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
+
+        vehicle.job = {
+            player,
+            preventHijack: true
+        };
+
+        vehicle.engineOn = true;
+        const vehicles = [...player.vehicles];
+        vehicles.push(vehicle);
+        player.vehicles = vehicles;
+
+        if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
+            player.job.vehicleHealth = vehicle.engineHealth - 100;
+        }
+
+        alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
+    }
+
+    giveRewards(player) {
+        this.rewards.forEach(reward => {
+            if (reward.type === 'xp') {
+                addXP(player, reward.prop, reward.quantity);
+                return;
+            }
+
+            if (reward.type === 'item') {
+                if (!Items[reward.prop]) return;
+                const baseItem = BaseItems[Items[reward.prop].base];
+                if (baseItem.abilities.stack) {
+                    player.addItem(Items[reward.prop].key, reward.quantity);
+                    player.send(
+                        `${Items[reward.prop].name} was added to your inventory.`
+                    );
+                } else {
+                    for (let i = 0; i < reward.quantity; i++) {
+                        player.addItem(Items[reward.prop].key, 1);
+                        player.send(
+                            `${Items[reward.prop].name} was added to your inventory.`
+                        );
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * Check the objective and see if it's
      * valid.
@@ -471,7 +451,15 @@ export class Objective {
                 if (!isVehicleUsed) {
                     valid = false;
                 } else {
-                    console.log('Valid vehicle.');
+                    if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
+                        if (player.vehicle.engineHealth < player.job.vehicleHealth) {
+                            player.send(
+                                `You failed to keep your vehicle in good health.`
+                            );
+                            quitJob(player, false, true);
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -686,33 +674,36 @@ export class Job {
 
     addUniform(player) {
         if (!this.uniform) return;
-        if (player.hasItem(Items[this.uniform].label)) return;
-        player.addItem({ ...Items[this.uniform] }, 1, false);
-        player.send(`${Items[this.uniform].label} was added to your inventory.`);
+        if (!Items[this.uniform]) return;
+        if (player.hasItem(Items[this.uniform].key)) return;
+        player.addItem(Items[this.uniform].key, 1, Items[this.uniform].props);
+        player.send(`${Items[this.uniform].name} was added to your inventory.`);
     }
 
     checkItemRestrictions(player) {
         if (this.items.length <= 0) return true;
         let allValid = true;
         for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].hasItem) {
-                if (!player.hasItem(this.items[i].label)) {
-                    allValid = false;
-                    player.send('You are restricted from doing this job.');
-                    player.send(`You don't have {FF0000}${this.items[i].label}{FFFFFF}.`);
-                    break;
-                }
-            } else {
-                if (player.hasItem(this.items[i].label)) {
-                    allValid = false;
-                    player.send('You are restricted from doing this job.');
-                    player.send(`You have {FF0000}${this.items[i].label}{FFFFFF}.`);
-                    break;
-                }
+            const valid = player.hasItem(this.items[i].key);
+
+            if (this.items[i].hasItem && !valid) {
+                allValid = false;
+                player.send('You are restricted from doing this job.');
+                player.send(`You don't have {FF0000}${this.items[i].key}{FFFFFF}.`);
+                break;
+            }
+
+            if (!this.items[i].hasItem && valid) {
+                allValid = false;
+                player.send('You are restricted from doing this job.');
+                player.send(`You already have a {FF0000}${this.items[i].key}{FFFFFF}.`);
+                break;
             }
         }
         return allValid;
     }
+
+    checkItemRestriction(player, hasItem) {}
 
     /**
      * Set a time limit for the entire job.
@@ -906,12 +897,10 @@ export function checkRestrictions(player) {
 
     // Weapon Restriction
     if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
-        if (player.inventory[37]) {
-            if (player.inventory[37].isWeapon) {
-                player.send('This job does not allow weapons.');
-                quitJob(player, false, true);
-                return;
-            }
+        if (player.inventory[37] && player.inventory[37].isWeapon) {
+            player.send('This job does not allow weapons.');
+            quitJob(player, false, true);
+            return;
         }
     }
 }
@@ -986,11 +975,9 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
     }
 
     if (player.job) {
-        if (player.job.target) {
-            if (player.job.target.entity.constructor.name === 'Player') {
-                player.job.target.entity.jobber = undefined;
-                player.job.target.entity.send('The employee quit their job.');
-            }
+        if (player.job.target && player.job.target.entity.constructor.name === 'Player') {
+            player.job.target.entity.jobber = undefined;
+            player.job.target.entity.send('The employee quit their job.');
         }
     }
 

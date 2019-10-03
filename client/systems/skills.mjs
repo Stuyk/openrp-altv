@@ -21,7 +21,8 @@ function loadInterval(key, value) {
     }
 
     if (key !== 'loggedin') return;
-    alt.setInterval(skillInterval, 1000);
+    const intervalID = alt.setInterval(skillInterval, 1000);
+    alt.log(`skills.mjs ${intervalID}`);
 }
 
 function skillInterval() {
@@ -34,6 +35,7 @@ function skillInterval() {
  * Must be above 5 speed in any direction.
  */
 function agilitySkill() {
+    if (native.isPedStill(alt.Player.local.scriptID)) return;
     if (alt.Player.local.vehicle) return;
     if (!native.isControlPressed(0, 21)) {
         alt.Player.local.agility = Date.now();

@@ -29,10 +29,6 @@ class App extends Component {
     }
 
     parseColors(colors) {
-        console.log('Hello World');
-
-        console.log(JSON.stringify(colors));
-
         this.setState({
             primary: colors.primary.color,
             secondary: colors.secondary.color,

@@ -132,6 +132,7 @@ chat.registerCmd('tpto', (player, arg) => {
 
 chat.registerCmd('players', player => {
     alt.Player.all.forEach(t => {
+        if (!t.data) return;
         player.send(`${t.data.name}`);
     });
 });

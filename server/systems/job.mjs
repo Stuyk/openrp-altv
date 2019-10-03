@@ -30,7 +30,8 @@ export const modifiers = {
     GOTO_PLAYER: 256,
     REMOVE_ITEM: 512,
     CLEAR_PROPS: 1024,
-    MAX: 2048
+    NO_DAMAGE_VEHICLE: 2048,
+    MAX: 4096
 };
 
 export const restrictions = {
@@ -377,6 +378,12 @@ export class Objective {
         const vehicles = [...player.vehicles];
         vehicles.push(vehicle);
         player.vehicles = vehicles;
+
+        if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
+            player.job.vehicleHealth = vehicle.engineHealth - 100;
+        }
+
+        alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
     }
 
     giveRewards(player) {
@@ -444,7 +451,15 @@ export class Objective {
                 if (!isVehicleUsed) {
                     valid = false;
                 } else {
-                    console.log('Valid vehicle.');
+                    if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
+                        if (player.vehicle.engineHealth < player.job.vehicleHealth) {
+                            player.send(
+                                `You failed to keep your vehicle in good health.`
+                            );
+                            quitJob(player, false, true);
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -681,7 +696,7 @@ export class Job {
             if (!this.items[i].hasItem && valid) {
                 allValid = false;
                 player.send('You are restricted from doing this job.');
-                player.send(`You don't have {FF0000}${this.items[i].key}{FFFFFF}.`);
+                player.send(`You already have a {FF0000}${this.items[i].key}{FFFFFF}.`);
                 break;
             }
         }

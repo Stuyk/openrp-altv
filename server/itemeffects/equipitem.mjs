@@ -13,6 +13,5 @@ alt.on('itemeffects:EquipItem', (player, item, hash) => {
         return;
     }
 
-    console.log('Equipping...');
     player.equipItem(inventoryIndex, BaseItems[item.base].slot);
 });

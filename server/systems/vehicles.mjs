@@ -195,6 +195,8 @@ export function saveChanges(player, vehicle, jsonData) {
         return;
     }
 
+    console.log(jsonData);
+
     vehicle.saveCustom(jsonData);
     player.playAudio('buy');
 }

@@ -186,6 +186,39 @@ html {
         outline: none;
     }
 }
+/********************************/
+/****      Color Popout     ****/
+/********************************/
+.colorpopout {
+    display: flex;
+    position: fixed;
+    left: 320px;
+    top: 80px;
+    background: @dark;
+    color: white;
+
+    h4 {
+        pointer-events: none;
+    }
+
+    input[type='range'].green {
+        background: rgba(0, 255, 0, 0.55);
+    }
+    input[type='range'].red {
+        background: rgba(255, 0, 0, 0.55);
+    }
+    input[type='range'].blue {
+        background: rgba(0, 0, 255, 0.55);
+    }
+
+    .colorBox {
+        display: block;
+        grid-column: span 3;
+        height: 25px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
 
 /********************************/
 /****      Item Switcher     ****/

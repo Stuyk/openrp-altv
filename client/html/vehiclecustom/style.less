@@ -119,7 +119,6 @@ html {
     .spacer-right {
         display: flex;
         justify-content: flex-end;
-        align-items: flex-end;
     }
 
     .spacer {
@@ -137,6 +136,12 @@ html {
     .title {
         grid-area: title;
         transition: 2s;
+
+        &:first-child {
+            margin-right: 5px;
+            color: @contrast2;
+            min-width: 80px;
+        }
     }
 
     .count {

@@ -101,7 +101,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   Medicinal Jobs
         -   Police Jobs
         -   Firefighter Jobs
-    -   [ ] Gathering (Gather more items for Drug Crafting)
+    -   [x] Gathering (Gather more items for Drug Crafting)
         -   Basically use better gathering items.
     -   [x] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
         -   Repair Quicker on Mechanic Job
@@ -180,7 +180,7 @@ The file structure below is the **required** structure you must use for this gam
 
 -   Download [Postgres-Wrapper](https://github.com/team-stuyk-alt-v/altV-Postgres-Wrapper) this is the Postgres SQL helper that was written to make database usage easy. Extract it and put this into a folder called `postgres-wrapper`. Directly inside you should have `resource.cfg` if done correctly.
 
--   Install the latest version of [PostgresSQL](https://www.postgresql.org/download/) for either windows, linux, or whatever OS you're running.
+-   Install version **11.5** of [PostgresSQL](https://www.postgresql.org/download/) for either windows, linux, or whatever OS you're running.
 
 -   Once installed you need to create a username and password for your database; and create a database called 'altv' or something else if you know what you're doing. **PAY ATTENTION HERE YOU'LL NEED THIS INFO**
 

@@ -475,7 +475,7 @@ export class Objective {
     }
 
     checkIfInVehicle(player) {
-        if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
+        if (isFlagged(this.flags, modifiers.IN_VEHICLE)) {
             if (!player.vehicle) return false;
             const vehicles = player.vehicles.filter(x => x.job !== undefined);
             let isVehicleUsed = false;
@@ -486,14 +486,14 @@ export class Objective {
             });
 
             if (!isVehicleUsed) return false;
-            if (!this.checkIfVehicleDamaged()) return false;
+            if (!this.checkIfVehicleDamaged(player, player.vehicle)) return false;
         }
         return true;
     }
 
     checkIfVehicleDamaged(player, vehicle) {
         if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
-            if (player.vehicle.engineHealth < player.job.vehicleHealth) {
+            if (vehicle.engineHealth < player.job.vehicleHealth) {
                 player.send(`You failed to keep your vehicle in good health.`);
                 quitJob(player, false, true);
                 return false;
@@ -891,7 +891,7 @@ export function checkRestrictions(player) {
 
     // Weapon Restriction
     if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
-        if (player.inventory[37] && player.inventory[37].isWeapon) {
+        if (player.equipment[11] && player.equipment[11].base === 'weapon') {
             player.send('This job does not allow weapons.');
             quitJob(player, false, true);
             return;

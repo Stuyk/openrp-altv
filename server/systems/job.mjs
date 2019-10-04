@@ -475,7 +475,7 @@ export class Objective {
     }
 
     checkIfInVehicle(player) {
-        if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
+        if (isFlagged(this.flags, modifiers.IN_VEHICLE)) {
             if (!player.vehicle) return false;
             const vehicles = player.vehicles.filter(x => x.job !== undefined);
             let isVehicleUsed = false;

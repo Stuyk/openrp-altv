@@ -54,7 +54,9 @@ export function addXP(player, skill, xpToAdd) {
 }
 
 export function setXP(player, skill, amount) {
-    let skills = !player.data.skills ? { ...skills } : JSON.parse(player.data.skills);
+    let skills = !player.data.skills
+        ? { ...currentSkills }
+        : JSON.parse(player.data.skills);
     skills[skill].xp = parseInt(amount);
     player.emitMeta('gainxp', amount);
     player.data.skills = JSON.stringify(skills);

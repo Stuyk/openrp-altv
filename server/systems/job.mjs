@@ -486,7 +486,7 @@ export class Objective {
             });
 
             if (!isVehicleUsed) return false;
-            if (!this.checkIfVehicleDamaged()) return false;
+            if (!this.checkIfVehicleDamaged(player, player.vehicle)) return false;
         }
         return true;
     }

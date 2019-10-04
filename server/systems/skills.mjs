@@ -2,18 +2,18 @@ import * as alt from 'alt';
 import { getLevel } from './xp.mjs';
 
 const currentSkills = {
-    agility: { xp: 0 },
+    agility: { xp: 0 }, //
     cooking: { xp: 0 },
     crafting: { xp: 0 },
     fishing: { xp: 0 },
     gathering: { xp: 0 },
     mechanic: { xp: 0 },
     medicine: { xp: 0 },
-    mining: { xp: 0 },
+    mining: { xp: 0 }, //
     nobility: { xp: 0 },
     notoriety: { xp: 0 },
-    smithing: { xp: 0 },
-    woodcutting: { xp: 0 }
+    smithing: { xp: 0 }, //
+    woodcutting: { xp: 0 } //
 };
 
 export function addXP(player, skill, xpToAdd) {

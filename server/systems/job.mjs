@@ -891,7 +891,7 @@ export function checkRestrictions(player) {
 
     // Weapon Restriction
     if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
-        if (player.inventory[37] && player.inventory[37].isWeapon) {
+        if (player.equipment[11] && player.equipment[11].base === 'weapon') {
             player.send('This job does not allow weapons.');
             quitJob(player, false, true);
             return;

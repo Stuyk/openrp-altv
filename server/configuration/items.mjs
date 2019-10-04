@@ -466,6 +466,14 @@ export const Items = {
         quantity: 0,
         icon: 'metal'
     },
+    unrefinedkevlarium: {
+        name: 'Unrefined Kevlarium',
+        base: 'unrefined',
+        key: 'unrefinedkevlarium',
+        props: {},
+        quantity: 0,
+        icon: 'leaves'
+    },
     pickaxe1: {
         name: 'Rusty Pickaxe',
         base: 'pickaxe',

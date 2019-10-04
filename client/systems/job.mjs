@@ -628,8 +628,8 @@ async function loadAnim(dict) {
     });
 }
 
-let _dict;
-let _name;
+let dict;
+let name;
 
 alt.on('consoleCommand', (cmd, ...args) => {
     if (cmd === 'markanim') {
@@ -637,6 +637,9 @@ alt.on('consoleCommand', (cmd, ...args) => {
         if (!_time) {
             _time = 8000;
         }
+
+        dict = _dict;
+        name = _name;
 
         alt.log(`markanim ${_dict} ${_name}`);
         loadAnim(_dict).then(res => {
@@ -679,8 +682,8 @@ function keyHelper(e) {
     if (e === 32) {
         let animTime = native.getEntityAnimCurrentTime(
             alt.Player.local.scriptID,
-            _dict,
-            _name
+            dict,
+            name
         );
 
         alt.log(`Logged: ${animTime}`);

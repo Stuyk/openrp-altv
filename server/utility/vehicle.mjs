@@ -67,13 +67,24 @@ export function setupVehicleFunctions(vehicle) {
         if (!vehicle.data.customization) return;
         let mods = JSON.parse(vehicle.data.customization);
         Object.keys(mods).forEach(key => {
-            vehicle.modKit = 1;
-            let index = parseInt(key);
-            let value = parseInt(mods[key]) + 1;
-            try {
-                vehicle.setMod(index, value);
-            } catch (e) {
-                console.log(`Mod: ${index} could not be applied with value ${value}`);
+            if (key !== 'colors') {
+                vehicle.modKit = 1;
+                let index = parseInt(key);
+                let value = parseInt(mods[key]) + 1;
+                try {
+                    vehicle.setMod(index, value);
+                } catch (e) {
+                    console.log(`Mod: ${index} could not be applied with value ${value}`);
+                }
+                return;
+            }
+
+            if (key === 'colors') {
+                vehicle.setSyncedMeta('primaryPaint', mods[key].primary.type);
+                vehicle.setSyncedMeta('secondaryPaint', mods[key].secondary.type);
+                vehicle.setSyncedMeta('primaryColor', mods[key].primary.color);
+                vehicle.setSyncedMeta('secondaryColor', mods[key].secondary.color);
+                return;
             }
         });
     };

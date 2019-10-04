@@ -8,18 +8,33 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            mods: []
+            mods: [],
+            primary: [0, 0, 0],
+            secondary: [0, 0, 0],
+            primaryPaintType: 0,
+            secondaryPaintType: 0
         };
+        this.mouseDownBind = this.mousedown.bind(this);
     }
 
     componentDidMount() {
         if ('alt' in window) {
             alt.on('parseMod', this.parseMod.bind(this));
+            alt.on('parseColors', this.parseColors.bind(this));
         } else {
             // JSON Mimic for Editing
             const list = JSON.parse(json);
             list.forEach(l => this.parseMod(JSON.stringify(l)));
         }
+    }
+
+    parseColors(colors) {
+        this.setState({
+            primary: colors.primary.color,
+            secondary: colors.secondary.color,
+            primaryPaintType: colors.primary.type,
+            secondaryPaintType: colors.secondary.type
+        });
     }
 
     parseMod(mod) {
@@ -62,6 +77,74 @@ class App extends Component {
         });
     }
 
+    showColorPopup(e, boolValue, isPrimary) {
+        //console.log(`Values : ${boolValue}, ${isPrimary}`);
+
+        if (boolValue) {
+            window.addEventListener('mousedown', this.mouseDownBind);
+        } else {
+            window.removeEventListener('mousedown', this.mouseDownBind);
+        }
+
+        // need to handle two types of paint types here
+        if (isPrimary) {
+            this.setState({
+                colorPopout: boolValue,
+                primaryPaintType: parseInt(e.target.value),
+                isPrimary
+            });
+        } else {
+            this.setState({
+                colorPopout: boolValue,
+                secondaryPaintType: parseInt(e.target.value),
+                isPrimary
+            });
+        }
+    }
+
+    colorR(e) {
+        this.setColor(0, parseInt(e.target.value));
+    }
+
+    colorG(e) {
+        this.setColor(1, parseInt(e.target.value));
+    }
+
+    colorB(e) {
+        this.setColor(2, parseInt(e.target.value));
+    }
+
+    setColor(index, value) {
+        if (this.state.isPrimary) {
+            let primary = [...this.state.primary];
+            primary[index] = value;
+            this.setState({ primary });
+        } else {
+            let secondary = [...this.state.secondary];
+            secondary[index] = value;
+            this.setState({ secondary });
+        }
+
+        if ('alt' in window) {
+            alt.emit(
+                'vehicle:UpdateColor',
+                this.state.primaryPaintType,
+                this.state.secondaryPaintType,
+                this.state.primary,
+                this.state.secondary
+            );
+        } else {
+            console.log(`Primary: ${this.state.primary}`);
+            console.log(`Secondary: ${this.state.secondary}`);
+        }
+    }
+
+    mousedown(e) {
+        if (e.target.id === 'colorpopout' || e.target.parentNode.id === 'colorpopout')
+            return;
+        this.showColorPopup(e, false);
+    }
+
     render() {
         return h(
             'div',
@@ -72,7 +155,10 @@ class App extends Component {
                 { class: 'mod-list scroll' },
                 h(ModList, {
                     mods: this.state.mods,
-                    setItemValue: this.setItemValue.bind(this)
+                    setItemValue: this.setItemValue.bind(this),
+                    showColorPopup: this.showColorPopup.bind(this),
+                    primaryPaintType: this.state.primaryPaintType,
+                    secondaryPaintType: this.state.secondaryPaintType
                 })
             ),
             h(
@@ -88,17 +174,121 @@ class App extends Component {
                     { class: 'footer-button', onclick: this.saveVehicle.bind(this) },
                     'Purchase'
                 )
-            )
+            ),
+            this.state.colorPopout &&
+                h(
+                    'div',
+                    { class: 'colorpopout' },
+                    h(
+                        'div',
+                        { class: 'mod', id: 'colorpopout' },
+                        h(ColorBox, {
+                            isPrimary: this.state.isPrimary,
+                            primary: this.state.primary,
+                            secondary: this.state.secondary
+                        }),
+                        h('input', {
+                            class: 'red',
+                            type: 'range',
+                            min: 0,
+                            max: 255,
+                            value: this.state.isPrimary
+                                ? this.state.primary[0]
+                                : this.state.secondary[0],
+                            oninput: this.colorR.bind(this)
+                        }),
+                        h('input', {
+                            class: 'green',
+                            type: 'range',
+                            min: 0,
+                            max: 255,
+                            value: this.state.isPrimary
+                                ? this.state.primary[1]
+                                : this.state.secondary[1],
+                            oninput: this.colorG.bind(this)
+                        }),
+                        h('input', {
+                            class: 'blue',
+                            type: 'range',
+                            min: 0,
+                            max: 255,
+                            value: this.state.isPrimary
+                                ? this.state.primary[2]
+                                : this.state.secondary[2],
+                            oninput: this.colorB.bind(this)
+                        })
+                        // You can put them in here as well.
+                    )
+                )
         );
     }
 }
 
-const ModList = ({ mods, setItemValue, purchase }) => {
+const ColorBox = ({ isPrimary, primary, secondary }) => {
+    const color = isPrimary ? primary : secondary;
+    const bgColor = `${color[0]}, ${color[1]}, ${color[2]}`;
+
+    return h('div', {
+        class: 'colorBox',
+        style: `background-color: rgb(${bgColor}); `
+    });
+};
+
+const ModList = ({
+    mods,
+    setItemValue,
+    purchase,
+    showColorPopup,
+    primaryPaintType,
+    secondaryPaintType
+}) => {
     const itemList = mods.map((item, index) =>
         h(ModItem, { index, item, setItemValue, purchase })
     );
 
-    return h('div', null, itemList);
+    // Need to inject it into itemList.
+    // The css is setup in a way that the itemList controls how
+    // everything looks.
+    return h(
+        'div',
+        null,
+        h(ColorSelect, {
+            title: 'PrimaryColor',
+            showColorPopup,
+            isPrimary: true,
+            paintType: primaryPaintType
+        }),
+        h(ColorSelect, {
+            title: 'SecondaryColor',
+            showColorPopup,
+            isPrimary: false,
+            paintType: secondaryPaintType
+        }),
+        itemList
+    );
+};
+
+const ColorSelect = ({ title, showColorPopup, isPrimary, paintType }) => {
+    showPopup = e => {
+        showColorPopup(e, true, isPrimary);
+    };
+
+    return h(
+        'div',
+        { class: 'mod' },
+        h('h4', null, title),
+        h(
+            'select',
+            { oninput: showPopup.bind(this), value: `${paintType}` },
+            h('option', { value: '0' }, 'Normal'),
+            h('option', { value: '1' }, 'Metallic'),
+            h('option', { value: '2' }, 'Pearl'),
+            h('option', { value: '3' }, 'Matte'),
+            h('option', { value: '4' }, 'Metal'),
+            h('option', { value: '5' }, 'Chrome'),
+            h('option', { value: '6', disabled: true }, 'Change Type')
+        )
+    );
 };
 
 // Items to Display in a Group

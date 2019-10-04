@@ -276,57 +276,20 @@ export class Objective {
             }
         }
 
-        player.job.itemWarning = false;
+        this.finishObjective(player);
+        return true;
+    }
 
-        // Issue Rewards
-        if (this.rewards.length >= 1) {
-            this.giveRewards(player);
-        }
-
-        if (this.veh) {
-            this.spawnVehicles(player);
-        }
-
-        // Play a sound; after a user finishes their objective.
-        playFinishedSound(player, this);
-
+    finishObjective(player) {
         // Reset progress for this objective.
         this.progress = -1;
+        this.giveRewards(player);
+        this.spawnVehicles(player);
+        playFinishedSound(player, this);
 
         // Check objective modifier flags.
         if (player.job.target && player.job.target.entity) {
-            const entity = player.job.target.entity;
-
-            if (isFlagged(this.flags, modifiers.DROPOFF_PLAYER)) {
-                if (entity) {
-                    entity.ejectSlowly();
-                    entity.jobber = undefined;
-                }
-            }
-
-            if (isFlagged(this.flags, modifiers.REPAIR_PLAYER)) {
-                let fare = player.job.target.owner.jobber.fare;
-                if (!fare) {
-                    fare = 0;
-                }
-
-                if (entity.constructor.name === 'Player') {
-                    entity.spawn(entity.pos.x, entity.pos.y, entity.pos.z, 0);
-                    entity.health = 25;
-                    player.job.target.owner.subCash(fare);
-                    player.addCash(fare);
-                    player.job.target.owner.send(`{FF0000}-$${fare}`);
-                    player.send(`{00FF00}+$${fare}`);
-                }
-
-                if (entity.constructor.name === 'Vehicle') {
-                    entity.repair();
-                    player.job.target.owner.subCash(fare);
-                    player.addCash(fare);
-                    player.job.target.owner.send(`{FF0000}-$${fare}`);
-                    player.send(`{00FF00}+$${fare}`);
-                }
-            }
+            this.finishTargetType(player);
         }
 
         if (isFlagged(this.flags, modifiers.CLEAR_PROPS)) {
@@ -340,7 +303,48 @@ export class Objective {
         // Go To Next Objective
         // Issue Rewards Here
         player.emitMeta('job:Objective', undefined);
-        return true;
+    }
+
+    finishTargetType(player) {
+        const entity = player.job.target.entity;
+
+        if (isFlagged(this.flags, modifiers.DROPOFF_PLAYER)) {
+            if (entity) {
+                entity.ejectSlowly();
+                entity.jobber = undefined;
+            }
+        }
+
+        if (!isFlagged(this.flags, modifiers.REPAIR_PLAYER)) return;
+
+        if (entity.constructor.name === 'Player') {
+            this.finishPayFares(player, entity);
+        }
+
+        if (entity.constructor.name === 'Vehicle') {
+            this.handleVehicleRepair(player, entity);
+        }
+    }
+
+    finishPayFares(player, entity) {
+        let fare = player.job.target.owner.jobber.fare;
+        if (!fare) {
+            fare = 0;
+        }
+        entity.spawn(entity.pos.x, entity.pos.y, entity.pos.z, 0);
+        entity.health = 25;
+        player.job.target.owner.subCash(fare);
+        player.addCash(fare);
+        player.job.target.owner.send(`{FF0000}-$${fare}`);
+        player.send(`{00FF00}+$${fare}`);
+    }
+
+    handleVehicleRepair(player, entity) {
+        entity.repair();
+        player.job.target.owner.subCash(fare);
+        player.addCash(fare);
+        player.job.target.owner.send(`{FF0000}-$${fare}`);
+        player.send(`{00FF00}+$${fare}`);
     }
 
     removeItems(player) {
@@ -366,6 +370,7 @@ export class Objective {
     }
 
     spawnVehicles(player) {
+        if (!this.veh) return;
         let pos = randPosAround(this.veh.pos, 2);
         const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
 
@@ -387,30 +392,41 @@ export class Objective {
     }
 
     giveRewards(player) {
-        this.rewards.forEach(reward => {
-            if (reward.type === 'xp') {
-                addXP(player, reward.prop, reward.quantity);
-                return;
-            }
+        if (this.rewards.length <= 0) return;
 
-            if (reward.type === 'item') {
-                if (!Items[reward.prop]) return;
-                const baseItem = BaseItems[Items[reward.prop].base];
-                if (baseItem.abilities.stack) {
-                    player.addItem(Items[reward.prop].key, reward.quantity);
-                    player.send(
-                        `${Items[reward.prop].name} was added to your inventory.`
-                    );
-                } else {
-                    for (let i = 0; i < reward.quantity; i++) {
-                        player.addItem(Items[reward.prop].key, 1);
-                        player.send(
-                            `${Items[reward.prop].name} was added to your inventory.`
-                        );
-                    }
-                }
-            }
+        const xpRewards = this.rewards.filter(reward => {
+            if (reward && reward.type === 'xp') return reward;
         });
+
+        const itemRewards = this.rewards.filter(reward => {
+            if (reward && reward.type === 'item') return reward;
+        });
+
+        xpRewards.forEach(reward => {
+            this.rewardXP(player, reward.prop, reward.quantity);
+        });
+
+        itemRewards.forEach(reward => {
+            this.rewardItem(player, reward);
+        });
+    }
+
+    rewardXP(player, skillName, quantity) {
+        addXP(player, skillName, quantity);
+    }
+
+    rewardItem(player, reward) {
+        if (!Items[reward.prop]) return;
+        const baseItem = BaseItems[Items[reward.prop].base];
+        if (baseItem.abilities.stack) {
+            player.addItem(Items[reward.prop].key, reward.quantity);
+            player.send(`${Items[reward.prop].name} was added to your inventory.`);
+        } else {
+            for (let i = 0; i < reward.quantity; i++) {
+                player.addItem(Items[reward.prop].key, 1);
+                player.send(`${Items[reward.prop].name} was added to your inventory.`);
+            }
+        }
     }
 
     /**
@@ -420,128 +436,111 @@ export class Objective {
      * @param args
      */
     checkObjective(player, args) {
-        let valid = true;
-
         // Normal range check.
         // Then do a targed range check
         // if the objective type is 4.
-        if (this.type <= objectives.ORDER && this.type !== objectives.PLAYER) {
-            if (!isInRange(player, this)) valid = false;
-        }
-
-        // Checks if a player is on foot.
-        if (isFlagged(this.flags, modifiers.ON_FOOT) && valid) {
-            if (player.vehicle) valid = false;
-        }
-
-        // Checks if the player is in an job vehicle.
-        if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
-            if (!player.vehicle) {
-                valid = false;
-            } else {
-                const vehicles = player.vehicles.filter(x => x.job !== undefined);
-
-                let isVehicleUsed = false;
-                vehicles.forEach(veh => {
-                    if (veh === player.vehicle) {
-                        isVehicleUsed = true;
-                    }
-                });
-
-                if (!isVehicleUsed) {
-                    valid = false;
-                } else {
-                    if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
-                        if (player.vehicle.engineHealth < player.job.vehicleHealth) {
-                            player.send(
-                                `You failed to keep your vehicle in good health.`
-                            );
-                            quitJob(player, false, true);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-         * Finally check the base objective type
-         */
-        // Check the capture objective type.
-        // When the user is standing in a specific area.
-        if (this.type === objectives.CAPTURE && valid) {
-            valid = capture(player, this);
-        }
-
-        // Check the hold objective type.
-        // When the user is holding 'E'
-        if (this.type === objectives.HOLD && valid) {
-            valid = hold(player, this);
-        }
-
-        // Check the mash objective type.
-        // When the user is mashing 'E'.
-        if (this.type === objectives.MASH && valid) {
-            valid = mash(player, this);
-        }
-
-        // Wait Time
-        if (this.type === objectives.WAIT && valid) {
-            valid = wait(player, this);
-        }
+        if (!this.normalRangeCheck(player)) return false;
+        if (!this.checkIfOnFoot(player)) return false;
+        if (!this.checkIfInVehicle(player)) return false;
+        if (!this.checkCapture(player)) return false;
+        if (!this.checkHold(player)) return false;
+        if (!this.checkMash(player)) return false;
+        if (!this.checkWait(player)) return false;
 
         // Check the player objective type
         // When the user has a 'target' type.
-        if (this.type == objectives.PLAYER && valid) {
+        if (this.type == objectives.PLAYER) {
             if (player.job.target) {
-                valid = targetPlayer(player, this);
+                return targetPlayer(player, this);
             } else {
-                valid = false;
+                return false;
             }
         }
 
-        return valid;
+        return true;
+    }
+
+    normalRangeCheck(player) {
+        if (this.type <= objectives.ORDER && this.type !== objectives.PLAYER) {
+            if (!isInRange(player, this)) return false;
+        }
+        return true;
+    }
+
+    checkIfOnFoot(player) {
+        if (isFlagged(this.flags, modifiers.ON_FOOT)) {
+            if (player.vehicle) return false;
+        }
+        return true;
+    }
+
+    checkIfInVehicle(player) {
+        if (isFlagged(this.flags, modifiers.IN_VEHICLE) && valid) {
+            if (!player.vehicle) return false;
+            const vehicles = player.vehicles.filter(x => x.job !== undefined);
+            let isVehicleUsed = false;
+            vehicles.forEach(veh => {
+                if (veh === player.vehicle) {
+                    isVehicleUsed = true;
+                }
+            });
+
+            if (!isVehicleUsed) return false;
+            if (!this.checkIfVehicleDamaged()) return false;
+        }
+        return true;
+    }
+
+    checkIfVehicleDamaged(player, vehicle) {
+        if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
+            if (player.vehicle.engineHealth < player.job.vehicleHealth) {
+                player.send(`You failed to keep your vehicle in good health.`);
+                quitJob(player, false, true);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    checkCapture(player) {
+        if (this.type !== objectives.CAPTURE) return true;
+        this.progress += 1;
+        if (this.progress < this.maxProgress) {
+            playEverySound(player, this);
+            return false;
+        }
+        return true;
+    }
+
+    checkHold(player) {
+        if (this.type !== objectives.HOLD) return true;
+        this.progress += 1;
+        if (this.progress < this.maxProgress) {
+            playEverySound(player, this);
+            return false;
+        }
+        return true;
+    }
+
+    checkMash(player) {
+        if (this.type !== objectives.MASH) return true;
+        this.progress += 1;
+        if (this.progress < this.maxProgress) {
+            playEverySound(player, this);
+            return false;
+        }
+        return true;
+    }
+
+    checkWait(player) {
+        if (this.type !== objectives.WAIT) return true;
+        if (this.modifiedWaitTime > Date.now()) return false;
+        return true;
     }
 }
 
 const isInRange = (player, objective) => {
     if (distance(player.pos, objective.pos) >= objective.range) return false;
-    return true;
-};
-
-/**
- * The Follow objectives
- * are to be kept seperate; for additional objective modifiers.
- */
-
-// CAPTURE: 1, // Stand in Point
-const capture = (player, objective) => {
-    objective.progress += 1;
-    if (objective.progress < objective.maxProgress) {
-        playEverySound(player, objective);
-        return false;
-    }
-    return true;
-};
-
-// HOLD: 2, // Hold 'E'
-const hold = (player, objective) => {
-    objective.progress += 1;
-    if (objective.progress < objective.maxProgress) {
-        playEverySound(player, objective);
-        return false;
-    }
-    return true;
-};
-
-// MASH: 3, // Mash 'E'
-const mash = (player, objective) => {
-    objective.progress += 1;
-
-    if (objective.progress < objective.maxProgress) {
-        playEverySound(player, objective);
-        return false;
-    }
     return true;
 };
 
@@ -598,11 +597,6 @@ const targetPlayer = (player, objective) => {
 const getWord = () => {
     const word = Math.floor(Math.random() * (Dictionary.length - 1));
     return Dictionary[word];
-};
-
-const wait = (player, objective) => {
-    if (objective.modifiedWaitTime > Date.now()) return false;
-    return true;
 };
 
 const playEverySound = (player, objective) => {

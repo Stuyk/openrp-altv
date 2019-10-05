@@ -8,70 +8,72 @@ import * as systemsContext from '/client/systems/context.mjs';
 import * as utilityGameInfo from '/client/utility/gameinfo.mjs';
 // import * as chat from 'chat';
 
-alt.log('Loaded: client->events->keyup.mjs');
+alt.log('Loaded: client->events->keybinds.mjs');
 
 let keybinds = {
     // Shift + F - Keep Engine Running
     70: {
         altModifier: false,
         shiftModifier: true,
-        func: systemsVehicles.keepEngineRunning
+        onKeyUp: systemsVehicles.keepEngineRunning
     },
     // Shift + F - Keep Engine Running
     71: {
         altModifier: false,
         shiftModifier: true,
-        func: systemsVehicles.toggleEngine
+        onKeyUp: systemsVehicles.toggleEngine
     },
     // H - Toggle Vehicle Lock
     72: {
         altModifier: false,
         shiftModifier: true,
-        func: systemsVehicles.toggleLock
+        onKeyUp: systemsVehicles.toggleLock
     },
     // I - Inventory
     73: {
         altModifier: false,
         shiftModifier: false,
-        func: panelsInventory.showDialogue
+        onKeyUp: panelsInventory.showDialogue
     },
     // T - Chat
     84: {
         altModifier: false,
         shiftModifier: false,
-        func: panelsChat.toggleDialogue
+        onKeyUp: panelsChat.toggleDialogue
     },
     // Shift + F1 - Get Interior Info
     112: {
         altModifier: false,
         shiftModifier: true,
-        func: utilityGameInfo.printInteriorInfo
+        onKeyUp: utilityGameInfo.printInteriorInfo
     },
     // Shift + F2 - Get Location Info
     113: {
         altModifier: false,
         shiftModifier: true,
-        func: utilityGameInfo.printLocation
+        onKeyUp: utilityGameInfo.printLocation
     },
     // Shift + F7 - Hide Chat
     118: {
         altModifier: false,
         shiftModifier: true,
-        func: panelsChat.toggleHide
+        onKeyUp: panelsChat.toggleHide
     },
     // Tab - Hold for Context Cursor
     9: {
         altModifier: false,
         shiftModifier: false,
-        func: systemsContext.toggleInterval
+        onKeyDown: systemsContext.showContext,
+        onKeyUp: systemsContext.hideContext
     },
     // F1 - Help
     112: {
         altModifier: false,
         shiftModifier: false,
-        func: panelsHelp.toggleHelp
+        onKeyUp: panelsHelp.toggleHelp
     }
 };
+
 let cooldown = false;
 let shiftModified = false;
 let altModified = false;
@@ -90,12 +92,6 @@ function keyup(key) {
     if (key === 16) shiftModified = false;
     if (key === 18) altModified = false;
 
-    // Release TAB to exit Context Cursor
-    if (key === 9) {
-        keybinds[key].func();
-        return;
-    }
-
     if (!alt.Player.local.getMeta('loggedin')) return;
     if (alt.Player.local.getMeta('chat')) return;
     if (alt.Player.local.getMeta('job:KeyPressEvent')) return;
@@ -110,19 +106,19 @@ function keyup(key) {
         // Shift Modified Keys
         if (keybinds[key].shiftModifier) {
             if (!shiftModified) return;
-            keybinds[key].func();
+            keybinds[key].onKeyUp();
             return;
         }
 
         // Alt Modified Keys
         if (keybinds[key].altModifier) {
             if (!altModified) return;
-            keybinds[key].func();
+            keybinds[key].onKeyUp();
             return;
         }
 
         // Normal Keys
-        keybinds[key].func();
+        keybinds[key].onKeyUp();
         return;
     }
 }
@@ -133,5 +129,7 @@ function keydown(key) {
     if (key === 18) altModified = true;
 
     // Hold TAB for Context Cursor
-    if (key === 9) keybinds[key].func();
+    if (keybinds[key] && keybinds[key].hasOwnProperty('onKeyDown')) {
+        keybinds[key].onKeyDown();
+    }
 }

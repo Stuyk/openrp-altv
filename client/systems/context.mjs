@@ -175,15 +175,18 @@ export class ContextMenu {
 
 let interval;
 
-export function toggleInterval() {
+export function showContext() {
+    if (alt.Player.local.getMeta('viewOpen')) return;
+    interval = alt.setInterval(useMenu, 0);
+}
+
+export function hideContext() {
     if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (interval) {
         alt.clearInterval(interval);
         interval = undefined;
         currentContext = undefined;
-    } else {
-        interval = alt.setInterval(useMenu, 0);
     }
 }
 

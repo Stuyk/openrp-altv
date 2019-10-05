@@ -80,10 +80,15 @@ export function setupVehicleFunctions(vehicle) {
             }
 
             if (key === 'colors') {
-                vehicle.setSyncedMeta('primaryPaint', mods[key].primary.type);
-                vehicle.setSyncedMeta('secondaryPaint', mods[key].secondary.type);
-                vehicle.setSyncedMeta('primaryColor', mods[key].primary.color);
-                vehicle.setSyncedMeta('secondaryColor', mods[key].secondary.color);
+                if (mods[key].primary) {
+                    vehicle.setSyncedMeta('primaryPaint', mods[key].primary.type);
+                    vehicle.setSyncedMeta('primaryColor', mods[key].primary.color);
+                }
+
+                if (mods[key].secondary) {
+                    vehicle.setSyncedMeta('secondaryPaint', mods[key].secondary.type);
+                    vehicle.setSyncedMeta('secondaryColor', mods[key].secondary.color);
+                }
                 return;
             }
         });

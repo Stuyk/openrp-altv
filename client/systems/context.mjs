@@ -177,7 +177,9 @@ let interval;
 
 export function showContext() {
     if (alt.Player.local.getMeta('viewOpen')) return;
-    interval = alt.setInterval(useMenu, 0);
+    if (!interval) {
+        interval = alt.setInterval(useMenu, 0);
+    }
 }
 
 export function hideContext() {

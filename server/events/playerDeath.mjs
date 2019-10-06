@@ -10,7 +10,7 @@ alt.on('playerDeath', (target, killer, weapon) => {
 
     if (target !== killer) {
         if (weapon !== 133987706 && weapon !== 2741846334) {
-            if (killer) {
+            if (killer && killer.constructor.name === 'Player') {
                 if (!verifyWeapon(killer)) {
                     target.spawn(target.pos.x, target.pos.y, target.pos.z, 200);
                     return;

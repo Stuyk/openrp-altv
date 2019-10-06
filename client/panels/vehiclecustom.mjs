@@ -163,12 +163,12 @@ function buildModList() {
                 if (isToggleMod(i)) {
                     if (modIndex === -1) displayName = `Disabled`;
                     if (displayName === 'NULL') displayName = `Enabled`;
+                } else if (isTuningMod(i)) {
+                    if (modIndex === -1) displayName = `Stock`;
+                    if (displayName === 'NULL') displayName = `Level ${modIndex}`;
                 } else {
                     if (modIndex === -1) displayName = 'Stock';
-                    if (displayName === 'NULL')
-                        displayName = isTuningMod(i)
-                            ? `Level ${modIndex}`
-                            : `Mod #${modIndex}`;
+                    if (displayName === 'NULL') displayName = `Mod #${modIndex}`;
                 }
 
                 if (
@@ -270,9 +270,11 @@ function saveChanges() {
         previousVehicle[key] = vehicleChanges[key];
     });
 
+    /*
     Object.keys(previousVehicle).forEach(key => {
         if (previousVehicle[key] === -1) delete previousVehicle[key];
     });
+    */
 
     /*
         Need to add colors into this event here; for the previousVehicle data.

@@ -93,12 +93,29 @@ class App extends Component {
                 primaryPaintType: parseInt(e.target.value),
                 isPrimary
             });
-        } else {
+        } else if (isPrimary === false) {
             this.setState({
                 colorPopout: boolValue,
                 secondaryPaintType: parseInt(e.target.value),
                 isPrimary
             });
+        } else {
+            this.setState({
+                colorPopout: boolValue
+            });
+        }
+        if (isPrimary !== undefined) {
+            if ('alt' in window) {
+                alt.emit(
+                    'vehicle:UpdateColor',
+                    this.state.primaryPaintType,
+                    this.state.secondaryPaintType,
+                    this.state.primary,
+                    this.state.secondary
+                );
+            } else {
+                console.log('Update Color');
+            }
         }
     }
 
@@ -276,17 +293,21 @@ const ColorSelect = ({ title, showColorPopup, isPrimary, paintType }) => {
     return h(
         'div',
         { class: 'mod' },
-        h('h4', null, title),
+        h('div', { class: 'spacer-left' }, h('div', { class: 'title' }, title)),
         h(
-            'select',
-            { oninput: showPopup.bind(this), value: `${paintType}` },
-            h('option', { value: '0' }, 'Normal'),
-            h('option', { value: '1' }, 'Metallic'),
-            h('option', { value: '2' }, 'Pearl'),
-            h('option', { value: '3' }, 'Matte'),
-            h('option', { value: '4' }, 'Metal'),
-            h('option', { value: '5' }, 'Chrome'),
-            h('option', { value: '6', disabled: true }, 'Change Type')
+            'div',
+            { class: 'spacer-right' },
+            h(
+                'select',
+                { oninput: showPopup.bind(this), value: `${paintType}` },
+                h('option', { value: '0' }, 'Normal'),
+                h('option', { value: '1' }, 'Metallic'),
+                h('option', { value: '2' }, 'Pearl'),
+                h('option', { value: '3' }, 'Matte'),
+                h('option', { value: '4' }, 'Metal'),
+                h('option', { value: '5' }, 'Chrome'),
+                h('option', { value: '6', disabled: true }, 'Change Type')
+            )
         )
     );
 };

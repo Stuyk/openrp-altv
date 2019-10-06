@@ -499,9 +499,6 @@ export function setupPlayerFunctions(player) {
             }
         }
 
-        console.log(entries);
-        console.log(indexes);
-
         if (indexes.length <= 0) {
             return false;
         }
@@ -534,7 +531,11 @@ export function setupPlayerFunctions(player) {
             const inventory = JSON.parse(player.data.inventory);
             inventory.forEach(item => {
                 if (item) {
-                    item = objectToNull(item);
+                    if (item.name === '') {
+                        item = null;
+                    } else {
+                        item = objectToNull(item);
+                    }
                 }
             });
             player.data.inventory = JSON.stringify(inventory);

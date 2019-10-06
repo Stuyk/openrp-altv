@@ -113,6 +113,7 @@ let moveableSprites = [];
 let staticSprites = [];
 let clickableSprites = [];
 let eventHandlers = new Map();
+let ready = false;
 
 const resetGame = async callback => {
     for (let i = moveableSprites.length - 1; i > -1; i--) {
@@ -521,6 +522,11 @@ const spriteHandler = currentSprite => {
 };
 
 const gameLoop = delta => {
+    if (!ready) {
+        ready = true;
+        alt.emit('minigame:Ready');
+    }
+
     if (moveableSprites.length >= 1) {
         moveableSprites.forEach(spriteHandler);
     }

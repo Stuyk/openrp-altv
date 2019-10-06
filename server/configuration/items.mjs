@@ -472,7 +472,7 @@ export const Items = {
         key: 'unrefinedkevlarium',
         props: {},
         quantity: 0,
-        icon: 'leaves'
+        icon: 'leaf'
     },
     pickaxe1: {
         name: 'Rusty Pickaxe',

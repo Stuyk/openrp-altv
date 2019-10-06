@@ -5,6 +5,7 @@ import { drawMarker } from '/client/utility/marker.mjs';
 import { playAudio } from '/client/systems/sound.mjs';
 import { playParticleFX } from '/client/utility/particle.mjs';
 import { drawText3d } from '/client/utility/text.mjs';
+import { View } from '../utility/view.mjs';
 
 alt.log('Loaded: client->systems->job.mjs');
 
@@ -27,6 +28,7 @@ let target;
 let targetBlip = false;
 let soundCooldown = Date.now();
 let projectileCooldown = Date.now();
+let minigameView;
 
 const types = {
     0: point, // Go to Point
@@ -35,7 +37,8 @@ const types = {
     3: mash, // Mash 'E'
     4: player, // Target
     5: order, // Press Keys in Order
-    7: wait
+    7: wait,
+    8: minigame
 };
 
 export const modifiers = {
@@ -175,6 +178,12 @@ function clearObjective() {
     if (blip && !targetBlip) {
         blip.destroy();
         blip = undefined;
+    }
+
+    if (alt.Player.local.getMeta('viewOpen')) {
+        if (minigameView) {
+            minigameView.close();
+        }
     }
 
     mashing = 0;
@@ -375,6 +384,12 @@ function intervalObjectiveChecking() {
     alt.emitServer('job:Check');
 }
 
+function completeMiniGame(hash) {
+    if (!minigameView) return;
+    minigameView.close();
+    alt.emitServer('job:Check', `${hash}`);
+}
+
 function preObjectiveCheck() {
     let valid = true;
 
@@ -483,6 +498,23 @@ function order() {
         playAnimation();
     }
     return false;
+}
+
+function minigame() {
+    if (!alt.Player.local.inScenario) {
+        playScenario();
+    }
+
+    if (!minigameView) {
+        minigameView = new View();
+    } else {
+        if (alt.Player.local.getMeta('viewOpen')) return;
+        minigameView.open('http://resource/client/html/pixigames/index.html', true);
+        minigameView.on('minigame:Complete', completeMiniGame);
+        minigameView.on('minigame:Ready', () => {
+            minigameView.emit(`minigame:${objective.minigame}`, objective.minigamehash);
+        });
+    }
 }
 
 /**

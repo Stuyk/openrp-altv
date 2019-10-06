@@ -2,6 +2,7 @@ const textures = ['box', 'leaf1', 'leaf2'];
 
 const leafCount = 100;
 let treasure;
+let hash;
 
 setDescription('Find the box under the leaves.');
 
@@ -36,6 +37,7 @@ on(eventNames.ON_CLICK, args => {
 
     if (clickable === treasure) {
         if ('alt' in window) {
+            alt.emit('minigame:Complete', hash);
         } else {
             resetGame(() => {
                 setupGame();
@@ -45,8 +47,9 @@ on(eventNames.ON_CLICK, args => {
 });
 
 if ('alt' in window) {
-    alt.on('game:LoadOtherGame', () => {
+    alt.on('minigame:FindInLeaves', gamehash => {
         loadTextures(textures, () => {
+            hash = gamehash;
             setupGame();
         });
     });

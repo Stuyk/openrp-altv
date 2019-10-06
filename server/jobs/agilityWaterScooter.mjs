@@ -80,6 +80,7 @@ alt.on('job:WaterScooter', player => {
         obj = new Objective(objectives.POINT, modifiers.IN_VEHICLE);
         obj.setHelpText('Follow the course down.');
         obj.setPosition(pos);
+        obj.setRange(3);
         obj.setBlip(1, 2, pos);
         obj.setMarker(
             0,

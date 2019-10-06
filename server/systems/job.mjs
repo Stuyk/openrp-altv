@@ -4,6 +4,7 @@ import { Dictionary } from '../configuration/dictionary.mjs';
 import { distance, randPosAround } from '../utility/vector.mjs';
 import { addXP } from '../systems/skills.mjs';
 import { Items, BaseItems } from '../configuration/items.mjs';
+import { generateHash } from '../utility/encryption.mjs';
 
 const Debug = true;
 
@@ -15,7 +16,8 @@ export const objectives = {
     PLAYER: 4, // Player Type
     ORDER: 5, // Press Keys in Order
     INFINITE: 6, // Repeat any objectives after this.
-    WAIT: 7
+    WAIT: 7,
+    MINIGAME: 8
 };
 
 export const modifiers = {
@@ -134,6 +136,15 @@ export class Objective {
             duration,
             sounds
         };
+    }
+
+    /**
+     * Set a minigame for the minigame type.
+     * @param minigameName
+     */
+    setMiniGame(minigameName) {
+        this.minigame = minigameName;
+        this.minigamehash = generateHash(this);
     }
 
     /**
@@ -435,7 +446,7 @@ export class Objective {
      * @param player
      * @param args
      */
-    checkObjective(player, args) {
+    checkObjective(player, hash) {
         // Normal range check.
         // Then do a targed range check
         // if the objective type is 4.
@@ -446,6 +457,7 @@ export class Objective {
         if (!this.checkHold(player)) return false;
         if (!this.checkMash(player)) return false;
         if (!this.checkWait(player)) return false;
+        if (!this.checkMinigame(player, hash)) return false;
 
         // Check the player objective type
         // When the user has a 'target' type.
@@ -535,6 +547,15 @@ export class Objective {
     checkWait(player) {
         if (this.type !== objectives.WAIT) return true;
         if (this.modifiedWaitTime > Date.now()) return false;
+        return true;
+    }
+
+    checkMinigame(player, hash) {
+        if (this.type !== objectives.MINIGAME) return true;
+        if (this.minigamehash !== hash[0]) {
+            quitJob(player);
+            return false;
+        }
         return true;
     }
 }
@@ -805,11 +826,11 @@ export class Job {
      * @param player
      * @param args
      */
-    check(player, ...args) {
+    check(player, hash) {
         if (player.checking) return;
         player.checking = true;
 
-        if (!this.objectives[0].attemptObjective(player, ...args)) {
+        if (!this.objectives[0].attemptObjective(player, hash)) {
             player.checking = false;
             return;
         }
@@ -846,9 +867,9 @@ export class Job {
     }
 }
 
-export function check(player) {
+export function check(player, hash) {
     if (!player.job) return;
-    player.job.check(player);
+    player.job.check(player, hash);
 }
 
 export function skipToBeginning(player) {

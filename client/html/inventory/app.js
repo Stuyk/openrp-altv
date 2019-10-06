@@ -34,6 +34,7 @@ const icons = [
     'hat',
     'id-card',
     'inventory',
+    'leaf',
     'mechanic',
     'medicine',
     'metal',
@@ -202,7 +203,7 @@ class Inventory extends Component {
                 name: 'Taco',
                 base: 'Food',
                 hash: '90840921921',
-                icon: 'fish'
+                icon: 'leaf'
             };
             items[1] = {
                 name: 'Fish Taco That Is Super Delicious',

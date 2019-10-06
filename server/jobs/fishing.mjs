@@ -12,7 +12,7 @@ import { generateHash } from '../utility/encryption.mjs';
 alt.on('job:Fishing', player => {
     if (player.isTryingFishing) return;
     player.isTryingFishing = true;
-    const callbackEvent = generateHash(JSON.stringify(player));
+    const callbackEvent = generateHash(JSON.stringify(player.data));
     alt.onClient(callbackEvent, startFishing);
     alt.emitClient(player, 'job:isInWater', callbackEvent);
 });

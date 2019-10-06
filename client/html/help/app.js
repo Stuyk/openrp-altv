@@ -2,7 +2,10 @@ const helpCommands = {
     TAB: 'Context menu toggle',
     I: 'Inventory',
     F: 'Enter/exit vehicle',
-    H: '+ Shift: Lock/Unlock vehicle',
+    'Shift + H': 'Lock/Unlock Vehicle (Must enter vehicle once)',
+    'Shift + G': 'Start/Stop Engine',
+    'Shift + F': 'Keep Engine Running',
+    'Shift + F7': 'Toggle Chat',
     T: 'Toggle chat window',
     '/me <action>': 'Perform an action',
     '/b <msg>': 'Speak out of character',
@@ -13,7 +16,8 @@ const helpCommands = {
     '/phonenumber': 'Get your phonenumber',
     '/t, /call <number>, /hangup': 'Text, Call, or Hangup',
     '/addcontact <id>': 'Add player to contacts',
-    '/removecontact <id>': 'Remove player from contacts'
+    '/removecontact <id>': 'Remove player from contacts',
+    '/additem <key> <quantity>': 'Add an item your inventory.'
 };
 
 /* eslint-disable no-undef */

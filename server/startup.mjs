@@ -69,6 +69,7 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/agilityWaterScooter.mjs');
     import('./jobs/agilityDirtBuggy.mjs');
     import('./jobs/gatheringKevlarium1.mjs');
+    import('./jobs/gatheringVigorium1.mjs');
     import('./jobs/miningQuarry.mjs');
     import('./jobs/miningShaft.mjs');
     import('./jobs/playerTaxi.mjs');

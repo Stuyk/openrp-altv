@@ -4,7 +4,7 @@ import * as native from 'natives';
 alt.log(`Loaded: client->systems->interaction.mjs`);
 
 let interactionEnabled = false;
-let currentLabel = undefined;
+let currentLabel;
 let interval;
 
 alt.on('meta:Changed', (key, value) => {

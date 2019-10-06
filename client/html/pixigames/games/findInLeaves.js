@@ -30,18 +30,22 @@ const setupGame = async () => {
     treasure.sprite.x = positions[randomPos].x;
     treasure.sprite.y = positions[randomPos].y;
     treasure.sprite.scale.set(0.5, 0.5);
+    state = 'FindInLeaves';
 };
 
 on(eventNames.ON_CLICK, args => {
+    if (state !== 'FindInLeaves') return;
     const [event, clickable] = args;
 
     if (clickable === treasure) {
         if ('alt' in window) {
             alt.emit('minigame:Complete', hash);
         } else {
+            /*
             resetGame(() => {
                 setupGame();
             });
+            */
         }
     }
 });
@@ -54,9 +58,11 @@ if ('alt' in window) {
         });
     });
 } else {
+    /*
     loadTextures(textures, () => {
         setupGame();
     });
+    */
 }
 
 /*

@@ -114,6 +114,8 @@ let staticSprites = [];
 let clickableSprites = [];
 let eventHandlers = new Map();
 let ready = false;
+let clickCooldown = Date.now();
+let state;
 
 const resetGame = async callback => {
     for (let i = moveableSprites.length - 1; i > -1; i--) {
@@ -212,7 +214,7 @@ const hitTestRectangle = (r1, r2) => {
 };
 
 class ClickableSprite {
-    constructor(spriteName, removeOnClick = false) {
+    constructor(spriteName, removeOnClick = false, clickAmountToRemove = -1) {
         this.sprite = new Sprite(
             PIXI.loader.resources[`assets/${spriteName}.png`].texture
         );
@@ -223,6 +225,8 @@ class ClickableSprite {
         this.mouseoverBind = this.mouseover.bind(this);
         this.mouseoutBind = this.mouseout.bind(this);
         this.removeOnClick = removeOnClick;
+        this.clickAmount = 0;
+        this.clickAmountToRemove = clickAmountToRemove;
     }
 
     moveObject(e) {
@@ -262,7 +266,9 @@ class ClickableSprite {
             return;
         }
         clickableSprites.splice(index, 1);
-        callback();
+        if (callback) {
+            callback();
+        }
     }
 
     mouseup() {
@@ -271,9 +277,20 @@ class ClickableSprite {
     }
 
     mousedown() {
+        if (Date.now() < clickCooldown) return;
+        clickCooldown += 250;
         this.clickedSprite = this.sprite;
+        this.clickAmount += 1;
         if (this.removeOnClick) {
             this.unload();
+            emitEvent(eventNames.ON_CLICK, this);
+            return;
+        }
+
+        if (this.clickAmountToRemove !== -1) {
+            if (this.clickAmount >= this.clickAmountToRemove) {
+                this.unload();
+            }
             emitEvent(eventNames.ON_CLICK, this);
             return;
         }
@@ -283,11 +300,19 @@ class ClickableSprite {
     }
 
     mouseover() {
-        this.sprite.alpha = 0.8;
+        if (!this.noTransparency) {
+            this.sprite.alpha = 0.8;
+        } else {
+            this.sprite.tint = 0xdbdbdb;
+        }
     }
 
     mouseout() {
-        this.sprite.alpha = 1.0;
+        if (!this.noTransparency) {
+            this.sprite.alpha = 1.0;
+        } else {
+            this.sprite.tint = 0xffffff;
+        }
     }
 
     gameBounds() {
@@ -524,7 +549,9 @@ const spriteHandler = currentSprite => {
 const gameLoop = delta => {
     if (!ready) {
         ready = true;
-        alt.emit('minigame:Ready');
+        if ('alt' in window) {
+            alt.emit('minigame:Ready');
+        }
     }
 
     if (moveableSprites.length >= 1) {
@@ -535,6 +562,14 @@ const gameLoop = delta => {
         clickableSprites.forEach(spriteHandler);
     }
 };
+
+async function playAudio(sound) {
+    const audio = new Audio(`../sound/sounds/${sound}.ogg`);
+    audio.loop = false;
+    audio.volume = 0.1;
+    audio.autoplay = true;
+    audio.play();
+}
 
 Game.ticker.add(delta => gameLoop(delta));
 Game.stage.sortableChildren = true;

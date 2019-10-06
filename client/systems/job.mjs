@@ -501,8 +501,9 @@ function order() {
 }
 
 function minigame() {
-    if (!alt.Player.local.inScenario) {
-        playScenario();
+    if (playerSpeed >= 5 && !alt.Player.local.inScenario) {
+        clearScenario();
+        return false;
     }
 
     if (!minigameView) {
@@ -513,6 +514,9 @@ function minigame() {
         minigameView.on('minigame:Complete', completeMiniGame);
         minigameView.on('minigame:Ready', () => {
             minigameView.emit(`minigame:${objective.minigame}`, objective.minigamehash);
+            alt.setTimeout(() => {
+                playAnimation();
+            }, 3000);
         });
     }
 }

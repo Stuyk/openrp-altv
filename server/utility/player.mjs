@@ -510,8 +510,6 @@ export function setupPlayerFunctions(player) {
             total += parseInt(player.inventory[currIndex].quantity);
         });
 
-        console.log(`Total: ${total}`);
-
         if (total < quantity) {
             return false;
         }
@@ -531,11 +529,7 @@ export function setupPlayerFunctions(player) {
             const inventory = JSON.parse(player.data.inventory);
             inventory.forEach(item => {
                 if (item) {
-                    if (item.name === '') {
-                        item = null;
-                    } else {
-                        item = objectToNull(item);
-                    }
+                    item = objectToNull(item);
                 }
             });
             player.data.inventory = JSON.stringify(inventory);
@@ -718,10 +712,8 @@ export function setupPlayerFunctions(player) {
     };
 
     player.addStarterItems = () => {
-        /*
-        let shirt = { ...configurationItems.Items.Shirt };
+        let shirt = { ...Items.shirt };
         shirt.props = {
-            description: 'Starter Shirt',
             restriction: -1,
             female: [
                 { id: 11, value: 2, texture: 2 },
@@ -734,27 +726,32 @@ export function setupPlayerFunctions(player) {
                 { id: 3, value: 0, texture: 0 }
             ]
         };
+        shirt.hash = generateHash(shirt);
 
-        let pants = { ...configurationItems.Items.Pants };
+        let pants = { ...Items.pants };
         pants.props = {
-            description: 'Starter Pants',
             restriction: -1,
             female: [{ id: 4, value: 0, texture: 2 }],
             male: [{ id: 4, value: 0, texture: 0 }]
         };
+        pants.hash = generateHash(pants);
 
-        let shoes = { ...configurationItems.Items.Shoes };
+        let shoes = { ...Items.shoes };
         shoes.props = {
-            description: 'Starter Pants',
             restriction: -1,
             female: [{ id: 6, value: 3, texture: 0 }],
             male: [{ id: 6, value: 1, texture: 0 }]
         };
+        shoes.hash = generateHash(shoes);
 
-        player.addItem(shirt, 1);
-        player.addItem(pants, 1);
-        player.addItem(shoes, 1);
-        */
+        player.equipment[7] = shirt;
+        player.equipment[10] = pants;
+        player.equipment[13] = shoes;
+
+        player.addItem('pickaxe1', 1, Items.pickaxe1.props);
+        player.addItem('hammer1', 1, Items.hammer1.props);
+        player.addItem('axe1', 1, Items.axe1.props);
+        player.addItem('fishingrod1', 1, Items.fishingrod1.props);
     };
 
     // =================================

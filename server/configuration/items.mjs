@@ -474,6 +474,14 @@ export const Items = {
         quantity: 0,
         icon: 'leaf'
     },
+    unrefinedvigorium: {
+        name: 'Unrefined Vigorium Seeds',
+        base: 'unrefined',
+        key: 'unrefinedvigorium',
+        props: {},
+        quantity: 0,
+        icon: 'seeds'
+    },
     pickaxe1: {
         name: 'Rusty Pickaxe',
         base: 'pickaxe',

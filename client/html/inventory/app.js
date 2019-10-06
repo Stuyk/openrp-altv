@@ -47,6 +47,7 @@ const icons = [
     'planks',
     'profile',
     'rock',
+    'seeds',
     'settings',
     'shirt',
     'smithing',

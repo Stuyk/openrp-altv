@@ -15,7 +15,6 @@ const sandboxhelp = [
     '/addcash (amount)',
     '/addwep (name)',
     '/face, /addxp, /setxp',
-    '/granola, /coffee',
     '/tpto (rp-name)',
     '/players, /clearchat',
     '/taxi, /mechanic',
@@ -54,16 +53,6 @@ chat.registerCmd('addwep', (player, arg) => {
 
 chat.registerCmd('face', player => {
     player.showFaceCustomizerDialogue(player.pos);
-});
-
-chat.registerCmd('granola', player => {
-    let itemTemplate = configurationItems.Items['GranolaBar'];
-    player.addItem(itemTemplate, 5);
-});
-
-chat.registerCmd('coffee', player => {
-    let itemTemplate = configurationItems.Items['Coffee'];
-    player.addItem(itemTemplate, 5);
 });
 
 chat.registerCmd('additem', (player, arg) => {

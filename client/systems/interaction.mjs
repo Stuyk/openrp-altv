@@ -28,6 +28,7 @@ alt.on('meta:Changed', (key, value) => {
     // Show prompt for interaction.
     interactionEnabled = true;
     interval = alt.setInterval(showKeyPress, 0);
+    alt.log(`interaction.mjs ${interval}`);
 });
 
 // Check for the key the user is pressing when enabled.

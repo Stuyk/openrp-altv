@@ -27,6 +27,7 @@ export function playParticleFX(dict, name, duration, scale, x = 0, y = 0, z = 0)
         );
         particles.push(particle);
     }, 0);
+    alt.log(`particle.mjs ${interval}`);
 
     alt.setTimeout(() => {
         alt.clearInterval(interval);

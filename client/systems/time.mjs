@@ -9,7 +9,3 @@ alt.on('syncedMetaChange', (entity, key, value) => {
 
     currentHour = value;
 });
-
-alt.setInterval(() => {
-    native.networkOverrideClockTime(8, 0, 0);
-}, 1000);

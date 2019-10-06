@@ -8,20 +8,22 @@ alt.onServer('text:Animated', (text, duration) => {
     let alpha = 255;
     const interval = alt.setInterval(() => {
         if (alpha <= 0) alpha = 0;
-        drawText3d(
-            text,
-            pos.x,
-            pos.y,
-            pos.z + 1,
-            0.5,
-            4,
-            255,
-            255,
-            255,
-            alpha,
-            true,
-            false
-        );
+        alt.nextTick(() => {
+            drawText3d(
+                text,
+                pos.x,
+                pos.y,
+                pos.z + 1,
+                0.5,
+                4,
+                255,
+                255,
+                255,
+                alpha,
+                true,
+                false
+            );
+        });
         pos.z += 0.0075;
         alpha -= 3;
     }, 0);

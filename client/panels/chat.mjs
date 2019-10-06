@@ -106,3 +106,8 @@ alt.on('hud:SetSpeed', speed => {
     if (!webview) return;
     webview.emit('chat:SetSpeed', speed);
 });
+
+alt.on('hud:SetSprintBar', pixels => {
+    if (!webview) return;
+    webview.emit('chat:SprintBar', pixels);
+});

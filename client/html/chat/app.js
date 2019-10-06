@@ -82,8 +82,9 @@ class App extends Component {
             cash: `0`,
             location: '',
             task: '',
-            speed: '0 MPH',
-            hide: false
+            speed: '',
+            hide: false,
+            sprintBarWidth: `1920`
         };
     }
 
@@ -111,6 +112,7 @@ class App extends Component {
             alt.on('chat:SetCash', this.setCash.bind(this));
             alt.on('chat:SetLocation', this.setLocation.bind(this));
             alt.on('chat:SetSpeed', this.setSpeed.bind(this));
+            alt.on('chat:SprintBar', this.sprintBar.bind(this));
             alt.emit('chat:Ready');
         } else {
             setInterval(() => {
@@ -154,8 +156,6 @@ class App extends Component {
         });
 
         document.addEventListener('scroll', e => {
-            console.log('scrolling');
-
             if (this.state.scrollTimeout) {
                 clearTimeout(this.state.scrollTimeout);
             }
@@ -170,6 +170,10 @@ class App extends Component {
         });
     }
 
+    sprintBar(width) {
+        this.setState({ sprintBarWidth: width });
+    }
+
     showChatInput() {
         this.chatInput.current.classList.remove('hidden');
         this.chatInput.current.focus();
@@ -179,10 +183,6 @@ class App extends Component {
         if (this.state.scrolling) return;
         if (this.state.hide || this.lastMessage.current === null) return;
         this.lastMessage.current.scrollIntoView({ behavior: 'instant' });
-    }
-
-    scrolling() {
-        console.log('Reee');
     }
 
     appendMessage(msg) {
@@ -274,7 +274,11 @@ class App extends Component {
                 this.state.task !== '' &&
                     h('div', { class: 'element' }, `${this.state.task}`)
             ),
-            h('div', { class: 'speed' }, `${this.state.speed}`)
+            h('div', { class: 'speed' }, `${this.state.speed}`),
+            h('div', {
+                class: 'sprintbar',
+                style: `width: ${this.state.sprintBarWidth}px`
+            })
         );
         // Render HTML / Components and Shit Here
     }

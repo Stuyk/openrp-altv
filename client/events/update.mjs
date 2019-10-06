@@ -17,6 +17,11 @@ function loadInterval(key) {
 }
 
 function drawPlayerNames() {
+    native.hideHudComponentThisFrame(6);
+    native.hideHudComponentThisFrame(7);
+    native.hideHudComponentThisFrame(8);
+    native.hideHudComponentThisFrame(9);
+
     if (alt.Player.all.length <= 0) return;
 
     let lPos = alt.Player.local.pos;

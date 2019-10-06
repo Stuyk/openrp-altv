@@ -9,6 +9,8 @@ alt.log('Loaded: client->systems->context.mjs');
 let drawCursor = false;
 let currentContext;
 let cooldown = Date.now();
+let lastRaycast = Date.now();
+let rayCastInfo;
 
 let interactionTypes = {
     0: {
@@ -179,6 +181,7 @@ export function showContext() {
     if (alt.Player.local.getMeta('viewOpen')) return;
     if (!interval) {
         interval = alt.setInterval(useMenu, 0);
+        alt.log(`context.mjs ${interval}`);
     }
 }
 
@@ -189,6 +192,7 @@ export function hideContext() {
         alt.clearInterval(interval);
         interval = undefined;
         currentContext = undefined;
+        rayCastInfo = undefined;
     }
 }
 
@@ -206,44 +210,53 @@ function useMenu() {
     native.disableControlAction(0, 2, true);
     native.disablePlayerFiring(alt.Player.local.scriptID, false);
 
-    let [
-        _,
-        _hit,
-        _endCoords,
-        _surfaceNormal,
-        _entity
-    ] = utilityScreen2World.screenToWorld(22, -1);
-
-    if (!_hit) {
-        native.setMouseCursorSprite(1);
-        return;
-    } else {
+    if (rayCastInfo) {
         native.setMouseCursorSprite(3);
-    }
+        if (native.isDisabledControlJustPressed(0, 25)) {
+            if (Date.now() < cooldown) return;
 
-    if (utilityVector.distance(alt.Player.local.pos, _endCoords) > 5) {
+            cooldown = Date.now() + 500;
+            const entityType = native.getEntityType(rayCastInfo.entity);
+            if (entityType === 0) return;
+
+            alt.log(`You clicked on entity: ${rayCastInfo.entity}`);
+            alt.log(`Entity has model of ${native.getEntityModel(rayCastInfo.entity)}`);
+            alt.log(`Entity Type: ${entityType}`);
+
+            let interaction = interactionTypes[entityType];
+
+            if (interaction === undefined) return;
+            drawCursor = false;
+            currentContext = undefined;
+            interaction.func(rayCastInfo.entity, rayCastInfo.endCoords);
+            rayCastInfo = undefined;
+        }
+    } else {
         native.setMouseCursorSprite(1);
-        return;
     }
 
-    // Right Clicking
-    if (native.isDisabledControlJustPressed(0, 25)) {
-        if (Date.now() < cooldown) return;
+    if (Date.now() > lastRaycast) {
+        lastRaycast = Date.now() + 500;
+        const [
+            _,
+            hit,
+            endCoords,
+            surfaceNormal,
+            entity
+        ] = utilityScreen2World.screenToWorld(22, -1);
 
-        cooldown = Date.now() + 500;
-        const entityType = native.getEntityType(_entity);
-        if (entityType === 0) return;
-
-        alt.log(`You clicked on entity: ${_entity}`);
-        alt.log(`Entity has model of ${native.getEntityModel(_entity)}`);
-        alt.log(`Entity Type: ${entityType}`);
-
-        let interaction = interactionTypes[entityType];
-
-        if (interaction === undefined) return;
-        drawCursor = false;
-        currentContext = undefined;
-        interaction.func(_entity, _endCoords);
+        if (hit) {
+            if (utilityVector.distance(alt.Player.local.pos, endCoords) < 5) {
+                rayCastInfo = {
+                    hit,
+                    endCoords,
+                    surfaceNormal,
+                    entity
+                };
+            } else {
+                rayCastInfo = undefined;
+            }
+        }
     }
 }
 

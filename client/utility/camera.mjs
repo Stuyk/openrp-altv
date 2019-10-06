@@ -95,6 +95,7 @@ export class Camera {
 
         this.playerControlFunction = this.playerControls.bind(this);
         this.interval = alt.setInterval(this.playerControlFunction, 5);
+        alt.log(`camera.mjs ${this.interval}`);
     }
 
     // Call in update function.

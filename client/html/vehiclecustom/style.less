@@ -185,6 +185,23 @@ html {
     button:focus {
         outline: none;
     }
+
+    select {
+        appearance: none;
+        border: none;
+        height: 25px;
+        padding-left: 10px;
+        background: @dark;
+        color: #feffff;
+
+        option {
+            color: @contrast1;
+
+            &:disabled {
+                color: @contrast2;
+            }
+        }
+    }
 }
 /********************************/
 /****      Color Popout     ****/

@@ -10,6 +10,7 @@ import { objectToNull } from '../utility/object.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { spawnVehicle } from '../systems/vehicles.mjs';
 import { appendNewVehicle } from '../systems/vehicles.mjs';
+import { quitJob } from '../systems/job.mjs';
 
 console.log('Loaded: utility->player.mjs');
 
@@ -591,6 +592,13 @@ export function setupPlayerFunctions(player) {
                 equippedItem.name
             )
         ) {
+            if (equippedItem.base === 'fishingrod') {
+                if (player.job) {
+                    quitJob(player, false, true);
+                    player.send('You have quit fishing.');
+                }
+            }
+
             player.equipment[equipmentIndex] = null;
             player.saveInventory();
             return true;

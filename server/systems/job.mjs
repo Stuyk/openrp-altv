@@ -551,9 +551,9 @@ export class Objective {
     }
 
     checkMinigame(player, hash) {
+        console.log(`Minigame: ${player.name} ${hash}`);
         if (this.type !== objectives.MINIGAME) return true;
         if (this.minigamehash !== hash[0]) {
-            quitJob(player);
             return false;
         }
         return true;

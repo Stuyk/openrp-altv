@@ -192,7 +192,7 @@ class App extends Component {
         messages.push({ message: msg });
 
         if (messages.length >= 50) {
-            messages.pop();
+            messages.shift();
         }
 
         this.setState({ messages });

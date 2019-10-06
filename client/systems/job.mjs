@@ -516,7 +516,7 @@ function minigame() {
             minigameView.emit(`minigame:${objective.minigame}`, objective.minigamehash);
             alt.setTimeout(() => {
                 playAnimation();
-            }, 3000);
+            }, 2000);
         });
     }
 }

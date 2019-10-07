@@ -111,3 +111,8 @@ alt.on('hud:SetSprintBar', pixels => {
     if (!webview) return;
     webview.emit('chat:SprintBar', pixels);
 });
+
+alt.on('hud:SetMinigameText', text => {
+    if (!webview) return;
+    webview.emit('chat:SetMinigameText', text);
+});

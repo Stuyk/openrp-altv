@@ -84,7 +84,8 @@ class App extends Component {
             task: '',
             speed: '',
             hide: false,
-            sprintBarWidth: `1920`
+            sprintBarWidth: `1920`,
+            minigameText: ''
         };
     }
 
@@ -113,6 +114,7 @@ class App extends Component {
             alt.on('chat:SetLocation', this.setLocation.bind(this));
             alt.on('chat:SetSpeed', this.setSpeed.bind(this));
             alt.on('chat:SprintBar', this.sprintBar.bind(this));
+            alt.on('chat:SetMinigameText', this.setMinigameText.bind(this));
             alt.emit('chat:Ready');
         } else {
             setInterval(() => {
@@ -172,6 +174,10 @@ class App extends Component {
 
     sprintBar(width) {
         this.setState({ sprintBarWidth: width });
+    }
+
+    setMinigameText(text) {
+        this.setState({ minigameText: text });
     }
 
     showChatInput() {
@@ -278,7 +284,9 @@ class App extends Component {
             h('div', {
                 class: 'sprintbar',
                 style: `width: ${this.state.sprintBarWidth}px`
-            })
+            }),
+            this.state.minigameText !== '' &&
+                h('div', { class: 'minigameText' }, this.state.minigameText)
         );
         // Render HTML / Components and Shit Here
     }

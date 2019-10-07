@@ -186,6 +186,8 @@ function clearObjective() {
         }
     }
 
+    alt.emit('hud:SetMinigameText', '');
+
     mashing = 0;
     pause = false;
 }
@@ -257,19 +259,7 @@ function intervalObjectiveInfo() {
     if (objective.word && objective.word.length >= 1 && objective.marker) {
         native.disableAllControlActions(0);
         native.disableAllControlActions(1);
-        drawText3d(
-            objective.word.join(''),
-            objective.marker.pos.x,
-            objective.marker.pos.y,
-            objective.marker.pos.z + 1,
-            0.5,
-            4,
-            255,
-            255,
-            255,
-            255,
-            true
-        );
+        alt.emit('hud:SetMinigameText', objective.word);
     }
 
     if (objective && objective.helpText && !target) {
@@ -744,32 +734,19 @@ alt.onServer('job:isInWater', callbackName => {
         z: pPos.z
     };
 
-    const [_, height] = native.testVerticalProbeAgainstAllWater(
-        pos.x,
-        pos.y,
-        pos.z,
-        undefined,
-        undefined
-    );
-
-    if (height === 0) {
-        alt.emitServer(callbackName, callbackName, false);
-        return;
-    }
-
     const hash = native.getHashKey('a_c_fish');
     native.requestModel(hash);
-    alt.nextTick(() => {
-        const entity = native.createPed(1, hash, pos.x, pos.y, pos.z, 0, false, false);
-        native.setEntityAlpha(entity, 0, true);
 
-        alt.setTimeout(() => {
-            alt.nextTick(() => {
-                const inWater = native.isEntityInWater(entity);
-                pos.z = height;
-                alt.emitServer(callbackName, callbackName, inWater, pos);
-                native.deleteEntity(entity);
-            });
-        }, 3500);
-    });
+    const height = native.getWaterHeight(pos.x, pos.y, pos.z, undefined);
+    const entity = native.createPed(1, hash, pos.x, pos.y, pos.z, 0, false, false);
+    native.setEntityAlpha(entity, 0, true);
+
+    alt.setTimeout(() => {
+        alt.nextTick(() => {
+            const inWater = native.isEntityInWater(entity);
+            pos.z = height;
+            alt.emitServer(callbackName, callbackName, inWater, pos);
+            native.deleteEntity(entity);
+        });
+    }, 3500);
 });

@@ -646,17 +646,6 @@ export class Job {
     }
 
     /**
-     * Clear the job
-     * @param player
-     */
-    clear(player) {
-        let currentJob = player.getMeta('job');
-        if (currentJob) {
-            // Clear the Job Here
-        }
-    }
-
-    /**
      * Start the job.
      * @param player
      */
@@ -667,8 +656,11 @@ export class Job {
             return;
         }
 
-        this.addUniform(player);
+        checkRestrictions(player);
 
+        if (!player.job) return;
+
+        this.addUniform(player);
         this.start = Date.now();
         player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
         player.job.available = false;

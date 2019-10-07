@@ -132,14 +132,25 @@ export function use(player, hash) {
 
     if (!baseItem) {
         console.log(`${baseItem} is not defined for use.`);
+        player.syncInventory();
         return;
     }
 
     if (Array.isArray(baseItem.eventcall)) {
         baseItem.eventcall.forEach(event => {
+            if (event === '') {
+                player.syncInventory();
+                return;
+            }
+
             alt.emit(event, player, item, hash);
         });
     } else {
+        if (baseItem.eventcall === '') {
+            player.syncInventory();
+            return;
+        }
+
         alt.emit(baseItem.eventcall, player, item, hash);
     }
 }

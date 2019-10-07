@@ -11,6 +11,7 @@ import SQL from '../../../postgres-wrapper/database.mjs';
 import { spawnVehicle } from '../systems/vehicles.mjs';
 import { appendNewVehicle } from '../systems/vehicles.mjs';
 import { quitJob } from '../systems/job.mjs';
+import { fetchNextVehicleID } from '../cache/cache.mjs';
 
 console.log('Loaded: utility->player.mjs');
 
@@ -812,7 +813,10 @@ export function setupPlayerFunctions(player) {
             }
         }
 
+        const nextVehicleID = fetchNextVehicleID();
+
         const veh = {
+            id: nextVehicleID,
             guid: player.data.id,
             model,
             position: JSON.stringify(pos),
@@ -820,19 +824,9 @@ export function setupPlayerFunctions(player) {
             stats: null,
             customization: null
         };
-        const spawnedVehicle = spawnVehicle(player, veh, true);
-        db.insertData(
-            {
-                guid: player.data.id,
-                position: JSON.stringify(pos),
-                rotation: JSON.stringify(rot),
-                model
-            },
-            'Vehicle',
-            newVehicle => {
-                appendNewVehicle(newVehicle.identifiers[0].id, spawnedVehicle);
-            }
-        );
+
+        spawnVehicle(player, veh, true);
+        db.upsertData(veh, 'Vehicle', () => {});
     };
 
     // =================

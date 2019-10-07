@@ -287,6 +287,18 @@ export const BaseItems = {
         },
         slot: -1
     },
+    refineddrug: {
+        eventcall: 'itemeffects:Consume',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
     license: {
         eventcall: 'itemeffects:ShowLicense',
         abilities: {
@@ -473,6 +485,17 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'leaf'
+    },
+    refinedkevlarium: {
+        name: 'Refined Kevlarium',
+        base: 'refineddrug',
+        key: 'refinedkevlarium',
+        props: {
+            armour: 5,
+            health: -8
+        },
+        quantity: 0,
+        icon: 'pills'
     },
     unrefinedvigorium: {
         name: 'Unrefined Vigorium Seeds',

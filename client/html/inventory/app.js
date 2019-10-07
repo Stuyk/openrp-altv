@@ -44,6 +44,7 @@ const icons = [
     'outfit',
     'phone',
     'pickaxe',
+    'pills',
     'planks',
     'profile',
     'rock',

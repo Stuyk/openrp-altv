@@ -162,7 +162,7 @@ let interaction = new Interaction(
     'job:GatheringVigorium1',
     3,
     3,
-    'to begin gathering unrefined kevlarium.'
+    'to begin gathering unrefined vigorium.'
 );
 interaction.addBlip(140, 6, jobName);
 

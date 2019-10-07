@@ -34,6 +34,7 @@ const setupDirtGame = async () => {
     seed.sprite.y = positions[randomPos].y;
     isFindInDirtActive = true;
     state = 'FindInDirt';
+    setDescription('Find the seed under the dirt.');
 };
 
 on(eventNames.ON_CLICK, args => {

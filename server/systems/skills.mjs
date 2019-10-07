@@ -28,10 +28,19 @@ export function addXP(player, skill, xpToAdd) {
         skills[skill] = {
             xp: xpToAdd * 1
         };
+
+        if (skills[skill].xp < 0) {
+            skills[skill].xp = 0;
+        }
+
         newLevel = getLevel(skills[skill].xp);
     } else {
         oldLevel = getLevel(skills[skill].xp);
         skills[skill].xp += xpToAdd * 1;
+
+        if (skills[skill].xp < 0) {
+            skills[skill].xp = 0;
+        }
 
         if (skills[skill].xp > Number.MAX_SAFE_INTEGER) {
             skills[skill].xp = Number.MAX_SAFE_INTEGER;

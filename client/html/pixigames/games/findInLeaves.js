@@ -4,8 +4,6 @@ const leafCount = 100;
 let treasure;
 let hash;
 
-setDescription('Find the box under the leaves.');
-
 const setupGame = async () => {
     treasure = new ClickableSprite('box', false);
     treasure.load();
@@ -31,6 +29,7 @@ const setupGame = async () => {
     treasure.sprite.y = positions[randomPos].y;
     treasure.sprite.scale.set(0.5, 0.5);
     state = 'FindInLeaves';
+    setDescription('Find the box under the leaves.');
 };
 
 on(eventNames.ON_CLICK, args => {

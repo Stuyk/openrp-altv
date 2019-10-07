@@ -2,6 +2,8 @@ import * as alt from 'alt';
 
 // Props is defined in the configuration.
 alt.on('itemeffects:Consume', (player, item, hash) => {
+    console.log(item);
+
     if (!player.subItem(item.key, 1)) {
         return;
     }
@@ -12,8 +14,9 @@ alt.on('itemeffects:Consume', (player, item, hash) => {
     }
 
     // Add armor to the user.
-    if (item.props.armor !== undefined) {
-        player.armor += item.props.armor;
+    if (item.props.armour !== undefined) {
+        player.armour += item.props.armour;
+        console.log(player.armour);
     }
 
     player.send(`You consume the ${item.name}`);

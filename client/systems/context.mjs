@@ -197,6 +197,16 @@ export function hideContext() {
 }
 
 function useMenu() {
+    if (alt.Player.local.getMeta('viewOpen')) {
+        if (interval) {
+            alt.clearInterval(interval);
+            interval = undefined;
+            urrentContext = undefined;
+            rayCastInfo = undefined;
+        }
+        return;
+    }
+
     native.setMouseCursorSprite(1);
 
     if (currentContext !== undefined) {

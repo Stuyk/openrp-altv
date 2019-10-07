@@ -41,17 +41,17 @@ let keybinds = {
         shiftModifier: false,
         onKeyUp: panelsChat.toggleDialogue
     },
-    // Shift + F1 - Get Interior Info
-    112: {
-        altModifier: false,
-        shiftModifier: true,
-        onKeyUp: utilityGameInfo.printInteriorInfo
-    },
     // Shift + F2 - Get Location Info
     113: {
         altModifier: false,
         shiftModifier: true,
         onKeyUp: utilityGameInfo.printLocation
+    },
+    // Shift + F3 - Get Interior Info
+    114: {
+        altModifier: false,
+        shiftModifier: true,
+        onKeyUp: utilityGameInfo.printInteriorInfo
     },
     // Shift + F7 - Hide Chat
     118: {
@@ -92,6 +92,7 @@ function keyup(key) {
     if (key === 16) shiftModified = false;
     if (key === 18) altModified = false;
 
+    if (alt.Player.local.getMeta('viewOpen')) return;
     if (!alt.Player.local.getMeta('loggedin')) return;
     if (alt.Player.local.getMeta('chat')) return;
     if (alt.Player.local.getMeta('job:KeyPressEvent')) return;

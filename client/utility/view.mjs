@@ -28,9 +28,8 @@ export class View {
         showCursor(true);
         native.displayRadar(false);
         if (killControls) {
-            //currentView.gameControls = this.toggleGameControls.bind(this);
-            //currentView.interval = alt.setInterval(currentView.gameControls, 0);
-            alt.toggleGameControls(false);
+            currentView.gameControls = this.toggleGameControls.bind(this);
+            currentView.interval = alt.setInterval(currentView.gameControls, 0);
         }
     }
 
@@ -51,13 +50,10 @@ export class View {
         currentView.view = undefined;
         alt.Player.local.setMeta('viewOpen', false);
         alt.emit('chat:Toggle');
-        alt.toggleGameControls(true);
-        /*
         if (currentView.interval !== undefined) {
             alt.clearInterval(currentView.interval);
             currentView.interval = undefined;
         }
-        */
     }
 
     // Bind on events, but don't turn off.

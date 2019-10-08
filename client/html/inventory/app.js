@@ -54,6 +54,7 @@ const icons = [
     'smithing',
     'soda-can',
     'stats',
+    'syringe',
     'trousers',
     'unknown',
     'watch',

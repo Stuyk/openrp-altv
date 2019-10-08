@@ -1,8 +1,6 @@
 const findInDirtTextures = ['seed', 'dirt'];
 let seed;
 
-setDescription('Find the dropped seeds under the dirt.');
-
 const setupDirtGame = async () => {
     seed = new ClickableSprite('seed', false);
     seed.load();
@@ -62,7 +60,9 @@ if ('alt' in window) {
         });
     });
 } else {
+    /*
     loadTextures(findInDirtTextures, () => {
         setupDirtGame();
     });
+    */
 }

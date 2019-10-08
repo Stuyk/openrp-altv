@@ -227,6 +227,8 @@ class ClickableSprite {
         this.removeOnClick = removeOnClick;
         this.clickAmount = 0;
         this.clickAmountToRemove = clickAmountToRemove;
+        this.toggleOffGravity = false;
+        this.gravity = false;
     }
 
     moveObject(e) {
@@ -273,7 +275,13 @@ class ClickableSprite {
 
     mouseup() {
         this.clickedSprite = undefined;
+        this.toggleOffGravity = false;
         this.sprite.off('mousemove', this.moveObjectBind);
+        clickableSprites.forEach(sprite => {
+            sprite.vx = 0;
+            sprite.vy = 0;
+            sprite.toggleOffGravity = false;
+        });
     }
 
     mousedown() {
@@ -281,9 +289,15 @@ class ClickableSprite {
         clickCooldown += 250;
         this.clickedSprite = this.sprite;
         this.clickAmount += 1;
+        this.sprite.vx = 0;
+        this.sprite.vy = 0;
+        this.isOnBottom = false;
+        this.toggleOffGravity = true;
+
         if (this.removeOnClick) {
             this.unload();
             emitEvent(eventNames.ON_CLICK, this);
+            this.toggleOffGravity = false;
             return;
         }
 
@@ -292,11 +306,18 @@ class ClickableSprite {
                 this.unload();
             }
             emitEvent(eventNames.ON_CLICK, this);
+            this.toggleOffGravity = false;
             return;
         }
 
         emitEvent(eventNames.ON_CLICK, this);
         this.sprite.on('mousemove', this.moveObjectBind);
+
+        clickableSprites.forEach(sprite => {
+            sprite.vx = 0;
+            sprite.vy = 0;
+            sprite.toggleOffGravity = false;
+        });
     }
 
     mouseover() {
@@ -324,6 +345,7 @@ class ClickableSprite {
         if (this.sprite.y + this.sprite.height > Game.renderer.height) {
             this.sprite.y = Game.renderer.height - this.sprite.height;
             emitEvent(eventNames.ON_GAME_BOUNDS, this, 'down');
+            this.toggleOffGravity = true;
         }
 
         if (this.sprite.y < 0) {
@@ -334,6 +356,13 @@ class ClickableSprite {
         if (this.sprite.x < 0) {
             this.sprite.x = 0;
             emitEvent(eventNames.ON_GAME_BOUNDS, this, 'left');
+        }
+    }
+
+    collide(collidedSprite) {
+        if (collidedSprite.sprite.y < this.sprite.y) {
+            collidedSprite.sprite.y = this.sprite.y - this.sprite.height;
+            collidedSprite.toggleOffGravity = true;
         }
     }
 
@@ -482,6 +511,14 @@ const spriteHandler = currentSprite => {
         }
     });
 
+    clickableSprites.forEach(clickableSprite => {
+        if (clickableSprite === currentSprite) return;
+
+        if (hitTestRectangle(currentSprite.sprite, clickableSprite.sprite)) {
+            clickableSprite.collide(currentSprite);
+        }
+    });
+
     if (currentSprite.constructor.name === 'MoveableSprite') {
         if (up.isDown) {
             if (!isColliding) {
@@ -539,6 +576,15 @@ const spriteHandler = currentSprite => {
             currentSprite.sprite.y += currentSprite.sprite.vy;
             currentSprite.sprite.x += currentSprite.sprite.vx;
         }
+    }
+
+    if (currentSprite.gravity && !currentSprite.toggleOffGravity) {
+        if (!currentSprite.sprite.vy) {
+            currentSprite.sprite.vy = 0;
+        }
+
+        currentSprite.sprite.vy += 0.01;
+        currentSprite.sprite.y += currentSprite.sprite.vy;
     }
 
     if (currentSprite.gameBounds) {

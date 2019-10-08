@@ -11,26 +11,43 @@ import { Interaction } from '../systems/interaction.mjs';
 
 const jobName = 'Kevlarium Refinery';
 const trackStart = {
-    x: 6.567032814025879,
-    y: -2725.9384765625,
-    z: 6.01025390625
+    x: 3530.47900390625,
+    y: 3664.44384765625,
+    z: 28.1171875
 };
+
+/*
+[
+	,
+	,
+	{
+		"x": 3538.892333984375,
+		"y": 3668.21533203125,
+		"z": 28.1171875
+	},
+	{
+		"x": 3534.421875,
+		"y": 3659.67041015625,
+		"z": 28.1171875
+	}
+]
+*/
 
 const interactionPoint = { ...trackStart };
 interactionPoint.z -= 0.5;
 let interaction = new Interaction(
     interactionPoint,
     'job',
-    'job:RefineKevlarium1',
+    'job:RefineVigorium1',
     3,
     3,
-    'to begin refining kevlarium.'
+    'to begin refining vigoirum.'
 );
 interaction.addBlip(365, 6, jobName);
 
-alt.on('job:RefineKevlarium1', player => {
+alt.on('job:RefineVigorium1', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
-    job.setItemRestrictions([{ key: 'unrefinedkevlarium', hasItem: true }]);
+    job.setItemRestrictions([{ key: 'unrefinedvigorium', hasItem: true }]);
     let obj;
     let pos;
 
@@ -58,9 +75,13 @@ alt.on('job:RefineKevlarium1', player => {
     obj = new Objective(objectives.INFINITE, modifiers.MIN);
     job.add(copyObjective(obj));
 
-    pos = { x: 12.97163200378418, y: -2802.373779296875, z: 2.5259501934051514 };
-    obj = new Objective(objectives.HOLD, modifiers.ON_FOOT | modifiers.REMOVE_ITEM);
-    obj.setHelpText('Hold ~INPUT_CONTEXT~ to wash the kevlarium seeds.');
+    pos = {
+        x: 3537.098876953125,
+        y: 3664.41748046875,
+        z: 28.1171875
+    };
+    obj = new Objective(objectives.POINT, modifiers.ON_FOOT | modifiers.REMOVE_ITEM);
+    obj.setHelpText('Walk to the center of the lab.');
     obj.setPosition(pos);
     obj.setBlip(367, 2, pos);
     obj.setRange(3);
@@ -76,60 +97,17 @@ alt.on('job:RefineKevlarium1', player => {
         100
     );
     obj.setFinishedSound('complete');
-    obj.setRewards([
-        { type: 'xp', prop: 'crafting', quantity: 5 },
-        { type: 'xp', prop: 'notoriety', quantity: 25 },
-        { type: 'xp', prop: 'nobility', quantity: -75 }
-    ]);
     obj.setMaxProgress(5);
-    // /tryparticle core water_splash_whale_wade 1000 1 0 1 0
-    // /tryparticle core ent_dst_gen_water_spray 1000 1 0 1 0
-    obj.setAnimationAndSound('missarmenian3_gardener', 'idle_a', 1, -1);
-    // markanim anim@heists@load_box load_box_2
-    obj.setParticleEffect([
-        {
-            dict: 'core',
-            name: 'water_splash_whale_wade',
-            duration: 500,
-            scale: 2,
-            offset: { x: 0, y: 1.2, z: -1 },
-            time: 0.12 // Animation times to play at.
-        },
-        {
-            dict: 'core',
-            name: 'water_splash_whale_wade',
-            duration: 500,
-            scale: 2,
-            offset: { x: 0, y: 1.2, z: -1 },
-            time: 0.16 // Animation times to play at.
-        },
-        {
-            dict: 'core',
-            name: 'water_splash_whale_wade',
-            duration: 500,
-            scale: 2,
-            offset: { x: 0, y: 1.2, z: -1 },
-            time: 0.21 // Animation times to play at.
-        },
-        {
-            dict: 'core',
-            name: 'water_splash_whale_wade',
-            duration: 500,
-            scale: 2,
-            offset: { x: 0, y: 1.2, z: -1 },
-            time: 0.27 // Animation times to play at.
-        }
-    ]);
-    obj.setRemoveItem([{ key: 'unrefinedkevlarium', quantity: 1 }]);
+    obj.setRemoveItem([{ key: 'unrefinedvigorium', quantity: 1 }]);
     job.add(copyObjective(obj));
 
     pos = {
-        x: -22.773624420166016,
-        y: -2698.24609375,
-        z: 6.07763671875
+        x: 3538.892333984375,
+        y: 3668.21533203125,
+        z: 28.1171875
     };
     obj = new Objective(objectives.MASH, modifiers.ON_FOOT);
-    obj.setHelpText('Refine the kevlarium by mashing ~INPUT_CONTEXT~.');
+    obj.setHelpText('Mash to ~INPUT_CONTEXT~ to refine vigorium.');
     obj.setPosition(pos);
     obj.setBlip(367, 2, pos);
     obj.setRange(3);
@@ -157,6 +135,7 @@ alt.on('job:RefineKevlarium1', player => {
         1,
         -1
     );
+    /*
     obj.setParticleEffect([
         {
             dict: 'core',
@@ -167,15 +146,16 @@ alt.on('job:RefineKevlarium1', player => {
             time: 0.06 // Animation times to play at.
         }
     ]);
+    */
     job.add(copyObjective(obj));
 
     pos = {
-        x: -84.85714721679688,
-        y: -2662.47021484375,
-        z: 6.060791015625
+        x: 3534.421875,
+        y: 3659.67041015625,
+        z: 28.1171875
     };
-    obj = new Objective(objectives.CAPTURE, modifiers.ON_FOOT);
-    obj.setHelpText('Wait for your kevlarium to dry on the drying rack.');
+    obj = new Objective(objectives.HOLD, modifiers.ON_FOOT);
+    obj.setHelpText('Hold ~INPUT_CONTEXT~ to finish the refinery process.');
     obj.setPosition(pos);
     obj.setBlip(367, 2, pos);
     obj.setRange(3);
@@ -194,7 +174,7 @@ alt.on('job:RefineKevlarium1', player => {
     obj.setFinishedSound('complete');
     obj.setRewards([
         { type: 'xp', prop: 'crafting', quantity: 20 },
-        { type: 'item', prop: 'refinedkevlarium', quantity: 1 },
+        { type: 'item', prop: 'refinedvigorium', quantity: 1 },
         { type: 'xp', prop: 'notoriety', quantity: 25 },
         { type: 'xp', prop: 'nobility', quantity: -75 }
     ]);

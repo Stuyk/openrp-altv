@@ -75,6 +75,7 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/playerTaxi.mjs');
     import('./jobs/playerMechanic.mjs');
     import('./jobs/refineKevlarium.mjs');
+    import('./jobs/refineVigorium.mjs');
     import('./jobs/smithingRefinery.mjs');
     import('./jobs/woodcuttingLumber.mjs');
     import('./jobs/woodcuttingRefinery.mjs');

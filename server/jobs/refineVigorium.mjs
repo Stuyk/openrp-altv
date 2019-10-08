@@ -108,8 +108,19 @@ alt.on('job:RefineVigorium1', player => {
     };
     obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
     obj.setPosition(pos);
-    obj.setRange(3);
+    obj.setRange(1);
     obj.setBlip(367, 2, pos);
+    obj.setMarker(
+        0,
+        pos,
+        emptyVector,
+        emptyVector,
+        new alt.Vector3(1, 1, 1),
+        0,
+        255,
+        0,
+        100
+    );
     job.add(copyObjective(obj));
 
     obj = new Objective(objectives.MINIGAME, modifiers.ON_FOOT);

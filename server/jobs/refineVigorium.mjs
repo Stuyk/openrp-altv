@@ -106,35 +106,30 @@ alt.on('job:RefineVigorium1', player => {
         y: 3668.21533203125,
         z: 28.1171875
     };
-    obj = new Objective(objectives.MASH, modifiers.ON_FOOT);
+    obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
+    obj.setPosition(pos);
+    obj.setRange(3);
+    obj.setBlip(367, 2, pos);
+    job.add(copyObjective(obj));
+
+    obj = new Objective(objectives.MINIGAME, modifiers.ON_FOOT);
     obj.setHelpText('Mash to ~INPUT_CONTEXT~ to refine vigorium.');
     obj.setPosition(pos);
     obj.setBlip(367, 2, pos);
     obj.setRange(3);
-    obj.setMarker(
-        0,
-        pos,
-        emptyVector,
-        emptyVector,
-        new alt.Vector3(1, 1, 1),
-        0,
-        255,
-        0,
-        100
-    );
     obj.setFinishedSound('complete');
     obj.setRewards([
         { type: 'xp', prop: 'crafting', quantity: 20 },
         { type: 'xp', prop: 'notoriety', quantity: 25 },
         { type: 'xp', prop: 'nobility', quantity: -75 }
     ]);
-    obj.setMaxProgress(10);
     obj.setAnimationAndSound(
         'anim@amb@business@coc@coc_packing@',
         'operate_press_basicmould_v3_pressoperator',
         1,
         -1
     );
+    obj.setMiniGame('StackBoxes');
     /*
     obj.setParticleEffect([
         {

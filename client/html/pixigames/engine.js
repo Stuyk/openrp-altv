@@ -91,7 +91,8 @@ const eventNames = {
     ON_LOAD: 'onLoad',
     ON_CLICK: 'onClick',
     ON_GAME_BOUNDS: 'onGameBounds',
-    ON_MOVE: 'onMove'
+    ON_MOVE: 'onMove',
+    ON_MOUSEUP: 'onMouseUp'
 };
 
 const scoreStyle = new TextStyle({
@@ -282,6 +283,7 @@ class ClickableSprite {
             sprite.vy = 0;
             sprite.toggleOffGravity = false;
         });
+        emitEvent(eventNames.ON_MOUSEUP, this);
     }
 
     mousedown() {

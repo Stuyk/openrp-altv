@@ -53,3 +53,15 @@ class App extends Component {
 }
 
 render(h(App), document.querySelector('#render'));
+
+document.addEventListener('keyup', key => {
+    if (key.key === 'Escape') {
+        alt.emit('help:Exit');
+    }
+
+    // Closing help view with F1 does not work.
+    // Use ESC instead.
+    //if (key.keyCode === 112) {
+    //    alt.emit('help:Exit');
+    //}
+});

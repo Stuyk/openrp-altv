@@ -70,7 +70,7 @@ let keybinds = {
     112: {
         altModifier: false,
         shiftModifier: false,
-        onKeyUp: panelsHelp.toggleHelp
+        onKeyUp: panelsHelp.showHelp
     }
 };
 

@@ -237,6 +237,12 @@ Open a command prompt or powershell next to your .exe file
 ```
 npm init
 ```
+or
+
+
+```
+yarn init
+```
 
 Then press enter a bunch of times until its done stepping you through.
 
@@ -246,6 +252,12 @@ After you need to install the following packages from command prompt or power sh
 npm install typeorm
 npm install sjcl
 npm install pg
+```
+
+or
+
+```
+yarn add typeorm sjcl pg
 ```
 
 Great; now you have all the prerequisites.

@@ -201,7 +201,7 @@ function useMenu() {
         if (interval) {
             alt.clearInterval(interval);
             interval = undefined;
-            urrentContext = undefined;
+            currentContext = undefined;
             rayCastInfo = undefined;
         }
         return;

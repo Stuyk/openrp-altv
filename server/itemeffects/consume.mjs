@@ -14,7 +14,6 @@ alt.on('itemeffects:Consume', (player, item, hash) => {
     // Add armor to the user.
     if (item.props.armour !== undefined) {
         player.armour += item.props.armour;
-        console.log(player.armour);
     }
 
     if (item.props.skillbonus) {

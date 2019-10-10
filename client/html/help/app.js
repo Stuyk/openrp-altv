@@ -17,7 +17,10 @@ const helpCommands = {
     '/t, /call <number>, /hangup': 'Text, Call, or Hangup',
     '/addcontact <id>': 'Add player to contacts',
     '/removecontact <id>': 'Remove player from contacts',
-    '/additem <key> <quantity>': 'Add an item your inventory.'
+    '/additem <key> <quantity>': 'Add an item your inventory.',
+    '/sf': 'Succeed or Fail (Used to Randomize RP)',
+    '/d20': 'Roll a d20 Dice (Used to Randomize RP)',
+    '/flipcoin': 'Flip a Coin (Used to Randomize RP)'
 };
 
 /* eslint-disable no-undef */

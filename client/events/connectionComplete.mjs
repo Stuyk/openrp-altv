@@ -91,6 +91,8 @@ alt.on('connectionComplete', () => {
     native.removeIpl('DT1_05_HC_REMOVE');
     native.requestIpl('DT1_05_HC_REQ');
     native.requestIpl('DT1_05_REQUEST');
+    native.requestIpl('dt1_05_hc_remove');
+    native.requestIpl('dt1_05_hc_remove_lod');
     native.requestIpl('FINBANK');
     native.removeIpl('DT1_03_Shutter');
     native.removeIpl('DT1_03_Gr_Closed');
@@ -136,6 +138,7 @@ alt.on('connectionComplete', () => {
     native.requestIpl('RC12B_Destroyed');
     native.requestIpl('RC12B_HospitalInterior');
     native.requestIpl('canyonriver01');
+    native.requestIpl('canyonriver01_lod');
     native.requestIpl('cs3_05_water_grp1');
     native.requestIpl('cs3_05_water_grp1_lod');
     native.requestIpl('trv1_trail_start');

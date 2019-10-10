@@ -68,3 +68,37 @@ chat.registerCmd('b', (player, args) => {
         target.send(`{878787}${player.data.name} says: (( ${args.join(' ')} ))`);
     });
 });
+
+chat.registerCmd('flipcoin', player => {
+    const headsOrTails = Math.floor(Math.random() * 2) ? 'heads' : 'tails';
+    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    inRange.forEach(target => {
+        target.send(
+            `{c5a5de}* (( ${player.data.name.replace(
+                '_',
+                ' '
+            )} )) Flips a coin and it lands on ${headsOrTails}`
+        );
+    });
+});
+
+chat.registerCmd('sf', player => {
+    const sOrF = Math.floor(Math.random() * 2) ? 'succeed' : 'fail';
+    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    inRange.forEach(target => {
+        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${sOrF}`);
+    });
+});
+
+chat.registerCmd('d20', player => {
+    const d20 = Math.floor(Math.random() * 20) + 1;
+    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    inRange.forEach(target => {
+        target.send(
+            `{c5a5de}* (( ${player.data.name.replace(
+                '_',
+                ' '
+            )} )) Rolls a dice and it lands on ${d20}`
+        );
+    });
+});

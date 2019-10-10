@@ -23,7 +23,8 @@ const sandboxhelp = [
     '/quitjob, /getsector',
     '/tryparticle',
     '/phonenumber',
-    '/t, /call, /addcontact, /removecontact, /hangup'
+    '/t, /call, /addcontact, /removecontact, /hangup',
+    '/d20 /flipcoin, /sf'
 ];
 
 chat.registerCmd('help', player => {

@@ -640,6 +640,7 @@ export class Job {
         this.restrictions = restrictions;
         this.items = [];
         this.timelimit = 60000;
+        this.enabledTimer = false;
         player.hasDied = false;
         player.job = this;
     }
@@ -666,6 +667,10 @@ export class Job {
 
         if (isFlagged(this.restrictions, restrictions.TIME_LIMIT)) {
             this.end = this.start + this.timelimit;
+        }
+
+        if (this.enabledTimer) {
+            player.send('Clock is ticking.. Go Go Go!');
         }
     }
 
@@ -728,6 +733,14 @@ export class Job {
     }
 
     /**
+     * Enables elapsed timer
+     * Displays time at completion of job
+     */
+    setElapsedTimer() {
+        this.enabledTimer = true;
+    }
+
+    /**
      * Add an Objective Class type to loop through.
      * @param objectiveClass
      */
@@ -777,13 +790,26 @@ export class Job {
                 this.clearTarget(player);
             }
         } else {
-            player.emitMeta('job:Objective', undefined);
-            player.send('Job Complete');
-            quitJob(player);
+            this.completeJob(player);
             return;
         }
 
         player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
+    }
+
+    /**
+     * Completes the current job.
+     * @param player 
+     */
+    completeJob(player) {
+        player.emitMeta('job:Objective', undefined);
+        player.send('Job Complete!');
+        if (this.enabledTimer) {
+            let end = Date.now();
+            let elapsed_time = parseFloat(((end - this.start) / 1000)).toFixed(1);;
+            player.send(`Elapsed Time: ${elapsed_time} seconds`);
+        }
+        quitJob(player);
     }
 
     /**
@@ -804,8 +830,7 @@ export class Job {
         }
 
         if (this.objectives[0] === undefined) {
-            player.emitMeta('job:Objective', undefined);
-            player.send('Job Complete');
+            this.completeJob(player);
             return;
         }
 

@@ -12,7 +12,8 @@ const events = {
     'use:Atm': systemsUse.atm,
     'use:ExitLabs': systemsUse.exitLabs,
     'use:CuffPlayer': systemsUse.cuffPlayer,
-    'use:UncuffPlayer': systemsUse.uncuffPlayer
+    'use:UncuffPlayer': systemsUse.uncuffPlayer,
+    'use:ToggleDoor': systemsUse.toggleDoor
 };
 
 Object.keys(events).forEach(key => {

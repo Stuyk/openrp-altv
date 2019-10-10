@@ -639,6 +639,7 @@ export class Job {
         this.objectives = [];
         this.restrictions = restrictions;
         this.items = [];
+        this.levelRestrictions = [];
         this.timelimit = 60000;
         this.enabledTimer = false;
         player.hasDied = false;
@@ -657,6 +658,7 @@ export class Job {
         }
 
         checkRestrictions(player);
+        this.checkLevelRestrictions(player);
 
         if (!player.job) return;
 
@@ -714,7 +716,23 @@ export class Job {
         return allValid;
     }
 
-    checkItemRestriction(player, hasItem) {}
+    checkLevelRestrictions(player) {
+        if (!this.arrayOfLevels) return;
+        const skills = JSON.parse(player.data.skills);
+        let valid = true;
+        this.arrayOfLevels.forEach(restriction => {
+            if (!valid) return;
+            if (!restriction.skill) return;
+            if (skills[restriction.skill.toLowerCase()].xp < restriction.xp) {
+                valid = false;
+                quitJob(player, false, true);
+                player.send(
+                    `You do not have a high enough ${restriction.skill} for this job.`
+                );
+                return;
+            }
+        });
+    }
 
     /**
      * Set a time limit for the entire job.
@@ -730,6 +748,14 @@ export class Job {
      */
     setItemRestrictions(arrayOfItems) {
         this.items = arrayOfItems;
+    }
+
+    /**
+     * [{ skill: 'notoriety', xp: '50000' }]
+     * @param arrayOfLevels
+     */
+    setLevelRestrictions(arrayOfLevels) {
+        this.arrayOfLevels = arrayOfLevels;
     }
 
     /**
@@ -799,14 +825,14 @@ export class Job {
 
     /**
      * Completes the current job.
-     * @param player 
+     * @param player
      */
     completeJob(player) {
         player.emitMeta('job:Objective', undefined);
         player.send('Job Complete!');
         if (this.enabledTimer) {
             let end = Date.now();
-            let elapsed_time = parseFloat(((end - this.start) / 1000)).toFixed(1);;
+            let elapsed_time = parseFloat((end - this.start) / 1000).toFixed(1);
             player.send(`Elapsed Time: ${elapsed_time} seconds`);
         }
         quitJob(player);

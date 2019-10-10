@@ -20,6 +20,7 @@ import * as systemsWeather from '/client/systems/weather.mjs';
 import * as systemsCallbacks from '/client/systems/callbacks.mjs';
 import * as systemsContext from '/client/systems/context.mjs';
 import * as systemsCombat from '/client/systems/combat.mjs';
+import * as systemsDoors from '/client/systems/doors.mjs';
 import * as systemsJob from '/client/systems/job.mjs';
 import * as systemsShop from '/client/systems/shop.mjs';
 import * as systemsSkills from '/client/systems/skills.mjs';

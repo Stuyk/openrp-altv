@@ -78,3 +78,11 @@ export function uncuffPlayer(arrester, arrestee) {
         `Uses their keys to uncuff ${arrestee.data.name.replace('_', ' ')}.`
     );
 }
+
+export function toggleDoor(player, data) {
+    if (data.locked) {
+        alt.emitClient(null, 'door:Unlock', data.type, data.pos, data.heading);
+    } else {
+        alt.emitClient(null, 'door:Lock', data.type, data.pos, data.heading);
+    }
+}

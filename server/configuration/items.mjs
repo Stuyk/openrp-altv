@@ -510,11 +510,13 @@ export const Items = {
         base: 'refineddrug',
         key: 'refinedvigorium',
         props: {
-            skillbonus: {
-                skill: 'agility',
-                levelbonus: 5,
-                time: 60000
-            },
+            skillbonus: [
+                {
+                    skill: 'agility',
+                    level: 5,
+                    time: 60000
+                }
+            ],
             health: -8
         },
         quantity: 0,

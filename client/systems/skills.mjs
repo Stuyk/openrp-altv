@@ -11,12 +11,25 @@ function loadInterval(key, value) {
     if (key === 'skills') {
         skills = JSON.parse(value);
 
-        const agilityLevel = getLevel(skills['agility'].xp);
-        if (alt.getStat('stamina') !== agilityLevel) {
-            alt.log('Agility stat set to: ' + agilityLevel);
-            alt.resetStat('stamina');
-            alt.setStat('stamina', Math.floor(agilityLevel / 1.3));
+        const skillBonus = alt.Player.local.getMeta('skills:Bonus');
+        const agilityLevel = getLevel(skills.agility.xp);
+
+        let agilityBonus = 0;
+        if (skillBonus && skillBonus.agility) {
+            alt.log(`Skill Bonus Applied: ${JSON.stringify(skillBonus.agility)}`);
+            if (Date.now() > skillBonus.agility.time) {
+                agilityBonus = 0;
+            } else {
+                agilityBonus = skillBonus.agility.level;
+            }
         }
+
+        if (alt.getStat('stamina') !== agilityLevel + agilityBonus) {
+            alt.log('Agility stat set to: ' + (agilityLevel + agilityBonus));
+            alt.resetStat('stamina');
+            alt.setStat('stamina', Math.floor((agilityLevel + agilityBonus) / 1.3));
+        }
+
         return;
     }
 

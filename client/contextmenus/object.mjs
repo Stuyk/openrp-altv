@@ -166,6 +166,9 @@ let objectInteractions = {
     },
     3213942386: {
         func: humanelabs
+    },
+    631614199: {
+        func: doorControl
     }
 };
 
@@ -302,6 +305,36 @@ function humanelabs(ent) {
 
     if (dist > 15) return;
     alt.emitServer('use:ExitLabs');
+}
+
+function doorControl(ent) {
+    const pos = native.getEntityCoords(ent, false);
+    const type = native.getEntityModel(ent);
+    const [_, locked, _2] = native.getStateOfClosestDoorOfType(
+        type,
+        pos.x,
+        pos.y,
+        pos.z,
+        undefined,
+        undefined
+    );
+
+    new ContextMenu(ent, [
+        {
+            label: `Locked: ${locked}`
+        },
+        {
+            label: 'Toggle',
+            isServer: true,
+            event: 'use:ToggleDoor',
+            data: {
+                type,
+                pos,
+                heading: 0,
+                locked
+            }
+        }
+    ]);
 }
 
 function chair(ent) {

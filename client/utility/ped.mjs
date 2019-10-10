@@ -21,7 +21,6 @@ export class Ped {
             native.setBlockingOfNonTemporaryEvents(this.scriptID, 1);
             native.setPedFleeAttributes(this.scriptID, 0, 0);
             native.setPedCombatAttributes(this.scriptID, 17, 1);
-            native_pedreact
         });
     }
 

@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as chat from '../chat/chat.mjs';
+import { actionMessage } from '../chat/chat.mjs';
 
 export function sodaMachine(player) {
     if (!player.subCash(5)) {
@@ -57,6 +58,13 @@ export function cuffPlayer(arrester, arrestee) {
     alt.emitClient(arrestee, 'arrest:Tazed', -1);
     arrestee.setSyncedMeta('arrested', arrester);
     arrestee.emitMeta('arrest', arrester);
+    actionMessage(
+        arrester,
+        `Forces ${arrestee.data.name.replace(
+            '_',
+            ' '
+        )}'s hands behind their back and cuffs them.`
+    );
 }
 
 export function uncuffPlayer(arrester, arrestee) {
@@ -65,4 +73,8 @@ export function uncuffPlayer(arrester, arrestee) {
     arrestee.isArrested = false;
     arrestee.setSyncedMeta('arrested', undefined);
     arrestee.emitMeta('arrest', undefined);
+    actionMessage(
+        arrester,
+        `Uses their keys to uncuff ${arrestee.data.name.replace('_', ' ')}.`
+    );
 }

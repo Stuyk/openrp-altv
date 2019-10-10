@@ -18,26 +18,41 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 
 -   [x] PostgreSQL Integration
 -   [x] Login and Registration
--   [x] Character Facial Customization
--   [x] Roleplay Name Formatting
--   [x] Character Clothing Customization
--   [x] Glasses, Bracelets, etc.
--   [x] Barbershop
--   [ ] Tattoos
+-   [x] Player
+    -   [x] Character Facial Customization
+    -   [x] Roleplay Name Formatting
+    -   [x] Barbershop
+    -   [x] Clothing Shop
+    -   [ ] Tattoos
+    -   [x] Nametags / Character Names
 -   [x] Character Inventory System
--   [x] Item Configuration
--   [x] Item Drops
--   [x] Item Pickups
+    -   [x] Item Configuration
+    -   [x] Item Drops
+    -   [x] Item Pickups
+    -   [x] Stack Splitting (Shift + Left Click)
+    -   [x] Stack Drops
 -   [x] Vehicle System
 -   [x] Job System
--   [x] Example Job Configuration
--   [x] Job System Types
--   [x] Driving Test
--   [x] Taxi Job
--   [x] Mechanic Job
--   [x] Vehicle Customization
--   [ ] Vehicle Fuel System
--   [x] Nametags / Character Names
+    -   [x] Mini Game Engine
+    -   [x] Example Job Configuration
+    -   [x] Job System Types
+    -   [x] Driving Test
+    -   [x] Taxi Job
+    -   [x] Mechanic Job
+    -   [x] Vigorium Fields
+    -   [x] Kevlarium Fields
+    -   [x] Wood Cutting
+    -   [x] Mining
+    -   [x] Vigorium Refinery
+    -   [x] Kevlarium Refinery
+    -   [x] Driving Test
+    -   [x] 10x Agility Training Courses
+    -   [x] Smithing
+    -   [ ] Weapon Crafting Points
+-   [x] Vehicle System
+    -   [x] Vehicle Customization
+    -   [ ] Vehicle Fuel System
+    -   [ ] Vehicle Vendor
 -   [ ] Door System
     -   [ ] House Type
     -   [ ] Shop System
@@ -51,9 +66,16 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 -   [x] ATM / Bank System
     -   [ ] Transfer Money
 -   [ ] Faction System
--   [ ] Basic Anticheat
--   [x] Time Sync
--   [x] Weather Sync
+-   [x] Basic Anticheat
+    -   [x] Anti-Gun Spawn
+    -   [ ] Anti-Teleport
+    -   [ ] Anti-Speedhack
+    -   [ ] Anti-Health Hack
+    -   [ ] Anti-Armour Hack
+    -   [x] Anti-Explosion Hack
+-   Time & Weather
+    -   [ ] Time Sync (Needs Rework)
+    -   [ ] Weather Sync (Needs Rework)
 -   [x] Interaction System
     -   [x] Interaction for Vehicles
     -   [ ] Interaction for Players
@@ -73,60 +95,65 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Custom Chat Notification Functions / Clickables
     -   [ ] Custom Chat is Repositionable?
     -   [x] Ranged Chat
-    -   [x] Roleplay Commands (/me, /do, /b, /cc)
+    -   [x] Roleplay Commands (/me, /do, /b, /cc, /d20, /flipcoin, /sf)
 -   [x] Experience Curve for Skill System
 -   [ ] Skill System
+
     -   [x] Agility (Sprint Modifier)
-        -   Increase Stamina
-        -   Increase Level of Stamina
-        -   Run Longer / Swim Longer
+        -   [x] Increase Stamina
+        -   [x] Increase Level of Stamina
+        -   [x] Run Longer / Swim Longer
     -   [ ] Cooking (Craft Better Food)
-        -   Create Better Healing Food
-        -   Create Better Healing Drinks
-    -   [ ] Medicine (Health Healed on Player Revivals)
-        -   Heal users quicker.
-        -   Revive users quicker.
-    -   [ ] Notoriety (Gained Through Criminal Jobs, access to better jobs. Create a gang)
-        -   Lose nobility xp by doing notoriety activities.
-        -   Gain access to create a gang past a certain level.
-        -   Lose XP three times as fast when doing good things.
-        -   Drug Creation Jobs
-        -   Gun Creation Jobs
-        -   Illegal Shipment Jobs
-        -   Hitman Jobs (95+)
-    -   [ ] Nobility (Opposite of Notoriety, access to better jobs / factions.)
-        -   Lose notoriety xp by doing nobility activities.
-        -   Gain access to factions past a certain level. ie. Police Trainee
-        -   Lose XP three times as fast when doing bad things.
-        -   Medicinal Jobs
-        -   Police Jobs
-        -   Firefighter Jobs
-    -   [x] Gathering (Gather more items for Drug Crafting)
-        -   Basically use better gathering items.
-    -   [x] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
-        -   Repair Quicker on Mechanic Job
-        -   Use Repair Kits After Level 75+
+        -   [ ] Create Better Healing Food
+        -   [ ] Create Better Healing Drinks
     -   [ ] Crafting (Better Quality Items)
-        -   Craft Weapons
-        -   Craft Better Pickaxes
-        -   Craft Better Gathering Items
-        -   Craft Better Hammers
-        -   Craft Repair Kits
-        -   All Crafting Items Take Metal
-    -   [x] Woodcutting
-        -   Craft Refined Wood for Weapons / Tools
-        -   Unrefined Wood
-        -   Refined Wood
-    -   [x] Smithing
-        -   Craft Metal for Weapons / Tools
-        -   Refined Metal
+        -   [ ] Craft Weapons
+        -   [ ] Craft Better Pickaxes
+        -   [ ] Craft Better Gathering Items
+        -   [ ] Craft Better Hammers
+        -   [ ] Craft Repair Kits
+        -   [ ] All Crafting Items Take Metal
+    -   [x] Fishing
+        -   [x] Use a fishing rod to fish ANYWHERE.
+        -   [ ] Fish Loot Table
+    -   [ ] Medicine (Health Healed on Player Revivals)
+        -   [ ] Heal users quicker.
+        -   [ ] Revive users quicker.
     -   [x] Mining (Gather more items from Mining, use better equipment)
-        -   Basically better pickaxes that mine faster.
-        -   Unrefined Rock
--   [ ] Drug System
-    -   [ ] Drugs for Health (Healium)
-    -   [ ] Drugs for Armor (Kevlarium)
-    -   [ ] Drugs for Fast Running (Speed)
+        -   [x] Basically better pickaxes that mine faster.
+        -   [x] Unrefined Metal
+        -   [x] Refined Metal
+    -   [x] Notoriety (Gained Through Criminal Jobs, access to better jobs. Create a gang)
+        -   [x] Lose nobility xp by doing notoriety activities.
+        -   [ ] Gain access to create a gang past a certain level.
+        -   [x] Lose XP three times as fast when doing good things.
+        -   [ ] Drug Creation Jobs
+        -   [ ] Gun Creation Jobs
+        -   [ ] Illegal Shipment Jobs
+        -   [ ] Hitman Jobs (95+)
+    -   [ ] Nobility (Opposite of Notoriety, access to better jobs / factions.)
+        -   [ ] Lose notoriety xp by doing nobility activities.
+        -   [ ] Gain access to factions past a certain level. ie. Police Trainee
+        -   [ ] Lose XP three times as fast when doing bad things.
+        -   [ ] Medicinal Jobs
+        -   [ ] Police Jobs
+        -   [ ] Firefighter Jobs
+    -   [x] Gathering (Gather more items for Drug Crafting)
+        -   [x] Basically use better gathering items.
+    -   [x] Mechanic (Repair vehicles quicker; access to repair anywhere at 75+)
+        -   [ ] Repair Quicker on Mechanic Job
+        -   [ ] Use Repair Kits After Level 75+
+    -   [x] Smithing
+        -   [x] Craft Metal for Weapons / Tools
+        -   [x] Refined Metal
+    -   [x] Woodcutting
+        -   [x] Craft Refined Wood for Weapons / Tools
+        -   [x] Unrefined Wood
+        -   [x] Refined Wood
+
+-   [x] Drug System
+    -   [x] Drugs for Armor (Kevlarium)
+    -   [x] Drugs for Fast Stamina Boost (Vigorium)
     -   [ ] Drug Jobs 3 jobs for each type.
 -   [x] Playing Hours Stats
 -   [ ] Loyalty Program
@@ -237,8 +264,8 @@ Open a command prompt or powershell next to your .exe file
 ```
 npm init
 ```
-or
 
+or
 
 ```
 yarn init

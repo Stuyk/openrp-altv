@@ -44,11 +44,6 @@ export function playAnimation(player, dict, name, duration, flag) {
 }
 
 function startAnimation(player, dict, name, duration, flag) {
-    alt.log(dict);
-    alt.log(name);
-    alt.log(duration);
-    alt.log(flag);
-
     if (native.hasAnimDictLoaded(dict)) {
         native.taskPlayAnim(
             player.scriptID,
@@ -84,7 +79,7 @@ function startAnimation(player, dict, name, duration, flag) {
     });
 }
 
-async function loadAnim(dict) {
+export async function loadAnim(dict) {
     return new Promise(resolve => {
         native.requestAnimDict(dict);
         let inter = alt.setInterval(() => {

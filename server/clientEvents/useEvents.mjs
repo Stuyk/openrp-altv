@@ -9,7 +9,10 @@ const events = {
     'use:HideDumpster': systemsUse.hideDumpster,
     'use:SearchDumpster': systemsUse.searchDumpster,
     'use:LeaveDumpster': systemsUse.leaveDumpster,
-    'use:Atm': systemsUse.atm
+    'use:Atm': systemsUse.atm,
+    'use:ExitLabs': systemsUse.exitLabs,
+    'use:CuffPlayer': systemsUse.cuffPlayer,
+    'use:UncuffPlayer': systemsUse.uncuffPlayer
 };
 
 Object.keys(events).forEach(key => {

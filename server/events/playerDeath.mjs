@@ -19,6 +19,11 @@ alt.on('playerDeath', (target, killer, weapon) => {
         }
     }
 
+    if (target.cuffedPlayer) {
+        target.cuffedPlayer.setSyncedMeta('arrested', undefined);
+        target.cuffedPlayer.emitMeta('arrest', undefined);
+    }
+
     target.reviving = false;
 
     let closestHospital = configurationHospitals.Locations[0];
@@ -39,7 +44,9 @@ alt.on('playerDeath', (target, killer, weapon) => {
     });
 
     target.hasDied = true;
-    target.revivePos = closestHospital;
+    target.revivePos = target.isArrested
+        ? { x: 459.00830078125, y: -998.204833984375, z: 24.91485023498535 }
+        : closestHospital;
     target.saveDead(true);
     target.send('Type /revive to revive at the nearest hospital.');
     checkRestrictions(target);

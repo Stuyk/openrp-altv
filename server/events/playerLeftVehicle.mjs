@@ -4,6 +4,8 @@ import { quitTarget } from '../systems/job.mjs';
 console.log('Loaded: events->playerLeftVehicle.mjs');
 
 alt.on('playerLeftVehicle', (player, vehicle) => {
+    if (player.getSyncedMeta('arrested')) return false;
+
     player.lastVehicle = vehicle;
 
     if (player.jobber && vehicle.job) {

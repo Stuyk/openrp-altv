@@ -279,6 +279,9 @@ function pedMenu(ent, coords) {
     if (ent === alt.Player.local.scriptID) {
         alt.emit('menu:Player', ent);
         return;
+    } else {
+        alt.emit('menu:Ped', ent);
+        return;
     }
 }
 

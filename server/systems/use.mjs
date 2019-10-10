@@ -45,3 +45,24 @@ export function searchDumpster(player) {
 export function atm(player) {
     player.showAtmPanel();
 }
+
+export function exitLabs(player) {
+    player.pos = { x: 3626.514404296875, y: 3752.325439453125, z: 28.515737533569336 };
+}
+
+export function cuffPlayer(arrester, arrestee) {
+    if (!arrester || !arrestee) return;
+    arrester.cuffedPlayer = arrestee;
+    arrestee.isArrested = true;
+    alt.emitClient(arrestee, 'arrest:Tazed', -1);
+    arrestee.setSyncedMeta('arrested', arrester);
+    arrestee.emitMeta('arrest', arrester);
+}
+
+export function uncuffPlayer(arrester, arrestee) {
+    if (!arrester || !arrestee) return;
+    arrester.cuffedPlayer = null;
+    arrestee.isArrested = false;
+    arrestee.setSyncedMeta('arrested', undefined);
+    arrestee.emitMeta('arrest', undefined);
+}

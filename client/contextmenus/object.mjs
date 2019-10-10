@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from '/client/systems/context.mjs';
+import { distance } from '/client/utility/vector.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -162,6 +163,9 @@ let objectInteractions = {
     // Mineshaft Door
     3053754761: {
         func: mineshaft
+    },
+    3213942386: {
+        func: humanelabs
     }
 };
 
@@ -285,10 +289,19 @@ function mineshaft(ent) {
     // Inside Entity -> 111131
     // Outside Entity -> 145179
     // Outside Model -> 3053754761
-
     native.deleteEntity(ent);
     native.setEntityCollision(ent, false, false);
     native.setEntityAlpha(ent, 0, false);
+}
+
+function humanelabs(ent) {
+    const dist = distance(
+        { x: 3626.514404296875, y: 3752.325439453125, z: 28.515737533569336 },
+        alt.Player.local.pos
+    );
+
+    if (dist > 15) return;
+    alt.emitServer('use:ExitLabs');
 }
 
 function chair(ent) {

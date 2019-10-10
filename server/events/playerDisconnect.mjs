@@ -18,6 +18,12 @@ alt.on('playerDisconnect', player => {
         return;
     }
 
+    // UnArrest on Disconnect
+    if (player.cuffedPlayer) {
+        player.cuffedPlayer.setSyncedMeta('arrested', undefined);
+        player.cuffedPlayer.emitMeta('arrest', undefined);
+    }
+
     // Set the player's playing time for the session.
     player.updatePlayingTime();
     player.data.lastposition =
@@ -26,6 +32,16 @@ alt.on('playerDisconnect', player => {
             : JSON.stringify(player.pos);
     player.data.health = player.health;
     player.data.armour = player.armour;
+
+    // Arrest has highest prioirty.
+    if (player.isArrested) {
+        player.data.lastposition = JSON.stringify({
+            x: 459.00830078125,
+            y: -998.204833984375,
+            z: 24.91485023498535
+        });
+    }
+
     player.save();
     registrationLogin.removeLoggedInPlayer(player.username);
     alt.log(`${player.username} has disconnected.`);

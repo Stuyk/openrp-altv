@@ -4,6 +4,7 @@ import * as configurationItems from '../configuration/items.mjs';
 import fs from 'fs';
 import { addWeapon } from '../systems/inventory.mjs';
 import { addXP, setXP } from '../systems/skills.mjs';
+import { generateHash } from '../utility/encryption.mjs';
 
 console.log('Loaded: commands->sandbox.mjs');
 

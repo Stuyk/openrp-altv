@@ -2,6 +2,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { showCursor } from '/client/utility/cursor.mjs';
+import { Ped } from '/client/utility/ped.mjs';
 
 alt.log('Loaded: client.mjs');
 
@@ -12,6 +13,7 @@ import * as eventsDisconnect from '/client/events/disconnect.mjs';
 import * as eventsUpdate from '/client/events/update.mjs';
 import * as keybinds from '/client/events/keybinds.mjs';
 import * as eventsConnectionComplete from '/client/events/connectionComplete.mjs';
+import * as systemsArrest from '/client/systems/arrest.mjs';
 import * as systemsEquip from '/client/systems/equip.mjs';
 import * as systemsInteraction from '/client/systems/interaction.mjs';
 import * as systemsWeather from '/client/systems/weather.mjs';

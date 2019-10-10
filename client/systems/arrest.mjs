@@ -36,6 +36,7 @@ alt.on('meta:Changed', (key, value) => {
                 );
             });
             interval = alt.setInterval(arrestHandler, 50);
+            alt.emit('view:ForceClose');
         } else {
             native.clearPedTasks(alt.Player.local.scriptID);
         }

@@ -11,16 +11,29 @@ alt.log('Loaded: client->contextmenus->player.mjs');
  */
 
 alt.on('menu:Player', ent => {
-    new ContextMenu(ent, [
-        {
-            label: 'You'
-        },
-        {
-            label: 'Animations',
-            isServer: false,
-            event: 'submenu:PlayerAnimations'
-        }
-    ]);
+    if (alt.Player.local.getMeta('arrest')) {
+        new ContextMenu(ent, [
+            {
+                label: 'You'
+            },
+            {
+                label: 'Try Breaking Cuffs',
+                isServer: true,
+                event: 'use:BreakCuffs'
+            }
+        ]);
+    } else {
+        new ContextMenu(ent, [
+            {
+                label: 'You'
+            },
+            {
+                label: 'Animations',
+                isServer: false,
+                event: 'submenu:PlayerAnimations'
+            }
+        ]);
+    }
 });
 
 //data.dict, data.name, data.duration, data.flag

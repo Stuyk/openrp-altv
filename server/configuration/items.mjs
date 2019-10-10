@@ -310,6 +310,28 @@ export const BaseItems = {
             stack: false
         },
         slot: -1
+    },
+    rope: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: false
+        }
+    },
+    cuffs: {
+        eventcall: '',
+        abilities: {
+            drop: false,
+            use: false,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: false
+        }
     }
 };
 
@@ -675,5 +697,21 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'id-card'
+    },
+    rope: {
+        name: 'Bundle of Rope (5 Min)',
+        base: 'rope',
+        key: 'rope',
+        props: {},
+        quantity: 0,
+        icon: 'rope'
+    },
+    cuffs: {
+        name: 'Cuffs (10 Min)',
+        base: 'cuffs',
+        key: 'cuffs',
+        props: {},
+        quantity: 0,
+        icon: 'cuffs'
     }
 };

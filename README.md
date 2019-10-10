@@ -73,7 +73,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Anti-Health Hack
     -   [ ] Anti-Armour Hack
     -   [x] Anti-Explosion Hack
--   Time & Weather
+-   [ ] Time & Weather
     -   [ ] Time Sync (Needs Rework)
     -   [ ] Weather Sync (Needs Rework)
 -   [x] Interaction System

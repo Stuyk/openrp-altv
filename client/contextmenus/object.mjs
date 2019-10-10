@@ -179,6 +179,8 @@ chairs.forEach(item => {
 });
 
 alt.on('menu:Object', ent => {
+    if (alt.Player.local.getMeta('arrest')) return;
+
     let model = native.getEntityModel(ent);
 
     // find interaction; and call it if necessary.

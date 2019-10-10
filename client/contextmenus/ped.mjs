@@ -5,6 +5,7 @@ import { ContextMenu } from '/client/systems/context.mjs';
 alt.log('Loaded: client->contextmenus->ped.mjs');
 
 alt.on('menu:Ped', ent => {
+    if (alt.Player.local.getMeta('arrest')) return;
     const player = alt.Player.all.find(x => x.scriptID === ent);
     if (!player) return;
 

@@ -12,6 +12,7 @@ const doorNames = [
 ];
 
 alt.on('menu:Vehicle', ent => {
+    if (alt.Player.local.getMeta('arrest')) return;
     const name = native.getLabelText(
         native.getDisplayNameFromVehicleModel(native.getEntityModel(ent))
     );

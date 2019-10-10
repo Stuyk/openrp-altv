@@ -13,7 +13,8 @@ const events = {
     'use:ExitLabs': systemsUse.exitLabs,
     'use:CuffPlayer': systemsUse.cuffPlayer,
     'use:UncuffPlayer': systemsUse.uncuffPlayer,
-    'use:ToggleDoor': systemsUse.toggleDoor
+    'use:ToggleDoor': systemsUse.toggleDoor,
+    'use:BreakCuffs': systemsUse.breakCuffs
 };
 
 Object.keys(events).forEach(key => {

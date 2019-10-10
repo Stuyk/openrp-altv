@@ -95,6 +95,8 @@ function startShopInterval(key, value) {
 // Used to handle interiors.
 // Has to have special case for vehicle.
 function shopInterval() {
+    if (alt.Player.local.getMeta('arrest')) return;
+
     // Get the current interior of the user.
     const currInterior = native.getInteriorFromEntity(alt.Player.local.scriptID);
     if (currInterior === 0) {

@@ -5,6 +5,12 @@ import { showCursor } from '/client/utility/cursor.mjs';
 alt.log('Loaded: client->utility->view.mjs');
 
 export let currentView;
+
+alt.on('view:ForceClose', () => {
+    if (!currentView) return;
+    currentView.close();
+});
+
 export class View {
     constructor() {
         if (alt.Player.local.getMeta('chat')) return;

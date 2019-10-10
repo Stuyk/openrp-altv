@@ -53,6 +53,23 @@ export function exitLabs(player) {
 
 export function cuffPlayer(arrester, arrestee) {
     if (!arrester || !arrestee) return;
+    const cuffCount = arrester.hasQuantityOfItem('cuffs', 1);
+    const ropeCount = arrester.hasQuantityOfItem('rope', 1);
+
+    if (!cuffCount && !ropeCount) {
+        arrester.send('You cannot bind this player without rope or cuffs.');
+        return;
+    }
+
+    if (cuffCount) {
+        arrestee.cuffTime = Date.now() + 60000 * 10;
+        arrester.send('You use your cuffs.');
+    } else {
+        arrestee.cuffTime = Date.now() + 60000 * 5;
+        arrester.subItem('rope', 1);
+        arrester.send('You use a bundle of rope.');
+    }
+
     arrester.cuffedPlayer = arrestee;
     arrestee.isArrested = true;
     alt.emitClient(arrestee, 'arrest:Tazed', -1);
@@ -63,7 +80,7 @@ export function cuffPlayer(arrester, arrestee) {
         `Forces ${arrestee.data.name.replace(
             '_',
             ' '
-        )}'s hands behind their back and cuffs them.`
+        )}'s hands behind their back and binds them.`
     );
 }
 
@@ -71,12 +88,26 @@ export function uncuffPlayer(arrester, arrestee) {
     if (!arrester || !arrestee) return;
     arrester.cuffedPlayer = null;
     arrestee.isArrested = false;
+    arrestee.cuffTime = 0;
     arrestee.setSyncedMeta('arrested', undefined);
     arrestee.emitMeta('arrest', undefined);
     actionMessage(
         arrester,
         `Uses their keys to uncuff ${arrestee.data.name.replace('_', ' ')}.`
     );
+}
+
+export function breakCuffs(player) {
+    if (!player.cuffTime) return;
+    if (Date.now() > player.cuffTime) {
+        player.setSyncedMeta('arrested', undefined);
+        player.emitMeta('arrest', undefined);
+        actionMessage(player, `Breaks free from their binding.`);
+    } else {
+        const timeRemaining = Math.abs((Date.now() - player.cuffTime) / 1000);
+        player.send(`Cuffs are breakable in ${timeRemaining} seconds.`);
+        actionMessage(player, `Tries fiddling with their bindings.`);
+    }
 }
 
 export function toggleDoor(player, data) {

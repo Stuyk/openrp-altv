@@ -42,7 +42,6 @@ alt.on('meta:Changed', (key, value) => {
     }
 });
 
-let lastPos;
 function arrestHandler() {
     if (!arrester) return;
 
@@ -94,24 +93,11 @@ function arrestHandler() {
     if (dist < 2) return;
 
     const fwd = native.getEntityForwardVector(arrester.scriptID);
-    lastPos = {
+    const lastPos = {
         x: arrester.pos.x - fwd.x * 0.75,
         y: arrester.pos.y - fwd.y * 0.75,
         z: arrester.pos.z
     };
-
-    native.drawLine(
-        lastPos.x,
-        lastPos.y,
-        lastPos.z,
-        arrester.pos.x,
-        arrester.pos.y,
-        arrester.pos.z,
-        255,
-        0,
-        0,
-        255
-    );
 
     native.taskGoToCoordAnyMeans(
         alt.Player.local.scriptID,

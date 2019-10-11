@@ -1,12 +1,12 @@
 const helpCommands = {
-    TAB: 'Context menu toggle',
-    I: 'Inventory',
-    F: 'Enter/exit vehicle',
+    'TAB': 'Context menu toggle',
+    'I': 'Inventory',
+    'F': 'Enter/exit vehicle',
     'Shift + H': 'Lock/Unlock Vehicle (Must enter vehicle once)',
     'Shift + G': 'Start/Stop Engine',
     'Shift + F': 'Keep Engine Running',
     'Shift + F7': 'Toggle Chat',
-    T: 'Toggle chat window',
+    'T': 'Toggle chat window',
     '/me <action>': 'Perform an action',
     '/b <msg>': 'Speak out of character',
     '/players': 'List online players',
@@ -31,7 +31,26 @@ const h = createElement;
 class App extends Component {
     constructor(props) {
         super(props);
+        this.page = preact.createRef();
         this.state = { helpCommands: helpCommands };
+    }
+
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('help:Toggle', this.toggle.bind(this));
+        }
+    }
+
+    toggle(value) {
+        this.setState({ display: value });
+    }
+
+    componentDidUpdate() {
+        if (this.state.display) {
+            this.page.current.classList.remove('hidden');
+        } else {
+            this.page.current.classList.add('hidden');
+        }
     }
 
     createHelpItems(helpCommands) {
@@ -51,20 +70,15 @@ class App extends Component {
     }
 
     render() {
-        return h('div', { id: 'helpBox' }, this.createHelpItems(this.state.helpCommands));
+        return h(
+            'div',
+            {
+                ref: this.page,
+                id: 'helpBox'
+            },
+            this.createHelpItems(this.state.helpCommands)
+        );
     }
 }
 
 render(h(App), document.querySelector('#render'));
-
-document.addEventListener('keyup', key => {
-    if (key.key === 'Escape') {
-        alt.emit('help:Exit');
-    }
-
-    // Closing help view with F1 does not work.
-    // Use ESC instead.
-    //if (key.keyCode === 112) {
-    //    alt.emit('help:Exit');
-    //}
-});

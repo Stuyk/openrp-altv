@@ -2,9 +2,16 @@
 
 html,
 body {
+    height: auto;
     margin: 0;
-    padding: 0 0 0 0;
-    background:rgba(0, 0, 0, 0);
+}
+
+html {
+    overflow-y: scroll;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 #helpBox {
@@ -13,18 +20,24 @@ body {
     height:220px !important;
     background:rgba(0, 0, 0, 0.5) !important;
     text-shadow: 1px 1px #000000;
-    width:100%;
+    padding:5px;
+    width:99%;
+    z-index:100;
 }
 
 .helpItem {
     font-family: @fontface;
     font-size:80%;
-    color:#ffffff;
+    color:#ddd;
     padding:4px;
+    border-bottom:1px dotted #333333;
 
     .helpDesc {
         float:right;
+        color:#fff;
     }
 }
 
-
+.hidden {
+    display: none;
+}

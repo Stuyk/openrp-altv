@@ -154,3 +154,18 @@ export const Vehicle = new orm.EntitySchema({
         }
     }
 });
+
+export const Details = new orm.EntitySchema({
+    name: 'Details',
+    columns: {
+        id: {
+            primary: true,
+            type: 'int',
+            generated: true
+        },
+        mdc: {
+            type: 'text',
+            nullable: true
+        }
+    }
+});

@@ -113,6 +113,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   [ ] Craft Better Hammers
         -   [ ] Craft Repair Kits
         -   [ ] All Crafting Items Take Metal
+        -   [ ] All Crafting Items Take Wood
     -   [x] Fishing
         -   [x] Use a fishing rod to fish ANYWHERE.
         -   [ ] Fish Loot Table
@@ -161,6 +162,9 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Extra Backpack Slots for Hours Played
     -   [ ] Extra Shop Slots for Hours Played
     -   [ ] Extra Vehicle Slots for Hours Played
+-   [x] Police Officer Utilities
+    -   [x] Cuffing / Binding
+    -   [ ] Mobile Data Computer
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://www.twitch.tv/stuyksoft/).
 

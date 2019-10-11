@@ -1,9 +1,9 @@
 import * as alt from 'alt';
 //import * as chat from 'chat';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
-import { Account, Character, Vehicle } from './entities/entities.mjs'; // Schemas for Database
+import { Account, Character, Vehicle, Details } from './entities/entities.mjs'; // Schemas for Database
 import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration
-import { cacheAccount, setVehicleID } from './cache/cache.mjs';
+import { cacheAccount, setVehicleID, setServerDetails } from './cache/cache.mjs';
 
 // Setup Main Entities and Database Connection
 let db = new SQL(
@@ -14,7 +14,7 @@ let db = new SQL(
     configurationDatabase.DatabaseInfo.password,
     configurationDatabase.DatabaseInfo.dbname,
     // Specify New Table Schemas Here
-    [Account, Character, Vehicle]
+    [Account, Character, Vehicle, Details]
 );
 
 // After Database Connection is complete. Load the rest of the modules.

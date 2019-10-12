@@ -55,6 +55,7 @@ export function showDialogue() {
 
     // Create a pedestrian to customize.
     ped = new Ped('mp_f_freemode_01', playerPoint);
+    alt.log(ped.scriptID);
 
     native.setPedComponentVariation(ped.scriptID, 6, 1, 0, 0);
 

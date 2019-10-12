@@ -305,7 +305,7 @@ alt.on('job:GatheringKevlarium1', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setBlip(367, 2, pos);
-    obj.setMiniGame('FindInLeaves');
+    obj.setMiniGame('GrabTheLeaves');
     obj.setAnimationAndSound(
         'anim@amb@business@weed@weed_inspecting_lo_med_hi@',
         'weed_stand_checkingleaves_idle_01_inspector',
@@ -379,7 +379,7 @@ alt.on('job:GatheringKevlarium1', player => {
         obj.setPosition(pos);
         obj.setRange(3);
         obj.setBlip(367, 2, pos);
-        obj.setMiniGame('FindInLeaves');
+        obj.setMiniGame('GrabTheLeaves');
         obj.setAnimationAndSound(
             'anim@amb@business@weed@weed_inspecting_lo_med_hi@',
             'weed_stand_checkingleaves_idle_01_inspector',

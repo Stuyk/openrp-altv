@@ -140,7 +140,7 @@ alt.on('job:RefineVigorium1', player => {
         1,
         -1
     );
-    obj.setMiniGame('StackBoxes');
+    obj.setMiniGame('StackTheBoxes');
     /*
     obj.setParticleEffect([
         {

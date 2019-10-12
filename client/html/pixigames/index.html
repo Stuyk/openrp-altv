@@ -25,16 +25,19 @@
         }
 
         #description {
+            max-width: 150px;
             display: block;
             position: absolute;
             color: white;
             font-size: 12px;
             font-family: 'Arial';
             text-align: center;
-            left: 50%;
+            padding: 10px;
+            left: 2vw;
             top: 2vh;
-            transform: translate(-50%, 0);
             z-index: 99;
+            background: rgba(0, 0, 0, 0.5);
+            user-select: none;
         }
     </style>
 </head>
@@ -42,9 +45,17 @@
     <div id="description"></div>
     <div id="game"></div>
     <script src="./pixi.min.js"></script>
+    <script src="./bump.js"></script>
+    <script src="./services/collision.js"></script>
+    <script src="./services/event.js"></script>
+    <script src="./services/keyboard.js"></script>
+    <script src="./services/loadTexture.js"></script>
+    <script src="./services/sprite.js"></script>
+    <script src="./services/state.js"></script>
+    <script src="./services/utility.js"></script>
     <script src="./engine.js"></script>
-    <script src="./games/FindInLeaves.js"></script>
-    <script src="./games/FindInDirt.js"></script>
-    <script src="./games/StackBoxes.js"></script>
+    <script src="./games/DigInDirt.js"></script>
+    <script src="./games/StackTheBoxes.js"></script>
+    <script src="./games/GrabTheLeaves.js"></script>
 </body>
 </html>

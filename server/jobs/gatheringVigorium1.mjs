@@ -229,7 +229,7 @@ alt.on('job:GatheringVigorium1', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setBlip(367, 2, pos);
-    obj.setMiniGame('FindInDirt');
+    obj.setMiniGame('DigInDirt');
     obj.setAnimationAndSound('missarmenian3_gardener', 'idle_a', 1, -1);
     obj.setParticleEffect([
         {
@@ -282,7 +282,7 @@ alt.on('job:GatheringVigorium1', player => {
         obj.setPosition(pos);
         obj.setRange(3);
         obj.setBlip(367, 2, pos);
-        obj.setMiniGame('FindInDirt');
+        obj.setMiniGame('DigInDirt');
         obj.setAnimationAndSound('missarmenian3_gardener', 'idle_a', 1, -1);
         obj.setParticleEffect([
             {

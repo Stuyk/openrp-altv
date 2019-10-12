@@ -503,10 +503,15 @@ function minigame() {
         minigameView.open('http://resource/client/html/pixigames/index.html', true);
         minigameView.on('minigame:Complete', completeMiniGame);
         minigameView.on('minigame:Ready', () => {
+            alt.log('Game View Ready!');
+            alt.log(objective.minigame);
             minigameView.emit(`minigame:${objective.minigame}`, objective.minigamehash);
             alt.setTimeout(() => {
                 playAnimation();
             }, 2000);
+        });
+        minigameView.on('minigame:Quit', () => {
+            minigameView.close();
         });
     }
 }

@@ -582,6 +582,7 @@ function clearScenario() {
 }
 
 function playAnimation() {
+    if (!objective) return;
     if (!objective.anim) return;
     alt.Player.local.inAnimation = true;
     loadAnim(objective.anim.dict).then(res => {

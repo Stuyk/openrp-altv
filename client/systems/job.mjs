@@ -511,6 +511,7 @@ function minigame() {
             }, 2000);
         });
         minigameView.on('minigame:Quit', () => {
+            alt.emitServer('job:Quit', false, true);
             minigameView.close();
         });
     }

@@ -79,6 +79,7 @@ alt.onClient('chat:IsChatting', chat.setStatus);
 // Job
 alt.onClient('job:Check', systemsJob.check);
 alt.onClient('job:SkipToBeginning', systemsJob.skipToBeginning);
+alt.onClient('job:Quit', systemsJob.quitJob);
 
 // Skills
 alt.onClient('skill:Agility', systemsSkills.agility);

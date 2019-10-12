@@ -17,6 +17,7 @@ const sandboxhelp = [
     '/addwep (name)',
     '/face, /addxp, /setxp',
     '/tpto (rp-name)',
+    '/tpwp',
     '/players, /clearchat',
     '/taxi, /mechanic',
     '/cancel',
@@ -120,6 +121,10 @@ chat.registerCmd('tpto', (player, arg) => {
     }
 
     player.pos = target.pos;
+});
+
+chat.registerCmd('tpwp', player => {
+    alt.emitClient(player, 'teleportToWaypoint');
 });
 
 chat.registerCmd('players', player => {

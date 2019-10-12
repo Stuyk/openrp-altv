@@ -30,7 +30,9 @@ document.querySelector('#game').appendChild(Game.view);
 function gameLoop(delta) {
     if (!ready) {
         ready = true;
-        alt.emit('minigame:Ready');
+        if ('alt' in window) {
+            alt.emit('minigame:Ready');
+        }
     }
 
     if (!currentGameState) {
@@ -56,20 +58,34 @@ function gameLoop(delta) {
         if (!obj1.ignoreCollision) {
             currentGameState.objects.forEach(obj2 => {
                 if (obj1 === obj2) return;
+
+                if (obj2.constructor.name === 'StaticPassThrough') return;
+                if (obj1.constructor.name === 'StaticPassThrough') {
+                    if (b.hitTestRectangle(obj1, obj2)) {
+                        emitEvent(eventNames.ON_PASS_THROUGH, obj1, obj2);
+                        return;
+                    }
+                    return;
+                }
+
                 const directionHit = b.hit(obj1.container, obj2.container, true, false);
                 switch (directionHit) {
                     case 'bottom':
                         obj1.floor = true;
                         obj1.container.vy = 0;
+                        emitEvent(eventNames.ON_COLLIDE, obj1, obj2, directionHit);
                         break;
                     case 'left':
                         obj1.container.vx = 0;
+                        emitEvent(eventNames.ON_COLLIDE, obj1, obj2, directionHit);
                         break;
                     case 'right':
                         obj1.container.vx = 0;
+                        emitEvent(eventNames.ON_COLLIDE, obj1, obj2, directionHit);
                         break;
                     case 'top':
                         obj1.container.vy = 0;
+                        emitEvent(eventNames.ON_COLLIDE, obj1, obj2, directionHit);
                         break;
                     default:
                         break;

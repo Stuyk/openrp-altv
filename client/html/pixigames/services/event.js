@@ -12,7 +12,8 @@ const eventNames = {
     ON_GAME_BOUNDS: 'onGameBounds',
     ON_KEYDOWN: 'onKeyDown',
     ON_KEYUP: 'onKeyUp',
-    ON_LEFT_GAME_BOUNDS: 'onLeftGameBounds'
+    ON_LEFT_GAME_BOUNDS: 'onLeftGameBounds',
+    ON_PASS_THROUGH: 'onPassThrough'
 };
 
 function on(eventName, callback) {

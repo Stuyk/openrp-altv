@@ -110,6 +110,12 @@ class BaseSprite {
     }
 }
 
+class StaticPassThrough extends BaseSprite {
+    constructor(texture, useGravity = false) {
+        super(texture, useGravity);
+    }
+}
+
 class Clickable extends BaseSprite {
     constructor(texture, useGravity, lockPosition = false) {
         super(texture, useGravity);

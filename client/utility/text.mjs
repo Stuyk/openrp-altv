@@ -3,6 +3,30 @@ import * as native from 'natives';
 
 alt.log('Loaded: client->utility->text.mjs');
 
+alt.onServer('text:playerAction', (player, msg) => {
+    const interval = alt.setInterval(() => {
+        alt.nextTick(() => {
+            drawText3d(
+                `* ${msg} *`,
+                player.pos.x,
+                player.pos.y,
+                player.pos.z + 0.4,
+                0.4,
+                4,
+                255,
+                255,
+                255,
+                255,
+                true,
+                false
+            );
+        });
+    }, 0);
+    alt.setTimeout(() => {
+        alt.clearInterval(interval);
+    }, 5000);
+});
+
 alt.onServer('text:Animated', (text, duration) => {
     let pos = alt.Player.local.pos;
     let alpha = 255;

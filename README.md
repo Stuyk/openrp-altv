@@ -164,7 +164,9 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Extra Vehicle Slots for Hours Played
 -   [x] Police Officer Utilities
     -   [x] Cuffing / Binding
-    -   [ ] Mobile Data Computer
+    -   [x] Mobile Data Computer
+    -   [x] Frisking
+    -   [x] Charges for Illegal Activities
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://www.twitch.tv/stuyksoft/).
 

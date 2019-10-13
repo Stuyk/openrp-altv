@@ -126,7 +126,8 @@ export function cuffPlayerFreely(arrester, arrestee) {
 }
 
 export function friskPlayer(arrester, arrestee) {
-    const isOfficer = player.job && player.job.name.includes('Officer') ? true : false;
+    const isOfficer =
+        arrester.job && arrester.job.name.includes('Officer') ? true : false;
     const results = arrester.searchItems();
 
     if (!results.hasDrugs && !results.hasWeapons) {

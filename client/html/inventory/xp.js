@@ -15,7 +15,7 @@ function getLevel(passedXP) {
     let closest = curve.findIndex(x => x.xp >= xp);
 
     if (xp > 13034431) {
-        return maxLevel;
+        return 99;
     }
 
     if (curve[closest].xp > xp) {
@@ -27,5 +27,6 @@ function getLevel(passedXP) {
 }
 
 function getXP(lvl) {
+    if (lvl >= 99) return 99;
     return curve.find(x => x.lvl >= lvl).xp;
 }

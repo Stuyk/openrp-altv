@@ -17,6 +17,8 @@ const currentSkills = {
 };
 
 export function addXP(player, skill, xpToAdd) {
+    if (parseInt(xpToAdd) > 13034431) return;
+
     skill = skill.toLowerCase();
     let oldLevel = 1;
     let newLevel;
@@ -42,8 +44,8 @@ export function addXP(player, skill, xpToAdd) {
             skills[skill].xp = 0;
         }
 
-        if (skills[skill].xp > Number.MAX_SAFE_INTEGER) {
-            skills[skill].xp = Number.MAX_SAFE_INTEGER;
+        if (skills[skill].xp > 13034431) {
+            skills[skill].xp = 13034431;
         }
 
         newLevel = getLevel(skills[skill].xp);
@@ -63,6 +65,11 @@ export function addXP(player, skill, xpToAdd) {
 }
 
 export function setXP(player, skill, amount) {
+    if (amount > 13034431) {
+        player.send('You cant set your XP higher than 13034431');
+        return;
+    }
+
     let skills = !player.data.skills
         ? { ...currentSkills }
         : JSON.parse(player.data.skills);

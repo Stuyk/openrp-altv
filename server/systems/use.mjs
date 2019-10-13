@@ -126,6 +126,7 @@ export function cuffPlayerFreely(arrester, arrestee) {
 }
 
 export function friskPlayer(arrester, arrestee) {
+    const isOfficer = player.job && player.job.name.includes('Officer') ? true : false;
     const results = arrester.searchItems();
 
     if (!results.hasDrugs && !results.hasWeapons) {
@@ -136,16 +137,24 @@ export function friskPlayer(arrester, arrestee) {
     if (results.hasDrugs) {
         const msg = `Frisks ${arrestee.data.name.replace('_', ' ')} and finds drugs.`;
         actionMessage(arrester, msg);
-        appendToMdc('None - Frisked', arrestee.data.name, 'Drugs');
+
+        if (isOfficer) {
+            appendToMdc('None - Frisked', arrestee.data.name, 'Drugs');
+        }
     }
 
     if (results.hasWeapons) {
         const msg = `Frisks ${arrestee.data.name.replace('_', ' ')} and finds weapons.`;
         actionMessage(arrester, msg);
-        appendToMdc('None - Frisked', arrestee.data.name, 'Weapons');
+
+        if (isOfficer) {
+            appendToMdc('None - Frisked', arrestee.data.name, 'Weapons');
+        }
     }
 
-    cuffPlayer(arrester, arrestee);
+    if (isOfficer) {
+        cuffPlayer(arrester, arrestee);
+    }
 }
 
 export function cuffPlayer(arrester, arrestee) {

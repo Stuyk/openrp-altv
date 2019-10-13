@@ -605,6 +605,25 @@ export function setupPlayerFunctions(player) {
         }
     };
 
+    player.searchItems = () => {
+        let hasDrugs = false;
+        let hasWeapons = false;
+
+        player.inventory.forEach(item => {
+            if (!item) return;
+            if (item.base === 'refineddrug') {
+                hasDrugs = true;
+                return;
+            }
+
+            if (item.base === 'weapon') {
+                hasWeapons = true;
+            }
+        });
+
+        return { hasDrugs, hasWeapons };
+    };
+
     player.equipItem = (itemIndex, equipmentIndex) => {
         let equippedItem = { ...player.equipment[equipmentIndex] };
         let inventoryItem = { ...player.inventory[itemIndex] };

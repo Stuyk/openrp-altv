@@ -13,8 +13,10 @@ const jailCells = [
 ];
 
 const charges = [
-    { name: 'Murder', amount: 5000, xp: -75 },
-    { name: 'Speeding', amount: 100, xp: -10 }
+    { name: 'Murder', amount: 2500, xp: -75 },
+    { name: 'Speeding', amount: 100, xp: -10 },
+    { name: 'Weapons', amount: 1000, xp: -50 },
+    { name: 'Drugs', amount: 250, xp: -25 }
 ];
 
 /**

@@ -59,6 +59,12 @@ function arrestAddons(player) {
             isServer: true,
             event: 'use:CuffPlayerFreely'
         });
+
+        options.push({
+            label: 'Frisk',
+            isServer: true,
+            event: 'use:FriskPlayer'
+        });
     }
 
     // Are uncuffable by person who cuffed them.
@@ -68,6 +74,12 @@ function arrestAddons(player) {
                 label: 'Uncuff',
                 isServer: true,
                 event: 'use:UncuffPlayer'
+            });
+
+            options.push({
+                label: 'Frisk',
+                isServer: true,
+                event: 'use:FriskPlayer'
             });
         }
     }

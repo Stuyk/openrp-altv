@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as configurationItems from '../configuration/items.mjs';
 import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
+import { appendToMdc } from './mdc.mjs';
 
 export let doorStates = {
     '{"x":461.8065185546875,"y":-994.4085693359375,"z":25.06442642211914}': {
@@ -110,6 +111,7 @@ export function cuffPlayerFreely(arrester, arrestee) {
 
     arrester.cuffedPlayer = arrestee;
     arrestee.isArrested = true;
+    arrestee.unequipItem(11);
     alt.emitClient(arrestee, 'arrest:Tazed', -1);
     arrestee.setSyncedMeta('arrested', arrester);
     arrestee.setSyncedMeta('arrestedFreely', true);
@@ -121,6 +123,29 @@ export function cuffPlayerFreely(arrester, arrestee) {
             ' '
         )}'s hands behind their back and binds them.`
     );
+}
+
+export function friskPlayer(arrester, arrestee) {
+    const results = arrester.searchItems();
+
+    if (!results.hasDrugs && !results.hasWeapons) {
+        const msg = `Frisks ${arrestee.data.name.replace('_', ' ')} and finds nothing.`;
+        actionMessage(arrester, msg);
+    }
+
+    if (results.hasDrugs) {
+        const msg = `Frisks ${arrestee.data.name.replace('_', ' ')} and finds drugs.`;
+        actionMessage(arrester, msg);
+        appendToMdc('None - Frisked', arrestee.data.name, 'Drugs');
+    }
+
+    if (results.hasWeapons) {
+        const msg = `Frisks ${arrestee.data.name.replace('_', ' ')} and finds weapons.`;
+        actionMessage(arrester, msg);
+        appendToMdc('None - Frisked', arrestee.data.name, 'Weapons');
+    }
+
+    cuffPlayer(arrester, arrestee);
 }
 
 export function cuffPlayer(arrester, arrestee) {
@@ -149,6 +174,7 @@ export function cuffPlayer(arrester, arrestee) {
 
     arrester.cuffedPlayer = arrestee;
     arrestee.isArrested = true;
+    arrestee.unequipItem(11);
     alt.emitClient(arrestee, 'arrest:Tazed', -1);
     arrestee.setSyncedMeta('arrested', arrester);
     arrestee.setSyncedMeta('arrestedFreely', false);

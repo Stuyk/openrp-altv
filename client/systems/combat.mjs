@@ -31,4 +31,6 @@ function disableCombat() {
     if (_hash === -1569615261) {
         native.disableControlAction(0, 24, true);
     }
+
+    native.disableControlAction(0, 140, true);
 }

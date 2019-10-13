@@ -10,7 +10,8 @@ alt.on('weaponDamage', (attacker, target, weapon, damage, offset, bodyPart) => {
 
     // Tazer
     if (weapon === 911657153) {
-        return tazer(attacker, target);
+        tazer(attacker, target);
+        return false;
     }
 
     if (weapon !== 133987706 && weapon !== 2741846334 && weapon !== 2725352035) {

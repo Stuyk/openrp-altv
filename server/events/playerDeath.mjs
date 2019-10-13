@@ -1,8 +1,8 @@
 import * as alt from 'alt';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
-import * as utilityVector from '../utility/vector.mjs';
+import { distance } from '../utility/vector.mjs';
 import { verifyWeapon } from '../systems/anticheat.mjs';
-import { Weapons, CauseOfDeath } from '../configuration/weapons.mjs';
+import { Weapons, CauseOfDeath, NonMeleeWeapons } from '../configuration/weapons.mjs';
 import { checkRestrictions } from '../systems/job.mjs';
 import { appendToMdc } from '../systems/mdc.mjs';
 
@@ -10,6 +10,22 @@ alt.on('playerDeath', (target, killer, weapon) => {
     if (target.reviving) return;
     // Anti Cheat Handling
     if (handleAntiCheat(target, killer, weapon)) return;
+
+    if (target && killer) {
+        const dist = distance(killer.pos, target.pos);
+
+        if (dist <= 2) {
+            let isRanged = Object.keys(NonMeleeWeapons).find(x => {
+                if (NonMeleeWeapons[x] === weapon) return x;
+            });
+
+            if (isRanged !== undefined) {
+                console.log('Revived player from pistol whip.');
+                target.spawn(target.pos.x, target.pos.y, target.pos.z, 0);
+                return false;
+            }
+        }
+    }
 
     // Cuff Handling
     handleHasCuffed(target);
@@ -66,15 +82,15 @@ function handleHospital(player) {
     let lastDistance = 0;
 
     configurationHospitals.Locations.forEach(hospital => {
-        const distance = utilityVector.distance(hospital, player.pos);
+        const dist = distance(hospital, player.pos);
 
         if (lastDistance === 0) {
-            lastDistance = utilityVector.distance(hospital, player.pos);
+            lastDistance = distance(hospital, player.pos);
             return;
         }
 
-        if (lastDistance > distance) {
-            lastDistance = distance;
+        if (lastDistance > dist) {
+            lastDistance = dist;
             closestHospital = hospital;
         }
     });

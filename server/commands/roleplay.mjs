@@ -14,10 +14,11 @@ chat.registerCmd('me', (player, args) => {
         return;
     }
 
+    let msg = args.join(' ');
     let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxMeRange);
-
     inRange.forEach(target => {
-        target.send(`{c5a5de}${player.data.name.replace('_', ' ')} ${args.join(' ')}`);
+        target.send(`{c5a5de}${player.data.name.replace('_', ' ')} ${msg}`);
+        alt.emitClient(target, 'text:playerAction', player, msg);
     });
 });
 
@@ -32,11 +33,11 @@ chat.registerCmd('do', (player, args) => {
         return;
     }
 
+    let msg = args.join(' ');
     let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxDoRange);
     inRange.forEach(target => {
-        target.send(
-            `{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${args.join(' ')}`
-        );
+        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
+        alt.emitClient(target, 'text:playerAction', player, msg);
     });
 });
 
@@ -71,34 +72,30 @@ chat.registerCmd('b', (player, args) => {
 
 chat.registerCmd('flipcoin', player => {
     const headsOrTails = Math.floor(Math.random() * 2) ? 'heads' : 'tails';
+    const msg = `Flips a coin and it lands on ${headsOrTails}`
     let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
     inRange.forEach(target => {
-        target.send(
-            `{c5a5de}* (( ${player.data.name.replace(
-                '_',
-                ' '
-            )} )) Flips a coin and it lands on ${headsOrTails}`
-        );
+        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ` + msg);
+        alt.emitClient(target, 'text:playerAction', player, msg);
     });
 });
 
 chat.registerCmd('sf', player => {
     const sOrF = Math.floor(Math.random() * 2) ? 'succeed' : 'fail';
+    const msg = `${sOrF}`
     let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
     inRange.forEach(target => {
-        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${sOrF}`);
+        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ` + msg);
+        alt.emitClient(target, 'text:playerAction', player, msg);
     });
 });
 
 chat.registerCmd('d20', player => {
     const d20 = Math.floor(Math.random() * 20) + 1;
+    const msg = `Rolls a dice and it lands on ${d20}`
     let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
     inRange.forEach(target => {
-        target.send(
-            `{c5a5de}* (( ${player.data.name.replace(
-                '_',
-                ' '
-            )} )) Rolls a dice and it lands on ${d20}`
-        );
+        target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ` + msg);
+        alt.emitClient(target, 'text:playerAction', player, msg);
     });
 });

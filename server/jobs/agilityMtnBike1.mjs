@@ -105,7 +105,7 @@ alt.on('job:MtnBike1', player => {
     obj.setPosition(trackStart);
     obj.setRange(3);
     obj.setHelpText('Pick up your bike.');
-    obj.setBlip(255, 1, trackStart);
+    obj.setBlip(1, 1, trackStart);
     obj.setMarker(
         0,
         trackStart,

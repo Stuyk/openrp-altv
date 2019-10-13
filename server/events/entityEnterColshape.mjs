@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as systemsInteraction from '../systems/interaction.mjs';
+import * as systemsPolice from '../systems/police.mjs';
 
 alt.on('entityEnterColshape', (colshape, entity) => {
     // Forward any interaction events to the player.
@@ -11,5 +12,6 @@ alt.on('entityEnterColshape', (colshape, entity) => {
         }
 
         systemsInteraction.forwardEventToPlayer(colshape, entity);
+        systemsPolice.forwardColshapeEnter(colshape, entity);
     }
 });

@@ -68,6 +68,8 @@ export function showDialogue() {
 
     if (alt.Player.local.getMeta('viewOpen')) return;
     if (!alt.Player.local.vehicle) return;
+    if (alt.Player.local.getSyncedMeta('dead')) return;
+    if (alt.Player.local.getMeta('arrest')) return;
 
     // Setup Webview
     webview.open(url, true);

@@ -78,9 +78,9 @@ const slots = [
     'bracelet', // 9
     'trousers', // 10
     'hand', // 11
-    'outfit', // 12
+    'unknown', // 12
     'chelsea-boot', // 13
-    'unknown' // 14
+    'outfit' // 14
 ];
 
 // The main rendering function.

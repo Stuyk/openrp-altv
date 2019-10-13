@@ -44,7 +44,7 @@ alt.on('job:MechanicJob', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Pick up your vehicle.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,

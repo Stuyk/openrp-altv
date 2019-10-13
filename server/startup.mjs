@@ -48,6 +48,7 @@ alt.on('ConnectionComplete', () => {
     import('./commands/taxi.mjs');
     import('./commands/mechanic.mjs');
     import('./commands/phone.mjs');
+    import('./commands/mdc.mjs');
 
     // Systems
     import('./systems/anticheat.mjs');
@@ -75,6 +76,7 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/miningShaft.mjs');
     import('./jobs/playerTaxi.mjs');
     import('./jobs/playerMechanic.mjs');
+    import('./jobs/officer.mjs');
     import('./jobs/refineKevlarium.mjs');
     import('./jobs/refineVigorium.mjs');
     import('./jobs/smithingRefinery.mjs');

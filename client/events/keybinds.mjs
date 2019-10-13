@@ -92,7 +92,6 @@ function keyup(key) {
     if (key === 16) shiftModified = false;
     if (key === 18) altModified = false;
 
-    if (alt.Player.local.getMeta('arrest')) return;
     if (alt.Player.local.getMeta('viewOpen')) return;
     if (!alt.Player.local.getMeta('loggedin')) return;
     if (alt.Player.local.getMeta('chat')) return;

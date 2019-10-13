@@ -14,6 +14,8 @@ export function showDialogue() {
     }
 
     if (alt.Player.local.getMeta('viewOpen')) return;
+    if (alt.Player.local.getSyncedMeta('dead')) return;
+    if (alt.Player.local.getMeta('arrest')) return;
 
     // Load Webview
     webview.open(url);

@@ -4,6 +4,10 @@ import { verifyWeapon } from '../systems/anticheat.mjs';
 alt.on('weaponDamage', (attacker, target, weapon, damage, offset, bodyPart) => {
     if (attacker.constructor.name !== 'Player') return;
 
+    if (target.hasDied) {
+        return false;
+    }
+
     // Tazer
     if (weapon === 911657153) {
         return tazer(attacker, target);

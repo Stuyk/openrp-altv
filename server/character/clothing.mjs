@@ -1,6 +1,5 @@
 import * as alt from 'alt';
 import { Items } from '../configuration/items.mjs';
-import { dropNewItem } from '../systems/inventory.mjs';
 
 console.log('Loaded: character->clothing.mjs');
 

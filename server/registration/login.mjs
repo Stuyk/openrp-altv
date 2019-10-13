@@ -148,14 +148,14 @@ export function sync(player) {
     player.setLastLogin();
     player.updateTime();
     player.syncInteractionBlips();
-    player.syncInventory(true);
-    player.syncMoney();
     player.syncXP();
 
     // Setup Health / Armor
     let timeout = setTimeout(() => {
         if (!player) clearTimeout(timeout);
-
+        player.syncInventory(true);
+        player.syncMoney();
+        player.syncDoorStates();
         if (player.data.dead) {
             player.health = 0;
             player.armour = 0;

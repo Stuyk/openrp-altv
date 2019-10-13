@@ -29,5 +29,6 @@ chat.registerCmd('revive', player => {
         player.saveDead(false);
         player.taxIncome(configurationHospitals.Currency.feePct, true, 'Hospital Fee');
         player.send('You have been revived.');
+        player.setSyncedMeta('dead', false);
     }, 20000);
 });

@@ -33,7 +33,8 @@ export const modifiers = {
     REMOVE_ITEM: 512,
     CLEAR_PROPS: 1024,
     NO_DAMAGE_VEHICLE: 2048,
-    MAX: 4096
+    NULL_PLAYER: 4096,
+    MAX: 8192
 };
 
 export const restrictions = {
@@ -236,10 +237,11 @@ export class Objective {
      * @param type
      * @param pos
      */
-    setVehicle(type, pos) {
+    setVehicle(type, pos, rot = 0) {
         this.veh = {
             type,
-            pos
+            pos,
+            rot
         };
     }
 
@@ -383,7 +385,15 @@ export class Objective {
     spawnVehicles(player) {
         if (!this.veh) return;
         let pos = randPosAround(this.veh.pos, 2);
-        const vehicle = new alt.Vehicle(this.veh.type, pos.x, pos.y, pos.z, 0, 0, 0);
+        const vehicle = new alt.Vehicle(
+            this.veh.type,
+            pos.x,
+            pos.y,
+            pos.z,
+            0,
+            0,
+            Math.abs(this.veh.rot)
+        );
 
         vehicle.job = {
             player,
@@ -630,7 +640,7 @@ const playFinishedSound = (player, objective) => {
 };
 
 export class Job {
-    constructor(player, name, restrictions = 0) {
+    constructor(player, name, restrictions = 0, namecolor = undefined) {
         if (player.job) {
             quitJob(player);
         }
@@ -644,6 +654,10 @@ export class Job {
         this.enabledTimer = false;
         player.hasDied = false;
         player.job = this;
+
+        if (namecolor) {
+            player.setSyncedMeta('namecolor', namecolor);
+        }
     }
 
     /**
@@ -1038,6 +1052,7 @@ export function quitJob(player, loggingOut = false, playFailSound = false) {
         }
     }
 
+    player.setSyncedMeta('namecolor', null);
     if (player.job) player.job = undefined;
     player.emitMeta('job:ClearObjective', true);
     player.setSyncedMeta('job:Props', undefined);

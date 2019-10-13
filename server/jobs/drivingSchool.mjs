@@ -59,7 +59,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Pick up your vehicle.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -83,7 +83,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive to the point.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -105,7 +105,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive and stop on the point.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -128,7 +128,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive to the stop sign and wait before turning left.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -151,7 +151,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Make the left hand turn.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -173,7 +173,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive down the road.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -195,7 +195,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Slow down at the upcoming point; and make a right turn.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -217,7 +217,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Pull into the driveway.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -239,7 +239,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive towards the back of the lot.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -261,7 +261,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Slow down as you reach the end of the lot.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -283,7 +283,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Pull into the designated space and wait.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -306,7 +306,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Back up in the space behind you and wait.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -329,7 +329,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Pull out; and make a left hand turn.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -351,7 +351,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Make your way out of the lot.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -373,7 +373,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Stop and yield; before driving out.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -396,7 +396,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive down the road.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -418,7 +418,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Drive down the road; make a right-hand turn next.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -440,7 +440,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Make the right-hand turn; then a left-hand turn.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -462,7 +462,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Make the right-hand turn; then a left-hand turn.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
@@ -484,7 +484,7 @@ alt.on('job:DrivingSchool', player => {
     obj.setPosition(pos);
     obj.setRange(3);
     obj.setHelpText('Park your vehicle at the end of the lot; and wait.');
-    obj.setBlip(255, 1, pos);
+    obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,

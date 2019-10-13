@@ -8,6 +8,9 @@ alt.on('connectionComplete', () => {
 
     alt.requestIpl('ex_dt1_02_office_02b');
 
+    alt.loadModel('mp_f_freemode_01');
+    alt.loadModel('mp_m_freemode_01');
+
     let coordLoc = native.getInteriorAtCoords(-141.1987, -620.913, 168.8205);
     alt.log(`Interior Location ID: ${coordLoc}`);
 

@@ -12,6 +12,8 @@ import { spawnVehicle } from '../systems/vehicles.mjs';
 import { appendNewVehicle } from '../systems/vehicles.mjs';
 import { quitJob } from '../systems/job.mjs';
 import { fetchNextVehicleID } from '../cache/cache.mjs';
+import { dropNewItem } from '../systems/inventory.mjs';
+import { doorStates } from '../systems/use.mjs';
 
 console.log('Loaded: utility->player.mjs');
 
@@ -287,6 +289,21 @@ export function setupPlayerFunctions(player) {
         return player.data.bank;
     };
 
+    player.subToZero = amount => {
+        const bank = player.data.bank;
+        const cash = player.data.cash;
+        const removed = Math.abs(bank - amount);
+        player.data.bank = bank - amount <= 0 ? 0 : bank - amount;
+
+        if (removed > 0) {
+            player.data.cash = cash - removed <= 0 ? 0 : cash - removed;
+        }
+
+        player.saveField(player.data.id, 'bank', player.data.bank);
+        player.saveField(player.data.id, 'cash', player.data.cash);
+        player.syncMoney();
+    };
+
     player.taxIncome = (percentage, useHighest, reason) => {
         let cash = player.getCash(); // 0
         let bank = player.getBank(); // 1
@@ -516,6 +533,37 @@ export function setupPlayerFunctions(player) {
             return false;
         }
         return true;
+    };
+
+    player.removeItemsOnArrest = () => {
+        player.inventory.forEach((item, index) => {
+            if (!item) return;
+
+            if (item.base.includes('weapon') || item.base.includes('unrefined')) {
+                player.inventory[index] = null;
+            }
+        });
+
+        player.equipment.forEach((item, index) => {
+            if (!item) return;
+
+            if (item.base.includes('weapon') || item.base.includes('unrefined')) {
+                player.equipment[index] = null;
+            }
+        });
+        player.saveInventory();
+    };
+
+    player.dropItemsOnDeath = () => {
+        player.inventory.forEach((item, index) => {
+            if (!item) return;
+            if (item.base.includes('weapon') || item.base.includes('unrefined')) {
+                const itemClone = { ...item };
+                dropNewItem(player.pos, itemClone);
+                player.inventory[index] = null;
+            }
+        });
+        player.saveInventory();
     };
 
     player.saveInventory = () => {
@@ -885,5 +933,18 @@ export function setupPlayerFunctions(player) {
             return false;
         }
         return true;
+    };
+
+    // ==============================
+    player.syncDoorStates = () => {
+        Object.keys(doorStates).forEach(state => {
+            alt.emitClient(
+                null,
+                'door:Lock',
+                doorStates[state].type,
+                doorStates[state].pos,
+                doorStates[state].heading
+            );
+        });
     };
 }

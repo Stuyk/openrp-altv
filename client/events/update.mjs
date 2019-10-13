@@ -27,8 +27,17 @@ function drawPlayerNames() {
     let lPos = alt.Player.local.pos;
 
     alt.Player.all.forEach(player => {
-        if (player === alt.Player.local) return;
+        if (player === alt.Player.local) {
+            const isDead = alt.Player.local.getSyncedMeta('dead');
+            if (isDead) {
+                native.setPedToRagdoll(alt.Player.local.scriptID, 1000, 1000, 0, 0, 0, 0);
+            }
+            return;
+        }
+
         let localPlayerName = player.getSyncedMeta('name');
+        let color = player.getSyncedMeta('namecolor');
+        localPlayerName = color ? color + localPlayerName : localPlayerName;
 
         if (localPlayerName === undefined || localPlayerName === null) return;
 
@@ -79,7 +88,7 @@ function drawPlayerNames() {
             255,
             255,
             255,
-            100,
+            200,
             true,
             false,
             99

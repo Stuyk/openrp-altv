@@ -197,7 +197,7 @@ export function hideContext() {
 }
 
 function useMenu() {
-    if (alt.Player.local.getMeta('viewOpen')) {
+    if (alt.Player.local.getMeta('viewOpen') || alt.Player.local.getSyncedMeta('dead')) {
         if (interval) {
             alt.clearInterval(interval);
             interval = undefined;

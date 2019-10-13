@@ -181,29 +181,29 @@ export function splitItem(player, hash) {
     player.splitItem(index);
 }
 
-export function dropNewItem(player, item) {
-    let isDroppable = true;
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== item.label) return;
-        isDroppable = configurationItems.Items[key].droppable;
-    });
+export function dropNewItem(pos, item) {
+    console.log(item);
+    const baseItem = BaseItems[item.base];
 
-    if (!isDroppable) {
-        console.log('Cannot be dropped.');
-        console.log(item);
+    if (!baseItem) {
         return;
     }
 
+    if (!baseItem.abilities.drop) {
+        return;
+    }
+
+    // Generate a clone of the object.
+    const clonedItem = { ...item };
+
     // Regenerate new hash for each dropped item.
-    let firstHash = utilityEncryption.generateHash(JSON.stringify(item));
-    let newHash = utilityEncryption.generateHash(JSON.stringify({ firstHash, item }));
-    item.hash = newHash;
+    let newHash = generateHash(JSON.stringify({ hash: item.hash, clonedItem }));
+    clonedItem.hash = newHash;
 
     // Setup the dropped item.
-    ItemDrops.set(newHash, item);
-
-    let randomPos = utilityVector.randPosAround(player.pos, 2);
-    alt.emitClient(null, 'inventory:ItemDrop', player, item, randomPos);
+    ItemDrops.set(newHash, clonedItem);
+    const randomPos = utilityVector.randPosAround(pos, 2);
+    alt.emitClient(null, 'inventory:ItemDrop', null, clonedItem, randomPos);
 }
 
 export function drop(player, hash) {

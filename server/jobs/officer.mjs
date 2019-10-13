@@ -9,41 +9,35 @@ import {
 } from '../systems/job.mjs';
 import { Interaction } from '../systems/interaction.mjs';
 
-const jobName = 'Taxi Depot';
-const trackStart = {
-    x: 895.7274780273438,
-    y: -179.56483459472656,
-    z: 74.6900634765625
-};
+const jobName = 'Officer';
+const trackStart = { x: 458.305419921875, y: -990.7243041992188, z: 30.68960189819336 };
 const interactionPoint = { ...trackStart };
+const vehicles = ['police', 'police2', 'police3', 'policet'];
 interactionPoint.z -= 5;
 let interaction = new Interaction(
     interactionPoint,
     'job',
-    'job:TaxiJob',
+    'job:Officer',
     2,
     20,
-    'to work as a taxi driver.'
+    'to work as a police officer.'
 );
-interaction.addBlip(56, 5, jobName);
+interaction.addBlip(60, 38, jobName);
 
-alt.on('job:TaxiJob', player => {
+alt.on('job:Officer', player => {
     let pos;
     const emptyVector = { x: 0, y: 0, z: 0 };
-    let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
+    let job = new Job(player, jobName, restrictions.NO_DIEING, '{0099ff}');
     job.setItemRestrictions([{ key: 'driverslicense', hasItem: true }]);
-    //job.setUniform('TrackSuit');
+    job.setLevelRestrictions([{ skill: 'nobility', xp: '13363' }]);
+    job.setUniform('policeuniform');
 
     // Starting Point
     let obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
-    pos = {
-        x: 909.7714233398438,
-        y: -170.03076171875,
-        z: 73.15087890625
-    };
+    pos = { x: 435.2911071777344, y: -981.773681640625, z: 30.690650939941406 };
     obj.setPosition(pos);
     obj.setRange(3);
-    obj.setHelpText('Pick up your vehicle.');
+    obj.setHelpText('Exit the station.');
     obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
@@ -56,31 +50,27 @@ alt.on('job:TaxiJob', player => {
         0,
         100
     );
-    obj.setVehicle('taxi', pos);
     job.add(copyObjective(obj));
 
-    // Starting Point
-    obj = new Objective(objectives.POINT, modifiers.IN_VEHICLE);
-    pos = {
-        x: 918.5274658203125,
-        y: -182.967041015625,
-        z: 72.999267578125
-    };
+    pos = { x: 407.7098083496094, y: -997.7537231445312, z: 29.266338348388672 };
+    obj = new Objective(objectives.POINT, modifiers.ON_FOOT);
     obj.setPosition(pos);
-    obj.setRange(5);
-    obj.setHelpText('Exit the taxi station.');
+    obj.setRange(3);
+    obj.setHelpText('Retreive your patrol car.');
     obj.setBlip(1, 1, pos);
     obj.setMarker(
         0,
         pos,
         emptyVector,
         emptyVector,
-        new alt.Vector3(5, 5, 1),
+        new alt.Vector3(1, 1, 1),
         0,
         255,
         0,
         100
     );
+    let index = Math.floor(Math.random() * (vehicles.length - 1));
+    obj.setVehicle(vehicles[index], pos, 180);
     job.add(copyObjective(obj));
 
     // Infinite Loop
@@ -88,18 +78,12 @@ alt.on('job:TaxiJob', player => {
     job.add(copyObjective(obj));
 
     // Begin Searching for Player
-    obj = new Objective(objectives.PLAYER, modifiers.PICKUP_PLAYER);
+    obj = new Objective(objectives.PLAYER, modifiers.NULL_PLAYER);
     obj.setRange(3);
     obj.setPosition(emptyVector);
-    obj.setBlip(1, 1, new alt.Vector3(0, 0, 0));
-    obj.setHelpText('Wait for a customer...');
-    job.add(copyObjective(obj));
-
-    obj = new Objective(objectives.PLAYER, modifiers.DROPOFF_PLAYER);
-    obj.setRange(3);
-    obj.setPosition(emptyVector);
-    obj.setBlip(1, 1, new alt.Vector3(0, 0, 0));
-    obj.setHelpText('Drop off your user.');
+    obj.setHelpText(
+        'Use `/mdc` to access your terminal. Patrol for any logged criminals.'
+    );
     job.add(copyObjective(obj));
 
     job.start(player);

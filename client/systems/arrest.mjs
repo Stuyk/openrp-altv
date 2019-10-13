@@ -90,6 +90,7 @@ function arrestHandler() {
         }
     }
 
+    if (alt.Player.local.getSyncedMeta('arrestedFreely')) return;
     const dist = distance(arrester.pos, alt.Player.local.pos);
     if (dist < 2) return;
 

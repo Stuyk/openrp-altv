@@ -3,6 +3,39 @@ import * as configurationItems from '../configuration/items.mjs';
 import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 
+export let doorStates = {
+    '{"x":461.8065185546875,"y":-994.4085693359375,"z":25.06442642211914}': {
+        pos: {
+            x: 461.8065185546875,
+            y: -994.4085693359375,
+            z: 25.06442642211914
+        },
+        type: 631614199,
+        heading: 0,
+        locked: true
+    },
+    '{"x":461.8064880371094,"y":-997.6583251953125,"z":25.06442642211914}': {
+        pos: {
+            x: 461.8064880371094,
+            y: -997.6583251953125,
+            z: 25.06442642211914
+        },
+        type: 631614199,
+        heading: 0,
+        locked: true
+    },
+    '{"x":461.8065185546875,"y":-1001.301513671875,"z":25.06442642211914}': {
+        pos: {
+            x: 461.8065185546875,
+            y: -1001.301513671875,
+            z: 25.06442642211914
+        },
+        type: 631614199,
+        heading: 0,
+        locked: true
+    }
+};
+
 export function sodaMachine(player) {
     if (!player.subCash(5)) {
         player.send(`You don't have enough money for a soda. {FFFF00}$5.00`);
@@ -51,8 +84,13 @@ export function exitLabs(player) {
     player.pos = { x: 3626.514404296875, y: 3752.325439453125, z: 28.515737533569336 };
 }
 
-export function cuffPlayer(arrester, arrestee) {
+export function cuffPlayerFreely(arrester, arrestee) {
     if (!arrester || !arrestee) return;
+    if (arrester.cuffedPlayer) {
+        arrester.send('You already have a player cuffed.');
+        return;
+    }
+
     const cuffCount = arrester.hasQuantityOfItem('cuffs', 1);
     const ropeCount = arrester.hasQuantityOfItem('rope', 1);
 
@@ -74,6 +112,46 @@ export function cuffPlayer(arrester, arrestee) {
     arrestee.isArrested = true;
     alt.emitClient(arrestee, 'arrest:Tazed', -1);
     arrestee.setSyncedMeta('arrested', arrester);
+    arrestee.setSyncedMeta('arrestedFreely', true);
+    arrestee.emitMeta('arrest', arrester);
+    actionMessage(
+        arrester,
+        `Forces ${arrestee.data.name.replace(
+            '_',
+            ' '
+        )}'s hands behind their back and binds them.`
+    );
+}
+
+export function cuffPlayer(arrester, arrestee) {
+    if (!arrester || !arrestee) return;
+    if (arrester.cuffedPlayer) {
+        arrester.send('You already have a player cuffed.');
+        return;
+    }
+
+    const cuffCount = arrester.hasQuantityOfItem('cuffs', 1);
+    const ropeCount = arrester.hasQuantityOfItem('rope', 1);
+
+    if (!cuffCount && !ropeCount) {
+        arrester.send('You cannot bind this player without rope or cuffs.');
+        return;
+    }
+
+    if (cuffCount) {
+        arrestee.cuffTime = Date.now() + 60000 * 10;
+        arrester.send('You use your cuffs.');
+    } else {
+        arrestee.cuffTime = Date.now() + 60000 * 5;
+        arrester.subItem('rope', 1);
+        arrester.send('You use a bundle of rope.');
+    }
+
+    arrester.cuffedPlayer = arrestee;
+    arrestee.isArrested = true;
+    alt.emitClient(arrestee, 'arrest:Tazed', -1);
+    arrestee.setSyncedMeta('arrested', arrester);
+    arrestee.setSyncedMeta('arrestedFreely', false);
     arrestee.emitMeta('arrest', arrester);
     actionMessage(
         arrester,
@@ -111,9 +189,18 @@ export function breakCuffs(player) {
 }
 
 export function toggleDoor(player, data) {
+    if (data.type === 631614199) {
+        if (!player.job) return;
+        if (!player.job.name.includes('Officer')) return;
+    }
+
     if (data.locked) {
+        data.locked = false;
+        doorStates[`${JSON.stringify(data.pos)}`] = data;
         alt.emitClient(null, 'door:Unlock', data.type, data.pos, data.heading);
     } else {
+        data.locked = true;
+        doorStates[`${JSON.stringify(data.pos)}`] = data;
         alt.emitClient(null, 'door:Lock', data.type, data.pos, data.heading);
     }
 }

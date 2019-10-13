@@ -4,6 +4,18 @@ export const BaseItems = {
         abilities: {
             drop: true,
             use: true,
+            destroy: false,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: 11
+    },
+    boundweapon: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: false,
+            use: true,
             destroy: true,
             sell: true,
             rename: false,
@@ -201,7 +213,7 @@ export const BaseItems = {
             rename: true,
             stack: false
         },
-        slot: 12
+        slot: 14
     },
     pickaxe: {
         eventcall: 'itemeffects:EquipItem',
@@ -268,7 +280,7 @@ export const BaseItems = {
         abilities: {
             drop: true,
             use: false,
-            destroy: true,
+            destroy: false,
             sell: true,
             rename: false,
             stack: false
@@ -280,7 +292,7 @@ export const BaseItems = {
         abilities: {
             drop: true,
             use: false,
-            destroy: true,
+            destroy: false,
             sell: true,
             rename: false,
             stack: true
@@ -292,7 +304,7 @@ export const BaseItems = {
         abilities: {
             drop: true,
             use: false,
-            destroy: true,
+            destroy: false,
             sell: true,
             rename: false,
             stack: true
@@ -685,6 +697,30 @@ export const Items = {
                 { id: 6, value: 62 },
                 { id: 8, value: 15 },
                 { id: 11, value: 41 }
+            ]
+        },
+        quantity: 0,
+        icon: 'outfit'
+    },
+    policeuniform: {
+        name: 'Police Uniform',
+        base: 'uniform',
+        key: 'policeuniform',
+        props: {
+            restriction: -1,
+            female: [
+                { id: 3, value: 9 },
+                { id: 4, value: 30 },
+                { id: 6, value: 24 },
+                { id: 8, value: 35 },
+                { id: 11, value: 48 }
+            ],
+            male: [
+                { id: 3, value: 0 },
+                { id: 4, value: 31 },
+                { id: 6, value: 24 },
+                { id: 8, value: 58 },
+                { id: 11, value: 55 }
             ]
         },
         quantity: 0,

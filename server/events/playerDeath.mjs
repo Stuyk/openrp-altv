@@ -79,12 +79,16 @@ function handleHospital(player) {
         }
     });
 
+    player.dropItemsOnDeath();
     player.hasDied = true;
     player.revivePos = player.isArrested
         ? { x: 459.00830078125, y: -998.204833984375, z: 24.91485023498535 }
         : closestHospital;
     player.saveDead(true);
     player.send('Type /revive to revive at the nearest hospital.');
+    player.setSyncedMeta('dead', true);
+    player.spawn(player.pos.x, player.pos.y, player.pos.z, 0);
+    player.health = 200;
 }
 
 function handleMdcRegistration(target, killer) {

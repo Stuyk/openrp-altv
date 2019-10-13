@@ -30,7 +30,7 @@ function drawPlayerNames() {
         if (player === alt.Player.local) {
             const isDead = alt.Player.local.getSyncedMeta('dead');
             if (isDead) {
-                native.setPedToRagdoll(alt.Player.local.scriptID, 1000, 1000, 0, 0, 0, 0);
+                native.setPedToRagdoll(alt.Player.local.scriptID, -1, -1, 0, 0, 0, 0);
             }
             return;
         }

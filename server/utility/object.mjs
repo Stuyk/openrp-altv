@@ -3,7 +3,6 @@ export function objectToNull(obj) {
         return null;
     } else {
         if (obj.name === '') {
-            console.log('cleansed object');
             return null;
         }
     }

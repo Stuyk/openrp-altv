@@ -5,82 +5,11 @@ import * as utilityEncryption from '../utility/encryption.mjs';
 import { generateHash } from '../utility/encryption.mjs';
 import { BaseItems, Items } from '../configuration/items.mjs';
 import { Weapons } from '../configuration/weapons.mjs';
+import { objectToNull } from '../utility/object.mjs';
 console.log('Loaded: systems->inventory.mjs');
 
 // hash, itemdata
 let ItemDrops = new Map();
-
-// Called when a player consumes an item.
-alt.on('item:Consume', (player, itemObject) => {
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== itemObject.label) return;
-
-        const itemTemplate = configurationItems.Items[key];
-
-        if (itemTemplate.sound !== undefined) {
-            player.playAudio(itemTemplate.sound);
-        }
-
-        // animdict: 'mp_player_inteat@burger',
-        // anim: 'mp_player_int_eat_burger_fp',
-        // animflag: 49,
-        // Play animation for player if available.
-        if (itemTemplate.anim !== undefined) {
-            player.playAnimation(
-                itemTemplate.anim.dict,
-                itemTemplate.anim.name,
-                itemTemplate.anim.duration,
-                itemTemplate.anim.flag
-            );
-        }
-
-        alt.emit(itemTemplate.eventcall, player, itemObject.props, itemTemplate.message);
-        return;
-    });
-});
-
-// Called when a player uses an item.
-alt.on('item:Use', (player, itemObject) => {
-    Object.keys(configurationItems.Items).forEach(key => {
-        if (configurationItems.Items[key].label !== itemObject.label) return;
-
-        const itemTemplate = configurationItems.Items[key];
-
-        if (itemTemplate.sound !== undefined) {
-            player.playAudio(itemTemplate.sound);
-        }
-
-        if (itemTemplate.eventcall === undefined) return;
-
-        alt.emit(itemTemplate.eventcall, player, itemObject.props, itemTemplate.message);
-        return;
-    });
-});
-
-// Remove an item from a player.
-alt.on('inventory:SubItem', (player, index, quantity) => {
-    player.inventory[index].quantity -= quantity;
-
-    if (player.inventory[index].quantity <= 0) {
-        player.inventory[index] = null;
-        player.data.inventory = JSON.stringify(player.inventory);
-        player.saveField(player.data.id, 'inventory', player.data.inventory);
-        player.updateInventory();
-        return;
-    }
-
-    player.data.inventory = JSON.stringify(player.inventory);
-    player.saveField(player.data.id, 'inventory', player.data.inventory);
-    player.updateInventory();
-});
-
-alt.on('inventory:AddItem', (player, index, quantity) => {
-    player.inventory[index].quantity += quantity;
-    player.data.inventory = JSON.stringify(player.inventory);
-    player.saveField(player.data.id, 'inventory', player.data.inventory);
-    player.setSyncedMeta('inventory', player.data.inventory);
-    player.updateInventory();
-});
 
 export function rename(player, hash, newName) {
     let index = player.inventory.findIndex(
@@ -182,7 +111,6 @@ export function splitItem(player, hash) {
 }
 
 export function dropNewItem(pos, item) {
-    console.log(item);
     const baseItem = BaseItems[item.base];
 
     if (!baseItem) {
@@ -193,8 +121,13 @@ export function dropNewItem(pos, item) {
         return;
     }
 
+    const result = objectToNull(item);
+    if (!result) {
+        return;
+    }
+
     // Generate a clone of the object.
-    const clonedItem = { ...item };
+    const clonedItem = item;
 
     // Regenerate new hash for each dropped item.
     let newHash = generateHash(JSON.stringify({ hash: item.hash, clonedItem }));
@@ -281,9 +214,10 @@ export function pickup(player, hash) {
     let item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);
 
-    if (!player.addItem(item.key, item.quantity, item.props)) {
+    if (!player.addItem(item.key, item.quantity, item.props, false, false, item.name)) {
         ItemDrops.set(hash, item);
         player.pickingUpItem = false;
+        alt.emitClient(null, 'inventory:ItemDrop', null, clonedItem, randomPos);
         return;
     }
 

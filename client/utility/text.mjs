@@ -5,22 +5,20 @@ alt.log('Loaded: client->utility->text.mjs');
 
 alt.onServer('text:playerAction', (player, msg) => {
     const interval = alt.setInterval(() => {
-        alt.nextTick(() => {
-            drawText3d(
-                `* ${msg} *`,
-                player.pos.x,
-                player.pos.y,
-                player.pos.z + 0.4,
-                0.4,
-                4,
-                255,
-                255,
-                255,
-                255,
-                true,
-                false
-            );
-        });
+        drawText3d(
+            `* ${msg} *`,
+            player.pos.x,
+            player.pos.y,
+            player.pos.z + 0.4,
+            0.4,
+            4,
+            255,
+            255,
+            255,
+            255,
+            true,
+            false
+        );
     }, 0);
     alt.setTimeout(() => {
         alt.clearInterval(interval);

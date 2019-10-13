@@ -4,6 +4,7 @@ import * as panelsClothing from '/client/panels/clothing.mjs';
 import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
 import * as panelsBarbershop from '/client/panels/barbershop.mjs';
 import { createBlip } from '/client/blips/bliphelper.mjs';
+import { syncDoors } from '/client/systems/doors.mjs';
 
 alt.log('Loaded: client->systems->shop.mjs');
 
@@ -99,6 +100,14 @@ function shopInterval() {
 
     // Get the current interior of the user.
     const currInterior = native.getInteriorFromEntity(alt.Player.local.scriptID);
+
+    // LSPD
+    if (currInterior === 137473) {
+        clearShop();
+        syncDoors();
+        return;
+    }
+
     if (currInterior === 0) {
         clearShop();
         return;

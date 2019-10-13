@@ -25,25 +25,18 @@ alt.on('animation:Play', (player, data) => {
 });
 
 alt.on('animation:Clear', ent => {
-    alt.Player.local.inAnimation = false;
+    native.clearPedTasks(alt.Player.local.scriptID);
     if (!alt.Player.local.vehicle) {
-        native.clearPedTasks(alt.Player.local.scriptID);
         native.clearPedSecondaryTask(alt.Player.local.scriptID);
     }
 });
 
 export function playAnimation(player, dict, name, duration, flag) {
-    // Local Player Version
-    if (player.scriptID === alt.Player.local.scriptID) {
-        if (alt.Player.local.inAnimation) return;
-        alt.Player.local.inAnimation = true;
-        startAnimation(player, dict, name, duration, flag);
-    } else {
-        startAnimation(player, dict, name, duration, flag);
-    }
+    startAnimation(player, dict, name, duration, flag);
 }
 
 function startAnimation(player, dict, name, duration, flag) {
+    native.clearPedTasks(alt.Player.local.scriptID);
     if (native.hasAnimDictLoaded(dict)) {
         native.taskPlayAnim(
             player.scriptID,

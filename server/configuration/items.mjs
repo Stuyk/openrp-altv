@@ -709,7 +709,7 @@ export const Items = {
         props: {
             restriction: -1,
             female: [
-                { id: 3, value: 9 },
+                { id: 3, value: 0 },
                 { id: 4, value: 30 },
                 { id: 6, value: 24 },
                 { id: 8, value: 35 },

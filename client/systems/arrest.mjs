@@ -6,6 +6,7 @@ import { distance } from '/client/utility/vector.mjs';
 let arrester;
 let interval;
 let arrestPos;
+let lastCuffCheck = Date.now();
 
 // When the player updates their inventory.
 alt.on('meta:Changed', (key, value) => {
@@ -46,9 +47,16 @@ alt.on('meta:Changed', (key, value) => {
 function arrestHandler() {
     if (!arrester) return;
 
-    if (
-        !native.isEntityPlayingAnim(alt.Player.local.scriptID, 'mp_arresting', 'idle', 0)
-    ) {
+    const inAnim = native.isEntityPlayingAnim(
+        alt.Player.local.scriptID,
+        'mp_arresting',
+        'idle',
+        0
+    );
+
+    if (!inAnim && Date.now() > lastCuffCheck) {
+        lastCuffCheck = Date.now() + 10000;
+        native.clearPedTasks(alt.Player.local.scriptID);
         native.taskPlayAnim(
             alt.Player.local.scriptID,
             'mp_arresting',
@@ -65,6 +73,7 @@ function arrestHandler() {
     }
 
     if (native.isPedInAnyVehicle(arrester.scriptID, false)) {
+        if (!arrester.vehicle) return;
         const veh = arrester.vehicle.scriptID;
 
         if (alt.Player.local.vehicle) {

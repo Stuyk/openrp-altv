@@ -9,12 +9,12 @@ import {
 } from '../systems/job.mjs';
 import { Interaction } from '../systems/interaction.mjs';
 
-const jobName = 'Motorcross Training';
+const jobName = 'Agility Training';
 const trackStart = { x: 1180.7962646484375, y: 2373.35595703125, z: 57.449951171875 };
 const trackPoints = [
     { x: 1164.666748046875, y: 2439.90234375, z: 55.575157165527344 },
     { x: 1131.8624267578125, y: 2479.818115234375, z: 52.5234489440918 },
-    { x: 1091.70703125, y: 2453.2314453125, z: 49.49425506591797 },
+    { x: 1102.4945068359375, y: 2468.48828125, z: 49.768863677978516 },
     { x: 1026.4510498046875, y: 2439.0205078125, z: 44.885108947753906 },
     { x: 973.6740112304688, y: 2459.2451171875, z: 50.46562957763672 },
     { x: 918.0927124023438, y: 2485.292236328125, z: 51.5704231262207 },
@@ -39,9 +39,9 @@ let interaction = new Interaction(
     'job:Dirtbike2',
     3,
     3,
-    'to begin motorcross training.'
+    'to begin training agility.'
 );
-interaction.addBlip(226, 6, jobName);
+interaction.addBlip(126, 6, jobName);
 
 alt.on('job:Dirtbike2', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);

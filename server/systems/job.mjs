@@ -690,7 +690,7 @@ export class Job {
         }
 
         if (this.enabledTimer) {
-            player.send('Clock is ticking.. Go Go Go!');
+            player.notice('Clock is ticking.. Go Go Go!');
         }
     }
 
@@ -881,11 +881,12 @@ export class Job {
      */
     completeJob(player) {
         player.emitMeta('job:Objective', undefined);
-        player.send('Job Complete!');
         if (this.enabledTimer) {
             let end = Date.now();
             let elapsed_time = parseFloat((end - this.start) / 1000).toFixed(1);
-            player.send(`Elapsed Time: ${elapsed_time} seconds`);
+            player.notice(`Job Completed in ${elapsed_time} Seconds!`);
+        } else {
+            player.notice('Job Complete!');
         }
         quitJob(player);
     }

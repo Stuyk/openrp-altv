@@ -156,6 +156,7 @@ export function sync(player) {
         player.syncInventory(true);
         player.syncMoney();
         player.syncDoorStates();
+        player.syncArrest();
         if (player.data.dead) {
             player.health = 0;
             player.armour = 0;

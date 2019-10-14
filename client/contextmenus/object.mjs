@@ -148,6 +148,9 @@ let objectInteractions = {
     4223549947: {
         func: chair
     },
+    4123023395: {
+        func: chair
+    },
     2930269768: {
         func: atm
     },
@@ -169,6 +172,9 @@ let objectInteractions = {
     },
     631614199: {
         func: doorControl
+    },
+    690372739: {
+        func: coffeeMachine
     }
 };
 
@@ -210,6 +216,19 @@ function sodaMachine(ent) {
             label: 'Buy Soda',
             isServer: true,
             event: 'use:SodaMachine'
+        }
+    ]);
+}
+
+function coffeeMachine(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'Coffee Machine'
+        },
+        {
+            label: 'Buy Coffee',
+            isServer: true,
+            event: 'use:CoffeeMachine'
         }
     ]);
 }
@@ -340,6 +359,7 @@ function doorControl(ent) {
 }
 
 function chair(ent) {
+    native.freezeEntityPosition(ent, true);
     let pos = native.getEntityCoords(ent, false);
     let heading = native.getEntityHeading(ent) + 180.0;
 
@@ -351,7 +371,6 @@ function chair(ent) {
     }
 
     if (native.hasObjectBeenBroken(ent)) return;
-
     native.taskStartScenarioAtPosition(
         alt.Player.local.scriptID,
         'PROP_HUMAN_SEAT_BENCH',

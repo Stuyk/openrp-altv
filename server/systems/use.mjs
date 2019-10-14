@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import * as configurationItems from '../configuration/items.mjs';
+import { Items } from '../configuration/items.mjs';
 import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 import { appendToMdc } from './mdc.mjs';
@@ -38,18 +38,31 @@ export let doorStates = {
 };
 
 export function sodaMachine(player) {
+    if (!Items.soda) return;
+
     if (!player.subCash(5)) {
         player.send(`You don't have enough money for a soda. {FFFF00}$5.00`);
         return;
     }
 
-    let itemTemplate = configurationItems.Items.soda;
-    let clonedTemplate = { ...itemTemplate }; // Clone the template.
-
-    player.addItem(clonedTemplate, 1);
+    player.addItem('soda', 1, Items.soda.props);
     chat.actionMessage(
         player,
         'Inserts money into the machine; and it spits out a soda.'
+    );
+}
+
+export function coffeeMachine(player) {
+    if (!Items.soda) return;
+    if (!player.subCash(5)) {
+        player.send(`You don't have enough money for some coffee. {FFFF00}$5.00`);
+        return;
+    }
+
+    player.addItem('coffee', 1, Items.coffee.props);
+    chat.actionMessage(
+        player,
+        'Inserts money into the machine; and it spits out a canned coffee.'
     );
 }
 
@@ -110,6 +123,8 @@ export function cuffPlayerFreely(arrester, arrestee) {
     }
 
     arrester.cuffedPlayer = arrestee;
+    console.log(arrestee);
+    console.log(arrester.cuffedPlayer.data.name);
     arrestee.isArrested = true;
     arrestee.unequipItem(11);
     alt.emitClient(arrestee, 'arrest:Tazed', -1);
@@ -140,7 +155,7 @@ export function friskPlayer(arrester, arrestee) {
         actionMessage(arrester, msg);
 
         if (isOfficer) {
-            appendToMdc('None - Frisked', arrestee.data.name, 'Drugs');
+            appendToMdc('None - Frisked', arrestee, 'Drugs');
         }
     }
 
@@ -149,7 +164,7 @@ export function friskPlayer(arrester, arrestee) {
         actionMessage(arrester, msg);
 
         if (isOfficer) {
-            appendToMdc('None - Frisked', arrestee.data.name, 'Weapons');
+            appendToMdc('None - Frisked', arrestee, 'Weapons');
         }
     }
 

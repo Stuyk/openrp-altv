@@ -13,10 +13,10 @@ const jailCells = [
 ];
 
 const charges = [
-    { name: 'Murder', amount: 2500, xp: -75 },
-    { name: 'Speeding', amount: 100, xp: -10 },
-    { name: 'Weapons', amount: 1000, xp: -50 },
-    { name: 'Drugs', amount: 250, xp: -25 }
+    { name: 'Murder', amount: 2500, xp: -75, time: 10 },
+    { name: 'Speeding', amount: 100, xp: -10, time: 2 },
+    { name: 'Weapons', amount: 1000, xp: -50, time: 5 },
+    { name: 'Drugs', amount: 250, xp: -25, time: 5 }
 ];
 
 /**
@@ -31,12 +31,22 @@ export function appendToMdc(victim, attacker, reason) {
         currentMdc = [];
     }
 
+    if (victim.includes('Frisked')) {
+        victim = {
+            data: {
+                name: victim
+            }
+        };
+    }
+
     const mdc = JSON.parse(details.mdc);
     mdc.push({
-        victim,
-        attacker,
+        victim: victim.data.name,
+        attacker: attacker.data.name,
         reason,
-        hash: generateHash(JSON.stringify(victim.data))
+        hash: generateHash(
+            JSON.stringify(attacker.data) + reason + Math.random() * 9999999
+        )
     });
     updateField('mdc', mdc);
 }
@@ -57,6 +67,8 @@ export function removeFromMdc(player) {
 export function lookupByHash(hash) {
     const mdc = JSON.parse(details.mdc);
     const criminalData = mdc.find(x => x.hash === hash);
+
+    console.log(criminalData);
 
     if (!criminalData) {
         return undefined;
@@ -123,6 +135,7 @@ alt.onClient('mdc:TurnIn', (player, hash) => {
         return;
     }
 
+    console.log(hash);
     const criminal = lookupByHash(hash);
     if (!criminal) {
         quitJob(player, false, true);
@@ -143,6 +156,7 @@ alt.onClient('mdc:TurnIn', (player, hash) => {
 
     const criminalCharges = removeFromMdc(criminal);
     let amount = 0;
+    let arrestTime = 0;
     criminalCharges.forEach(charge => {
         let foundCharge = charges.find(x => x.name === charge.reason);
         if (!foundCharge) {
@@ -153,8 +167,13 @@ alt.onClient('mdc:TurnIn', (player, hash) => {
         addXP(criminal, 'notoriety', foundCharge.xp);
         addXP(player, 'nobility', Math.abs(foundCharge.xp));
         amount += foundCharge.amount;
+        arrestTime += foundCharge.time;
         criminal.send(`Charges: ${charge.reason}`);
     });
+
+    if (arrestTime > 30) {
+        arrestTime = 30;
+    }
 
     let randomCell = Math.floor(Math.random() * (jailCells.length - 1));
     criminal.subToZero(parseInt(amount));
@@ -163,5 +182,7 @@ alt.onClient('mdc:TurnIn', (player, hash) => {
     criminal.send(`{FFFF00}All weapons and unrefined goods were confiscated.`);
     criminal.pos = jailCells[randomCell];
     criminal.syncDoorStates();
+    criminal.send(`You will be detained for ${arrestTime} minutes.`);
+    criminal.setArrestTime(arrestTime * 60000);
     uncuffPlayer(player, criminal);
 });

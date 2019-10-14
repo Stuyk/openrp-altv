@@ -116,6 +116,10 @@ export const Character = new orm.EntitySchema({
         contacts: {
             type: 'text',
             default: '[]'
+        },
+        arrestTime: {
+            type: 'text',
+            default: '-1'
         }
     }
 });

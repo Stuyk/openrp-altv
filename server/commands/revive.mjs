@@ -37,6 +37,8 @@ chat.registerCmd('revive', player => {
         player.reviveTime = undefined;
         player.revive = false;
         player.isArrested = false;
+        player.lastLocation = undefined;
+        player.sendToJail = false;
         player.saveDead(false);
         player.taxIncome(configurationHospitals.Currency.feePct, true, 'Hospital Fee');
         player.send('You have been revived.');

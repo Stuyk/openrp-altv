@@ -16,7 +16,8 @@ const events = {
     'use:ToggleDoor': systemsUse.toggleDoor,
     'use:BreakCuffs': systemsUse.breakCuffs,
     'use:CuffPlayerFreely': systemsUse.cuffPlayerFreely,
-    'use:FriskPlayer': systemsUse.friskPlayer
+    'use:FriskPlayer': systemsUse.friskPlayer,
+    'use:CoffeeMachine': systemsUse.coffeeMachine
 };
 
 Object.keys(events).forEach(key => {

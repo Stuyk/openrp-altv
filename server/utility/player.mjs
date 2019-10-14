@@ -78,7 +78,7 @@ export function setupPlayerFunctions(player) {
     // ====================================
     player.notice = msg => {
         alt.emitClient(player, 'chat:Notice', msg);
-    }
+    };
 
     // ====================================
     // Weather & Time
@@ -541,21 +541,22 @@ export function setupPlayerFunctions(player) {
     };
 
     player.removeItemsOnArrest = () => {
+        const illegalBaseItems = ['weapon', 'boundweapon', 'unrefined', 'refineddrug'];
+
         player.inventory.forEach((item, index) => {
             if (!item) return;
-
-            if (item.base.includes('weapon') || item.base.includes('unrefined')) {
+            if (illegalBaseItems.includes(item.base)) {
                 player.inventory[index] = null;
             }
         });
 
         player.equipment.forEach((item, index) => {
             if (!item) return;
-
-            if (item.base.includes('weapon') || item.base.includes('unrefined')) {
+            if (illegalBaseItems.includes(item.base)) {
                 player.equipment[index] = null;
             }
         });
+
         player.saveInventory();
     };
 
@@ -597,7 +598,10 @@ export function setupPlayerFunctions(player) {
         player.emitMeta('inventory', player.data.inventory);
 
         if (player.equipment[11]) {
-            if (player.equipment[11].base === 'weapon') {
+            if (
+                player.equipment[11].base === 'weapon' ||
+                player.equipment[11].base === 'boundweapon'
+            ) {
                 player.setSyncedMeta('prop:11', undefined);
                 player.setWeapon(player.equipment[11].props.hash);
             } else {
@@ -622,6 +626,10 @@ export function setupPlayerFunctions(player) {
             }
 
             if (item.base === 'weapon') {
+                hasWeapons = true;
+            }
+
+            if (item.base === 'boundweapon') {
                 hasWeapons = true;
             }
         });
@@ -960,6 +968,7 @@ export function setupPlayerFunctions(player) {
     };
 
     // ==============================
+    // Doors
     player.syncDoorStates = () => {
         Object.keys(doorStates).forEach(state => {
             alt.emitClient(
@@ -970,5 +979,32 @@ export function setupPlayerFunctions(player) {
                 doorStates[state].heading
             );
         });
+    };
+
+    // =================
+    // Prisoner
+    player.setArrestTime = ms => {
+        if (ms <= 0) {
+            player.data.arrestTime = '-1';
+            player.pos = {
+                x: 441.4432067871094,
+                y: -982.8604125976562,
+                z: 30.68960952758789
+            };
+            player.notice('You are now a free citizen.');
+        } else {
+            player.data.arrestTime = `${Date.now() + ms}`;
+        }
+
+        player.saveField(player.data.id, 'arrestTime', player.data.arrestTime);
+        player.syncArrest();
+    };
+
+    player.syncArrest = () => {
+        if (Date.now() < parseInt(player.data.arrestTime)) {
+            player.setSyncedMeta('namecolor', '{ff8400}');
+        } else {
+            player.setSyncedMeta('namecolor', null);
+        }
     };
 }

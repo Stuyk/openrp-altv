@@ -356,6 +356,14 @@ export const Items = {
         quantity: 0,
         icon: 'weapon'
     },
+    boundweapon: {
+        name: '',
+        base: 'boundweapon',
+        key: 'boundweapon',
+        props: {},
+        quantity: 0,
+        icon: 'weapon'
+    },
     granolabar: {
         name: 'Granola Bar',
         base: 'food',
@@ -372,6 +380,23 @@ export const Items = {
         key: 'soda',
         props: {
             health: 2
+        },
+        quantity: 0,
+        icon: 'soda'
+    },
+    coffee: {
+        name: 'Coffee',
+        base: 'food',
+        key: 'coffee',
+        props: {
+            skillbonus: [
+                {
+                    skill: 'agility',
+                    level: 1,
+                    time: 60000
+                }
+            ],
+            health: 1
         },
         quantity: 0,
         icon: 'soda'

@@ -32,7 +32,7 @@ alt.on('job:Officer', player => {
     job.setLevelRestrictions([{ skill: 'nobility', xp: '13363' }]);
     job.setUniform('policeuniform');
     job.setItems([
-        { key: 'weapon', quantity: 1, props: { hash: 911657153 }, name: 'StunGun' },
+        { key: 'boundweapon', quantity: 1, props: { hash: 911657153 }, name: 'StunGun' },
         { key: 'cuffs', quantity: 1, props: {} }
     ]);
 

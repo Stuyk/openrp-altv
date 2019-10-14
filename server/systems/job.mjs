@@ -677,6 +677,8 @@ export class Job {
         if (!player.job) return;
 
         this.addUniform(player);
+        this.addItems(player);
+
         this.start = Date.now();
         player.emitMeta('job:Objective', JSON.stringify(this.objectives[0]));
         player.job.available = false;
@@ -705,6 +707,40 @@ export class Job {
         if (player.hasItem(Items[this.uniform].key)) return;
         player.addItem(Items[this.uniform].key, 1, Items[this.uniform].props);
         player.send(`${Items[this.uniform].name} was added to your inventory.`);
+    }
+
+    /**
+     * [{key: 'value', quantity: 1, props:{}, name: 'whatever'}]
+     * @param items
+     */
+    setItems(items) {
+        this.items = items;
+    }
+
+    addItems(player) {
+        if (!this.items) return;
+
+        this.items.forEach(item => {
+            if (!Items[item.key]) return;
+
+            const result = player.inventory.find(x => {
+                if (x && x.key === item.key) return x;
+            });
+
+            if (result) return;
+            if (Items[item.key].base.includes('weapon')) {
+                player.addItem(
+                    item.key,
+                    item.quantity,
+                    item.props,
+                    false,
+                    false,
+                    item.name
+                );
+            } else {
+                player.addItem(item.key, item.quantity, item.props);
+            }
+        });
     }
 
     checkItemRestrictions(player) {

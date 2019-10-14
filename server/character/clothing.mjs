@@ -37,20 +37,52 @@ const itemProps = {
     7: Items.bracelet
 };
 
+const blackList = {
+    4: {
+        male: [31],
+        female: [30]
+    },
+    8: {
+        male: [58],
+        female: [35]
+    },
+    11: {
+        male: [55],
+        female: [48]
+    }
+};
+
 // TODO: Implement cost.
 export function purchase(player, jsonData) {
     let props = JSON.parse(jsonData);
     let type = 0;
 
+    let invalid = false;
     Object.keys(props).forEach(key => {
         if (key === 'male') {
             type = props[key][0].id;
+            if (!blackList[type]) return;
+            if (blackList[type].male.includes(props[key][0].value)) {
+                delete props[key];
+                invalid = true;
+            }
         }
 
         if (key === 'female') {
             type = props[key][0].id;
+            if (!blackList[type]) return;
+            if (blackList[type].female.includes(props[key][0].value)) {
+                delete props[key];
+                invalid = true;
+            }
         }
     });
+
+    if (invalid) {
+        player.send('1 or more item was blacklisted from purchase.');
+        player.playAudio('error');
+        return;
+    }
 
     let itemClone = props.isProp ? { ...itemProps[type] } : { ...items[type] };
 

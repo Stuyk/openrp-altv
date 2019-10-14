@@ -5,6 +5,7 @@ import { distance, randPosAround } from '../utility/vector.mjs';
 import { addXP } from '../systems/skills.mjs';
 import { Items, BaseItems } from '../configuration/items.mjs';
 import { generateHash } from '../utility/encryption.mjs';
+import { setupVehicleFunctions } from '../utility/vehicle.mjs';
 
 const Debug = true;
 
@@ -409,6 +410,7 @@ export class Objective {
             player.job.vehicleHealth = vehicle.engineHealth - 100;
         }
 
+        setupVehicleFunctions(vehicle, false);
         alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
     }
 
@@ -714,13 +716,13 @@ export class Job {
      * @param items
      */
     setItems(items) {
-        this.items = items;
+        this.givenItems = items;
     }
 
     addItems(player) {
-        if (!this.items) return;
+        if (!this.givenItems) return;
 
-        this.items.forEach(item => {
+        this.givenItems.forEach(item => {
             if (!Items[item.key]) return;
 
             const result = player.inventory.find(x => {

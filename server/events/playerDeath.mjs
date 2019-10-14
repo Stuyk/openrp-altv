@@ -11,22 +11,6 @@ alt.on('playerDeath', (target, killer, weapon) => {
     // Anti Cheat Handling
     if (handleAntiCheat(target, killer, weapon)) return;
 
-    if (target && killer) {
-        const dist = distance(killer.pos, target.pos);
-
-        if (dist <= 2) {
-            let isRanged = Object.keys(NonMeleeWeapons).find(x => {
-                if (NonMeleeWeapons[x] === weapon) return x;
-            });
-
-            if (isRanged !== undefined) {
-                console.log('Revived player from pistol whip.');
-                target.spawn(target.pos.x, target.pos.y, target.pos.z, 0);
-                return false;
-            }
-        }
-    }
-
     // Job Handling
     checkRestrictions(target);
 

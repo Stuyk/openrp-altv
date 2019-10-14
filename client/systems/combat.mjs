@@ -33,4 +33,6 @@ function disableCombat() {
     }
 
     native.disableControlAction(0, 140, true);
+    native.disableControlAction(0, 141, true);
+    native.disableControlAction(0, 142, true);
 }

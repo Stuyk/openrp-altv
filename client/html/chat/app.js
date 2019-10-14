@@ -79,6 +79,7 @@ class App extends Component {
                     style: 'color: rgba(255, 255, 255, 1) !important;'
                 }
             ],
+            notice: '',
             cash: `0`,
             location: '',
             task: '',
@@ -115,6 +116,7 @@ class App extends Component {
             alt.on('chat:SetSpeed', this.setSpeed.bind(this));
             alt.on('chat:SprintBar', this.sprintBar.bind(this));
             alt.on('chat:SetMinigameText', this.setMinigameText.bind(this));
+            alt.on('chat:Notice', this.notice.bind(this));
             alt.emit('chat:Ready');
         } else {
             setInterval(() => {
@@ -122,6 +124,10 @@ class App extends Component {
             }, 200);
 
             document.getElementById('chat-input').classList.remove('hidden');
+
+            setInterval(() => {
+                this.notice(`${Math.random() * 500000}`);
+            }, 10000);
         }
 
         this.setState({ ready: true });
@@ -213,6 +219,13 @@ class App extends Component {
         this.scrollToBottom();
     }
 
+    notice(msg) {
+        this.setState({ notice: msg });
+        setTimeout(() => {
+            this.setState({ notice: '' });
+        }, 3000); // notice lasts for 3 seconds
+    }
+
     appendTask(msg) {
         this.setState({ task: msg });
     }
@@ -280,6 +293,7 @@ class App extends Component {
                 this.state.task !== '' &&
                     h('div', { class: 'element' }, `${this.state.task}`)
             ),
+            h('div', { class: 'notice' }, `${this.state.notice}`),
             h('div', { class: 'speed' }, `${this.state.speed}`),
             h('div', {
                 class: 'sprintbar',

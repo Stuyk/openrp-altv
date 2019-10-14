@@ -76,6 +76,11 @@ export function setupPlayerFunctions(player) {
     };
 
     // ====================================
+    player.notice = msg => {
+        alt.emitClient(player, 'chat:Notice', msg);
+    }
+
+    // ====================================
     // Weather & Time
     player.updateTime = () => {
         systemsTime.setTimeForNewPlayer(player);

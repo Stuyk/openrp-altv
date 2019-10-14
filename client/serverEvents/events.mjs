@@ -128,6 +128,7 @@ alt.onServer('vehicle:SetIntoVehicle', systemsVehicles.setIntoVehicle);
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
 alt.onServer('chat:SetStatus', panelsChat.setStatus);
+alt.onServer('chat:Notice', panelsChat.notice);
 
 // =======================================================
 // MDC

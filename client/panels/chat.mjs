@@ -52,6 +52,11 @@ export function send(msg) {
 
 alt.on('chat:Toggle', toggleHide);
 
+export function notice(msg) {
+    if (!webview) return;
+    webview.emit('chat:Notice', msg);
+}
+
 export function toggleHide() {
     if (webview === undefined) return;
 

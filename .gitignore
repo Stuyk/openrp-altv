@@ -10,4 +10,4 @@ update.json
 package-lock.json
 cache/
 crashdumps/
-
+server.cfg

@@ -11,3 +11,4 @@ package-lock.json
 cache/
 crashdumps/
 server.cfg
+package.json

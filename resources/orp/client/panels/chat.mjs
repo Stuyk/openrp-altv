@@ -46,10 +46,10 @@ export function toggleDialogue() {
 
 export function send(msg) {
     if (webview === undefined) return;
-
     webview.emit('chat:AppendMessage', msg);
 }
 
+alt.on('chat:Send', send);
 alt.on('chat:Toggle', toggleHide);
 
 export function notice(msg) {

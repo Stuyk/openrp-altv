@@ -175,6 +175,15 @@ let objectInteractions = {
     },
     690372739: {
         func: coffeeMachine
+    },
+    1339433404: {
+        func: gasPump
+    },
+    3832150195: {
+        func: gasPump
+    },
+    3825272565: {
+        func: gasPump
     }
 };
 
@@ -395,4 +404,18 @@ function clearSit(key) {
         native.clearPedSecondaryTask(alt.Player.local.scriptID);
         alt.Player.local.sitting = false;
     }
+}
+
+function gasPump(ent) {
+    new ContextMenu(ent, [
+        {
+            label: `Gas Pump`
+        },
+        {
+            label: 'Fuel Vehicle',
+            isServer: false,
+            event: 'vehicle:Fuel',
+            data: {}
+        }
+    ]);
 }

@@ -39,6 +39,7 @@ alt.on('ConnectionComplete', () => {
 
     // Intervals
     import('./intervals/players.mjs');
+    import('./intervals/vehicle.mjs');
 
     // Sandbox Commands
     import('./commands/job.mjs');
@@ -84,7 +85,7 @@ alt.on('ConnectionComplete', () => {
     import('./jobs/woodcuttingRefinery.mjs');
     import('./jobs/drivingSchool.mjs');
     import('./jobs/mountainThruster.mjs');
-    
+
     // Import Item Effects
     import('./itemeffects/consume.mjs');
     import('./itemeffects/showlicense.mjs');

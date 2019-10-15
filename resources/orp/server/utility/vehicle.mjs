@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
+import { distance } from '../utility/vector.mjs';
 
 console.log('Loaded: utility->vehicle.mjs');
 
@@ -120,5 +121,47 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         // Toggle
         vehicle.doorStates[id] = !vehicle.doorStates[id];
         alt.emitClient(player, 'vehicle:ToggleDoor', vehicle, id, vehicle.doorStates[id]);
+    };
+
+    vehicle.syncFuel = () => {
+        const currentFuel = vehicle.fuel;
+
+        if (!vehicle.lastPosition) {
+            vehicle.lastPosition = vehicle.pos;
+        }
+
+        const dist = distance(vehicle.pos, vehicle.lastPosition);
+        if (dist > 10 && vehicle.driver) {
+            const fuelConsumed = (dist * 2) / 100;
+            const remainingFuel = currentFuel - fuelConsumed;
+            vehicle.lastPosition = vehicle.pos;
+            vehicle.fuel = remainingFuel <= 0 ? 0 : remainingFuel;
+
+            if (vehicle.driver) {
+                vehicle.driver.send(`Remaining: ${vehicle.fuel}`);
+            }
+
+            if (vehicle.fuel <= 0 && vehicle.isEngineOn) {
+                vehicle.isEngineOn = false;
+                if (vehicle.driver) {
+                    alt.emitClient(vehicle.driver, 'vehicle:StartEngine', false);
+                    vehicle.driver.send(`{FFFF00} You are out of fuel.`);
+                }
+            }
+        }
+
+        vehicle.setSyncedMeta('fuel', vehicle.fuel);
+
+        if (vehicle.data) {
+            vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
+        }
+    };
+
+    vehicle.fillFuel = () => {
+        vehicle.fuel = 100;
+        vehicle.setSyncedMeta('fuel', vehicle.fuel);
+        if (vehicle.data) {
+            vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
+        }
     };
 }

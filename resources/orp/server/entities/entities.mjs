@@ -155,6 +155,10 @@ export const Vehicle = new orm.EntitySchema({
         customization: {
             type: 'text',
             nullable: true
+        },
+        fuel: {
+            type: 'decimal',
+            default: 100
         }
     }
 });

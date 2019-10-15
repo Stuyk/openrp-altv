@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from '/client/systems/context.mjs';
+import { distance } from '/client/utility/vector.mjs';
 
 alt.log('Loaded: client->contextmenus->vehicle.mjs');
 
@@ -34,6 +35,11 @@ alt.on('menu:Vehicle', ent => {
                 event: 'vehicle:ToggleEngine'
             },
             {
+                label: 'Check Fuel',
+                isServer: true,
+                event: 'vehicle:CheckFuel'
+            },
+            {
                 label: 'Safety Lock',
                 isServer: true,
                 event: 'vehicle:SafetyLock'
@@ -44,11 +50,20 @@ alt.on('menu:Vehicle', ent => {
             items.pop();
         }
 
+        if (alt.Player.local.isFueling) {
+            alt.Player.local.isFueling = false;
+            items.push({
+                label: 'Fuel Vehicle',
+                isServer: true,
+                event: 'vehicle:FillFuel'
+            });
+        }
+
         new ContextMenu(ent, items);
         return;
     }
 
-    new ContextMenu(ent, [
+    let nonSuperItems = [
         {
             label: name
         },
@@ -58,11 +73,33 @@ alt.on('menu:Vehicle', ent => {
             event: 'vehicle:ToggleLock'
         },
         {
+            label: 'Check Fuel',
+            isServer: true,
+            event: 'vehicle:CheckFuel'
+        },
+        {
             label: 'Doors Menu',
             isServer: false,
             event: 'submenu:VehicleDoors'
         }
-    ]);
+    ];
+
+    if (alt.Player.local.isFueling) {
+        const dist = distance(
+            alt.Player.local.fuelLocation,
+            native.getEntityCoords(ent, false)
+        );
+        alt.Player.local.isFueling = false;
+        if (dist <= 4) {
+            nonSuperItems.push({
+                label: 'Fuel Vehicle',
+                isServer: true,
+                event: 'vehicle:FillFuel'
+            });
+        }
+    }
+
+    new ContextMenu(ent, nonSuperItems);
 });
 
 alt.on('submenu:VehicleDoors', ent => {

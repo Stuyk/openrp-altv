@@ -402,6 +402,9 @@ export class Objective {
         };
 
         vehicle.engineOn = true;
+        vehicle.fuel = 100;
+        vehicle.setSyncedMeta('fuel', vehicle.fuel);
+
         const vehicles = [...player.vehicles];
         vehicles.push(vehicle);
         player.vehicles = vehicles;

@@ -1,7 +1,8 @@
 import * as alt from 'alt';
-import * as utilityVector from '../utility/vector.mjs';
+import { randPosAround, distance } from '../utility/vector.mjs';
 import * as utilityVehicle from '../utility/vehicle.mjs';
 import * as configurationVehicles from '../configuration/vehicles.mjs';
+import { actionMessage } from '../chat/chat.mjs';
 
 console.log('Loaded: systems->vehicles.mjs');
 let VehicleMap = new Map();
@@ -35,7 +36,7 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     try {
         pos = JSON.parse(veh.position);
     } catch (err) {
-        pos = utilityVector.randPosAround(player.pos, 3);
+        pos = randPosAround(player.pos, 3);
     }
 
     try {
@@ -57,6 +58,8 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     vehicle.data = veh;
     vehicle.engineOn = false;
     vehicle.lockState = 2;
+    vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : 100;
+    vehicle.setSyncedMeta('fuel', vehicle.fuel);
 
     // Synchronize the Stats
     /*
@@ -119,7 +122,7 @@ setInterval(() => {
 */
 
 export function toggleDoor(player, vehicle, id) {
-    const dist = utilityVector.distance(player.pos, vehicle.pos);
+    const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
 
     if (vehicle.lockState === 2) {
@@ -138,7 +141,7 @@ export function toggleDoor(player, vehicle, id) {
 }
 
 export function toggleLock(player, vehicle) {
-    const dist = utilityVector.distance(player.pos, vehicle.pos);
+    const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) {
         player.send(`{FF0000} You're too far away to toggle the lock.`);
         return;
@@ -167,15 +170,14 @@ export function toggleLock(player, vehicle) {
 
 export function toggleEngine(player, vehicle) {
     if (!player.vehicle) return;
-
     if (player.vehicles === undefined) return;
-
     if (!player.vehicles.includes(vehicle)) return;
 
-    if (!vehicle.isEngineOn) {
-        vehicle.isEngineOn = true;
-    } else {
-        vehicle.isEngineOn = !vehicle.isEngineOn;
+    vehicle.isEngineOn = !vehicle.isEngineOn ? true : !vehicle.isEngineOn;
+
+    if (vehicle.fuel <= 0) {
+        vehicle.isEngineOn = false;
+        player.send(`{FFFF00} You are out of fuel.`);
     }
 
     alt.emitClient(player, 'vehicle:StartEngine', vehicle.isEngineOn);
@@ -206,4 +208,35 @@ export function saveChanges(player, vehicle, jsonData) {
 
     vehicle.saveCustom(jsonData);
     player.playAudio('buy');
+}
+
+export function fillFuel(player, vehicle) {
+    if (!vehicle) return;
+
+    const fuelUntilFull = 100 - vehicle.fuel;
+    const perUnit = 0.5;
+    const totalCost = fuelUntilFull * perUnit;
+
+    let msg = `{FFFF00} Total Cost is: {00FF00} $${totalCost}.`;
+    if (!player.subCash(totalCost)) {
+        player.send(msg + `{FF0000}You do not have enough cash.`);
+        return;
+    }
+    player.send(msg);
+    actionMessage(player, 'Begins to fill the closest vehicle with fuel.');
+
+    setTimeout(() => {
+        vehicle.fillFuel();
+        if (player) {
+            actionMessage(
+                player,
+                'Tops off the tank; and secures the handle to the pump.'
+            );
+        }
+    }, 10000);
+}
+
+export function checkFuel(player, vehicle) {
+    if (!vehicle) return;
+    player.send(`{FFFF00}Remaining Fuel: {FFFFFF}${vehicle.fuel}`);
 }

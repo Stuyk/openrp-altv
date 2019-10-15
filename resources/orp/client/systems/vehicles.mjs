@@ -74,6 +74,15 @@ alt.on('syncedMetaChange', (entity, key, value) => {
     }, 1000);
 });
 
+alt.on('vehicle:Fuel', () => {
+    alt.Player.local.isFueling = true;
+    alt.emit(
+        'chat:Send',
+        `{00FF00} Select the vehicle you want to fuel with your cursor.`
+    );
+    alt.Player.local.fuelLocation = alt.Player.local.pos;
+});
+
 function startInterval(key, value) {
     if (key !== 'pedflags') return;
     alt.off('meta:Changed', startInterval);

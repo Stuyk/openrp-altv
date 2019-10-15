@@ -201,6 +201,15 @@ async function startup() {
         console.log('\r\nSkipping already configured DB setup.');
     }
 
+    // Copy server.cfg
+    const serverCfgFile = path.join(__dirname, '/server.cfg');
+    if (!fs.existsSync(serverCfgFile)) {
+        fs.copyFile(serverCfgFile, serverCfgFile+'.example'), (err) => {
+            if (err) throw err;
+            console.log('server.cfg.example was copied to server.cfg');
+        }
+    }
+            
     const q6 = '\r\nWhich alt:V Branch? 0: Stable, 1: Beta\r\n';
     res = await question(q6);
 

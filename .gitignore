@@ -1,4 +1,5 @@
-terms-and-conditions.json
+resources/*
+!resources/orp/*
 resources/orp/server/configuration/database.json
 node_modules/
 modules/

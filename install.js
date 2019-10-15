@@ -102,7 +102,6 @@ async function question(question) {
 }
 
 async function downloadAll(urls) {
-    console.log(`Downloading Latest alt:V Server Files.`);
     for (let i = 0; i < urls.length; i++) {
         console.log(urls[i].url);
         await download(urls[i].url, urls[i].destination).catch(err => {
@@ -200,16 +199,8 @@ async function startup() {
     } else {
         console.log('\r\nSkipping already configured DB setup.');
     }
-
-    // Copy server.cfg
-    const serverCfgFile = path.join(__dirname, '/server.cfg');
-    if (!fs.existsSync(serverCfgFile)) {
-        fs.copyFile(serverCfgFile, serverCfgFile+'.example'), (err) => {
-            if (err) throw err;
-            console.log('server.cfg.example was copied to server.cfg');
-        }
-    }
-            
+        
+    console.log(`Downloading Latest alt:V Server Files.`);
     const q6 = '\r\nWhich alt:V Branch? 0: Stable, 1: Beta\r\n';
     res = await question(q6);
 
@@ -231,6 +222,15 @@ async function startup() {
         downloadAll(windowsURLS);
     } else {
         downloadAll(linuxURLS);
+    }
+
+    // Copy server.cfg
+    const serverCfgFile = path.join(__dirname, '/server.cfg');
+    if (!fs.existsSync(serverCfgFile)) {
+        fs.copyFile(serverCfgFile + '.example', serverCfgFile, (err) => {
+            if (err) throw err;
+            console.log('server.cfg.example was copied to server.cfg');
+        });
     }
 }
 

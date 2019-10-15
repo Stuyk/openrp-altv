@@ -1,6 +1,7 @@
 const fs = require('fs');
 const download = require('download');
 const path = require('path');
+const exec = require('child_process').exec;
 const platform = process.platform === 'win32' ? 'windows' : 'linux';
 const readline = require('readline').createInterface({
     input: process.stdin,
@@ -90,7 +91,7 @@ let linuxURLS = [
 
 async function question(question) {
     return new Promise(resolve => {
-        readline.question(question, res => {
+        readline.question(`\x1b[32m${question}\x1b[0m`, res => {
             if (!res) {
                 res = undefined;
             }
@@ -110,8 +111,25 @@ async function downloadAll(urls) {
     }
 
     console.log(
-        `\r\nDownload Complete! Please run start.sh (Linux) or altv-server.exe (Windows)\r\n`
+        `\r\n\x1b[36mDownload Complete! Please run start.sh (Linux) or altv-server.exe (Windows)\r\n\x1b[0m`
     );
+
+    if (platform !== 'windows') {
+        exec('chmod +777 ./start.sh', (err, stdout, stderr) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+
+        exec('chmod +777 ./altv-server', (err, stdout, stderr) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
+
     process.exit(0);
 }
 
@@ -123,11 +141,12 @@ async function startup() {
     });
 
     const termPath = path.join(__dirname, '/resources/orp/terms-and-conditions.json');
+    let res;
 
     if (!fs.existsSync(termPath)) {
         // Terms and Conditions
         const q1 = '\r\nPlease read the above terms and conditions. \r\n \r\n';
-        let res = await question(q1);
+        res = await question(q1);
 
         if (res !== 'true') {
             const error =
@@ -151,7 +170,12 @@ async function startup() {
         '/resources/orp/server/configuration/database.json'
     );
 
-    if (!fs.existsSync(dbPath)) {
+    const newDatabase = 'Setup new database? (y/n) Default is y \r\n';
+    res = await question(newDatabase);
+
+    if (!res) res = 'y';
+
+    if (res === 'y') {
         const q2 =
             'Please enter your POSTGRES database address. ie. `localhost` or `127.0.0.1` \r\nPress Enter for Default (localhost) \r\n';
         res = undefined;
@@ -196,7 +220,7 @@ async function startup() {
             });
         });
     } else {
-        console.log('\r\nSkipping already configured DB setup.');
+        console.log('\r\nSkipping DB setup.');
     }
 
     const q6 = '\r\nWhich alt:V Branch? 0: Stable, 1: Beta\r\n';

@@ -257,6 +257,6 @@ After; it should be running automatically in your services on windows. You can a
 
 -   Download the latest version of this resource.
 
--   Open a command prompt and run `npm install` in the base orp folder where `package.json` is. If an installation dialogue does not prompt you about your database information or terms and conditions, run `npm run install`.
+-   Open a command prompt and run `npm run orp`. **FOLLOW THE INSTRUCTIONS CAREFULLY ON PROMPT**.
 
 -   Run `altv-server.exe` or `./start.sh`. If you're on Linux you may need to set permission for `altv-server`.

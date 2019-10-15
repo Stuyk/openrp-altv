@@ -4,7 +4,7 @@
     "description": "An open source roleplay project for alt:V",
     "main": "index.js",
     "scripts": {
-        "install": "node ./install.js"
+        "orp": "npm install && node ./install.js"
     },
     "author": "stuyk",
     "license": "ISC",

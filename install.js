@@ -6,7 +6,6 @@ const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 });
-
 const terms = {
     author: '\r\nAuthor: https://github.com/stuyk/ \r\n',
     license: 'License: GNU GENERAL PUBLIC LICENSE v3 \r\n',
@@ -22,8 +21,7 @@ const terms = {
     ],
     do_you_agree: false
 };
-
-const dbDefault = {
+let dbDefault = {
     type: 'postgres',
     username: 'postgres',
     password: 'abc123',

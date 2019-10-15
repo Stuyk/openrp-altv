@@ -124,26 +124,28 @@ async function startup() {
         console.log(term);
     });
 
-    // Terms and Conditions
-    const q1 = '\r\nPlease read the above terms and conditions. \r\n \r\n';
-    let res = await question(q1);
-
-    if (res !== 'true') {
-        const error =
-            '\x1b[31mFailed to read terms and conditions. Now exiting.\r\n\x1b[0m';
-        console.log(error);
-        process.exit(0);
-    }
-
     const termPath = path.join(__dirname, '/resources/orp/terms-and-conditions.json');
 
-    terms.do_you_agree = true;
-    await new Promise(resolve => {
-        fs.writeFile(termPath, JSON.stringify(terms, null, '\t'), () => {
-            console.log('\r\n Terms written successfully. \r\n');
-            resolve();
+    if (!fs.existsSync(termPath)) {
+        // Terms and Conditions
+        const q1 = '\r\nPlease read the above terms and conditions. \r\n \r\n';
+        let res = await question(q1);
+
+        if (res !== 'true') {
+            const error =
+                '\x1b[31mFailed to read terms and conditions. Now exiting.\r\n\x1b[0m';
+            console.log(error);
+            process.exit(0);
+        }
+
+        terms.do_you_agree = true;
+        await new Promise(resolve => {
+            fs.writeFile(termPath, JSON.stringify(terms, null, '\t'), () => {
+                console.log('\r\n Terms written successfully. \r\n');
+                resolve();
+            });
         });
-    });
+    }
 
     // Database Setup
     const dbPath = path.join(
@@ -151,49 +153,53 @@ async function startup() {
         '/resources/orp/server/configuration/database.json'
     );
 
-    const q2 =
-        'Please enter your POSTGRES database address. ie. `localhost` or `127.0.0.1` \r\nPress Enter for Default (localhost) \r\n';
-    res = undefined;
-    res = await question(q2);
-
-    if (res) {
-        dbDefault.address = res;
+    if (!fs.existsSync(dbPath)) {
+        const q2 =
+            'Please enter your POSTGRES database address. ie. `localhost` or `127.0.0.1` \r\nPress Enter for Default (localhost) \r\n';
         res = undefined;
-    }
+        res = await question(q2);
 
-    const q3 =
-        'Please enter your POSTGRES port. ie. 5432 \r\nPress Enter for Default (5432)\r\n';
-    res = await question(q3);
+        if (res) {
+            dbDefault.address = res;
+            res = undefined;
+        }
 
-    if (res) {
-        dbDefault.port = parseInt(res);
-        res = undefined;
-    }
+        const q3 =
+            'Please enter your POSTGRES port. ie. 5432 \r\nPress Enter for Default (5432)\r\n';
+        res = await question(q3);
 
-    const q4 =
-        'Please enter your POSTGRES username. ie. Johnny \r\nPress Enter for Default (postgres)\r\n';
-    res = await question(q4);
+        if (res) {
+            dbDefault.port = parseInt(res);
+            res = undefined;
+        }
 
-    if (res) {
-        dbDefault.username = res;
-        res = undefined;
-    }
+        const q4 =
+            'Please enter your POSTGRES username. ie. Johnny \r\nPress Enter for Default (postgres)\r\n';
+        res = await question(q4);
 
-    const q5 =
-        'Please enter your POSTGRES password. ie. abc123 \r\nPress Enter for Default (abc123)\r\n';
-    res = await question(q5);
+        if (res) {
+            dbDefault.username = res;
+            res = undefined;
+        }
 
-    if (res) {
-        dbDefault.password = res;
-        res = undefined;
-    }
+        const q5 =
+            'Please enter your POSTGRES password. ie. abc123 \r\nPress Enter for Default (abc123)\r\n';
+        res = await question(q5);
 
-    await new Promise(resolve => {
-        fs.writeFile(dbPath, JSON.stringify(dbDefault, null, '\t'), () => {
-            console.log('\r\nDatabase configured.\r\n');
-            resolve();
+        if (res) {
+            dbDefault.password = res;
+            res = undefined;
+        }
+
+        await new Promise(resolve => {
+            fs.writeFile(dbPath, JSON.stringify(dbDefault, null, '\t'), () => {
+                console.log('\r\nDatabase configured.\r\n');
+                resolve();
+            });
         });
-    });
+    } else {
+        console.log('\r\nSkipping already configured DB setup.');
+    }
 
     const q6 = '\r\nWhich alt:V Branch? 0: Stable, 1: Beta\r\n';
     res = await question(q6);

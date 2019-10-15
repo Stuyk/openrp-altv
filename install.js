@@ -83,6 +83,10 @@ let linuxURLS = [
     {
         url: `https://cdn.altv.mp/server/beta/x64_linux/data/vehmods.bin`,
         destination: './data'
+    },
+    {
+        url: `https://cdn.altv.mp/others/start.sh`,
+        destination: '.'
     }
 ];
 

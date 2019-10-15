@@ -223,6 +223,38 @@ After; it should be running automatically in your services on windows. You can a
 
 ![](https://i.imgur.com/6pA8PWB.png)
 
+**Creating on Linux with Terminal**
+
+-   Follow these instructions up to Step 3: [Installing Postgres on Ubuntu](https://tecadmin.net/install-postgresql-server-on-ubuntu/)
+
+-   Type: `su - postgres`
+
+-   Type: `psql`
+
+-   Type: `CREATE DATABASE altv;`
+
+-   If all is well you will see `CREATE DATABASE` or something similar replied.
+
+-   Type: `CREATE USER stuyk WITH ENCRYPTED PASSWORD 'abc123';`
+
+-   If all is well you will see `CREATE ROLE` replied.
+
+-   We now have a user called `stuyk` with a password of `abc123`. We need to assign to db.
+
+-   Type: `GRANT ALL PRIVILEGES ON DATABASE altv TO stuyk;`
+
+-   If all is well you wil see `GRANT` replied.
+
+-   Type: `\q` to exit.
+
+-   Type: `sudo -u root`
+
+-   This will bring you back to your root account.
+
+-   Now follow the rest of the steps below.
+
+---
+
 -   Download the latest version of this resource.
 
 -   Open a command prompt and run `npm install` in the base orp folder where `package.json` is. If an installation dialogue does not prompt you about your database information or terms and conditions, run `npm run install`.

@@ -4,7 +4,6 @@ import * as utilityVehicle from '../utility/vehicle.mjs';
 import * as configurationVehicles from '../configuration/vehicles.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 
-console.log('Loaded: systems->vehicles.mjs');
 let VehicleMap = new Map();
 
 /**
@@ -21,11 +20,13 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         if (!Array.isArray(player.vehicles)) {
             player.vehicles = [];
             player.vehicles.push(mappedVehicle);
+            player.emitMeta('vehicles', player.vehicles);
             return;
         }
 
         if (player.vehicles.includes(mappedVehicle)) return;
         player.vehicles.push(mappedVehicle);
+        player.emitMeta('vehicles', player.vehicles);
         return;
     }
 
@@ -94,6 +95,7 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         player.vehicles.push(vehicle);
     }
 
+    player.emitMeta('vehicles', player.vehicles);
     return vehicle;
 }
 

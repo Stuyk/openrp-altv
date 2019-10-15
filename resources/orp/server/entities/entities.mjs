@@ -1,7 +1,5 @@
 import orm from 'typeorm';
 
-console.log('Loaded: entities->entities.mjs');
-
 // These are the different table schemas provided.
 // Account is required for the login system.
 export const Account = new orm.EntitySchema({

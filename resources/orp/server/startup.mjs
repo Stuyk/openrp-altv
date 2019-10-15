@@ -5,10 +5,9 @@ import { cacheAccount, setVehicleID } from './cache/cache.mjs';
 import fs from 'fs';
 import path from 'path';
 
+const resourceDir = alt.getResourcePath('orp');
 const dbData = fs
-    .readFileSync(
-        path.join(alt.getResourcePath('orp'), '/server/configuration/database.json')
-    )
+    .readFileSync(path.join(resourceDir, '/server/configuration/database.json'))
     .toString();
 let dbInfo;
 
@@ -32,81 +31,45 @@ let db = new SQL(
     [Account, Character, Vehicle, Details]
 );
 
-// After Database Connection is complete. Load the rest of the modules.
-// This is required so we don't use the Database functionality too early.
-// Please keep that in mind if you plan on expanding this framework.
 alt.on('ConnectionComplete', () => {
-    // Standard Events
-    import('./events/playerConnect.mjs');
-    import('./events/playerDisconnect.mjs');
-    import('./events/playerDeath.mjs');
-    import('./events/consoleCommand.mjs');
-    import('./events/entityEnterColshape.mjs');
-    import('./events/entityLeaveColshape.mjs');
-    import('./events/playerLeftVehicle.mjs');
-    import('./events/playerEnteredVehicle.mjs');
-    import('./events/explosion.mjs');
-    import('./events/weaponDamage.mjs');
+    let filesLoaded = 0;
+    const folders = fs.readdirSync(path.join(alt.rootDir, '/resources/orp/server/'));
+    const filterFolders = folders.filter(x => !x.includes('.mjs'));
+    for (let i = 0; i < filterFolders.length; i++) {
+        const folder = filterFolders[i];
+        const files = fs.readdirSync(
+            path.join(alt.rootDir, `/resources/orp/server/${folder}`)
+        );
+        const filterFiles = files.filter(x => x.includes('.mjs'));
 
-    // Custom Client Events / Custom Server Events
-    import('./clientEvents/events.mjs');
-    import('./clientEvents/useEvents.mjs');
-
-    // Intervals
-    import('./intervals/players.mjs');
-    import('./intervals/vehicle.mjs');
-
-    // Sandbox Commands
-    import('./commands/job.mjs');
-    import('./commands/sandbox.mjs');
-    import('./commands/revive.mjs');
-    import('./commands/roleplay.mjs');
-    import('./commands/taxi.mjs');
-    import('./commands/mechanic.mjs');
-    import('./commands/phone.mjs');
-    import('./commands/mdc.mjs');
-
-    // Systems
-    import('./systems/anticheat.mjs');
-    import('./systems/vehicles.mjs');
-    import('./systems/inventory.mjs');
-    import('./systems/time.mjs');
-    import('./systems/job.mjs');
-    import('./systems/use.mjs');
-    import('./systems/xp.mjs');
-    import('./systems/grid.mjs');
-
-    // Jobs
-    import('./jobs/fishing.mjs');
-    import('./jobs/agilityTrack.mjs');
-    import('./jobs/agilityWorkout.mjs');
-    import('./jobs/agilityMtnBike1.mjs');
-    import('./jobs/agilityMtnBike2.mjs');
-    import('./jobs/agilityDirtbike.mjs');
-    import('./jobs/agilityDirtbike2.mjs');
-    import('./jobs/agilityWaterScooter.mjs');
-    import('./jobs/agilityDirtBuggy.mjs');
-    import('./jobs/gatheringKevlarium1.mjs');
-    import('./jobs/gatheringVigorium1.mjs');
-    import('./jobs/miningQuarry.mjs');
-    import('./jobs/miningShaft.mjs');
-    import('./jobs/playerTaxi.mjs');
-    import('./jobs/playerMechanic.mjs');
-    import('./jobs/officer.mjs');
-    import('./jobs/refineKevlarium.mjs');
-    import('./jobs/refineVigorium.mjs');
-    import('./jobs/smithingRefinery.mjs');
-    import('./jobs/woodcuttingLumber.mjs');
-    import('./jobs/woodcuttingRefinery.mjs');
-    import('./jobs/drivingSchool.mjs');
-    import('./jobs/mountainThruster.mjs');
-
-    // Import Item Effects
-    import('./itemeffects/consume.mjs');
-    import('./itemeffects/showlicense.mjs');
-    import('./itemeffects/equipitem.mjs');
+        for (let f = 0; f < filterFiles.length; f++) {
+            const newPath = `./${folder}/${filterFiles[f]}`;
+            /* jshint ignore:start */
+            import(newPath)
+                .then(res => {
+                    if (!res) {
+                        alt.log(`Failed to load: ${newPath}`);
+                    } else {
+                        filesLoaded += 1;
+                        alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
+                    }
+                })
+                .catch(err => {
+                    console.log('\r\n\x1b[31mERROR IN LOADED FILE');
+                    alt.log(newPath);
+                    alt.log(err);
+                    console.log('\r\n \x1b[0m');
+                    return undefined;
+                });
+            /* jshint ignore:end */
+        }
+    }
 
     cacheInformation();
+    setTimeout(() => {
+        alt.log('\r\nORP Ready - Loading Any Addons\r\n');
+        alt.emit('orp:Ready');
+    }, 5000);
 });
 
 // Used to speed up the server dramatically.
@@ -127,6 +90,6 @@ function cacheInformation() {
             cacheAccount(data[i].username, data[i].id, data[i].password);
         }
 
-        console.log(`=====> Cached: ${data.length} Accounts`);
+        alt.log(`=====> Cached: ${data.length} Accounts`);
     });
 }

@@ -1,8 +1,6 @@
 import * as alt from 'alt';
 import { checkRestrictions } from '../systems/job.mjs';
 
-alt.log('Loaded: events->playerEnteredVehicle.mjs');
-
 alt.on('playerEnteredVehicle', (player, vehicle, seat) => {
     player.lastVehicle = vehicle;
 

@@ -3,8 +3,6 @@ import * as alt from 'alt';
 import { RegisterCamPoint } from '../configuration/coordinates.mjs';
 import * as utilityPlayer from '../utility/player.mjs';
 
-console.log('Loaded: events->playerConnect.mjs');
-
 alt.on('playerConnect', player => {
     alt.log(`${player.name} has connected.`);
 

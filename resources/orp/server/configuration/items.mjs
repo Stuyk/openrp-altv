@@ -1,3 +1,5 @@
+import * as alt from 'alt';
+
 export const BaseItems = {
     weapon: {
         eventcall: 'itemeffects:EquipItem',
@@ -776,3 +778,27 @@ export const Items = {
         icon: 'cuffs'
     }
 };
+
+alt.on('orp:AddItems', jsonString => {
+    const newData = JSON.parse(jsonString);
+    Object.keys(newData).forEach(key => {
+        if (Items[key]) {
+            alt.log(`\r\n Item ${key} is already defined. Overwrote it. \r\n`);
+            return;
+        }
+        Items[key] = newData[key];
+        alt.log(`Item Addon Added: ${key}`);
+    });
+});
+
+alt.on('orp:AddBaseItems', jsonString => {
+    const newData = JSON.parse(jsonString);
+    Object.keys(newData).forEach(key => {
+        if (BaseItems[key]) {
+            alt.log(`\r\n Item ${key} is already defined. Overwrote it. \r\n`);
+            return;
+        }
+        BaseItems[key] = newData[key];
+        alt.log(`Base Item Addon Added: ${key}`);
+    });
+});

@@ -1,5 +1,6 @@
 resources/*
 !resources/orp/*
+!resources/orp-addon/*
 resources/orp/server/configuration/database.json
 node_modules/
 modules/
@@ -13,3 +14,6 @@ cache/
 crashdumps/
 server.cfg
 package.json
+altv-server
+libnode.so.72
+start.sh

@@ -3,8 +3,6 @@ import * as utilityEncryption from '../utility/encryption.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import * as cache from '../cache/cache.mjs';
 
-console.log('Loaded: registration->register.mjs');
-
 const db = new SQL(); // Get DB Reference
 
 // Called when a user wants to register from the events folder.

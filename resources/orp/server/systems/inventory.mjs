@@ -6,7 +6,6 @@ import { generateHash } from '../utility/encryption.mjs';
 import { BaseItems, Items } from '../configuration/items.mjs';
 import { Weapons } from '../configuration/weapons.mjs';
 import { objectToNull } from '../utility/object.mjs';
-console.log('Loaded: systems->inventory.mjs');
 
 // hash, itemdata
 let ItemDrops = new Map();

@@ -2,8 +2,6 @@ import * as alt from 'alt';
 import * as vector from '../utility/vector.mjs';
 import { ChatConfig } from '../configuration/chat.mjs';
 
-console.log('Loaded: chat->chat.mjs');
-
 let cmds = {};
 let mutedPlayers = [];
 
@@ -14,6 +12,11 @@ export function registerCmd(cmd, callback) {
         cmds[cmd] = callback;
     }
 }
+
+alt.on('orp:RegisterCmd', (cmd, eventNameCallback) => {
+    registerCmd(cmd, eventNameCallback);
+    alt.log(`Registered Addon CMD: ${cmd}`);
+});
 
 export function routeMessage(player, msg) {
     // Commands
@@ -29,7 +32,11 @@ export function routeMessage(player, msg) {
             const callback = cmds[cmd];
 
             if (callback) {
-                callback(player, args);
+                if (typeof callback === 'function') {
+                    callback(player, args);
+                } else {
+                    alt.emit(callback, player, args);
+                }
             } else {
                 player.send(`Unknown command /${cmd}`);
             }

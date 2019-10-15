@@ -1,7 +1,5 @@
 import * as alt from 'alt';
 
-console.log('Loaded: interactions->atms.mjs');
-
 // Called when the player wants to make a withdrawl from the ATM.
 export function withdraw(player, value) {
     const result = player.subBank(value);

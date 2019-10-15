@@ -1,8 +1,6 @@
 import * as alt from 'alt';
 import { BaseItems } from '../configuration/items.mjs';
 
-console.log('Loaded: itemeffects->equipitem.mjs');
-
 alt.on('itemeffects:EquipItem', (player, item, hash) => {
     const inventoryIndex = player.inventory.findIndex(i => {
         if (i && i.hash === hash) return i;

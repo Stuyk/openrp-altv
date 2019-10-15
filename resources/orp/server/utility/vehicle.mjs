@@ -2,8 +2,6 @@ import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { distance } from '../utility/vector.mjs';
 
-console.log('Loaded: utility->vehicle.mjs');
-
 // Load the database handler.
 const db = new SQL();
 
@@ -165,3 +163,26 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         }
     };
 }
+
+alt.on('orp:VehicleFunc', (...args) => {
+    const passedVehicle = args.shift();
+    const vehicle = alt.Vehicle.all.find(x => x.id === passedVehicle.id);
+    if (!vehicle) {
+        console.error('Vehicle was not found from VehicleFunc call.');
+        return;
+    }
+
+    if (args.length <= 0) return;
+    const funcName = args.shift();
+
+    if (!vehicle[funcName]) {
+        console.error('That function does not exist for the vehicle.');
+        return;
+    }
+
+    if (args.length >= 1) {
+        vehicle[funcName](args);
+    } else {
+        vehicle[funcName]();
+    }
+});

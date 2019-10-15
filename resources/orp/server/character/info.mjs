@@ -7,8 +7,6 @@ import { DefaultSpawn } from '../configuration/coordinates.mjs';
 
 const db = new SQL();
 
-console.log('Loaded: character->info.mjs');
-
 const playerPoint = {
     x: -140.45274353027344,
     y: -646.4044189453125,

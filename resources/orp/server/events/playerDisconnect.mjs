@@ -1,9 +1,6 @@
 import * as alt from 'alt';
 import * as registrationLogin from '../registration/login.mjs';
 import { quitJob, quitTarget } from '../systems/job.mjs';
-import * as utilityTime from '../utility/time.mjs';
-
-console.log('Loaded: events->playerDisconnect.mjs');
 
 alt.on('playerDisconnect', player => {
     // If the player isn't logged in; don't do anything else.

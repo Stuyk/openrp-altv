@@ -1,7 +1,5 @@
 import sjcl from 'sjcl';
 
-console.log('Loaded: utility->encryption.mjs');
-
 /**
  * Hash a password with pbkdf2
  * @param password

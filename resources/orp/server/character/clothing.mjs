@@ -1,8 +1,6 @@
 import * as alt from 'alt';
 import { Items } from '../configuration/items.mjs';
 
-console.log('Loaded: character->clothing.mjs');
-
 /*
 28 - Hat
 29 - Helmet

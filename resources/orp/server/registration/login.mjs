@@ -6,8 +6,6 @@ import SQL from '../../../postgres-wrapper/database.mjs';
 import { DefaultSpawn } from '../configuration/coordinates.mjs';
 import { PlayerDefaults } from '../configuration/player.mjs';
 
-console.log('Loaded: registration->login.mjs');
-
 const db = new SQL(); // Get DB Reference
 const LoggedInPlayers = [];
 

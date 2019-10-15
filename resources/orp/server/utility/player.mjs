@@ -15,8 +15,6 @@ import { fetchNextVehicleID } from '../cache/cache.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
 import { doorStates } from '../systems/use.mjs';
 
-console.log('Loaded: utility->player.mjs');
-
 // Load the database handler.
 const db = new SQL();
 
@@ -1008,3 +1006,30 @@ export function setupPlayerFunctions(player) {
         }
     };
 }
+
+alt.on('orp:PlayerFunc', (...args) => {
+    const passedPlayer = args.shift();
+    const player = alt.Player.all.find(x => x.id === passedPlayer.id);
+    if (!player) {
+        console.error('Player was not found from PlayerFunc call.');
+        return;
+    }
+
+    if (args.length <= 0) return;
+    const funcName = args.shift();
+
+    if (!player[funcName]) {
+        console.error('That function does not exist for the player.');
+        return;
+    }
+
+    if (funcName === 'send') {
+        args = args.join(' ');
+    }
+
+    if (args.length >= 1) {
+        player[funcName](args);
+    } else {
+        player[funcName]();
+    }
+});

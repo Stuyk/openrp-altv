@@ -1,5 +1,4 @@
 import * as TermsAndConditions from './configuration/terms-and-conditions.mjs'; // Terms & Conditions
-
 import fs from 'fs';
 
 if (!fs.existsSync('./resources/orp/terms-and-conditions.json')) {
@@ -17,5 +16,7 @@ if (!fs.existsSync('./resources/orp/terms-and-conditions.json')) {
         throw new Error(
             'Please read the terms and conditions and modify accordingly under terms-and-conditions.json'
         );
+    /* jshint ignore:start */
     import('./startup.mjs');
+    /* jshint ignore:end */
 }

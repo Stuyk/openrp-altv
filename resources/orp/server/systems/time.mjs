@@ -1,7 +1,5 @@
 import * as alt from 'alt';
 
-console.log('Loaded: systems->time.mjs');
-
 let time = {
     hour: 8
 };

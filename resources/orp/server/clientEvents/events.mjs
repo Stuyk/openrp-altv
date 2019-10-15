@@ -15,9 +15,6 @@ import * as systemsSkills from '../systems/skills.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 import * as chat from '../chat/chat.mjs';
 
-// On load; send a message.
-console.log('Loaded: clientEvents->events.mjs');
-
 // ====================================================
 // Registration
 // Called when a client attempts to Register an account.

@@ -8,7 +8,6 @@ import * as alt from 'alt';
 // username, encrypted password
 
 const accounts = {};
-let details = {};
 let vehicleID;
 
 export function cacheAccount(username, id, password) {
@@ -25,7 +24,7 @@ export function getAccount(username) {
 
 export function setVehicleID(lastVehicleID) {
     vehicleID = lastVehicleID + 1;
-    console.log(`Next vehicle ID is set to ${vehicleID}`);
+    alt.log(`Next vehicle ID is set to ${vehicleID}`);
 }
 
 export function fetchNextVehicleID() {

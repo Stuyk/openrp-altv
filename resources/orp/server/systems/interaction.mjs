@@ -1,8 +1,6 @@
 import * as alt from 'alt';
 import * as utilityVector from '../utility/vector.mjs';
 
-console.log('Loaded: systems->interaction.mjs');
-
 export const interactions = [];
 
 // Interactions act as a way for a user to simply press 'E'

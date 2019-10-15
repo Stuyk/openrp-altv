@@ -101,35 +101,17 @@ async function question(question) {
 }
 
 async function downloadAll(urls) {
-    for (let i = 0; i < urls.length; i++) {
-        console.log(urls[i].url);
-        await download(urls[i].url, urls[i].destination).catch(err => {
-            throw err;
-        });
-        console.log(`\r\n[${i + 1}/${urls.length}] Complete`);
-    }
+    return new Promise(async resolve => {
+        for (let i = 0; i < urls.length; i++) {
+            console.log(urls[i].url);
+            await download(urls[i].url, urls[i].destination).catch(err => {
+                throw err;
+            });
+            console.log(`\r\n[${i + 1}/${urls.length}] Complete`);
+        }
 
-    console.log(
-        `\r\n\x1b[36mDownload Complete! Please run start.sh (Linux) or altv-server.exe (Windows)\r\n\x1b[0m`
-    );
-
-    if (platform !== 'windows') {
-        exec('chmod +777 ./start.sh', (err, stdout, stderr) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-        });
-
-        exec('chmod +777 ./altv-server', (err, stdout, stderr) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-        });
-    }
-
-    process.exit(0);
+        resolve();
+    });
 }
 
 async function startup() {
@@ -221,7 +203,7 @@ async function startup() {
     } else {
         console.log('\r\nSkipping DB setup.');
     }
-        
+
     console.log(`Downloading Latest alt:V Server Files.`);
     const q6 = '\r\nWhich alt:V Branch? 0: Stable, 1: Beta\r\n';
     res = await question(q6);
@@ -241,19 +223,41 @@ async function startup() {
     }
 
     if (platform === 'windows') {
-        downloadAll(windowsURLS);
+        await downloadAll(windowsURLS);
     } else {
-        downloadAll(linuxURLS);
+        await downloadAll(linuxURLS);
     }
 
     // Copy server.cfg
     const serverCfgFile = path.join(__dirname, '/server.cfg');
     if (!fs.existsSync(serverCfgFile)) {
-        fs.copyFile(serverCfgFile + '.example', serverCfgFile, (err) => {
+        fs.copyFile(serverCfgFile + '.example', serverCfgFile, err => {
             if (err) throw err;
             console.log('server.cfg.example was copied to server.cfg');
         });
     }
+
+    console.log(
+        `\r\n\x1b[36mDownload Complete! Please run start.sh (Linux) or altv-server.exe (Windows)\r\n\x1b[0m`
+    );
+
+    if (platform !== 'windows') {
+        exec('chmod +777 ./start.sh', (err, stdout, stderr) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+
+        exec('chmod +777 ./altv-server', (err, stdout, stderr) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    }
+
+    process.exit(0);
 }
 
 startup();

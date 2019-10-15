@@ -223,7 +223,7 @@ After; it should be running automatically in your services on windows. You can a
 
 ![](https://i.imgur.com/6pA8PWB.png)
 
-**Creating on Linux with Terminal**
+**Creating on Linux with Terminal ( UBUNTU 18.04 (Don't use 16.04 it's a pain in the ass.) )**
 
 -   Follow these instructions up to Step 3: [Installing Postgres on Ubuntu](https://tecadmin.net/install-postgresql-server-on-ubuntu/)
 

@@ -242,14 +242,14 @@ async function startup() {
     );
 
     if (platform !== 'windows') {
-        exec('chmod +777 ./start.sh', (err, stdout, stderr) => {
+        exec('chmod +x ./start.sh', (err, stdout, stderr) => {
             if (err) {
                 console.log(err);
                 return;
             }
         });
 
-        exec('chmod +777 ./altv-server', (err, stdout, stderr) => {
+        exec('chmod +x ./altv-server', (err, stdout, stderr) => {
             if (err) {
                 console.log(err);
                 return;

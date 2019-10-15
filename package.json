@@ -3,9 +3,13 @@
     "version": "0.0.1",
     "description": "An open source roleplay project for alt:V",
     "main": "index.js",
+    "scripts": {
+        "install": "node ./install.js"
+    },
     "author": "stuyk",
     "license": "ISC",
     "dependencies": {
+        "download": "^7.1.0",
         "pg": "^7.12.1",
         "sjcl": "^1.0.8",
         "typeorm": "^0.2.18"

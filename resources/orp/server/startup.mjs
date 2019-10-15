@@ -1,18 +1,33 @@
 import * as alt from 'alt';
-//import * as chat from 'chat';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character, Vehicle, Details } from './entities/entities.mjs'; // Schemas for Database
-import * as configurationDatabase from './configuration/database.mjs'; // Database Configuration
 import { cacheAccount, setVehicleID } from './cache/cache.mjs';
+import fs from 'fs';
+import path from 'path';
+
+const dbData = fs
+    .readFileSync(
+        path.join(alt.getResourcePath('orp'), '/server/configuration/database.json')
+    )
+    .toString();
+let dbInfo;
+
+try {
+    dbInfo = JSON.parse(dbData);
+} catch (err) {
+    console.log('FAILED TO PROCESS DATABASE INFO. RUN INSTALLATION PROCESS AGAIN.');
+    console.log(err);
+    process.exit(0);
+}
 
 // Setup Main Entities and Database Connection
 let db = new SQL(
-    configurationDatabase.DatabaseInfo.type,
-    configurationDatabase.DatabaseInfo.address,
-    configurationDatabase.DatabaseInfo.port,
-    configurationDatabase.DatabaseInfo.username,
-    configurationDatabase.DatabaseInfo.password,
-    configurationDatabase.DatabaseInfo.dbname,
+    dbInfo.type,
+    dbInfo.address,
+    dbInfo.port,
+    dbInfo.username,
+    dbInfo.password,
+    dbInfo.dbname,
     // Specify New Table Schemas Here
     [Account, Character, Vehicle, Details]
 );

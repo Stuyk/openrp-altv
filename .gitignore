@@ -1,3 +1,13 @@
 terms-and-conditions.json
-server/configuration/database.mjs
+resources/orp/server/configuration/database.json
+node_modules/
+modules/
+data/
+altv-server.exe
+libnode.dll
+server.log
+update.json
+package-lock.json
+cache/
+crashdumps/
 

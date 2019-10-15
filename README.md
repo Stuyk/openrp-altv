@@ -206,15 +206,9 @@ Shift + F7 -> Hide Chat
 
 ### Installation
 
-If you don't have NodeJS; please go install it.
+#### If you don't have NodeJS v12+; please go install it.
 
-The file structure below is the **required** structure you must use for this game mode. You must follow it exactly for this resource to work.
-
--   Grab the latest version of the alt:V server files. They must be clean. No resources.
-
--   Download [Postgres-Wrapper](https://github.com/team-stuyk-alt-v/altV-Postgres-Wrapper) this is the Postgres SQL helper that was written to make database usage easy. Extract it and put this into a folder called `postgres-wrapper`. Directly inside you should have `resource.cfg` if done correctly.
-
--   Install version **11.5** of [PostgresSQL](https://www.postgresql.org/download/) for either windows, linux, or whatever OS you're running.
+-   Install version **v11.5** of [PostgresSQL](https://www.postgresql.org/download/) for either windows, linux, or whatever OS you're running.
 
 -   Once installed you need to create a username and password for your database; and create a database called 'altv' or something else if you know what you're doing. **PAY ATTENTION HERE YOU'LL NEED THIS INFO**
 
@@ -229,91 +223,8 @@ After; it should be running automatically in your services on windows. You can a
 
 ![](https://i.imgur.com/6pA8PWB.png)
 
--   Download the latest version of this resource. You can either clone the repository or simply download it. The `resource.cfg` and the rest of the files should be directly inside of a folder called `orp`.
+-   Download the latest version of this resource.
 
--   To configure your database, you will need the `resources/orp/server/configuration/database.mjs` file configured with the required parameters to connect to your database. Open `database.mjs.example`, fill out the required parameters, and save it to a new file named `database.mjs`.
+-   Open a command prompt and run `npm run` in the base orp folder where `package.json` is. If an installation dialogue does not prompt you about your database information or terms and conditions, run `npm run install`.
 
-**Example Database Configuration**
-
-```js
-export const DatabaseInfo = {
-    username: 'postgres',
-    password: 'abc123',
-    address: 'localhost',
-    port: 5432,
-    dbname: 'altv'
-};
-```
-
-**Example Folder Structure**
-
-```yaml
-altVServerFolder/
-└── resources/
-|   ├── orp/
-|   |   ├── server/
-|   |   ├── client/
-|   |   └── resource.cfg
-|   ├── postgres-wrapper/
-|   |   ├── client.mjs
-|   |   ├── database.mjs
-|   |	└── resource.cfg
-└── package.json
-└── altv-server.exe
-└── node_modules/
-```
-
-**Installing Packages for NodeJS**
-After installing the above; if you don't have a package.json in your main server directory where your .exe is you're going to need to do the following:
-
-Open a command prompt or powershell next to your .exe file
-
-```
-npm init
-```
-
-or
-
-```
-yarn init
-```
-
-Then press enter a bunch of times until its done stepping you through.
-
-After you need to install the following packages from command prompt or power shell.
-
-```
-npm install typeorm
-npm install sjcl
-npm install pg
-```
-
-or
-
-```
-yarn add typeorm sjcl pg
-```
-
-Great; now you have all the prerequisites.
-
-Open your `server.cfg` next to your `altv-server.exe`.
-
-You need to add `orp` to resources.
-
-```
-name: 'Open RP'
-host: 0.0.0.0
-port: 7766
-players: 1000
-announce: false
-gamemode: OpenRP
-website: twitch.tv/stuykgaming
-language: lang-here
-description: 'Using Open Roleplay'
-modules: [ node-module ]
-resources: [ orp ]
-token: ''
-debug: 'true'
-```
-
-That's about it; once you run it you'll be greeted with terms and conditions and you can follow the additional instructions from there.
+-   Run `altv-server.exe` or `./start.sh`. If you're on Linux you may need to set permission for `altv-server`.

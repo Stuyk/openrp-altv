@@ -25,6 +25,7 @@ alt.on('animation:Play', (player, data) => {
 });
 
 alt.on('animation:Clear', ent => {
+    alt.Player.local.laying = false;
     native.clearPedTasks(alt.Player.local.scriptID);
     if (!alt.Player.local.vehicle) {
         native.clearPedSecondaryTask(alt.Player.local.scriptID);

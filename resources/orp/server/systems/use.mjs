@@ -3,6 +3,7 @@ import { Items } from '../configuration/items.mjs';
 import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 import { appendToMdc } from './mdc.mjs';
+import { addBoundWeapon } from './inventory.mjs';
 
 export let doorStates = {
     '{"x":461.8065185546875,"y":-994.4085693359375,"z":25.06442642211914}': {
@@ -92,6 +93,16 @@ export function searchDumpster(player) {
 
 export function atm(player) {
     player.showAtmPanel();
+}
+
+export function hospitalBed(player, coords) {
+    coords = {
+        x: coords.x,
+        y: coords.y,
+        z: coords.z + 0.5
+    };
+
+    player.pos = coords;
 }
 
 export function exitLabs(player) {
@@ -254,4 +265,15 @@ export function toggleDoor(player, data) {
         doorStates[`${JSON.stringify(data.pos)}`] = data;
         alt.emitClient(null, 'door:Lock', data.type, data.pos, data.heading);
     }
+}
+
+export function fireExtinguisher(player) {
+    const index = player.inventory.findIndex(x => x && x.name.includes('Extinguisher'));
+    if (index > -1) {
+        player.send('You already have one of those.');
+        return;
+    }
+
+    addBoundWeapon(player, 'FireExtinguisher');
+    player.send('You pick up the fire extinguisher.');
 }

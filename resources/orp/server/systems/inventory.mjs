@@ -249,3 +249,23 @@ export function addWeapon(player, weaponName) {
     player.addItem('weapon', 1, props, false, false, weapon.name);
     return true;
 }
+
+export function addBoundWeapon(player, weaponName) {
+    let weapon;
+    Object.keys(Weapons).forEach(key => {
+        if (key !== weaponName) return;
+        weapon = {
+            name: key,
+            value: Weapons[key]
+        };
+    });
+
+    if (!weapon) return false;
+
+    const props = {
+        hash: weapon.value
+    };
+
+    player.addItem('boundweapon', 1, props, false, false, weapon.name);
+    return true;
+}

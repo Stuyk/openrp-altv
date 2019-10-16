@@ -91,7 +91,7 @@ alt.on('job:Officer', player => {
     );
     job.add(copyObjective(obj));
 
-    console.log(JSON.stringify(job));
+    console.log(JSON.stringify(job, null, '\t'));
 
     job.start(player);
 });

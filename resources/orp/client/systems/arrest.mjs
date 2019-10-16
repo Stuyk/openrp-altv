@@ -110,15 +110,16 @@ function arrestHandler() {
         z: arrester.pos.z
     };
 
-    native.taskGoToCoordAnyMeans(
+    const heading = native.getEntityHeading(arrester.scriptID);
+
+    native.taskGoStraightToCoord(
         alt.Player.local.scriptID,
         lastPos.x,
         lastPos.y,
         lastPos.z,
         6.0,
-        0,
-        false,
-        0,
+        -1,
+        heading,
         0
     );
 }

@@ -17,7 +17,9 @@ const events = {
     'use:BreakCuffs': systemsUse.breakCuffs,
     'use:CuffPlayerFreely': systemsUse.cuffPlayerFreely,
     'use:FriskPlayer': systemsUse.friskPlayer,
-    'use:CoffeeMachine': systemsUse.coffeeMachine
+    'use:CoffeeMachine': systemsUse.coffeeMachine,
+    'use:HospitalBed': systemsUse.hospitalBed,
+    'use:FireExtinguisher': systemsUse.fireExtinguisher
 };
 
 Object.keys(events).forEach(key => {

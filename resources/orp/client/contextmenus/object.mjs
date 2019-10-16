@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { ContextMenu } from '/client/systems/context.mjs';
 import { distance } from '/client/utility/vector.mjs';
+import { playAnimation } from '/client/systems/animation.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -151,6 +152,12 @@ let objectInteractions = {
     4123023395: {
         func: chair
     },
+    2508542797: {
+        func: chair
+    },
+    2508542797: {
+        func: chair
+    },
     2930269768: {
         func: atm
     },
@@ -184,6 +191,18 @@ let objectInteractions = {
     },
     3825272565: {
         func: gasPump
+    },
+    3203580969: {
+        func: hospitalBed
+    },
+    2117668672: {
+        func: hospitalBed
+    },
+    1631638868: {
+        func: hospitalBed
+    },
+    3628385663: {
+        func: fireExtinguisher
     }
 };
 
@@ -367,6 +386,24 @@ function doorControl(ent) {
     ]);
 }
 
+function hospitalBed(ent) {
+    let pos = native.getEntityCoords(ent, false);
+    let heading = native.getEntityHeading(ent) + 180.0;
+
+    if (alt.Player.local.laying) {
+        alt.Player.local.laying = false;
+        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+        return;
+    }
+
+    alt.emitServer('use:HospitalBed', pos);
+    alt.setTimeout(() => {
+        alt.Player.local.laying = true;
+        native.setEntityHeading(alt.Player.local.scriptID, heading);
+        playAnimation(alt.Player.local, 'move_crawlprone2crawlback', 'back', -1, 2);
+    }, 1500);
+}
+
 function chair(ent) {
     native.freezeEntityPosition(ent, true);
     let pos = native.getEntityCoords(ent, false);
@@ -416,6 +453,19 @@ function gasPump(ent) {
             isServer: false,
             event: 'vehicle:Fuel',
             data: {}
+        }
+    ]);
+}
+
+function fireExtinguisher(ent) {
+    new ContextMenu(ent, [
+        {
+            label: 'Fire Extinguisher'
+        },
+        {
+            label: 'Pickup',
+            isServer: true,
+            event: 'use:FireExtinguisher'
         }
     ]);
 }

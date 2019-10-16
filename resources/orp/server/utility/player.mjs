@@ -2,14 +2,13 @@
 import * as alt from 'alt';
 import { generateHash } from '../utility/encryption.mjs';
 import { Items, BaseItems } from '../configuration/items.mjs';
-import * as configurationPlayer from '../configuration/player.mjs';
+import { Config } from '../configuration/config.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsTime from '../systems/time.mjs';
 import * as utilityTime from '../utility/time.mjs';
 import { objectToNull } from '../utility/object.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { spawnVehicle } from '../systems/vehicles.mjs';
-import { appendNewVehicle } from '../systems/vehicles.mjs';
 import { quitJob } from '../systems/job.mjs';
 import { fetchNextVehicleID } from '../cache/cache.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
@@ -166,6 +165,49 @@ export function setupPlayerFunctions(player) {
 
     player.screenBlurIn = timeInMS => {
         alt.emitClient(player, 'screen:BlurIn', timeInMS);
+    };
+
+    // ====================================
+    // Player Health + Armor / Reviving
+    player.revive = () => {
+        player.screenFadeOutFadeIn(1000, 5000);
+
+        if (!player.revivePos) {
+            player.spawn(player.pos.x, player.pos.y, player.pos.z, 2000);
+        } else {
+            player.spawn(
+                player.revivePos.x,
+                player.revivePos.y,
+                player.revivePos.z,
+                2000
+            );
+        }
+
+        player.clearBlood();
+        player.setHealth(200);
+        player.setArmour(0);
+        player.revivePos = undefined;
+        player.reviveTime = undefined;
+        player.revive = false;
+        player.isArrested = false;
+        player.lastLocation = undefined;
+        player.sendToJail = false;
+        player.saveDead(false);
+        player.taxIncome(Config.hospitalPctFee, true, 'Hospital Fee');
+        player.send('You have been revived.');
+        player.setSyncedMeta('dead', false);
+    };
+
+    player.setHealth = amount => {
+        player.health = amount;
+        player.data.health = amount;
+        player.lastHealth = player.health;
+    };
+
+    player.setArmour = amount => {
+        player.armour = amount;
+        player.data.armour = amount;
+        player.lastArmour = player.armour;
     };
 
     // ====================================
@@ -883,9 +925,7 @@ export function setupPlayerFunctions(player) {
 
     player.addVehicle = (model, pos, rot) => {
         if (Array.isArray(player.vehicles)) {
-            if (
-                player.vehicles.length >= configurationPlayer.PlayerDefaults.maxvehicles
-            ) {
+            if (player.vehicles.length >= Config.defaultPlayerMaxVehicles) {
                 player.send(`You are not allowed to have any additional vehicles.`);
                 return;
             }

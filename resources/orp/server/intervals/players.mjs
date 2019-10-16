@@ -20,5 +20,11 @@ setInterval(() => {
         ) {
             player.setArrestTime(-1);
         }
+
+        if (player.reviveTime) {
+            if (Date.now() > player.reviveTime) {
+                player.revive();
+            }
+        }
     }
 }, time);

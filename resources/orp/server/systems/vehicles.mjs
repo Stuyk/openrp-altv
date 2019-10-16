@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import { randPosAround, distance } from '../utility/vector.mjs';
 import * as utilityVehicle from '../utility/vehicle.mjs';
-import * as configurationVehicles from '../configuration/vehicles.mjs';
+import { Config } from '../configuration/config.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 
 let VehicleMap = new Map();
@@ -110,7 +110,7 @@ setInterval(() => {
     for (let key in VehicleMap) {
         VehicleMap[key].saveVehicleData();
     }
-}, configurationVehicles.Configuration.saveTimeInMS);
+}, Config.vehicleSaveTime);
 
 /*
 0 = Front Left Door

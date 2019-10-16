@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 //import * as chat from 'chat';
-import { RegisterCamPoint } from '../configuration/coordinates.mjs';
+import { Config } from '../configuration/config.mjs';
 import * as utilityPlayer from '../utility/player.mjs';
 
 alt.on('playerConnect', player => {
@@ -11,8 +11,8 @@ alt.on('playerConnect', player => {
     if (player.getMeta('isLoggedIn')) return;
 
     // Setup the Login Camera
-    player.pos = RegisterCamPoint;
+    player.pos = Config.registerCamPoint;
     player.dimension = 0;
     player.setSyncedMeta('loggedin', false);
-    player.showRegisterDialogue(RegisterCamPoint);
+    player.showRegisterDialogue(Config.registerCamPoint);
 });

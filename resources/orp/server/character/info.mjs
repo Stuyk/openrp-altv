@@ -1,9 +1,7 @@
 import * as alt from 'alt';
-import * as cache from '../cache/cache.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
-import { generateHash } from '../utility/encryption.mjs';
 import { distance } from '../utility/vector.mjs';
-import { DefaultSpawn } from '../configuration/coordinates.mjs';
+import { Config } from '../configuration/config.mjs';
 
 const db = new SQL();
 
@@ -23,7 +21,7 @@ export function setRoleplayInfo(player, info) {
     });
 
     if (distance(player.pos, playerPoint) <= 20) {
-        player.pos = DefaultSpawn;
+        player.pos = Config.defaultSpawnPoint;
     }
 
     player.closeRoleplayInfoDialogue();

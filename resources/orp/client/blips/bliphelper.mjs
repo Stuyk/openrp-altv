@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import { Atms } from '/client/locations/locations.mjs';
+import { Atms, FuelStations, Hospitals } from '/client/locations/locations.mjs';
 
 alt.log('Loaded: client->blips->bliphelper.mjs');
 
@@ -49,4 +49,12 @@ export function cleanSectorBlips() {
 // Load ATM Blips
 Atms.forEach(atm => {
     createBlip(atm, 108, 2, 'ATM');
+});
+
+FuelStations.forEach(station => {
+    createBlip(station, 361, 49, 'Fuel Station');
+});
+
+Hospitals.forEach(hospital => {
+    createBlip(hospital, 61, 11, 'Hospital');
 });

@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { distance } from '../utility/vector.mjs';
+import { Config } from '../configuration/config.mjs';
 
 // Load the database handler.
 const db = new SQL();
@@ -130,7 +131,7 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
 
         const dist = distance(vehicle.pos, vehicle.lastPosition);
         if (dist > 10 && vehicle.driver) {
-            const fuelConsumed = (dist * 2) / 100;
+            const fuelConsumed = dist / Config.vehicleBaseFuel;
             const remainingFuel = currentFuel - fuelConsumed;
             vehicle.lastPosition = vehicle.pos;
             vehicle.fuel = remainingFuel <= 0 ? 0 : remainingFuel;

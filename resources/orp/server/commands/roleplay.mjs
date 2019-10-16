@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.mjs';
 import * as vector from '../utility/vector.mjs';
-import { ChatConfig } from '../configuration/chat.mjs';
+import { Config } from '../configuration/config.mjs';
 
 chat.registerCmd('me', (player, args) => {
     if (args.length <= 0) {
@@ -15,7 +15,7 @@ chat.registerCmd('me', (player, args) => {
     }
 
     let msg = args.join(' ');
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxMeRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxMeRange);
     inRange.forEach(target => {
         target.send(`{c5a5de}${player.data.name.replace('_', ' ')} ${msg}`);
         alt.emitClient(target, 'text:playerAction', player, msg);
@@ -34,7 +34,7 @@ chat.registerCmd('do', (player, args) => {
     }
 
     let msg = args.join(' ');
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxDoRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxDoRange);
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
         alt.emitClient(target, 'text:playerAction', player, msg);
@@ -64,7 +64,7 @@ chat.registerCmd('b', (player, args) => {
         return;
     }
 
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxOocRange);
     inRange.forEach(target => {
         target.send(`{878787}${player.data.name} says: (( ${args.join(' ')} ))`);
     });
@@ -73,7 +73,7 @@ chat.registerCmd('b', (player, args) => {
 chat.registerCmd('flipcoin', player => {
     const headsOrTails = Math.floor(Math.random() * 2) ? 'heads' : 'tails';
     const msg = `Flips a coin and it lands on ${headsOrTails}`;
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxOocRange);
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ` + msg);
         alt.emitClient(target, 'text:playerAction', player, `{c5a5de} ${msg}`);
@@ -83,7 +83,7 @@ chat.registerCmd('flipcoin', player => {
 chat.registerCmd('sf', player => {
     const sOrF = Math.floor(Math.random() * 2) ? 'succeed' : 'fail';
     const msg = `${sOrF}`;
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxOocRange);
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ` + msg);
         alt.emitClient(target, 'text:playerAction', player, `{c5a5de} ${msg}`);
@@ -93,7 +93,7 @@ chat.registerCmd('sf', player => {
 chat.registerCmd('d20', player => {
     const d20 = Math.floor(Math.random() * 20) + 1;
     const msg = `Rolls a dice and it lands on ${d20}`;
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxOocRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxOocRange);
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ` + msg);
         alt.emitClient(target, 'text:playerAction', player, `{c5a5de} ${msg}`);

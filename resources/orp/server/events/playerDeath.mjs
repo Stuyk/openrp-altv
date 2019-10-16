@@ -1,8 +1,8 @@
 import * as alt from 'alt';
 import * as configurationHospitals from '../configuration/hospitals.mjs';
+import { Config } from '../configuration/config.mjs';
 import { distance } from '../utility/vector.mjs';
 import { verifyWeapon } from '../systems/anticheat.mjs';
-import { Weapons, CauseOfDeath, NonMeleeWeapons } from '../configuration/weapons.mjs';
 import { checkRestrictions } from '../systems/job.mjs';
 import { appendToMdc } from '../systems/mdc.mjs';
 

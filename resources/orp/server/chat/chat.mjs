@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as vector from '../utility/vector.mjs';
-import { ChatConfig } from '../configuration/chat.mjs';
+import { Config } from '../configuration/config.mjs';
 
 let cmds = {};
 let mutedPlayers = [];
@@ -64,7 +64,7 @@ function handleMessage(player, msg) {
         return;
     }
 
-    var playersInRange = vector.getPlayersInRange(player.pos, ChatConfig.maxChatRange);
+    var playersInRange = vector.getPlayersInRange(player.pos, Config.maxChatRange);
     const sender = player.data.name.replace('_', ' ');
     const message = `${sender} says: ${msg}`;
     alt.log(message);
@@ -86,7 +86,7 @@ export function actionMessage(player, msg) {
         return;
     }
 
-    let inRange = vector.getPlayersInRange(player.pos, ChatConfig.maxDoRange);
+    let inRange = vector.getPlayersInRange(player.pos, Config.maxDoRange);
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
     });

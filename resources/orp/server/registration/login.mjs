@@ -3,8 +3,7 @@ import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as cache from '../cache/cache.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
-import { DefaultSpawn } from '../configuration/coordinates.mjs';
-import { PlayerDefaults } from '../configuration/player.mjs';
+import { Config } from '../configuration/config.mjs';
 
 const db = new SQL(); // Get DB Reference
 const LoggedInPlayers = [];
@@ -67,11 +66,11 @@ export function finishPlayerLogin(player, databaseID) {
         // New Character
         const data = {
             id: player.guid,
-            lastposition: JSON.stringify(DefaultSpawn),
+            lastposition: JSON.stringify(Config.defaultSpawnPoint),
             model: 'mp_m_freemode_01',
             health: 200,
-            cash: PlayerDefaults.cash,
-            bank: PlayerDefaults.bank,
+            cash: Config.defaultPlayerCash,
+            bank: Config.defaultPlayerBank,
             creation: currentTime,
             lastlogin: currentTime
         };

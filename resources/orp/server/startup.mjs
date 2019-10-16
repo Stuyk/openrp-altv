@@ -32,7 +32,6 @@ let db = new SQL(
 );
 
 alt.on('ConnectionComplete', () => {
-    setTimeout(() => {});
     let filesLoaded = 0;
     const folders = fs.readdirSync(path.join(alt.rootDir, '/resources/orp/server/'));
     const filterFolders = folders.filter(x => !x.includes('.mjs'));

@@ -32,43 +32,45 @@ let db = new SQL(
 );
 
 alt.on('ConnectionComplete', () => {
-    let filesLoaded = 0;
-    const folders = fs.readdirSync(path.join(alt.rootDir, '/resources/orp/server/'));
-    const filterFolders = folders.filter(x => !x.includes('.mjs'));
-    for (let i = 0; i < filterFolders.length; i++) {
-        const folder = filterFolders[i];
-        const files = fs.readdirSync(
-            path.join(alt.rootDir, `/resources/orp/server/${folder}`)
-        );
-        const filterFiles = files.filter(x => x.includes('.mjs'));
-
-        for (let f = 0; f < filterFiles.length; f++) {
-            const newPath = `./${folder}/${filterFiles[f]}`;
-            /* jshint ignore:start */
-            import(newPath)
-                .then(res => {
-                    if (!res) {
-                        alt.log(`Failed to load: ${newPath}`);
-                    } else {
-                        filesLoaded += 1;
-                        alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
-                    }
-                })
-                .catch(err => {
-                    console.log('\r\n\x1b[31mERROR IN LOADED FILE');
-                    alt.log(newPath);
-                    alt.log(err);
-                    console.log('\r\n \x1b[0m');
-                    return undefined;
-                });
-            /* jshint ignore:end */
-        }
-    }
-
-    cacheInformation();
     setTimeout(() => {
-        alt.log('\r\nORP Ready - Loading Any Addons\r\n');
-        alt.emit('orp:Ready');
+        let filesLoaded = 0;
+        const folders = fs.readdirSync(path.join(alt.rootDir, '/resources/orp/server/'));
+        const filterFolders = folders.filter(x => !x.includes('.mjs'));
+        for (let i = 0; i < filterFolders.length; i++) {
+            const folder = filterFolders[i];
+            const files = fs.readdirSync(
+                path.join(alt.rootDir, `/resources/orp/server/${folder}`)
+            );
+            const filterFiles = files.filter(x => x.includes('.mjs'));
+
+            for (let f = 0; f < filterFiles.length; f++) {
+                const newPath = `./${folder}/${filterFiles[f]}`;
+                /* jshint ignore:start */
+                import(newPath)
+                    .then(res => {
+                        if (!res) {
+                            alt.log(`Failed to load: ${newPath}`);
+                        } else {
+                            filesLoaded += 1;
+                            alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('\r\n\x1b[31mERROR IN LOADED FILE');
+                        alt.log(newPath);
+                        alt.log(err);
+                        console.log('\r\n \x1b[0m');
+                        return undefined;
+                    });
+                /* jshint ignore:end */
+            }
+        }
+
+        cacheInformation();
+        setTimeout(() => {
+            alt.log('\r\nORP Ready - Loading Any Addons\r\n');
+            alt.emit('orp:Ready');
+        }, 5000);
     }, 5000);
 });
 

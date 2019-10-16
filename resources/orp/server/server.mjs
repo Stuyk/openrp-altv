@@ -1,3 +1,4 @@
+import * as alt from 'alt';
 import fs from 'fs';
 
 try {

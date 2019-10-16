@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import * as alt from 'alt';
 import * as utilityEncryption from '../utility/encryption.mjs';
 import * as cache from '../cache/cache.mjs';

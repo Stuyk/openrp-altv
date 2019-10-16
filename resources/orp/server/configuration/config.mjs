@@ -1,3 +1,5 @@
+import * as alt from 'alt';
+
 export const Config = {
     maxChatRange: 25,
     maxMeRange: 15,

@@ -133,8 +133,8 @@ function handleJobProps(entity, props) {
             );
             native.attachEntityToEntity(
                 object,
-                alt.Player.local.scriptID,
-                native.getPedBoneIndex(alt.Player.local.scriptID, prop.bone),
+                entity.scriptID,
+                native.getPedBoneIndex(entity.scriptID, prop.bone),
                 prop.x,
                 prop.y,
                 prop.z,

@@ -1,12 +1,56 @@
 import * as alt from 'alt';
+import { Config } from '../configuration/config.mjs';
+import { actionMessage } from '../chat/chat.mjs';
 
-setInterval(() => {
-    const filteredVehicles = alt.Vehicle.all.filter(x => x.driver);
-    if (filteredVehicles.length <= 0) {
-        return;
+let nextVehicleSaveTime = Date.now() + Config.vehicleSaveTime;
+let handling = false;
+
+setInterval(handleVehicleInterval, 10000);
+
+function handleVehicleInterval() {
+    if (handling) return;
+    handling = true;
+    for (let i = 0; i < alt.Vehicle.all.length; i++) {
+        const vehicle = alt.Vehicle.all[i];
+        const now = Date.now();
+        if (!vehicle) continue;
+
+        // Synchronize Fuel
+        if (vehicle.syncFuel) {
+            vehicle.syncFuel();
+        }
+
+        // Save Vehicles
+        if (Date.now() > nextVehicleSaveTime) {
+            nextVehicleSaveTime = Date.now() + Config.vehicleSaveTime;
+            if (vehicle.saveVehicleData) {
+                try {
+                    vehicle.saveVehicleData();
+                } catch (err) {
+                    console.log('Could not save vehicle data.');
+                    continue;
+                }
+            }
+        }
+
+        // Check for Refill Update
+        if (vehicle.isBeingFilled) {
+            if (now > vehicle.isBeingFilled.time) {
+                try {
+                    vehicle.refillTank();
+                    if (vehicle.isBeingFilled.player) {
+                        actionMessage(
+                            player,
+                            'Tops off the tank; and secures the handle to the pump.'
+                        );
+                    }
+                    vehicle.isBeingFilled = undefined;
+                } catch (err) {
+                    console.error('Failed to refill tank of vehicle.');
+                }
+            }
+        }
     }
 
-    for (let i = 0; i < filteredVehicles.length; i++) {
-        if (filteredVehicles[i].syncFuel) filteredVehicles[i].syncFuel();
-    }
-}, 15000);
+    handling = false;
+}

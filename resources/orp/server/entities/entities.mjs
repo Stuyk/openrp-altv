@@ -118,6 +118,18 @@ export const Character = new orm.EntitySchema({
         arrestTime: {
             type: 'text',
             default: '-1'
+        },
+        extraVehicleSlots: {
+            type: 'numeric',
+            default: 0
+        },
+        extraHouseSlots: {
+            type: 'number',
+            default: 0
+        },
+        extraBusinessSlots: {
+            type: 'number',
+            default: 0
         }
     }
 });

@@ -925,14 +925,23 @@ export function setupPlayerFunctions(player) {
 
     player.addVehicle = (model, pos, rot) => {
         if (Array.isArray(player.vehicles)) {
-            if (player.vehicles.length >= Config.defaultPlayerMaxVehicles) {
+            const vehicles = player.vehicles.filter(veh => veh.data);
+            const extraSlots = player.data.extraVehicleSlots;
+            if (vehicles.length >= Config.defaultPlayerMaxVehicles + extraSlots) {
                 player.send(`You are not allowed to have any additional vehicles.`);
-                return;
+                return false;
             }
         }
 
-        const nextVehicleID = fetchNextVehicleID();
+        try {
+            const tempVeh = new alt.Vehicle(model, 0, 0, 0, 0, 0, 0);
+            tempVeh.destroy();
+        } catch (err) {
+            console.error(`${model} is not a valid vehicle model.`);
+            return false;
+        }
 
+        const nextVehicleID = fetchNextVehicleID();
         const veh = {
             id: nextVehicleID,
             guid: player.data.id,
@@ -945,6 +954,7 @@ export function setupPlayerFunctions(player) {
 
         spawnVehicle(player, veh, true);
         db.upsertData(veh, 'Vehicle', () => {});
+        return true;
     };
 
     // =================
@@ -1044,6 +1054,31 @@ export function setupPlayerFunctions(player) {
         } else {
             player.setSyncedMeta('namecolor', null);
         }
+    };
+
+    // ===============================
+    // Bonuses / Loyalty
+    player.addVehicleSlot = (amount = 1) => {
+        player.data.extraVehicleSlots += amount;
+        player.saveField(
+            player.data.id,
+            'extraVehicleSlots',
+            player.data.extraVehicleSlots
+        );
+    };
+
+    player.addHouseSlot = (amount = 1) => {
+        player.data.extraHouseSlots += amount;
+        player.saveField(player.data.id, 'extraHouseSlots', player.data.extraHouseSlots);
+    };
+
+    player.addBusinessSlot = (amount = 1) => {
+        player.data.extraBusinessSlots += amount;
+        player.saveField(
+            player.data.id,
+            'extraBusinessSlots',
+            player.data.extraBusinessSlots
+        );
     };
 }
 

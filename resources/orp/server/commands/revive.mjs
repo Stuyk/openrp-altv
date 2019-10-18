@@ -13,7 +13,7 @@ chat.registerCmd('revive', player => {
 
     player.reviveTime = Date.now() + Config.defaultPlayerReviveTime;
     player.reviving = true;
-    player.send('Please wait; you will be revived in twenty seconds.');
+    player.send('Please wait; you will be revived within 20 to 30 seconds.');
 });
 
 chat.registerCmd('cancelrevive', player => {

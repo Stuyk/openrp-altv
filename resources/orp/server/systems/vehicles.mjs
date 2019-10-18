@@ -104,14 +104,6 @@ export function appendNewVehicle(id, vehicle) {
     VehicleMap.set(id, vehicle);
 }
 
-// Save Vehicle Data
-setInterval(() => {
-    // Saves All Vehicles Every 5 Minutes
-    for (let key in VehicleMap) {
-        VehicleMap[key].saveVehicleData();
-    }
-}, Config.vehicleSaveTime);
-
 /*
 0 = Front Left Door
 1 = Front Right Door
@@ -250,23 +242,17 @@ export function fillFuel(player, data) {
     const perUnit = 0.5;
     const totalCost = fuelUntilFull * perUnit;
 
-    let msg = `{FFFF00} Total Cost is: {00FF00} $${totalCost}.`;
+    let msg = `{FFFF00} Total Cost was: {00FF00} $${totalCost}.`;
     if (!player.subCash(totalCost)) {
         player.send(msg + `{FF0000}You do not have enough cash.`);
         return;
     }
     player.send(msg);
     actionMessage(player, 'Begins to fill the closest vehicle with fuel.');
-
-    setTimeout(() => {
-        vehicle.fillFuel();
-        if (player) {
-            actionMessage(
-                player,
-                'Tops off the tank; and secures the handle to the pump.'
-            );
-        }
-    }, 10000);
+    vehicle.isBeingFilled = {
+        time: Date.now() + Config.vehicleFuelTime,
+        player
+    };
 }
 
 export function checkFuel(player, data) {

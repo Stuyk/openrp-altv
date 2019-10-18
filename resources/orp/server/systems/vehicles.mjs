@@ -235,7 +235,6 @@ export function saveChanges(player, vehicle, jsonData) {
 
 export function fillFuel(player, data) {
     const vehicle = data.vehicle;
-
     if (!vehicle) return;
 
     const fuelUntilFull = 100 - vehicle.fuel;

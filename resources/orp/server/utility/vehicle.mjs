@@ -22,6 +22,7 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         vehicle.saveVehicleData = () => {
             vehicle.saveField(vehicle.data.id, 'position', JSON.stringify(vehicle.pos));
             vehicle.saveField(vehicle.data.id, 'rotation', JSON.stringify(vehicle.rot));
+            vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
 
             let vehicleData = {
                 appearance: vehicle.getAppearanceDataBase64(),
@@ -150,10 +151,6 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         }
 
         vehicle.setSyncedMeta('fuel', vehicle.fuel);
-
-        if (vehicle.data) {
-            vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
-        }
     };
 
     vehicle.fillFuel = () => {

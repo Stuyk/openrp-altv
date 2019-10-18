@@ -124,11 +124,11 @@ export const Character = new orm.EntitySchema({
             default: 0
         },
         extraHouseSlots: {
-            type: 'number',
+            type: 'numeric',
             default: 0
         },
         extraBusinessSlots: {
-            type: 'number',
+            type: 'numeric',
             default: 0
         }
     }

@@ -37,10 +37,10 @@ function handleVehicleInterval() {
         if (vehicle.isBeingFilled) {
             if (now > vehicle.isBeingFilled.time) {
                 try {
-                    vehicle.refillTank();
+                    vehicle.fillFuel();
                     if (vehicle.isBeingFilled.player) {
                         actionMessage(
-                            player,
+                            vehicle.isBeingFilled.player,
                             'Tops off the tank; and secures the handle to the pump.'
                         );
                     }

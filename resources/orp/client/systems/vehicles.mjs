@@ -138,7 +138,7 @@ export function toggleEngine() {
     const pedInSeat = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1);
     if (pedInSeat !== alt.Player.local.scriptID) return;
 
-    alt.emitServer('vehicle:ToggleEngine', alt.Player.local.vehicle);
+    alt.emitServer('vehicle:ToggleEngine', { vehicle: alt.Player.local.vehicle });
 }
 
 // Called from a keybind.
@@ -151,7 +151,7 @@ export function toggleLock() {
 
     if (alt.Player.local.vehicle) return;
 
-    alt.emitServer('vehicle:ToggleLock', veh);
+    alt.emitServer('vehicle:ToggleLock', { vehicle: alt.Player.local.vehicle });
 }
 
 // Called from a keybind.

@@ -109,7 +109,8 @@ export function exitLabs(player) {
     player.pos = { x: 3626.514404296875, y: 3752.325439453125, z: 28.515737533569336 };
 }
 
-export function cuffPlayerFreely(arrester, arrestee) {
+export function cuffPlayerFreely(arrester, data) {
+    const arrestee = data.player;
     if (!arrester || !arrestee) return;
     if (arrester.cuffedPlayer) {
         arrester.send('You already have a player cuffed.');
@@ -151,7 +152,8 @@ export function cuffPlayerFreely(arrester, arrestee) {
     );
 }
 
-export function friskPlayer(arrester, arrestee) {
+export function friskPlayer(arrester, data) {
+    const arrestee = data.player;
     const isOfficer =
         arrester.job && arrester.job.name.includes('Officer') ? true : false;
     const results = arrestee.searchItems();
@@ -184,7 +186,8 @@ export function friskPlayer(arrester, arrestee) {
     }
 }
 
-export function cuffPlayer(arrester, arrestee) {
+export function cuffPlayer(arrester, data) {
+    const arrestee = data.player;
     if (!arrester || !arrestee) return;
     if (arrester.cuffedPlayer) {
         arrester.send('You already have a player cuffed.');
@@ -224,7 +227,10 @@ export function cuffPlayer(arrester, arrestee) {
     );
 }
 
-export function uncuffPlayer(arrester, arrestee) {
+export function uncuffPlayer(arrester, data) {
+    console.log('We called it.');
+
+    const arrestee = data.player;
     if (!arrester || !arrestee) return;
     arrester.cuffedPlayer = null;
     arrestee.isArrested = false;

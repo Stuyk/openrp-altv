@@ -105,7 +105,7 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         alt.emitClient(null, 'vehicle:Repair', vehicle);
     };
 
-    vehicle.toggleDoor = (player, id) => {
+    vehicle.toggleDoor = (player, id, closeAll = false) => {
         if (vehicle.doorStates === undefined) {
             vehicle.doorStates = {
                 0: false,
@@ -118,7 +118,7 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         }
 
         // Toggle
-        vehicle.doorStates[id] = !vehicle.doorStates[id];
+        vehicle.doorStates[id] = closeAll ? false : !vehicle.doorStates[id];
         alt.emitClient(player, 'vehicle:ToggleDoor', vehicle, id, vehicle.doorStates[id]);
     };
 

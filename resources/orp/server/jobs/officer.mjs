@@ -90,8 +90,5 @@ alt.on('job:Officer', player => {
         'Use `/mdc` to access your terminal. Patrol for any logged criminals.'
     );
     job.add(copyObjective(obj));
-
-    console.log(JSON.stringify(job, null, '\t'));
-
     job.start(player);
 });

@@ -1,8 +1,9 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { ContextMenu } from '/client/systems/context.mjs';
+// import { ContextMenu } from '/client/systems/context.mjs';
 import { distance } from '/client/utility/vector.mjs';
 import { playAnimation } from '/client/systems/animation.mjs';
+import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -198,6 +199,9 @@ let objectInteractions = {
     1694452750: {
         func: gasPump
     },
+    1933174915: {
+        func: gasPump
+    },
     3203580969: {
         func: hospitalBed
     },
@@ -234,112 +238,44 @@ alt.on('menu:Object', ent => {
 });
 
 function unknown(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Unknown'
-        }
-    ]);
+    setContextTitle(`Unknown - ${ent}`);
 }
 
 function sodaMachine(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Soda Machine'
-        },
-        {
-            label: 'Buy Soda',
-            isServer: true,
-            event: 'use:SodaMachine'
-        }
-    ]);
+    appendContextItem('Buy Soda', true, 'use:SodaMachine', {});
+    setContextTitle(`Soda Machine`);
 }
 
 function coffeeMachine(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Coffee Machine'
-        },
-        {
-            label: 'Buy Coffee',
-            isServer: true,
-            event: 'use:CoffeeMachine'
-        }
-    ]);
+    appendContextItem('Buy Coffee', true, 'use:CoffeeMachine', {});
+    setContextTitle(`Coffee Machine`);
 }
 
 function payPhone(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Payphone'
-        },
-        {
-            label: 'Use Phone',
-            isServer: true,
-            event: 'use:PayPhone'
-        }
-    ]);
+    appendContextItem('Use Phone', true, 'use:PayPhone', {});
+    setContextTitle('Pay Phone');
 }
 
 function metroTicketMachine(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Metro Ticket Machine'
-        },
-        {
-            label: 'Buy Ticket',
-            isServer: true,
-            event: 'use:MetroTicketMachine'
-        }
-    ]);
+    appendContextItem('Buy Ticket', true, 'use:MetroTicketMachine', {});
+    setContextTitle('Metro Ticket Machine');
 }
 
 function postalBox(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Postal Box'
-        },
-        {
-            label: 'Use',
-            isServer: true,
-            event: 'use:PostalBox'
-        }
-    ]);
+    appendContextItem('Use', true, 'use:PostalBox', {});
+    setContextTitle('Postal Box');
 }
 
 function dumpster(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Dumpster'
-        },
-        {
-            label: 'Hide',
-            isServer: true,
-            event: 'use:HideDumpster'
-        },
-        {
-            label: 'Search',
-            isServer: true,
-            event: 'use:SearchDumpster'
-        },
-        {
-            label: 'Leave',
-            isServer: true,
-            event: 'use:LeaveDumpster'
-        }
-    ]);
+    appendContextItem('Hide', true, 'use:HideDumpster', {});
+    appendContextItem('Search', true, 'use:SearchDumpster', {});
+    appendContextItem('Leave', true, 'use:LeaveDumpster', {});
+    setContextTitle('Dumpster');
 }
 
 function atm(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'ATM'
-        },
-        {
-            label: 'Use',
-            isServer: true,
-            event: 'use:Atm'
-        }
-    ]);
+    appendContextItem('Use', true, 'use:ATM', {});
+    setContextTitle('ATM');
 }
 
 function mineshaft(ent) {
@@ -374,22 +310,13 @@ function doorControl(ent) {
         undefined
     );
 
-    new ContextMenu(ent, [
-        {
-            label: `Locked: ${locked}`
-        },
-        {
-            label: 'Toggle',
-            isServer: true,
-            event: 'use:ToggleDoor',
-            data: {
-                type,
-                pos,
-                heading: 0,
-                locked
-            }
-        }
-    ]);
+    appendContextItem(`Toggle Lock`, true, 'use:ToggleDoor', {
+        type,
+        pos,
+        heading: 0,
+        locked
+    });
+    setContextTitle(`Locked: ${locked}`);
 }
 
 function hospitalBed(ent) {
@@ -450,28 +377,11 @@ function clearSit(key) {
 }
 
 function gasPump(ent) {
-    new ContextMenu(ent, [
-        {
-            label: `Gas Pump`
-        },
-        {
-            label: 'Fuel Vehicle',
-            isServer: false,
-            event: 'vehicle:Fuel',
-            data: {}
-        }
-    ]);
+    appendContextItem(`Fuel Vehicle`, false, 'vehicle:Fuel', {});
+    setContextTitle(`Gas Pump`);
 }
 
 function fireExtinguisher(ent) {
-    new ContextMenu(ent, [
-        {
-            label: 'Fire Extinguisher'
-        },
-        {
-            label: 'Pickup',
-            isServer: true,
-            event: 'use:FireExtinguisher'
-        }
-    ]);
+    appendContextItem(`Fire Extinguisher`, true, 'use:FireExtinguisher', {});
+    setContextTitle(`Fire Extinguisher`);
 }

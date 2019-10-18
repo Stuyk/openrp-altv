@@ -1,7 +1,8 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { ContextMenu } from '/client/systems/context.mjs';
+//import { ContextMenu } from '/client/systems/context.mjs';
 import { distance } from '/client/utility/vector.mjs';
+import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 
 alt.log('Loaded: client->contextmenus->vehicle.mjs');
 
@@ -18,71 +19,26 @@ alt.on('menu:Vehicle', ent => {
         native.getDisplayNameFromVehicleModel(native.getEntityModel(ent))
     );
 
+    const vehicle = alt.Vehicle.all.find(veh => veh.scriptID === ent);
+    if (!vehicle) return;
+
     if (alt.Player.local.vehicle) {
-        let vehClass = native.getVehicleClass(alt.Player.local.vehicle.scriptID);
-        let items = [
-            {
-                label: name
-            },
-            {
-                label: 'Toggle Lock',
-                isServer: true,
-                event: 'vehicle:ToggleLock'
-            },
-            {
-                label: 'Toggle Engine',
-                isServer: true,
-                event: 'vehicle:ToggleEngine'
-            },
-            {
-                label: 'Check Fuel',
-                isServer: true,
-                event: 'vehicle:CheckFuel'
-            },
-            {
-                label: 'Safety Lock',
-                isServer: true,
-                event: 'vehicle:SafetyLock'
-            }
-        ];
+        appendContextItem('Toggle Lock', true, 'vehicle:ToggleLock', { vehicle });
+        appendContextItem('Toggle Engine', true, 'vehicle:ToggleEngine', { vehicle });
+        appendContextItem('Check Fuel', true, 'vehicle:CheckFuel', { vehicle });
 
-        if (vehClass === 8) {
-            items.pop();
+        const vehClass = native.getVehicleClass(alt.Player.local.vehicle.scriptID);
+        if (vehClass !== 8) {
+            appendContextItem('Safety Lock', true, 'vehicle:SafetyLock', { vehicle });
         }
 
-        if (alt.Player.local.isFueling) {
-            alt.Player.local.isFueling = false;
-            items.push({
-                label: 'Fuel Vehicle',
-                isServer: true,
-                event: 'vehicle:FillFuel'
-            });
-        }
-
-        new ContextMenu(ent, items);
+        setContextTitle(name);
         return;
     }
 
-    let nonSuperItems = [
-        {
-            label: name
-        },
-        {
-            label: 'Toggle Lock',
-            isServer: true,
-            event: 'vehicle:ToggleLock'
-        },
-        {
-            label: 'Check Fuel',
-            isServer: true,
-            event: 'vehicle:CheckFuel'
-        },
-        {
-            label: 'Doors Menu',
-            isServer: false,
-            event: 'submenu:VehicleDoors'
-        }
-    ];
+    appendContextItem('Toggle Lock', true, 'vehicle:ToggleLock', { vehicle });
+    appendContextItem('Check Fuel', true, 'vehicle:CheckFuel', { vehicle });
+    appendContextItem('Doors Menu', false, 'submenu:VehicleDoors', { vehicle });
 
     if (alt.Player.local.isFueling) {
         const dist = distance(
@@ -91,46 +47,25 @@ alt.on('menu:Vehicle', ent => {
         );
         alt.Player.local.isFueling = false;
         if (dist <= 4) {
-            nonSuperItems.push({
-                label: 'Fuel Vehicle',
-                isServer: true,
-                event: 'vehicle:FillFuel'
-            });
+            appendContextItem('Fill Vehicle', true, 'vehicle:FillFuel', { vehicle });
         }
     }
 
-    new ContextMenu(ent, nonSuperItems);
+    setContextTitle(name);
 });
 
-alt.on('submenu:VehicleDoors', ent => {
-    const doorCount = native.getVehicleMaxNumberOfPassengers(ent) + 1;
+alt.on('submenu:VehicleDoors', data => {
+    const doorCount = native.getVehicleMaxNumberOfPassengers(data.vehicle.scriptID) + 1;
+    const vehicle = alt.Vehicle.all.find(veh => veh.scriptID === data.vehicle.scriptID);
+    if (!vehicle) return;
 
-    let items = [
-        {
-            label: 'Door Control'
-        },
-        {
-            label: 'Trunk',
-            isServer: true,
-            event: 'vehicle:ToggleDoor',
-            data: 5
-        },
-        {
-            label: 'Hood',
-            isServer: true,
-            event: 'vehicle:ToggleDoor',
-            data: 4
-        }
-    ];
+    appendContextItem('Close All Doors', true, 'vehicle:CloseAllDoors', { vehicle });
+    appendContextItem('Trunk', true, 'vehicle:ToggleDoor', { vehicle, door: 5 });
+    appendContextItem('Hood', true, 'vehicle:ToggleDoor', { vehicle, door: 4 });
 
     for (let i = 0; i < doorCount; i++) {
-        items.push({
-            label: doorNames[i],
-            isServer: true,
-            event: 'vehicle:ToggleDoor',
-            data: i
-        });
+        appendContextItem(doorNames[i], true, 'vehicle:ToggleDoor', { vehicle, door: i });
     }
 
-    new ContextMenu(ent, items);
+    setContextTitle('Toggle Door', true);
 });

@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { ContextMenu } from '/client/systems/context.mjs';
+import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 
 alt.log('Loaded: client->contextmenus->ped.mjs');
 
@@ -17,7 +17,7 @@ alt.on('menu:Ped', ent => {
     ];
 
     options = options.concat(arrestAddons(player));
-    new ContextMenu(ent, options);
+    setContextTitle(name);
 });
 
 function arrestAddons(player) {
@@ -48,55 +48,23 @@ function arrestAddons(player) {
 
     // Is arrestable based on animations.
     if (isArrestable) {
-        options.push({
-            label: 'Cuff',
-            isServer: true,
-            event: 'use:CuffPlayer'
-        });
-
-        options.push({
-            label: 'Free Cuff',
-            isServer: true,
-            event: 'use:CuffPlayerFreely'
-        });
-
-        options.push({
-            label: 'Frisk',
-            isServer: true,
-            event: 'use:FriskPlayer'
-        });
+        appendContextItem('Cuff', true, 'use:CuffPlayer', { player });
+        appendContextItem('Cuff (Move Freely)', true, 'use:CuffPlayerFreely', { player });
+        appendContextItem('Frisk', true, 'use:FriskPlayer', { player });
     }
 
     // Are uncuffable by person who cuffed them.
     if (arrester) {
         if (arrester.scriptID === alt.Player.local.scriptID) {
-            options.push({
-                label: 'Uncuff',
-                isServer: true,
-                event: 'use:UncuffPlayer'
-            });
-
-            options.push({
-                label: 'Frisk',
-                isServer: true,
-                event: 'use:FriskPlayer'
-            });
+            appendContextItem('Uncuff', true, 'use:UncuffPlayer', { player });
+            appendContextItem('Frisk', true, 'use:FriskPlayer', { player });
         }
     }
 
     // Is Tazed by Not Arrested Yet
     if (isTazed && !arrester) {
-        options.push({
-            label: 'Cuff',
-            isServer: true,
-            event: 'use:CuffPlayer'
-        });
-
-        options.push({
-            label: 'Cuff Freely',
-            isServer: true,
-            event: 'use:CuffPlayerFreely'
-        });
+        appendContextItem('Cuff', true, 'use:CuffPlayer', { player });
+        appendContextItem('Cuff (Move Freely)', true, 'use:CuffPlayerFreely', { player });
     }
 
     return options;

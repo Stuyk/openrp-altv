@@ -70,6 +70,7 @@ alt.onClient('vehicle:SafetyLock', systemsVehicles.toggleSafetyLock);
 alt.onClient('vehicle:SaveChanges', systemsVehicles.saveChanges);
 alt.onClient('vehicle:FillFuel', systemsVehicles.fillFuel);
 alt.onClient('vehicle:CheckFuel', systemsVehicles.checkFuel);
+alt.onClient('vehicle:CloseAllDoors', systemsVehicles.closeAllDoors);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);

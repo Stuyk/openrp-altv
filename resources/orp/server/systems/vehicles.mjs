@@ -123,7 +123,30 @@ setInterval(() => {
 7 = Back2
 */
 
-export function toggleDoor(player, vehicle, id) {
+export function closeAllDoors(player, data) {
+    const vehicle = data.vehicle;
+    const dist = distance(player.pos, vehicle.pos);
+    if (dist > 5) return;
+    if (vehicle.lockState === 2) {
+        if (player.vehicles === undefined) return;
+
+        if (!player.vehicles.includes(vehicle)) {
+            player.send('{FF0000} This vehicle does not belong to you.');
+            return;
+        }
+
+        player.send('{00FF00} Your vehicle was unlocked.');
+        vehicle.lockState = 1;
+    }
+
+    for (let i = 0; i < 6; i++) {
+        vehicle.toggleDoor(player, i, true);
+    }
+}
+
+export function toggleDoor(player, data) {
+    const vehicle = data.vehicle;
+    const id = data.door;
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
 
@@ -142,7 +165,8 @@ export function toggleDoor(player, vehicle, id) {
     vehicle.toggleDoor(player, id);
 }
 
-export function toggleLock(player, vehicle) {
+export function toggleLock(player, data) {
+    const vehicle = data.vehicle;
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) {
         player.send(`{FF0000} You're too far away to toggle the lock.`);
@@ -170,7 +194,8 @@ export function toggleLock(player, vehicle) {
     }
 }
 
-export function toggleEngine(player, vehicle) {
+export function toggleEngine(player, data) {
+    const vehicle = data.vehicle;
     if (!player.vehicle) return;
     if (player.vehicles === undefined) return;
     if (!player.vehicles.includes(vehicle)) return;
@@ -185,7 +210,9 @@ export function toggleEngine(player, vehicle) {
     alt.emitClient(player, 'vehicle:StartEngine', vehicle.isEngineOn);
 }
 
-export function toggleSafetyLock(player, vehicle) {
+export function toggleSafetyLock(player, data) {
+    const vehicle = data.vehicle;
+
     if (!player.vehicle) return;
 
     if (player.vehicles === undefined) return;
@@ -212,7 +239,9 @@ export function saveChanges(player, vehicle, jsonData) {
     player.playAudio('buy');
 }
 
-export function fillFuel(player, vehicle) {
+export function fillFuel(player, data) {
+    const vehicle = data.vehicle;
+
     if (!vehicle) return;
 
     const fuelUntilFull = 100 - vehicle.fuel;
@@ -238,7 +267,8 @@ export function fillFuel(player, vehicle) {
     }, 10000);
 }
 
-export function checkFuel(player, vehicle) {
+export function checkFuel(player, data) {
+    const vehicle = data.vehicle;
     if (!vehicle) return;
     player.send(`{FFFF00}Remaining Fuel: {FFFFFF}${vehicle.fuel}`);
 }

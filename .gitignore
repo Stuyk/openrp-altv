@@ -1,6 +1,8 @@
 resources/*
-!resources/orp/*
+!resources/orp
 !resources/orp-addon/*
+resources/orp/terms-and-conditions.json
+resources/orp/server/configuration/database.mjs
 resources/orp/server/configuration/database.json
 node_modules/
 modules/

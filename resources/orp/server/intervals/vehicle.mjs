@@ -7,6 +7,6 @@ setInterval(() => {
     }
 
     for (let i = 0; i < filteredVehicles.length; i++) {
-        filteredVehicles[i].syncFuel();
+        if (filteredVehicles[i].syncFuel) filteredVehicles[i].syncFuel();
     }
 }, 15000);

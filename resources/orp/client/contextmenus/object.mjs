@@ -274,7 +274,7 @@ function dumpster(ent) {
 }
 
 function atm(ent) {
-    appendContextItem('Use', true, 'use:ATM', {});
+    appendContextItem('Use', true, 'use:Atm', {});
     setContextTitle('ATM');
 }
 

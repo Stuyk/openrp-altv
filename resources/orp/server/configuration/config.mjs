@@ -15,11 +15,12 @@ export const Config = {
         y: -279,
         z: 66
     },
-    vehicleSaveTime: 60000 * 5,
     defaultPlayerCash: 100.0,
     defaultPlayerBank: 1000.0,
+    defaultPlayerReviveTime: 1000 * 20, // 20 Seconds
     defaultPlayerMaxVehicles: 25,
     vehicleBaseFuel: 100,
+    vehicleSaveTime: 60000 * 5, // 5 Minutes
     hospitalPctFee: 0.02
 };
 

@@ -404,6 +404,7 @@ export class Objective {
         vehicle.engineOn = true;
         vehicle.fuel = 100;
         vehicle.setSyncedMeta('fuel', vehicle.fuel);
+        vehicle.setSyncedMeta('isJobCar', true);
 
         const vehicles = [...player.vehicles];
         vehicles.push(vehicle);

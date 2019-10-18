@@ -229,6 +229,8 @@ export function toggleSafetyLock(player, data) {
 }
 
 export function saveChanges(player, vehicle, jsonData) {
+    if (!vehicle.saveCustom) return;
+
     if (!player.vehicles || !player.vehicles.includes(vehicle)) {
         player.send('This is not your vehicle; you cannot modify it.');
         vehicle.syncCustom();

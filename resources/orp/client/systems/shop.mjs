@@ -127,6 +127,7 @@ function shopInterval() {
         if (!alt.Player.local.vehicle) return;
         let ped = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1, 0);
         if (alt.Player.local.scriptID !== ped) return;
+        if (alt.Player.local.vehicle.getSyncedMeta('isJobCar')) return;
     }
 
     // Turn on the shop key update function.

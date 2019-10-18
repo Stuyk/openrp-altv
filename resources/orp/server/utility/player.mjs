@@ -188,7 +188,7 @@ export function setupPlayerFunctions(player) {
         player.setArmour(0);
         player.revivePos = undefined;
         player.reviveTime = undefined;
-        player.revive = false;
+        player.reviving = false;
         player.isArrested = false;
         player.lastLocation = undefined;
         player.sendToJail = false;

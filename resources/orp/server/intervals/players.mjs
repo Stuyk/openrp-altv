@@ -1,6 +1,6 @@
 import * as alt from 'alt';
 
-const time = 60000;
+const time = 25000;
 let nextSavePlayerPlayTime = Date.now() + 60000 * 5;
 
 setInterval(() => {
@@ -23,7 +23,7 @@ setInterval(() => {
             if (player.setArrestTime) player.setArrestTime(-1);
         }
 
-        if (player.reviveTime) {
+        if (player.reviving) {
             if (now > player.reviveTime && player.revive) {
                 player.revive();
             }

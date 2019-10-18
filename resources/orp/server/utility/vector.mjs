@@ -10,6 +10,7 @@ export function getPlayersInRange(pos, range) {
 
     alt.Player.all.forEach(value => {
         if (distance(pos, value.pos) > range) return;
+        if (!value.data) return;
         inRange.push(value);
     });
 

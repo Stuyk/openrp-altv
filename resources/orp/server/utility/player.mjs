@@ -889,6 +889,10 @@ export function setupPlayerFunctions(player) {
         alt.emitClient(player, 'sound:PlayAudio', soundName);
     };
 
+    player.playAudio3D = (target, soundName) => {
+        alt.emitClient(player, 'sound:PlayAudio3D', target, soundName);
+    };
+
     // =================================
     // Animation
     player.playAnimation = (dictionary, name, durationInMS, flag) => {

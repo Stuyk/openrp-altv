@@ -109,6 +109,7 @@ alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);
 // =======================================================
 // Sound
 alt.onServer('sound:PlayAudio', systemsSound.playAudio);
+alt.onServer('sound:PlayAudio3D', systemsSound.playAudio3D);
 
 // =======================================================
 // Animation

@@ -623,6 +623,7 @@ function playAnimation() {
                         if (Date.now() < soundCooldown) return;
                         soundCooldown = Date.now() + 100;
                         playAudio(sound.name);
+                        alt.emitServer('audio:Sync3D', sound.name);
                     });
                 }
 

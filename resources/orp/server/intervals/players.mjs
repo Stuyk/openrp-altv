@@ -21,7 +21,7 @@ function handlePlayerInterval() {
 
         // Save Player Data
         if (nextSavePlayerTime < now) {
-            nextSavePlayerTime = now + Config.timePlayerTime;
+            nextSavePlayerTime = now + Config.timePlayerSaveTime;
             if (player.saveData) {
                 try {
                     player.saveData();

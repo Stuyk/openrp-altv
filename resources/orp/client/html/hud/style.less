@@ -11,6 +11,7 @@ body {
     height: 100%;
     padding: 0;
     margin: 0;
+    font-family: @fontface;
 }
 
 .context-menu {
@@ -18,7 +19,6 @@ body {
     position: fixed;
     background: @dark;
     font-family: @fontface;
-    user-select: none;
     display: flex;
     text-align: left;
     flex-direction: column;
@@ -26,6 +26,7 @@ body {
     max-width: 200px;
     overflow: hidden;
     border: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 99;
 
     .option {
         color: @light;
@@ -34,17 +35,146 @@ body {
         padding-left: 5px;
         height: 25px;
         max-height: 25px;
+        user-select: none;
     }
 
     .option:hover {
         background: @darkaccent;
         color: @contrast1;
-        cursor: pointer;
     }
 
     .title {
         padding: 5px;
         color: @contrast2;
         max-height: 25px;
+        user-select: none;
+    }
+}
+
+.hudpanel {
+    user-select: none;
+    position: fixed;
+    display: flex;
+    right: 20px;
+    top: 22px;
+    background: @dark;
+    transform: skew(-20deg);
+    padding: 5px;
+    width: auto;
+    max-width: 400px;
+    max-height: 29px;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+
+    .cash {
+        padding: 0px 5px;
+        transform: skew(20deg);
+        text-align: right;
+        color: @contrast1;
+        min-width: 100px;
+    }
+
+    .location {
+        padding: 0px 5px;
+        transform: skew(20deg);
+        text-align: center;
+        color: @light;
+        min-width: 200px;
+    }
+}
+
+.fuel {
+    user-select: none;
+    position: fixed;
+    display: flex;
+    right: 15px;
+    top: 10px;
+    background: rgba(60, 255, 0, 0.5);
+    height: 8px;
+    text-align: right;
+    font-size: 9px;
+    color: white;
+    padding-right: 2px;
+    height: 12px;
+    flex-direction: row-reverse;
+}
+
+.sprintbar {
+    user-select: none;
+    position: fixed;
+    display: flex;
+    font-size: 9px;
+    color: white;
+    padding-right: 2px;
+    right: 25px;
+    top: 51px;
+    background: rgba(0, 238, 255, 0.5);
+    height: 12px;
+    flex-direction: row-reverse;
+}
+
+.speed {
+    user-select: none;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    bottom: 10px;
+    text-shadow: 1px 1px black;
+    color: white;
+    width: 100%;
+}
+
+.minigametext {
+    user-select: none;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+    text-shadow: 1px 1px black;
+    color: white;
+    font-weight: 200;
+    width: 100%;
+    font-size: 24px;
+}
+
+.notice {
+    user-select: none;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    height: 80%;
+    text-shadow: 1px 1px black;
+    color: white;
+    font-weight: 200;
+    width: 100%;
+    font-size: 32px;
+}
+
+.notification {
+    position: fixed;
+    display: flex;
+    top: 100px;
+    background: @dark;
+    right: 25px;
+    color: white;
+    width: 300px;
+    padding: 5px;
+    height: auto;
+    animation: end 2s;
+    animation-delay: 2s;
+
+    @keyframes end {
+        from {
+            opacity: 1;
+            visibility: visible;
+        }
+        to {
+            opacity: 0;
+            visibility: hidden;
+        }
     }
 }

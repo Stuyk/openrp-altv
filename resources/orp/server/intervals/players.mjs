@@ -49,8 +49,8 @@ function handlePlayerInterval() {
             nextPaycheckTime = now + Config.timePaycheckTime;
             if (player.addCash(Config.defaultPlayerPaycheck)) {
                 try {
-                    const msg = `{00FF00}+$${Config.defaultPlayerPaycheck} {FFFFFF} from Paycheck`;
-                    player.send(msg);
+                    const msg = `+$${Config.defaultPlayerPaycheck} from Paycheck`;
+                    player.notify(msg);
                 } catch (err) {
                     console.error(`Could not add paycheck.`);
                     continue;

@@ -23,6 +23,7 @@ import * as panelsInventory from '/client/panels/inventory.mjs';
 import * as panelsClothing from '/client/panels/clothing.mjs';
 import * as panelsCharacter from '/client/panels/character.mjs';
 import * as panelsMdc from '/client/panels/mdc.mjs';
+import * as panelsHud from '/client/panels/hud.mjs';
 
 import * as meta from '/client/meta/meta.mjs';
 
@@ -129,7 +130,6 @@ alt.onServer('vehicle:SetIntoVehicle', systemsVehicles.setIntoVehicle);
 // Chat
 alt.onServer('chat:Send', panelsChat.send);
 alt.onServer('chat:SetStatus', panelsChat.setStatus);
-alt.onServer('chat:Notice', panelsChat.notice);
 
 // =======================================================
 // MDC

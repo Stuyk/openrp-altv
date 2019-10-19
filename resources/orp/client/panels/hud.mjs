@@ -77,3 +77,33 @@ alt.on('hud:ContextClose', () => {
         isContextOpen = false;
     }
 });
+
+alt.on('hud:SetKeyValue', (key, value) => {
+    if (!webview) return;
+    webview.emit('hud:SetHudData', key, value);
+});
+
+alt.on('hud:AdjustHud', value => {
+    if (!webview) return;
+    webview.emit('hud:AdjustHud', value);
+});
+
+alt.on('hud:IsInVehicle', value => {
+    if (!webview) return;
+    webview.emit('hud:isInVehicle', value);
+});
+
+alt.on('meta:Changed', (key, value) => {
+    if (!webview) return;
+    if (key === 'cash') {
+        webview.emit('hud:SetHudData', 'cash', value);
+    }
+
+    if (key === 'queueNotification') {
+        webview.emit('hud:QueueNotification', value);
+    }
+
+    if (key === 'hudNotice') {
+        webview.emit('hud:SetHudNotice', msg);
+    }
+});

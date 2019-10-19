@@ -5,7 +5,7 @@ chat.registerCmd('revive', player => {
     if (!player.data.dead) return;
 
     if (player.reviving) {
-        player.send(
+        player.notify(
             `You will revive in ${(player.reviveTime - Date.now()) / 1000} seconds.`
         );
         return;
@@ -13,7 +13,7 @@ chat.registerCmd('revive', player => {
 
     player.reviveTime = Date.now() + Config.defaultPlayerReviveTime;
     player.reviving = true;
-    player.send('Please wait; you will be revived within 20 to 30 seconds.');
+    player.notify('Please wait; you will be revived within 20 to 30 seconds.');
 });
 
 chat.registerCmd('cancelrevive', player => {
@@ -22,5 +22,5 @@ chat.registerCmd('cancelrevive', player => {
 
     player.reviving = false;
     player.reviveTime = undefined;
-    player.send('You have cancelled your revive time.');
+    player.notify('You have cancelled your revive time.');
 });

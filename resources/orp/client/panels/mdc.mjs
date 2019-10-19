@@ -4,7 +4,7 @@ import { View } from '/client/utility/view.mjs';
 alt.log('Loaded: client->panels->info.mjs');
 
 const url = 'http://resource/client/html/mdc/index.html';
-let webview = undefined;
+let webview;
 
 // Show the webview for the player to type in their roleplay info.
 export function showDialogue() {

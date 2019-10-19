@@ -111,12 +111,6 @@ class App extends Component {
             alt.on('chat:ClearChatBox', this.clearChatBox.bind(this)); // Clears the chat box.
             alt.on('chat:Hide', this.hide.bind(this));
             //alt.on('chat:AppendTask', appendTask);
-            alt.on('chat:SetCash', this.setCash.bind(this));
-            alt.on('chat:SetLocation', this.setLocation.bind(this));
-            alt.on('chat:SetSpeed', this.setSpeed.bind(this));
-            alt.on('chat:SprintBar', this.sprintBar.bind(this));
-            alt.on('chat:SetMinigameText', this.setMinigameText.bind(this));
-            alt.on('chat:Notice', this.notice.bind(this));
             alt.emit('chat:Ready');
         } else {
             setInterval(() => {
@@ -178,14 +172,6 @@ class App extends Component {
         });
     }
 
-    sprintBar(width) {
-        this.setState({ sprintBarWidth: width });
-    }
-
-    setMinigameText(text) {
-        this.setState({ minigameText: text });
-    }
-
     showChatInput() {
         this.chatInput.current.classList.remove('hidden');
         this.chatInput.current.focus();
@@ -217,13 +203,6 @@ class App extends Component {
         messages.push(msg);
         this.setState({ messages });
         this.scrollToBottom();
-    }
-
-    notice(msg) {
-        this.setState({ notice: msg });
-        setTimeout(() => {
-            this.setState({ notice: '' });
-        }, 3000); // notice lasts for 3 seconds
     }
 
     appendTask(msg) {
@@ -276,31 +255,7 @@ class App extends Component {
                     },
                     'test'
                 )
-            ),
-            h(
-                'div',
-                { class: 'hud' },
-                h(
-                    'div',
-                    { class: 'element' },
-                    h('div', { class: 'label money' }, `$${this.state.cash}`)
-                ),
-                h(
-                    'div',
-                    { class: 'element' },
-                    h('div', { class: 'label location' }, `${this.state.location}`)
-                ),
-                this.state.task !== '' &&
-                    h('div', { class: 'element' }, `${this.state.task}`)
-            ),
-            h('div', { class: 'notice' }, `${this.state.notice}`),
-            h('div', { class: 'speed' }, `${this.state.speed}`),
-            h('div', {
-                class: 'sprintbar',
-                style: `width: ${this.state.sprintBarWidth}px`
-            }),
-            this.state.minigameText !== '' &&
-                h('div', { class: 'minigameText' }, this.state.minigameText)
+            )
         );
         // Render HTML / Components and Shit Here
     }

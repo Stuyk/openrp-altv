@@ -73,8 +73,13 @@ export function setupPlayerFunctions(player) {
     };
 
     // ====================================
+    // HUD
     player.notice = msg => {
-        alt.emitClient(player, 'chat:Notice', msg);
+        player.emitMeta('hudNotice', msg);
+    };
+
+    player.notify = msg => {
+        player.emitMeta('queueNotification', msg);
     };
 
     // ====================================

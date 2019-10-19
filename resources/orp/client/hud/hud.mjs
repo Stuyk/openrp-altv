@@ -32,30 +32,41 @@ function startInterval() {
         return;
     }
 
-    if (alt.Player.local.vehicle) {
-        vehicleHudData();
-    } else {
-        if (lastSpeed !== '') {
-            lastSpeed = '';
-            alt.nextTick(() => {
-                alt.emit('hud:SetSpeed', lastSpeed);
-            });
-        }
-    }
-
     if (!alt.Player.local.vehicle) {
+        alt.emit('hud:IsInVehicle', false);
+
         const sprintTime = native.getPlayerSprintStaminaRemaining(
             alt.Player.local.scriptID
         );
         const timeLeft = 100 - sprintTime;
         if (timeLeft !== 100) {
             const progress = timeLeft / 100;
-            const totalWidth = progress * width;
             alt.nextTick(() => {
-                alt.emit('hud:SetSprintBar', totalWidth);
+                alt.emit('hud:SetKeyValue', 'sprintbar', progress);
             });
         }
+
+        if (lastSpeed !== '') {
+            lastSpeed = '';
+            alt.nextTick(() => {
+                alt.emit('hud:SetKeyValue', 'speed', lastSpeed);
+            });
+        }
+    } else {
+        alt.emit('hud:IsInVehicle', true);
+        vehicleHudData();
+        vehicleFuel();
     }
+}
+
+function vehicleFuel() {
+    const veh = alt.Player.local.vehicle;
+    let fuel = veh.getSyncedMeta('fuel');
+    let basefuel = veh.getSyncedMeta('basefuel');
+    if (fuel === null) fuel = 1;
+    if (basefuel === null) basefuel = 100;
+    const currentFuel = fuel / basefuel;
+    alt.emit('hud:SetKeyValue', 'fuel', currentFuel);
 }
 
 function vehicleHudData() {
@@ -64,7 +75,7 @@ function vehicleHudData() {
         isMetric ? 'KM/H' : 'MPH'
     }`;
     alt.nextTick(() => {
-        alt.emit('hud:SetSpeed', lastSpeed);
+        alt.emit('hud:SetKeyValue', 'speed', lastSpeed);
     });
 }
 
@@ -86,6 +97,6 @@ function updateLocation() {
     let streetName = native.getStreetNameFromHashKey(_street);
 
     alt.nextTick(() => {
-        alt.emit('hud:SetLocation', `${zone}, ${streetName}`);
+        alt.emit('hud:SetKeyValue', 'location', `${zone}, ${streetName}`);
     });
 }

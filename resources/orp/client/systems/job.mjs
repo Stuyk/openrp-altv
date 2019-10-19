@@ -191,7 +191,7 @@ function clearObjective() {
         }
     }
 
-    alt.emit('hud:SetMinigameText', '');
+    alt.emit('hud:SetKeyValue', 'minigametext', '');
 
     mashing = 0;
     pause = false;
@@ -264,7 +264,7 @@ function intervalObjectiveInfo() {
     if (objective.word && objective.word.length >= 1 && objective.marker) {
         native.disableAllControlActions(0);
         native.disableAllControlActions(1);
-        alt.emit('hud:SetMinigameText', objective.word);
+        alt.emit('hud:SetKeyValue', 'minigametext', objective.word);
     }
 
     if (objective && objective.helpText && !target) {

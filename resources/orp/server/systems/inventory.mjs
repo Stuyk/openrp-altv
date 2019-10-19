@@ -81,6 +81,8 @@ export function use(player, hash) {
 
         alt.emit(baseItem.eventcall, player, item, hash);
     }
+
+    player.notify(`Used: ${item.name} 1x`);
 }
 
 export function unequipItem(player, hash) {
@@ -187,6 +189,8 @@ export function drop(player, hash) {
 
     // Setup the dropped item.
     ItemDrops.set(newHash, clonedItem);
+
+    player.notify(`Dropped: ${clonedItem.name} ${clonedItem.quantity}x`);
     const randomPos = utilityVector.randPosAround(player.pos, 2);
     alt.emitClient(null, 'inventory:ItemDrop', player, clonedItem, randomPos);
     player.isDropping = false;
@@ -202,6 +206,8 @@ export function destroy(player, hash) {
         return;
     }
 
+    const item = player.inventory[index];
+    player.notify(`Destroyed: ${item.name} ${item.quantity}x`);
     player.removeItem(index);
 }
 

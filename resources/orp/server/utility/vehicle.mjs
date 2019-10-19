@@ -137,10 +137,6 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
             vehicle.lastPosition = vehicle.pos;
             vehicle.fuel = remainingFuel <= 0 ? 0 : remainingFuel;
 
-            if (vehicle.driver) {
-                vehicle.driver.send(`Remaining: ${vehicle.fuel}`);
-            }
-
             if (vehicle.fuel <= 0 && vehicle.isEngineOn) {
                 vehicle.isEngineOn = false;
                 if (vehicle.driver) {
@@ -151,10 +147,11 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         }
 
         vehicle.setSyncedMeta('fuel', vehicle.fuel);
+        vehicle.setSyncedMeta('basefuel', Config.vehicleBaseFuel);
     };
 
     vehicle.fillFuel = () => {
-        vehicle.fuel = 100;
+        vehicle.fuel = Config.vehicleBaseFuel;
         vehicle.setSyncedMeta('fuel', vehicle.fuel);
         if (vehicle.data) {
             vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);

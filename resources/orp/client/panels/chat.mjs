@@ -52,11 +52,6 @@ export function send(msg) {
 alt.on('chat:Send', send);
 alt.on('chat:Toggle', toggleHide);
 
-export function notice(msg) {
-    if (!webview) return;
-    webview.emit('chat:Notice', msg);
-}
-
 export function toggleHide() {
     if (webview === undefined) return;
 
@@ -94,30 +89,3 @@ function ready() {
 export function setStatus(player, value) {
     player.setMeta('isChatting', value);
 }
-
-alt.on('meta:Changed', (key, value) => {
-    if (!webview) return;
-    if (key === 'cash') {
-        webview.emit('chat:SetCash', value);
-    }
-});
-
-alt.on('hud:SetLocation', location => {
-    if (!webview) return;
-    webview.emit('chat:SetLocation', location);
-});
-
-alt.on('hud:SetSpeed', speed => {
-    if (!webview) return;
-    webview.emit('chat:SetSpeed', speed);
-});
-
-alt.on('hud:SetSprintBar', pixels => {
-    if (!webview) return;
-    webview.emit('chat:SprintBar', pixels);
-});
-
-alt.on('hud:SetMinigameText', text => {
-    if (!webview) return;
-    webview.emit('chat:SetMinigameText', text);
-});

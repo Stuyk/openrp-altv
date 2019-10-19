@@ -48,6 +48,8 @@ export function showDialogue() {
     webview.on('inventory:FetchEquipment', fetchEquipment);
     webview.on('inventory:UnequipItem', unequipItem);
     webview.on('inventory:Split', split);
+
+    alt.emit('hud:AdjustHud', true);
 }
 
 function swapItem(heldIndex, dropIndex) {
@@ -121,6 +123,7 @@ export function fetchItems(value) {
 
 function exit() {
     webview.close();
+    alt.emit('hud:AdjustHud', false);
 }
 
 function destroy(hash) {

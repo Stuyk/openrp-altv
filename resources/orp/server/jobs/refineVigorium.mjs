@@ -9,29 +9,12 @@ import {
 } from '../systems/job.mjs';
 import { Interaction } from '../systems/interaction.mjs';
 
-const jobName = 'Kevlarium Refinery';
+const jobName = 'Vigorium Refinery';
 const trackStart = {
     x: 3530.47900390625,
     y: 3664.44384765625,
     z: 28.1171875
 };
-
-/*
-[
-	,
-	,
-	{
-		"x": 3538.892333984375,
-		"y": 3668.21533203125,
-		"z": 28.1171875
-	},
-	{
-		"x": 3534.421875,
-		"y": 3659.67041015625,
-		"z": 28.1171875
-	}
-]
-*/
 
 const interactionPoint = { ...trackStart };
 interactionPoint.z -= 0.5;

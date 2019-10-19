@@ -49,7 +49,7 @@ chat.registerCmd('addwep', (player, arg) => {
         return;
     }
 
-    player.send(`Weapon was added to your inventory.`);
+    player.notify('A weapon was added to your inventory.');
 });
 
 chat.registerCmd('face', player => {

@@ -51,6 +51,17 @@ alt.on('menu:Vehicle', ent => {
         }
     }
 
+    if (alt.Player.local.isRepairing) {
+        const dist = distance(
+            alt.Player.local.pos,
+            native.getEntityCoords(ent, false)
+        );
+        if (dist <= 4) {
+            appendContextItem('Repair Vehicle', true, 'vehicle:RepairVehicle', { vehicle });
+            alt.Player.local.isRepairing = false;
+        }
+    }
+
     setContextTitle(name);
 });
 

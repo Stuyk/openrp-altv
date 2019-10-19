@@ -39,6 +39,14 @@ export function itemPickup(hash) {
     }
 }
 
+export function useRepairKit() {
+    alt.Player.local.isRepairing = true;
+    alt.emit(
+        'chat:Send',
+        `{00FF00} Select the vehicle you want to repair with your cursor.`
+    );
+}
+
 function drawItems() {
     if (itemsOnGround.length <= 0) {
         if (interval) {

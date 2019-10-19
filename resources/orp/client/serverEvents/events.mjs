@@ -106,6 +106,8 @@ alt.onServer('inventory:FetchItems', panelsInventory.fetchItems);
 alt.onServer('inventory:ItemDrop', systemsInventory.itemDrop);
 // Pickup Item
 alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);
+// Use RepairKit from Inventory
+alt.onServer('inventory:UseRepairKit', systemsInventory.useRepairKit);
 
 // =======================================================
 // Sound

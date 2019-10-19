@@ -71,6 +71,7 @@ alt.onClient('vehicle:SaveChanges', systemsVehicles.saveChanges);
 alt.onClient('vehicle:FillFuel', systemsVehicles.fillFuel);
 alt.onClient('vehicle:CheckFuel', systemsVehicles.checkFuel);
 alt.onClient('vehicle:CloseAllDoors', systemsVehicles.closeAllDoors);
+alt.onClient('vehicle:Repair', systemsVehicles.repair);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);

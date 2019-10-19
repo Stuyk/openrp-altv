@@ -121,6 +121,8 @@ export function eject(slowly) {
 
 export function repair(vehicle) {
     native.setVehicleFixed(vehicle.scriptID);
+    native.setVehicleDeformationFixed(vehicle.scriptID);
+    native.setVehicleUndriveable(vehicle.scriptID, false);
 }
 
 export function startEngine(value) {

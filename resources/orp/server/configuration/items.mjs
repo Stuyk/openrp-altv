@@ -325,6 +325,18 @@ export const BaseItems = {
         },
         slot: -1
     },
+    repairkit: {
+        eventcall: 'itemeffects:RepairVehicle',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
     rope: {
         eventcall: '',
         abilities: {
@@ -760,6 +772,14 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'id-card'
+    },
+    repairkit: {
+        name: 'Repair Kit',
+        base: 'repairkit',
+        key: 'repairkit',
+        props: {},
+        quantity: 0,
+        icon: 'auto-repair'
     },
     rope: {
         name: 'Bundle of Rope (5 Min)',

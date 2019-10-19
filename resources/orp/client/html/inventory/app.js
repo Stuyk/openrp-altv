@@ -12,6 +12,7 @@ const tabData = {
 const icons = [
     'accessory',
     'agility',
+    'auto-repair',
     'axe',
     'backpack',
     'bandana',

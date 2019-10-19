@@ -266,7 +266,7 @@ export function checkFuel(player, data) {
     player.send(`{FFFF00}Remaining Fuel: {FFFFFF}${vehicle.fuel}`);
 }
 
-export function repair(player, data) {
+export function repairVehicle(player, data) {
     const vehicle = data.vehicle;
     if (!vehicle) return;
     vehicle.repair();

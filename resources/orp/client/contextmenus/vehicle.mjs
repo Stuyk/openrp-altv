@@ -57,7 +57,7 @@ alt.on('menu:Vehicle', ent => {
             native.getEntityCoords(ent, false)
         );
         if (dist <= 4) {
-            appendContextItem('Repair Vehicle', true, 'vehicle:Repair', { vehicle });
+            appendContextItem('Repair Vehicle', true, 'vehicle:RepairVehicle', { vehicle });
             alt.Player.local.isRepairing = false;
         }
     }

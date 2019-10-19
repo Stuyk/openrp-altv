@@ -5,10 +5,5 @@ alt.on('itemeffects:RepairVehicle', (player, item, hash) => {
         return;
     }
 
-    player.send('You begin repairing the vehicle.');
-
-    // TODO: couldn't get animation to work :(
-    //player.playAnimation = ('mini@repair', 'fixing_a_car', 1200, 33);
-
     alt.emitClient(player, 'inventory:UseRepairKit');
 });

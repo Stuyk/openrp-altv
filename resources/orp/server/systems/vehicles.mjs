@@ -158,7 +158,13 @@ export function toggleDoor(player, data) {
 }
 
 export function toggleLock(player, data) {
-    const vehicle = data.vehicle;
+    let vehicle = data.vehicle;
+    if (!vehicle) {
+        vehicle = alt.Vehicle.all.find(veh => {
+            if (veh && distance(veh.pos, player.pos) <= 4) return veh;
+        });
+    }
+    if (!vehicle) return;
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) {
         player.send(`{FF0000} You're too far away to toggle the lock.`);

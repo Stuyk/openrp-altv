@@ -224,6 +224,7 @@ chairs.forEach(item => {
 
 alt.on('menu:Object', ent => {
     if (alt.Player.local.getMeta('arrest')) return;
+    if (alt.Player.local.vehicle) return;
 
     let model = native.getEntityModel(ent);
 

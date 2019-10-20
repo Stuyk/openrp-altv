@@ -24,6 +24,7 @@ import * as panelsClothing from '/client/panels/clothing.mjs';
 import * as panelsCharacter from '/client/panels/character.mjs';
 import * as panelsMdc from '/client/panels/mdc.mjs';
 import * as panelsHud from '/client/panels/hud.mjs';
+import * as panelsVehicleVendor from '/client/panels/vehiclevendor.mjs';
 
 import * as meta from '/client/meta/meta.mjs';
 
@@ -141,3 +142,7 @@ alt.onServer('mdc:Data', panelsMdc.data);
 // =======================================================
 // Global
 alt.onServer('meta:Emit', meta.emit);
+
+// =======================================================
+// Vehicle Vendors
+alt.onServer('vehiclevendor:ShowDialogue', panelsVehicleVendor.showDialogue);

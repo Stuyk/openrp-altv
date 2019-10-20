@@ -14,7 +14,7 @@ let VehicleMap = new Map();
  */
 export function spawnVehicle(player, veh, newVehicle = false) {
     // Existing Vehicle; Player Rejoined
-    if (!newVehicle && VehicleMap.has(veh.id)) {
+    if (VehicleMap.has(veh.id)) {
         let mappedVehicle = VehicleMap.get(veh.id);
 
         if (!Array.isArray(player.vehicles)) {
@@ -81,9 +81,10 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         vehicle.syncCustom();
     }
 
-    if (!newVehicle) {
-        // Set the vehicle into the map.
-        VehicleMap.set(veh.id, vehicle);
+    VehicleMap.set(veh.id, vehicle);
+
+    if (newVehicle) {
+        alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
     }
 
     // Create the vehicles array for the player.

@@ -12,6 +12,7 @@ import * as systemsVehicles from '../systems/vehicles.mjs';
 import * as systemsJob from '../systems/job.mjs';
 import * as systemsAtm from '../systems/atm.mjs';
 import * as systemsSkills from '../systems/skills.mjs';
+import * as systemsVehicleVendor from '../systems/vehiclevendor.mjs';
 import * as characterClothing from '../character/clothing.mjs';
 import * as chat from '../chat/chat.mjs';
 
@@ -72,6 +73,9 @@ alt.onClient('vehicle:FillFuel', systemsVehicles.fillFuel);
 alt.onClient('vehicle:CheckFuel', systemsVehicles.checkFuel);
 alt.onClient('vehicle:CloseAllDoors', systemsVehicles.closeAllDoors);
 alt.onClient('vehicle:RepairVehicle', systemsVehicles.repairVehicle);
+
+// Vehicle Vendor
+alt.onClient('vehiclevendor:Purchase', systemsVehicleVendor.purchaseVehicle);
 
 // Chat
 alt.onClient('chat:RouteMessage', chat.routeMessage);

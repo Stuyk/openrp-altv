@@ -41,10 +41,7 @@ class App extends Component {
     setVehicleData(data) {
         const vehicles = JSON.parse(data);
         const vehiclesByType = vehicles.filter(x => {
-            if (
-                x.class.toLowerCase() === this.state.classType.toLowerCase() &&
-                x.sellable
-            )
+            if (x.sell && x.class.toLowerCase() === this.state.classType.toLowerCase())
                 return x;
         });
 
@@ -92,7 +89,7 @@ class App extends Component {
 
         this.setState({
             index,
-            vehiclename: this.state.vehicles[index].name,
+            vehiclename: this.state.vehicles[index].display,
             price
         });
     }

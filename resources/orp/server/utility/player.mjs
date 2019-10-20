@@ -932,6 +932,17 @@ export function setupPlayerFunctions(player) {
         });
     };
 
+    player.hasVehicleSlot = () => {
+        if (Array.isArray(player.vehicles)) {
+            const vehicles = player.vehicles.filter(veh => veh.data);
+            const extraSlots = player.data.extraVehicleSlots;
+            if (vehicles.length >= Config.defaultPlayerMaxVehicles + extraSlots) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     player.addVehicle = (model, pos, rot) => {
         if (Array.isArray(player.vehicles)) {
             const vehicles = player.vehicles.filter(veh => veh.data);

@@ -4,21 +4,20 @@ import { View } from '/client/utility/view.mjs';
 import { Vehicles } from '/client/gamedata/vehicles.mjs';
 import { Camera } from '/client/utility/camera.mjs';
 
-const vehiclePos = {
-    x: -43.35280990600586,
-    y: -1095.1534423828125,
-    z: 26.42232894897461
-};
-const camPos = { x: -45.453521728515625, y: -1100.82958984375, z: 27.42232894897461 };
-
 const url = 'http://resource/client/html/vehiclevendor/index.html';
 let webview;
 let camera;
 let currentVehicle;
 let currentVehicles = [];
 let type = '';
+let vehiclePos = {
+    x: -43.35280990600586,
+    y: -1095.1534423828125,
+    z: 26.42232894897461
+};
+let camPos = { x: -45.453521728515625, y: -1100.82958984375, z: 27.42232894897461 };
 
-export function showDialogue(vehicleClassType = 'Sedans') {
+export function showDialogue(vehPos, cPos, vehicleClassType = 'Sedans') {
     if (!webview) {
         webview = new View();
     }
@@ -26,6 +25,9 @@ export function showDialogue(vehicleClassType = 'Sedans') {
     if (alt.Player.local.getMeta('viewOpen')) return;
     if (alt.Player.local.getSyncedMeta('dead')) return;
     if (alt.Player.local.getMeta('arrest')) return;
+
+    vehiclePos = vehPos;
+    camPos = cPos;
 
     // Setup Webview
     webview.open(url, true);

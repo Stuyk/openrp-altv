@@ -276,9 +276,6 @@ export function repairVehicle(player, data) {
 
 export function refuelVehicle(player, data) {
     const vehicle = data.vehicle;
-    alt.log('here!!!!');
-    alt.log(vehicle.fuel);
-
     if (!vehicle) return;
     actionMessage(player, 'Begins to fill the vehicle with fuel.');
     vehicle.isBeingFilled = {

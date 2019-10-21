@@ -293,14 +293,12 @@ export function repairVehicle(player, data) {
     player.send(`{FFFF00}Vehicle has been repaired.`);
 }
 
-<<<<<<< HEAD
 export function trackVehicle(player, id) {
     if (!player.vehicles) return;
     const vehicle = player.vehicles.find(x => x.data.id === id);
     if (!vehicle) return;
     alt.emitClient(player, 'vehicle:TrackVehicle', vehicle.pos);
 }
-=======
 export function refuelVehicle(player, data) {
     const vehicle = data.vehicle;
     if (!vehicle) return;
@@ -310,4 +308,3 @@ export function refuelVehicle(player, data) {
         player
     };
 }
->>>>>>> 68d34ff96bd0acb81152cbb854e5674913248b18

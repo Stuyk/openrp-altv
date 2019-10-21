@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import { createBlip } from '/client/blips/bliphelper.mjs';
 
 alt.log('Loaded: client->systems->vehicles.mjs');
 
@@ -203,4 +204,20 @@ export function setIntoVehicle(vehicle) {
     alt.setTimeout(() => {
         native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle.scriptID, -1);
     }, 200);
+}
+
+export function trackVehicle(pos) {
+    const blip = createBlip(pos, 1, 61, 'A Vehicle Tracker');
+    alt.emit(
+        'hud:QueueNotification',
+        `A pink blip was placed on your map named 'A Vehicle Tracker'`
+    );
+
+    alt.setTimeout(() => {
+        try {
+            blip.destroy();
+        } catch (err) {
+            console.log('Locate vehicle blip could not be destroyed.');
+        }
+    }, 15000);
 }

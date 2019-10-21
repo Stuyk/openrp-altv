@@ -107,3 +107,7 @@ alt.on('meta:Changed', (key, value) => {
         webview.emit('hud:SetHudNotice', msg);
     }
 });
+
+alt.on('hud:QueueNotification', msg => {
+    webview.emit('hud:QueueNotification', msg);
+});

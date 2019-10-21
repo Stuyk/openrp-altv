@@ -15,7 +15,7 @@ export const vendors = [
         exit: { x: -69.21147155761719, y: -1099.0828857421875, z: 26.305255889892578 },
         blip: {
             name: `Demoriaan's Premium Deluxe Motorsport`,
-            sprite: 147,
+            sprite: 595,
             color: 11
         }
     },
@@ -32,7 +32,7 @@ export const vendors = [
         exit: { x: -194.41993713378906, y: -1387.773193359375, z: 31.17905616760254 },
         blip: {
             name: `Jagger's Coupes`,
-            sprite: 147,
+            sprite: 530,
             color: 11
         }
     },
@@ -117,7 +117,7 @@ export const vendors = [
         exit: { x: -397.6817932128906, y: 1177.038330078125, z: 325.64178466796875 },
         blip: {
             name: `Mika's Sport Vehicles`,
-            sprite: 147,
+            sprite: 523,
             color: 11
         }
     },
@@ -130,7 +130,7 @@ export const vendors = [
         exit: { x: 1985.4091796875, y: 3769.632080078125, z: 32.180641174316406 },
         blip: {
             name: `Shao's Offroad Emporium`,
-            sprite: 147,
+            sprite: 512,
             color: 11
         }
     },
@@ -193,14 +193,38 @@ export const vendors = [
             sprite: 575,
             color: 11
         }
+    },
+    {
+        base: 'vehicle',
+        type: 'motorcycle',
+        interaction: {
+            x: -1291.2449951171875,
+            y: -1306.56591796875,
+            z: 4.425912380218506
+        },
+        pos: { x: -1301.4639892578125, y: -1309.9246826171875, z: 4.765772819519043 },
+        cPos: { x: -1297.5157470703125, y: -1308.5504150390625, z: 4.679189205169678 },
+        exit: { x: -1301.8232421875, y: -1303.0283203125, z: 4.711495399475098 },
+        blip: {
+            name: `Qallle's Motorcycle Shop`,
+            sprite: 226,
+            color: 11
+        }
+    },
+    {
+        base: 'vehicle',
+        type: 'van',
+        interaction: { x: 720.8762817382812, y: -2114.77734375, z: 29.221271514892578 },
+        pos: { x: 724.600341796875, y: -2103.179931640625, z: 29.261981964111328 },
+        cPos: { x: 729.4063110351562, y: -2103.397216796875, z: 29.28108787536621 },
+        exit: { x: 727.3639526367188, y: -2090.68994140625, z: 29.291629791259766 },
+        blip: {
+            name: `Take's Van Shop`,
+            sprite: 318,
+            color: 11
+        }
     }
 ];
-
-/*
-{
-[17:38:34] {"x":-1111.548095703125,"y":-1684.92626953125,"z":4.364548206329346}
-[17:38:40] 
-*/
 
 vendors.forEach((vendor, index) => {
     // Vehicle Vendors

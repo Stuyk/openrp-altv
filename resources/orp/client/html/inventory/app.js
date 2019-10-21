@@ -5,8 +5,9 @@ const tabData = {
     profile: 0,
     stats: 1,
     inventory: 2,
-    unknown: 3,
-    settings: 4
+    keys: 3,
+    contact: 4,
+    settings: 5
 };
 
 const icons = [
@@ -158,10 +159,12 @@ class App extends Component {
                 this.state.tabIndex == 1 && h(Stats),
                 // Inventory
                 this.state.tabIndex == 2 && h(Inventory),
+                // Vehicles
+                this.state.tabIndex === 3 && h('div', {}, h(Vehicles)),
                 // Idk Yet
-                this.state.tabIndex == 3 && h('div', {}, 'idk'),
+                this.state.tabIndex == 4 && h('div', {}, 'idk'),
                 // Settings
-                this.state.tabIndex == 4 && h('div', {}, 'settings')
+                this.state.tabIndex == 5 && h('div', {}, 'settings')
             )
         );
     }
@@ -184,6 +187,108 @@ const Navigation = ({ navigate, index }) => {
     });
     return h('div', { class: 'navcon' }, tabs);
 };
+
+class Vehicles extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            vehicles: []
+        };
+        this.recieveVehicleBind = this.recieveVehicle.bind(this);
+    }
+
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('inventory:RecieveVehicle', this.recieveVehicleBind);
+            alt.emit('inventory:FetchVehicles');
+        } else {
+            for (let i = 0; i < 50; i++) {
+                this.recieveVehicle({
+                    id: i,
+                    guid: 3,
+                    model: 'akuma',
+                    position:
+                        '{"x":627.7186889648438,"y":263.9736328125,"z":102.5933837890625}',
+                    rotation: '{"x":0,"y":-0.25,"z":-0.09375}',
+                    stats:
+                        '{"appearance":"ACYEnAAAACAAAIYUAAAAMAYMypWAAAAAAAAAAAAAAAA=","damageStatus":"AA==","health":"DwAA","lockState":1,"scriptData":"wCYkADgAAAP/+AAQAAABAgA="}',
+                    customization: null,
+                    fuel: '100'
+                });
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        if ('alt' in window) {
+            alt.off('inventory:RecieveVehicle', this.recieveVehiclesBind);
+        }
+    }
+
+    recieveVehicle(vehicle) {
+        const vehicles = [...this.state.vehicles];
+        vehicles.push(vehicle);
+        this.setState({ vehicles });
+    }
+
+    locate(e) {
+        const id = parseInt(e.target.id);
+        if ('alt' in window) {
+            alt.emit('inventory:LocateVehicle', id);
+        } else {
+            console.log(`Locate: ${id}`);
+        }
+    }
+
+    sell(e) {
+        const id = parseInt(e.target.id);
+        if ('alt' in window) {
+            alt.emit('inventory:SellVehicle', id);
+        } else {
+            console.log(`Sell: ${id}`);
+        }
+    }
+
+    destroy(e) {
+        const id = parseInt(e.target.id);
+        if ('alt' in window) {
+            alt.emit('inventory:DestroyVehicle', id);
+        } else {
+            console.log(`Destroy: ${id}`);
+        }
+    }
+
+    renderVehicles() {
+        const vehicles = this.state.vehicles.map(veh => {
+            return h(
+                'div',
+                { class: 'vehiclerow' },
+                h('div', { class: 'id' }, `ID: ${veh.id}`),
+                h('div', { class: 'title' }, `Model: ${veh.model}`),
+                h(
+                    'button',
+                    { class: 'btn', id: veh.id, onclick: this.locate.bind(this) },
+                    'Locate'
+                ),
+                h(
+                    'button',
+                    { class: 'btn', id: veh.id, onclick: this.sell.bind(this) },
+                    'Sell'
+                ),
+                h(
+                    'button',
+                    { class: 'btn', id: veh.id, onclick: this.destroy.bind(this) },
+                    'Destroy'
+                )
+            );
+        });
+        return h('div', { class: 'vehiclelist' }, vehicles);
+    }
+
+    render() {
+        return h(this.renderVehicles.bind(this));
+    }
+}
 
 class Inventory extends Component {
     constructor(props) {

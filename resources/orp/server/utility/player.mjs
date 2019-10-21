@@ -935,7 +935,7 @@ export function setupPlayerFunctions(player) {
     player.hasVehicleSlot = () => {
         if (Array.isArray(player.vehicles)) {
             const vehicles = player.vehicles.filter(veh => veh.data);
-            const extraSlots = player.data.extraVehicleSlots;
+            const extraSlots = parseInt(player.data.extraVehicleSlots);
             if (vehicles.length >= Config.defaultPlayerMaxVehicles + extraSlots) {
                 return false;
             }
@@ -946,7 +946,7 @@ export function setupPlayerFunctions(player) {
     player.addVehicle = (model, pos, rot) => {
         if (Array.isArray(player.vehicles)) {
             const vehicles = player.vehicles.filter(veh => veh.data);
-            const extraSlots = player.data.extraVehicleSlots;
+            const extraSlots = parseInt(player.data.extraVehicleSlots);
             if (vehicles.length >= Config.defaultPlayerMaxVehicles + extraSlots) {
                 player.send(`You are not allowed to have any additional vehicles.`);
                 return false;

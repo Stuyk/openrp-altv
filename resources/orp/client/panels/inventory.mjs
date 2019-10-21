@@ -48,6 +48,8 @@ export function showDialogue() {
     webview.on('inventory:FetchEquipment', fetchEquipment);
     webview.on('inventory:UnequipItem', unequipItem);
     webview.on('inventory:Split', split);
+    webview.on('inventory:FetchVehicles', fetchVehicles);
+    webview.on('inventory:LocateVehicle', locateVehicle);
 
     alt.emit('hud:AdjustHud', true);
 }
@@ -98,7 +100,7 @@ export function fetchItems(value) {
     }
 
     const itemArray = JSON.parse(value);
-
+    if (!itemArray) return;
     itemArray.forEach((item, index) => {
         if (!item) {
             webview.emit('inventory:AddItem', index, null);
@@ -148,4 +150,18 @@ function unequipItem(hash) {
 
 function split(hash) {
     alt.emitServer('inventory:Split', hash);
+}
+
+function fetchVehicles() {
+    if (!webview) return;
+    const vehicles = alt.Player.local.getMeta('vehiclesMeta');
+    if (!vehicles) return;
+    vehicles.forEach(veh => {
+        webview.emit('inventory:RecieveVehicle', JSON.parse(veh));
+    });
+}
+
+function locateVehicle(id) {
+    exit();
+    alt.emitServer('vehicle:TrackVehicle', id);
 }

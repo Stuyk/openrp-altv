@@ -13,7 +13,6 @@ export function createBlip(pos, type, color, label) {
     blip.sprite = type;
     blip.color = color;
     blip.name = label;
-
     return blip;
 }
 

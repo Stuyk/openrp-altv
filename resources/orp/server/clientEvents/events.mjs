@@ -73,6 +73,7 @@ alt.onClient('vehicle:FillFuel', systemsVehicles.fillFuel);
 alt.onClient('vehicle:CheckFuel', systemsVehicles.checkFuel);
 alt.onClient('vehicle:CloseAllDoors', systemsVehicles.closeAllDoors);
 alt.onClient('vehicle:RepairVehicle', systemsVehicles.repairVehicle);
+alt.onClient('vehicle:TrackVehicle', systemsVehicles.trackVehicle);
 
 // Vehicle Vendor
 alt.onClient('vehiclevendor:Purchase', systemsVehicleVendor.purchaseVehicle);

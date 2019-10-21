@@ -21,12 +21,24 @@ export function spawnVehicle(player, veh, newVehicle = false) {
             player.vehicles = [];
             player.vehicles.push(mappedVehicle);
             player.emitMeta('vehicles', player.vehicles);
+
+            const vehData = [];
+            player.vehicles.forEach(veh => {
+                vehData.push(JSON.stringify(veh.data));
+            });
+            player.emitMeta('vehiclesMeta', vehData);
             return;
         }
 
         if (player.vehicles.includes(mappedVehicle)) return;
         player.vehicles.push(mappedVehicle);
         player.emitMeta('vehicles', player.vehicles);
+
+        const vehData = [];
+        player.vehicles.forEach(veh => {
+            vehData.push(JSON.stringify(veh.data));
+        });
+        player.emitMeta('vehiclesMeta', vehData);
         return;
     }
 
@@ -61,6 +73,7 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     vehicle.lockState = 2;
     vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : 100;
     vehicle.setSyncedMeta('fuel', vehicle.fuel);
+    vehicle.setSyncedMeta('id', veh.id);
 
     // Synchronize the Stats
     /*
@@ -97,6 +110,12 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     }
 
     player.emitMeta('vehicles', player.vehicles);
+
+    const vehData = [];
+    player.vehicles.forEach(veh => {
+        vehData.push(JSON.stringify(veh.data));
+    });
+    player.emitMeta('vehiclesMeta', vehData);
     return vehicle;
 }
 
@@ -272,4 +291,11 @@ export function repairVehicle(player, data) {
     if (!vehicle) return;
     vehicle.repair();
     player.send(`{FFFF00}Vehicle has been repaired.`);
+}
+
+export function trackVehicle(player, id) {
+    if (!player.vehicles) return;
+    const vehicle = player.vehicles.find(x => x.data.id === id);
+    if (!vehicle) return;
+    alt.emitClient(player, 'vehicle:TrackVehicle', vehicle.pos);
 }

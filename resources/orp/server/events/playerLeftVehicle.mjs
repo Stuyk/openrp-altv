@@ -17,4 +17,8 @@ alt.on('playerLeftVehicle', (player, vehicle) => {
     if (vehicle.data === undefined) return;
 
     vehicle.saveVehicleData();
+
+    if (player) {
+        player.saveLocation(player.pos);
+    }
 });

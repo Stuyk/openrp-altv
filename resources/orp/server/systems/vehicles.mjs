@@ -273,3 +273,13 @@ export function repairVehicle(player, data) {
     vehicle.repair();
     player.send(`{FFFF00}Vehicle has been repaired.`);
 }
+
+export function refuelVehicle(player, data) {
+    const vehicle = data.vehicle;
+    if (!vehicle) return;
+    actionMessage(player, 'Begins to fill the vehicle with fuel.');
+    vehicle.isBeingFilled = {
+        time: Date.now() + Config.vehicleFuelTime,
+        player
+    };
+}

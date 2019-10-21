@@ -51,6 +51,7 @@ alt.on('menu:Vehicle', ent => {
         }
     }
 
+    // RepairKit
     if (alt.Player.local.isRepairing) {
         const dist = distance(
             alt.Player.local.pos,
@@ -59,6 +60,18 @@ alt.on('menu:Vehicle', ent => {
         if (dist <= 4) {
             appendContextItem('Repair Vehicle', true, 'vehicle:RepairVehicle', { vehicle });
             alt.Player.local.isRepairing = false;
+        }
+    }
+
+    // Gas Can
+    if (alt.Player.local.isUsingGasCan) {
+        const dist = distance(
+            alt.Player.local.pos,
+            native.getEntityCoords(ent, false)
+        );
+        if (dist <= 4) {
+            appendContextItem('Refuel with Gas Can', true, 'vehicle:RefuelVehicle', { vehicle });
+            alt.Player.local.isUsingGasCan = false;
         }
     }
 

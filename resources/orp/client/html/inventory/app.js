@@ -36,6 +36,7 @@ const icons = [
     'hat',
     'id-card',
     'inventory',
+    'jerrycan',
     'leaf',
     'mechanic',
     'medicine',

@@ -337,6 +337,18 @@ export const BaseItems = {
         },
         slot: -1
     },
+    gascan: {
+        eventcall: 'itemeffects:UseGasCan',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
     rope: {
         eventcall: '',
         abilities: {
@@ -780,6 +792,14 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'auto-repair'
+    },
+    gascan: {
+        name: 'Gas Can',
+        base: 'gascan',
+        key: 'gascan',
+        props: {},
+        quantity: 0,
+        icon: 'jerrycan'
     },
     rope: {
         name: 'Bundle of Rope (5 Min)',

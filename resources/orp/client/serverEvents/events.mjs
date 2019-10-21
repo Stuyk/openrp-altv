@@ -109,6 +109,7 @@ alt.onServer('inventory:ItemDrop', systemsInventory.itemDrop);
 alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);
 // Use RepairKit from Inventory
 alt.onServer('inventory:UseRepairKit', systemsInventory.useRepairKit);
+alt.onServer('inventory:UseGasCan', systemsInventory.useGasCan);
 
 // =======================================================
 // Sound

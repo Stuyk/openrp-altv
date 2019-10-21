@@ -47,6 +47,14 @@ export function useRepairKit() {
     );
 }
 
+export function useGasCan() {
+    alt.Player.local.isUsingGasCan = true;
+    alt.emit(
+        'chat:Send',
+        `{00FF00} Select the vehicle you want to re-fuel with your cursor.`
+    );    
+}
+
 function drawItems() {
     if (itemsOnGround.length <= 0) {
         if (interval) {

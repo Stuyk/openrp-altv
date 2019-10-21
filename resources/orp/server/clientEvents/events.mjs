@@ -74,6 +74,7 @@ alt.onClient('vehicle:CheckFuel', systemsVehicles.checkFuel);
 alt.onClient('vehicle:CloseAllDoors', systemsVehicles.closeAllDoors);
 alt.onClient('vehicle:RepairVehicle', systemsVehicles.repairVehicle);
 alt.onClient('vehicle:TrackVehicle', systemsVehicles.trackVehicle);
+alt.onClient('vehicle:RefuelVehicle', systemsVehicles.refuelVehicle); // gas can
 
 // Vehicle Vendor
 alt.onClient('vehiclevendor:Purchase', systemsVehicleVendor.purchaseVehicle);

@@ -299,6 +299,16 @@ export function trackVehicle(player, id) {
     if (!vehicle) return;
     alt.emitClient(player, 'vehicle:TrackVehicle', vehicle.pos);
 }
+
+export function destroyVehicle(player, id) {
+    if (!player.vehicles) return;
+    const vehicle = player.vehicles.find(x => x.data.id === id);
+    if (!vehicle) return;
+    player.send(`{FFFF00} Confirm Destroying your ${vehicle.data.model} at ${id}.`);
+    player.send(`{FFFF00} Type: {FFFFFF}/destroyvehicle`);
+    player.destroyVehicle = id;
+}
+
 export function refuelVehicle(player, data) {
     const vehicle = data.vehicle;
     if (!vehicle) return;

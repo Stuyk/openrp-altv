@@ -50,6 +50,9 @@ export function showDialogue() {
     webview.on('inventory:Split', split);
     webview.on('inventory:FetchVehicles', fetchVehicles);
     webview.on('inventory:LocateVehicle', locateVehicle);
+    webview.on('inventory:DestroyVehicle', destroyVehicle);
+    webview.on('inventory:FetchContacts', fetchContacts);
+    webview.on('inventory:AddContact', addContact);
 
     alt.emit('hud:AdjustHud', true);
 }
@@ -164,4 +167,23 @@ function fetchVehicles() {
 function locateVehicle(id) {
     exit();
     alt.emitServer('vehicle:TrackVehicle', id);
+}
+
+function destroyVehicle(id) {
+    exit();
+    alt.emitServer('vehicle:DestroyVehicle', id);
+}
+
+function fetchContacts() {
+    if (!webview) return;
+    const contacts = alt.Player.local.getMeta('contactList');
+    if (!contacts) return;
+    contacts.forEach(contact => {
+        webview.emit('inventory:SetContact', contact.id, contact.name, contact.online);
+    });
+}
+
+function addContact(id) {
+    if (!webview) return;
+    alt.emitServer('phone:AddContact', id);
 }

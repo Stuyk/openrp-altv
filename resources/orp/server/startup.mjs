@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character, Vehicle, Details } from './entities/entities.mjs'; // Schemas for Database
-import { cacheAccount, setVehicleID } from './cache/cache.mjs';
+import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.mjs';
 import fs from 'fs';
 import path from 'path';
 
@@ -91,5 +91,13 @@ function cacheInformation() {
         }
 
         alt.log(`=====> Cached: ${data.length} Accounts`);
+    });
+
+    db.selectData('Character', ['id', 'name'], data => {
+        if (data === undefined) return;
+
+        for (let i = 0; i < data.length; i++) {
+            cacheCharacter(data[i].id, data[i].name);
+        }
     });
 }

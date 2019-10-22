@@ -370,6 +370,17 @@ export const BaseItems = {
             rename: false,
             stack: false
         }
+    },
+    phone: {
+        eventcall: '',
+        abilities: {
+            drop: false,
+            use: false,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: false
+        }
     }
 };
 
@@ -816,6 +827,14 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'cuffs'
+    },
+    phone: {
+        name: 'Phone',
+        base: 'phone',
+        key: 'phone',
+        props: {},
+        quantity: 0,
+        icon: 'phone'
     }
 };
 

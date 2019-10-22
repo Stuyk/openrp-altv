@@ -8,6 +8,7 @@ import * as alt from 'alt';
 // username, encrypted password
 
 const accounts = {};
+const characters = {};
 let vehicleID;
 
 export function cacheAccount(username, id, password) {
@@ -20,6 +21,15 @@ export function cacheAccount(username, id, password) {
 export function getAccount(username) {
     let dat = accounts[username];
     return dat;
+}
+
+export function getCharacterName(id) {
+    if (characters[id]) return characters[id];
+    return 'none';
+}
+
+export function cacheCharacter(id, name) {
+    characters[id] = name;
 }
 
 export function setVehicleID(lastVehicleID) {

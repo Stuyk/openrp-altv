@@ -51,8 +51,11 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Weapon Crafting Points
 -   [x] Vehicle System
     -   [x] Vehicle Customization
-    -   [ ] Vehicle Fuel System
-    -   [ ] Vehicle Vendor
+    -   [x] Vehicle Fuel System
+    -   [x] Vehicle Vendor
+    -   [ ] Destroy Vehicles
+    -   [ ] Sell Vehicles
+    -   [x] Track Vehicles
 -   [ ] Door System
     -   [ ] House Type
     -   [ ] Shop System
@@ -80,12 +83,12 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [x] Interaction for Vehicles
     -   [ ] Interaction for Players
         -   [ ] Give Money
+        -   [ ] Burn Money
     -   [x] Interaction for Objects
     -   [x] Interaction for Self
         -   [x] Animations for Sitting
 -   [x] Player Death Handling
 -   [x] Taxation
-    -   [ ] Taxation goes to Government Fund
 -   [x] Animation Manager
 -   [x] Context Menu of Animations
 -   [x] Custom Sounds! Blat!
@@ -168,6 +171,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [x] Frisking
     -   [x] Charges for Illegal Activities
     -   [x] Arrest Times
+    -   [ ] Prison Transfer Job
+    -   [ ] High Speed Pursuit Unit
 
 I will not be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page and joining discord](https://www.twitch.tv/stuyksoft/).
 

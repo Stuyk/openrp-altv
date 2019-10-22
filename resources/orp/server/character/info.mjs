@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
+import { cacheCharacter } from '../cache/cache.mjs';
 import { distance } from '../utility/vector.mjs';
 import { Config } from '../configuration/config.mjs';
 
@@ -24,5 +25,6 @@ export function setRoleplayInfo(player, info) {
         player.pos = Config.defaultSpawnPoint;
     }
 
+    cacheCharacter(player.data.id, info.name);
     player.closeRoleplayInfoDialogue();
 }

@@ -11,6 +11,7 @@ import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
 import * as systemsJob from '../systems/job.mjs';
 import * as systemsAtm from '../systems/atm.mjs';
+import * as systemsPhone from '../systems/phone.mjs';
 import * as systemsSkills from '../systems/skills.mjs';
 import * as systemsVehicleVendor from '../systems/vehiclevendor.mjs';
 import * as characterClothing from '../character/clothing.mjs';
@@ -75,6 +76,10 @@ alt.onClient('vehicle:CloseAllDoors', systemsVehicles.closeAllDoors);
 alt.onClient('vehicle:RepairVehicle', systemsVehicles.repairVehicle);
 alt.onClient('vehicle:TrackVehicle', systemsVehicles.trackVehicle);
 alt.onClient('vehicle:RefuelVehicle', systemsVehicles.refuelVehicle); // gas can
+alt.onClient('vehicle:DestroyVehicle', systemsVehicles.destroyVehicle);
+
+// Phone
+alt.onClient('phone:AddContact', systemsPhone.addContact);
 
 // Vehicle Vendor
 alt.onClient('vehiclevendor:Purchase', systemsVehicleVendor.purchaseVehicle);

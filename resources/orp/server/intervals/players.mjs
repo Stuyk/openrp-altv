@@ -1,9 +1,11 @@
 import * as alt from 'alt';
+import { getCharacterName } from '../cache/cache.mjs';
 import { Config } from '../configuration/config.mjs';
 
 let nextTimePlayingTime = Date.now() + Config.timePlayingTime;
 let nextSavePlayerTime = Date.now() + Config.timePlayerTime;
 let nextPaycheckTime = Date.now() + Config.timePaycheckTime;
+let nextRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
 let handling = false;
 
 setInterval(handlePlayerInterval, 10000);
@@ -59,6 +61,24 @@ alt.on('parse:Player', (player, now) => {
             } catch (err) {
                 console.error(`Could not add paycheck.`);
             }
+        }
+    }
+
+    if (nextRefreshContactsTime < now) {
+        nextRefreshContactsTime = now + Config.timeRefreshContactsTime;
+        const contacts = JSON.parse(player.data.contacts);
+        if (contacts.length >= 1) {
+            const contactList = [];
+            contacts.forEach(contact => {
+                const target = alt.Player.all.find(p => p.data && p.data.id === contact);
+                const isOnline = target ? true : false;
+                contactList.push({
+                    id: contact,
+                    name: getCharacterName(contact),
+                    online: isOnline
+                });
+            });
+            player.emitMeta('contactList', contactList);
         }
     }
 

@@ -11,7 +11,7 @@ chat.registerCmd('t', (player, args) => {
         return;
     }
 
-    if (!player.hasItem('Phone')) {
+    if (!player.hasItem('phone')) {
         player.send(`You don't seem to have a phone.`);
         return;
     }
@@ -46,7 +46,7 @@ chat.registerCmd('t', (player, args) => {
         return;
     }
 
-    if (!user.hasItem('Phone')) {
+    if (!user.hasItem('phone')) {
         player.send(`{FFFF00} That number is not in service at this time.`);
         return;
     }
@@ -61,7 +61,7 @@ chat.registerCmd('addcontact', (player, arg) => {
         return;
     }
 
-    if (!player.hasItem('Phone')) {
+    if (!player.hasItem('phone')) {
         player.send(`You don't seem to have a phone.`);
         return;
     }
@@ -93,7 +93,7 @@ function removeContact(player, arg) {
         return;
     }
 
-    if (!player.hasItem('Phone')) {
+    if (!player.hasItem('phone')) {
         player.send(`You don't seem to have a phone.`);
         return;
     }
@@ -127,7 +127,7 @@ chat.registerCmd('call', (player, arg) => {
         return;
     }
 
-    if (!player.hasItem('Phone')) {
+    if (!player.hasItem('phone')) {
         player.send(`You don't seem to have a phone.`);
         return;
     }
@@ -156,7 +156,7 @@ chat.registerCmd('call', (player, arg) => {
         return;
     }
 
-    if (!user.hasItem('Phone')) {
+    if (!user.hasItem('phone')) {
         player.send(`{FFFF00} That number is not in service at this time.`);
         return;
     }
@@ -214,7 +214,7 @@ chat.registerCmd('answer', player => {
         return;
     }
 
-    if (!player.hasItem('Phone')) {
+    if (!player.hasItem('phone')) {
         player.send(`You don't seem to have a phone.`);
         return;
     }

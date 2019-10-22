@@ -162,8 +162,8 @@ class App extends Component {
                 this.state.tabIndex == 2 && h(Inventory),
                 // Vehicles
                 this.state.tabIndex === 3 && h('div', {}, h(Vehicles)),
-                // Idk Yet
-                this.state.tabIndex == 4 && h('div', {}, 'idk'),
+                // Contacts
+                this.state.tabIndex == 4 && h('div', {}, h(Contacts)),
                 // Settings
                 this.state.tabIndex == 5 && h('div', {}, 'settings')
             )
@@ -288,6 +288,96 @@ class Vehicles extends Component {
 
     render() {
         return h(this.renderVehicles.bind(this));
+    }
+}
+
+class Contacts extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            contacts: [],
+            contact: 0
+        };
+        this.setContactBind = this.setContact.bind(this);
+    }
+
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('inventory:SetContact', this.setContactBind);
+            alt.emit('inventory:FetchContacts');
+        } else {
+            this.setContact(1, 'Joe', true);
+            this.setContact(2, 'Dane', false);
+        }
+    }
+
+    componentWillUnmount() {
+        if ('alt' in window) {
+            alt.off('inventory:SetContact', this.setContactBind);
+        }
+    }
+
+    setContact(id, name, isOnline) {
+        const contacts = [...this.state.contacts];
+        contacts.push({ id, name, isOnline });
+        this.setState({ contacts });
+    }
+
+    contactNumber(e) {
+        this.setState({ contact: parseInt(e.target.value) });
+    }
+
+    addContact() {
+        if ('alt' in window) {
+            alt.emit('inventory:AddContact', parseInt(this.state.contact));
+        } else {
+            console.log(e.target.value);
+        }
+    }
+
+    addContactEnter(e) {
+        if (e.key !== 'Enter') return;
+        if ('alt' in window) {
+            alt.emit('inventory:AddContact', parseInt(e.target.value));
+        } else {
+            console.log(e.target.value);
+        }
+    }
+
+    renderContacts() {
+        const contacts = this.state.contacts.map(contact => {
+            return h(
+                'div',
+                { class: 'contact' },
+                h('div', { class: 'id' }, contact.id),
+                h('div', { class: 'name' }, contact.name),
+                h('div', { class: 'isOnline' }, `Online? ${contact.isOnline}`)
+            );
+        });
+
+        contacts.unshift(
+            h(
+                'div',
+                { class: 'input' },
+                h('input', {
+                    type: 'number',
+                    value: this.state.contact,
+                    onchange: this.contactNumber.bind(this),
+                    onkeydown: this.addContactEnter.bind(this)
+                }),
+                h(
+                    'button',
+                    { class: 'addcontact', onclick: this.addContact.bind(this) },
+                    'Add Contact'
+                )
+            )
+        );
+
+        return h('div', { class: 'contactlist' }, contacts);
+    }
+
+    render() {
+        return h(this.renderContacts.bind(this));
     }
 }
 

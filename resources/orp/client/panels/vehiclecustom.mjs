@@ -71,6 +71,11 @@ export function showDialogue() {
     if (alt.Player.local.getSyncedMeta('dead')) return;
     if (alt.Player.local.getMeta('arrest')) return;
 
+    previousVehicle = {};
+    vehicleChanges = {};
+    previousColors = {};
+    colors = {};
+
     // Setup Webview
     webview.open(url, true);
     webview.on('vehicle:FetchModList', buildModList);

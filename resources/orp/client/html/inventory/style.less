@@ -505,7 +505,7 @@ html {
 
         input {
             height: 30px;
-            width: 80%;
+            width: 300px;
             color: white;
             border: none;
             background: @darkaccent;
@@ -516,8 +516,12 @@ html {
             outline: none;
         }
 
+        .addcontact {
+            font-size: 9px;
+        }
+
         button {
-            width: 20%;
+            width: 100px !important;
             height: 30px;
             border: 2px solid white;
             background: none;
@@ -540,12 +544,31 @@ html {
         width: 100%;
         height: 100%;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: space-between;
         align-content: center;
         align-items: center;
         flex-direction: row;
-        margin: 10px;
         font-family: @fontface;
+
+        button {
+            width: 100px;
+            height: 30px;
+            border: 2px solid white;
+            background: none;
+            padding: 5px;
+            margin: 5px;
+            color: white;
+            font-size: 9px;
+        }
+
+        button:hover {
+            color: @contrast2;
+            border: 2px solid @contrast2;
+        }
+
+        button:focus {
+            outline: none;
+        }
     }
 }
 

@@ -145,6 +145,7 @@ export function sync(player) {
     player.updateTime();
     player.syncInteractionBlips();
     player.syncXP();
+    player.syncContacts();
 
     // Setup Health / Armor
     let timeout = setTimeout(() => {

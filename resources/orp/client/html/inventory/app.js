@@ -298,11 +298,13 @@ class Contacts extends Component {
             contact: 0
         };
         this.setContactBind = this.setContact.bind(this);
+        this.clearContactsBind = this.clearContacts.bind(this);
     }
 
     componentDidMount() {
         if ('alt' in window) {
             alt.on('inventory:SetContact', this.setContactBind);
+            alt.on('inventory:ClearContacts', this.clearContactsBind);
             alt.emit('inventory:FetchContacts');
         } else {
             this.setContact(1, 'Joe', true);
@@ -313,6 +315,7 @@ class Contacts extends Component {
     componentWillUnmount() {
         if ('alt' in window) {
             alt.off('inventory:SetContact', this.setContactBind);
+            alt.off('inventory:ClearContacts', this.clearContactsBind);
         }
     }
 
@@ -327,6 +330,7 @@ class Contacts extends Component {
     }
 
     addContact() {
+        if (this.state.contact <= 0) return;
         if ('alt' in window) {
             alt.emit('inventory:AddContact', parseInt(this.state.contact));
         } else {
@@ -334,12 +338,23 @@ class Contacts extends Component {
         }
     }
 
+    clearContacts() {
+        this.setState({ contacts: [] });
+    }
+
     addContactEnter(e) {
         if (e.key !== 'Enter') return;
+        if (e.target.value <= 0) return;
         if ('alt' in window) {
             alt.emit('inventory:AddContact', parseInt(e.target.value));
         } else {
             console.log(e.target.value);
+        }
+    }
+
+    deleteContact(e) {
+        if ('alt' in window) {
+            alt.emit('inventory:DeleteContact', parseInt(e.target.id));
         }
     }
 
@@ -350,7 +365,16 @@ class Contacts extends Component {
                 { class: 'contact' },
                 h('div', { class: 'id' }, contact.id),
                 h('div', { class: 'name' }, contact.name),
-                h('div', { class: 'isOnline' }, `Online? ${contact.isOnline}`)
+                h('div', { class: 'isOnline' }, `Online? ${contact.isOnline}`),
+                h(
+                    'button',
+                    {
+                        class: 'removeContact',
+                        onclick: this.deleteContact.bind(this),
+                        id: contact.id
+                    },
+                    'Delete Contact'
+                )
             );
         });
 
@@ -366,7 +390,7 @@ class Contacts extends Component {
                 }),
                 h(
                     'button',
-                    { class: 'addcontact', onclick: this.addContact.bind(this) },
+                    { class: 'addcontact', onmousedown: this.addContact.bind(this) },
                     'Add Contact'
                 )
             )

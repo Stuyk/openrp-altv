@@ -80,6 +80,7 @@ alt.onClient('vehicle:DestroyVehicle', systemsVehicles.destroyVehicle);
 
 // Phone
 alt.onClient('phone:AddContact', systemsPhone.addContact);
+alt.onClient('phone:DeleteContact', systemsPhone.deleteContact);
 
 // Vehicle Vendor
 alt.onClient('vehiclevendor:Purchase', systemsVehicleVendor.purchaseVehicle);

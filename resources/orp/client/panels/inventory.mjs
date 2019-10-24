@@ -11,7 +11,14 @@ const url = 'http://resource/client/html/inventory/index.html';
 let webview;
 
 alt.on('meta:Changed', (key, value) => {
-    if (key !== 'equipment' && key !== 'inventory' && key !== 'skills') return;
+    if (
+        key !== 'equipment' &&
+        key !== 'inventory' &&
+        key !== 'skills' &&
+        key !== 'contactList'
+    )
+        return;
+
     switch (key) {
         case 'equipment':
             fetchEquipment(value);
@@ -21,6 +28,9 @@ alt.on('meta:Changed', (key, value) => {
             break;
         case 'skills':
             fetchStats(value);
+            break;
+        case 'contactList':
+            fetchContacts();
             break;
     }
 });
@@ -53,6 +63,7 @@ export function showDialogue() {
     webview.on('inventory:DestroyVehicle', destroyVehicle);
     webview.on('inventory:FetchContacts', fetchContacts);
     webview.on('inventory:AddContact', addContact);
+    webview.on('inventory:DeleteContact', deleteContact);
 
     alt.emit('hud:AdjustHud', true);
 }
@@ -163,9 +174,6 @@ function split(hash) {
 
 function fetchVehicles() {
     if (!webview) return;
-
-    alt.log('Fetched Vehicles');
-
     const vehicles = alt.Player.local.getMeta('vehiclesMeta');
     if (!vehicles) return;
     vehicles.forEach(veh => {
@@ -185,10 +193,9 @@ function destroyVehicle(id) {
 
 function fetchContacts() {
     if (!webview) return;
-    alt.log('Fetched Contacts');
-
     const contacts = alt.Player.local.getMeta('contactList');
     if (!contacts) return;
+    webview.emit('inventory:ClearContacts');
     contacts.forEach(contact => {
         webview.emit('inventory:SetContact', contact.id, contact.name, contact.online);
     });
@@ -196,5 +203,12 @@ function fetchContacts() {
 
 function addContact(id) {
     if (!webview) return;
+    webview.emit('inventory:ClearContacts');
     alt.emitServer('phone:AddContact', id);
+}
+
+function deleteContact(id) {
+    if (!webview) return;
+    webview.emit('inventory:ClearContacts');
+    alt.emitServer('phone:DeleteContact', id);
 }

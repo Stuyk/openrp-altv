@@ -10,7 +10,7 @@ import { objectToNull } from '../utility/object.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { spawnVehicle } from '../systems/vehicles.mjs';
 import { quitJob } from '../systems/job.mjs';
-import { fetchNextVehicleID } from '../cache/cache.mjs';
+import { fetchNextVehicleID, getCharacterName } from '../cache/cache.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
 import { doorStates } from '../systems/use.mjs';
 
@@ -1137,11 +1137,30 @@ export function setupPlayerFunctions(player) {
 
     player.hasContact = number => {
         let contacts = JSON.parse(player.data.contacts);
-        let index = contacts.findIndex(x => x === number);
+        let index = contacts.findIndex(num => num === number);
         if (index <= -1) {
             return false;
         }
         return true;
+    };
+
+    player.syncContacts = () => {
+        const contacts = JSON.parse(player.data.contacts);
+        if (contacts.length >= 1) {
+            const contactList = [];
+            contacts.forEach(contact => {
+                const target = alt.Player.all.find(p => p.data && p.data.id === contact);
+                const isOnline = target ? true : false;
+                contactList.push({
+                    id: contact,
+                    name: getCharacterName(contact),
+                    online: isOnline
+                });
+            });
+            player.emitMeta('contactList', contactList);
+        } else {
+            player.emitMeta('contactList', []);
+        }
     };
 
     // ==============================

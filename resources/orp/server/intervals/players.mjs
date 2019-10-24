@@ -66,20 +66,7 @@ alt.on('parse:Player', (player, now) => {
 
     if (nextRefreshContactsTime < now) {
         nextRefreshContactsTime = now + Config.timeRefreshContactsTime;
-        const contacts = JSON.parse(player.data.contacts);
-        if (contacts.length >= 1) {
-            const contactList = [];
-            contacts.forEach(contact => {
-                const target = alt.Player.all.find(p => p.data && p.data.id === contact);
-                const isOnline = target ? true : false;
-                contactList.push({
-                    id: contact,
-                    name: getCharacterName(contact),
-                    online: isOnline
-                });
-            });
-            player.emitMeta('contactList', contactList);
-        }
+        player.syncContacts();
     }
 
     // Handle Arrest Times / Prison Releases

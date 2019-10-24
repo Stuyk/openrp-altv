@@ -147,14 +147,6 @@ export function toggleEngine() {
 // Called from a keybind.
 export function toggleLock() {
     const vehicle = native.getVehiclePedIsIn(alt.Player.local.scriptID, 1);
-    if (!vehicle){
-        vehicle = player.lastvehicle;
-        const dist = distance(player.pos, vehicle.pos);
-        if(dist > 5){
-            player.send(`{FF0000} You're too far away to toggle the lock.`);
-            return;
-        }
-    }
     if (!native.doesEntityExist(vehicle)) return;
 
     let veh = alt.Vehicle.all.find(x => x.scriptID === vehicle);

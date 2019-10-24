@@ -160,7 +160,6 @@ export function toggleLock() {
 // Called from a keybind.
 export function keepEngineRunning() {
     if (!alt.Player.local.vehicle) return;
-    if (!native.getIsVehicleEngineRunning(alt.Player.local.vehicle.scriptID)) return;
     const pedInSeat = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1);
     if (pedInSeat !== alt.Player.local.scriptID) return;
     alt.setTimeout(() => {
@@ -171,7 +170,7 @@ export function keepEngineRunning() {
             true,
             true
         );
-    }, 100);
+    }, 250);
 }
 
 // Called when the user locks their vehicle.

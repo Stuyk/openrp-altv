@@ -21,13 +21,13 @@ let keybinds = {
     71: {
         altModifier: false,
         shiftModifier: true,
-        onKeyDown: systemsVehicles.toggleEngine
+        onKeyUp: systemsVehicles.toggleEngine
     },
     // Shift + H - Toggle Vehicle Lock
     72: {
         altModifier: false,
         shiftModifier: true,
-        onKeyDown: systemsVehicles.toggleLock
+        onKeyUp: systemsVehicles.toggleLock
     },
     // I - Inventory
     73: {

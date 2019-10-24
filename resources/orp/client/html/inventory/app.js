@@ -164,7 +164,7 @@ class App extends Component {
                 // Contacts
                 this.state.tabIndex == 4 && h('div', {}, h(Contacts)),
                 // Settings
-                this.state.tabIndex == 5 && h('div', {}, 'settings')
+                this.state.tabIndex == 5 && h('div', {}, h(Settings))
             )
         );
     }
@@ -187,6 +187,222 @@ const Navigation = ({ navigate, index }) => {
     });
     return h('div', { class: 'navcon' }, tabs);
 };
+
+class Settings extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            AirplaneMode: false,
+            YandexKey: '',
+            Language: 'none'
+        };
+        this.setOptionBind = this.setOption.bind(this);
+    }
+
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('option:SetOption', this.setOptionBind);
+            alt.emit('option:LoadOptions');
+        }
+    }
+
+    componentWillUnmount() {
+        if ('alt' in window) {
+            alt.off('option:SetOption', this.setOptionBind);
+        }
+    }
+
+    setOption(key, value) {
+        this.setState({ [key]: value });
+    }
+
+    setAirplaneMode(e) {
+        this.setState({ AirplaneMode: e.target.checked });
+
+        if ('alt' in window) {
+            alt.emit('option:SetOption', 'option:AirplaneMode', e.target.checked);
+        } else {
+            console.log(e.target.checked);
+        }
+    }
+
+    setYandexKey(e) {
+        this.setState({ YandexKey: e.target.value });
+
+        if ('alt' in window) {
+            alt.emit('option:SetOption', 'option:YandexKey', e.target.value);
+        } else {
+            console.log(e.target.value);
+        }
+    }
+
+    setPreferredLanguage(e) {
+        this.setState({ Language: e.target.value });
+
+        if ('alt' in window) {
+            alt.emit('option:SetOption', 'option:Language', e.target.value);
+        } else {
+            console.log(e.target.value);
+        }
+    }
+
+    renderOptions() {
+        return h(
+            'div',
+            { class: 'options' },
+            // Put Phone on Airplane Mode
+            h(
+                'div',
+                { class: 'option' },
+                h('div', { class: 'title' }, 'Put Phone on Airplane Mode'),
+                h(
+                    'div',
+                    { class: 'description' },
+                    'Stops all incoming and outgoing messages.'
+                ),
+                h('input', {
+                    type: 'checkbox',
+                    class: 'input',
+                    checked: this.state.AirplaneMode,
+                    onchange: this.setAirplaneMode.bind(this)
+                })
+            ),
+            // Translation Service
+            h(
+                'div',
+                { class: 'option' },
+                h('div', { class: 'title' }, 'Yandex Translation API Key'),
+                h(
+                    'div',
+                    { class: 'description' },
+                    'Used to translate English text into your native language. Can be obtained here: https://translate.yandex.com/developers/keys'
+                ),
+                h('input', {
+                    type: 'password',
+                    class: 'input',
+                    value: this.state.YandexKey,
+                    onchange: this.setYandexKey.bind(this)
+                })
+            ),
+            // Translation Language
+            h(
+                'div',
+                { class: 'option' },
+                h('div', { class: 'title' }, '-- Used with API Key'),
+                h(
+                    'div',
+                    { class: 'description' },
+                    'Set your preferred language. This only translates chat; not interfaces.'
+                ),
+                h(
+                    'select',
+                    {
+                        value: this.state.Language,
+                        oninput: this.setPreferredLanguage.bind(this)
+                    },
+                    h('option', { value: 'none', disabled: true }, 'Select Language'),
+                    h('option', { value: 'az' }, 'Azerbaijan'),
+                    h('option', { value: 'sq' }, 'Albanian'),
+                    h('option', { value: 'am' }, 'Amharic'),
+                    h('option', { value: 'en' }, 'English'),
+                    h('option', { value: 'ar' }, 'Arabic'),
+                    h('option', { value: 'hy' }, 'Armenian'),
+                    h('option', { value: 'af' }, 'Afrikaans'),
+                    h('option', { value: 'eu' }, 'Basque'),
+                    h('option', { value: 'ba' }, 'Bashkir'),
+                    h('option', { value: 'be' }, 'Belarusian'),
+                    h('option', { value: 'bn' }, 'Bengali'),
+                    h('option', { value: 'my' }, 'Burmese'),
+                    h('option', { value: 'bg' }, 'Bulgarian'),
+                    h('option', { value: 'bs' }, 'Bosnian'),
+                    h('option', { value: 'cy' }, 'Welsh'),
+                    h('option', { value: 'hu' }, 'Hungarian'),
+                    h('option', { value: 'vi' }, 'Vietnamese'),
+                    h('option', { value: 'ht' }, 'Haitan'),
+                    h('option', { value: 'gl' }, 'Galician'),
+                    h('option', { value: 'nl' }, 'Dutch'),
+                    h('option', { value: 'mrj' }, 'Hill Mari'),
+                    h('option', { value: 'el' }, 'Greek'),
+                    h('option', { value: 'ka' }, 'Georgian'),
+                    h('option', { value: 'gu' }, 'Gujarati'),
+                    h('option', { value: 'da' }, 'Danish'),
+                    h('option', { value: 'he' }, 'Hebrew'),
+                    h('option', { value: 'yi' }, 'Yiddish'),
+                    h('option', { value: 'id' }, 'Indonesian'),
+                    h('option', { value: 'ga' }, 'Irish'),
+                    h('option', { value: 'it' }, 'Italian'),
+                    h('option', { value: 'is' }, 'Icelandic'),
+                    h('option', { value: 'es' }, 'Spanish'),
+                    h('option', { value: 'kk' }, 'Kazakh'),
+                    h('option', { value: 'kn' }, 'Kannada'),
+                    h('option', { value: 'ca' }, 'Katalan'),
+                    h('option', { value: 'ky' }, 'Kyrgyz'),
+                    h('option', { value: 'zh' }, 'Chinese'),
+                    h('option', { value: 'ko' }, 'Korean'),
+                    h('option', { value: 'xh' }, 'Xhosa'),
+                    h('option', { value: 'km' }, 'Khmer'),
+                    h('option', { value: 'lo' }, 'Laotian'),
+                    h('option', { value: 'la' }, 'Latin'),
+                    h('option', { value: 'lv' }, 'Lativan'),
+                    h('option', { value: 'lt' }, 'Lithuanian'),
+                    h('option', { value: 'lb' }, 'Luxembourgish'),
+                    h('option', { value: 'mg' }, 'Malagasy'),
+                    h('option', { value: 'ms' }, 'Malay'),
+                    h('option', { value: 'ml' }, 'Malayalam'),
+                    h('option', { value: 'mt' }, 'Maltese'),
+                    h('option', { value: 'mk' }, 'Macedonian'),
+                    h('option', { value: 'mi' }, 'Maori'),
+                    h('option', { value: 'mr' }, 'Marathi'),
+                    h('option', { value: 'mhr' }, 'Mari'),
+                    h('option', { value: 'mn' }, 'Mongolian'),
+                    h('option', { value: 'de' }, 'German'),
+                    h('option', { value: 'ne' }, 'Nepali'),
+                    h('option', { value: 'no' }, 'Norweigan'),
+                    h('option', { value: 'pa' }, 'Punjabi'),
+                    h('option', { value: 'pap' }, 'Papiamento'),
+                    h('option', { value: 'fa' }, 'Persian'),
+                    h('option', { value: 'pl' }, 'Polish'),
+                    h('option', { value: 'pt' }, 'Portuguese'),
+                    h('option', { value: 'ro' }, 'Romanian'),
+                    h('option', { value: 'ru' }, 'Russian'),
+                    h('option', { value: 'ceb' }, 'Cebuano'),
+                    h('option', { value: 'sr' }, 'Serbian'),
+                    h('option', { value: 'si' }, 'Sinhala'),
+                    h('option', { value: 'sk' }, 'Slovakian'),
+                    h('option', { value: 'sl' }, 'Slovenian'),
+                    h('option', { value: 'sw' }, 'Swahili'),
+                    h('option', { value: 'su' }, 'Sundanese'),
+                    h('option', { value: 'tg' }, 'Tajik'),
+                    h('option', { value: 'th' }, 'Thai'),
+                    h('option', { value: 'tl' }, 'Tagalog'),
+                    h('option', { value: 'ta' }, 'Tamil'),
+                    h('option', { value: 'tt' }, 'Tatar'),
+                    h('option', { value: 'te' }, 'Telugu'),
+                    h('option', { value: 'tr' }, 'Turkish'),
+                    h('option', { value: 'udm' }, 'Udmurt'),
+                    h('option', { value: 'uz' }, 'Uzbek'),
+                    h('option', { value: 'uk' }, 'Ukrainian'),
+                    h('option', { value: 'ur' }, 'Urdu'),
+                    h('option', { value: 'fi' }, 'Finnish'),
+                    h('option', { value: 'fr' }, 'French'),
+                    h('option', { value: 'hi' }, 'Hindi'),
+                    h('option', { value: 'hr' }, 'Croatian'),
+                    h('option', { value: 'cs' }, 'Czech'),
+                    h('option', { value: 'sv' }, 'Swedish'),
+                    h('option', { value: 'gd' }, 'Scottish'),
+                    h('option', { value: 'et' }, 'Estonian'),
+                    h('option', { value: 'eo' }, 'Esperanto'),
+                    h('option', { value: 'jv' }, 'Javanese'),
+                    h('option', { value: 'ja' }, 'Japanese')
+                )
+            )
+        );
+    }
+
+    render() {
+        return h(this.renderOptions.bind(this));
+    }
+}
 
 class Vehicles extends Component {
     constructor(props) {

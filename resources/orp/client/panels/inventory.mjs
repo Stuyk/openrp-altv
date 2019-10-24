@@ -7,6 +7,7 @@ import { getLevel } from '/client/systems/xp.mjs';
 
 alt.log(`Loaded: client->panels->inventory.mjs`);
 
+const options = ['AirplaneMode', 'YandexKey', 'Language'];
 const url = 'http://resource/client/html/inventory/index.html';
 let webview;
 
@@ -64,6 +65,8 @@ export function showDialogue() {
     webview.on('inventory:FetchContacts', fetchContacts);
     webview.on('inventory:AddContact', addContact);
     webview.on('inventory:DeleteContact', deleteContact);
+    webview.on('option:SetOption', setOption);
+    webview.on('option:LoadOptions', loadOptions);
 
     alt.emit('hud:AdjustHud', true);
 }
@@ -212,3 +215,27 @@ function deleteContact(id) {
     webview.emit('inventory:ClearContacts');
     alt.emitServer('phone:DeleteContact', id);
 }
+
+function setOption(key, value) {
+    const cache = alt.LocalStorage.get();
+    cache.set(key, value);
+    cache.save();
+    alt.emit('option:Changed', key, value);
+}
+
+function loadOptions() {
+    const cache = alt.LocalStorage.get();
+
+    if (!webview) {
+        options.forEach(option => {
+            alt.emit('option:Changed', option, cache.get(`option:${option}`));
+        });
+        return;
+    }
+
+    options.forEach(option => {
+        webview.emit('option:SetOption', option, cache.get(`option:${option}`));
+    });
+}
+
+loadOptions();

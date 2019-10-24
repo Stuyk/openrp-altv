@@ -7,6 +7,8 @@ const url = 'http://resource/client/html/chat/index.html';
 let isActive = false;
 let webview;
 let isViewHidden = false;
+let yandexKey;
+let language;
 
 /*
 Warning; this is meant to be a seperate webview.
@@ -84,8 +86,26 @@ function routeMessage(msg) {
 
 function ready() {
     alt.emitServer('sync:Ready');
+    webview.emit('chat:YandexKey', yandexKey);
+    webview.emit('chat:Language', language);
 }
 
 export function setStatus(player, value) {
     player.setMeta('isChatting', value);
 }
+
+alt.on('option:Changed', (key, value) => {
+    if (key !== 'option:YandexKey' || key !== 'option:Language') return;
+    if (!webview) return;
+
+    if (key === 'option:YandexKey') {
+        yandexKey = value;
+    } else {
+        language = value;
+    }
+
+    if (webview) {
+        webview.emit('chat:YandexKey', yandexKey);
+        webview.emit('chat:Language', language);
+    }
+});

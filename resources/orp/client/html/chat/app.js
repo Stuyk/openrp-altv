@@ -87,20 +87,53 @@ class App extends Component {
             hide: false,
             sprintBarWidth: `1920`,
             minigameText: '',
-            showingInput: false
+            showingInput: false,
+            language: 'es',
+            yandexKey:
+                'trnsl.1.1.20191018T231031Z.571b4557a59e0d54.977c91139753ee2dd294b4f6229e4cbeaaeae4e1'
         };
     }
 
-    setCash(cash) {
-        this.setState({ cash });
+    yandexKey(key) {
+        this.setState({ yandexKey: key });
     }
 
-    setSpeed(speed) {
-        this.setState({ speed });
+    language(language) {
+        this.setState({ language });
     }
 
-    setLocation(location) {
-        this.setState({ location });
+    async translateToEnglish(msg) {
+        return new Promise(async resolve => {
+            const fetcher = await fetch(
+                `https://cors-anywhere.herokuapp.com/https://translate.yandex.net/api/v1.5/tr.json/translate?key=${this.state.yandexKey}&lang=${this.state.language}-en&text=${msg}`,
+                {
+                    method: 'post'
+                }
+            );
+
+            console.log(JSON.stringify(fetcher));
+
+            /*
+            const xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open(
+                'POST',
+                `https://translate.yandex.net/api/v1.5/tr.json/translate`,
+                true
+            );
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            const data = `key=${this.state.yandexKey}&lang=${this.state.language}-en&text=${msg}`;
+            xhr.send(data);
+            xhr.addEventListener('readystatechange', () => {
+                if (this.readyState === 4 && this.status === 200) {
+                    console.log(this.responseText);
+                    resolve(this.responseText);
+                }
+
+                console.log(this.responseText);
+            });
+            */
+        });
     }
 
     componentDidMount() {
@@ -111,6 +144,8 @@ class App extends Component {
             //alt.on('appendMessageClickable'); // Soon ^tm;
             alt.on('chat:ClearChatBox', this.clearChatBox.bind(this)); // Clears the chat box.
             alt.on('chat:Hide', this.hide.bind(this));
+            alt.on('chat:YandexKey', this.yandexKey.bind(this));
+            alt.on('chat:Language', this.language.bind(this));
             //alt.on('chat:AppendTask', appendTask);
             alt.emit('chat:Ready');
         } else {
@@ -118,11 +153,7 @@ class App extends Component {
                 this.appendMessage(`${Math.random() * 500000}`);
             }, 200);
 
-            document.getElementById('chat-input').classList.remove('hidden');
-
-            setInterval(() => {
-                this.notice(`${Math.random() * 500000}`);
-            }, 10000);
+            this.setState({ showingInput: true });
         }
 
         this.setState({ ready: true });

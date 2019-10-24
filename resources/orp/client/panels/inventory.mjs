@@ -69,6 +69,8 @@ export function fetchEquipment(value) {
 
     const equipmentArray = JSON.parse(value);
 
+    alt.log('Fetched Equipment');
+
     equipmentArray.forEach((item, index) => {
         if (!item) {
             webview.emit('inventory:EquipItem', null, index, null);
@@ -86,6 +88,8 @@ export function fetchStats(value) {
     }
     const statArray = JSON.parse(value);
 
+    alt.log('Fetched Stats');
+
     Object.keys(statArray).forEach(key => {
         webview.emit(
             'inventory:AddStat',
@@ -101,6 +105,8 @@ export function fetchItems(value) {
     if (!value) {
         value = alt.Player.local.getMeta('inventory');
     }
+
+    alt.log('Fetched Items');
 
     const itemArray = JSON.parse(value);
     if (!itemArray) return;
@@ -157,6 +163,9 @@ function split(hash) {
 
 function fetchVehicles() {
     if (!webview) return;
+
+    alt.log('Fetched Vehicles');
+
     const vehicles = alt.Player.local.getMeta('vehiclesMeta');
     if (!vehicles) return;
     vehicles.forEach(veh => {
@@ -176,6 +185,8 @@ function destroyVehicle(id) {
 
 function fetchContacts() {
     if (!webview) return;
+    alt.log('Fetched Contacts');
+
     const contacts = alt.Player.local.getMeta('contactList');
     if (!contacts) return;
     contacts.forEach(contact => {

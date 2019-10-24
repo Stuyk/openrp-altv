@@ -17,32 +17,49 @@ import { doorStates } from '../systems/use.mjs';
 // Load the database handler.
 const db = new SQL();
 
-// These are player extension functions.
-// They can be called from anywhere inside of
-// this resource and they're very useful for
-// quickly interacting with player data.
-// Keep the sectioned off; it makes it easier.
 export function setupPlayerFunctions(player) {
-    // ====================================
-    // Set Meta for User
+    /**
+     * setupPlayerFunctions
+     * @exports setupPlayerfunctions
+     * @namespace player
+     */
+
+    /**
+     *  Used to emit meta to the local player and server.
+     *  Can be fetched on the client side by doing getMeta.
+     * @memberof player
+     * @param {any} key
+     * @param {any} value
+     */
     player.emitMeta = (key, value) => {
         player.setMeta(key, value);
         alt.emitClient(player, 'meta:Emit', key, value);
     };
 
-    // ====================================
-    // Enable Player Saving
+    /**
+     *  Used to save all `player.data` information.
+     * @memberof player
+     */
     player.save = () => {
         db.upsertData(player.data, 'Character', () => {});
     };
 
-    // Save only a specific field.
+    /**
+     *  Used to save a specific id, field, and value.
+     * @memberof player
+     * @param {string/number} id User's database id. ie. player.data.id
+     * @param {string} fieldName The field name to use.
+     * @param {any} fieldValue The field value to apply.
+     */
     player.saveField = (id, fieldName, fieldValue) => {
         db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
     };
 
-    // ====================================
-    // Playing Time
+    /**
+     * Updates the player's current playing time.
+     * Calculated from start time; until now. Then resets it.
+     * @memberof player
+     */
     player.updatePlayingTime = () => {
         const minutes = utilityTime.getPlayingTime(player.startTime, Date.now());
         player.data.playingtime += Math.round(minutes);
@@ -59,6 +76,10 @@ export function setupPlayerFunctions(player) {
         player.saveField(player.data.id, 'upgradestotal', player.data.upgradestotal);
     };
 
+    /**
+     *  Set the last login date of the user to the database.
+     * @memberof player
+     */
     player.setLastLogin = () => {
         const date = new Date(player.data.lastlogin * 1).toString();
         player.send(`{FFFF00}Last Login: ${date}`);
@@ -66,18 +87,29 @@ export function setupPlayerFunctions(player) {
         player.saveField(player.data.id, 'lastlogin', player.data.lastlogin);
     };
 
-    // ====================================
-    // Chat
+    /**
+     *  Send a message to the player.
+     * @memberof player
+     * @param {string} msg The message to send to the user.
+     */
     player.send = msg => {
         alt.emitClient(player, 'chat:Send', msg);
     };
 
-    // ====================================
-    // HUD
+    /**
+     *  Display a message in the center screen to the user.
+     * @memberof player
+     * @param {string} msg The message to send to the user.
+     */
     player.notice = msg => {
         player.emitMeta('hudNotice', msg);
     };
 
+    /**
+     *  Display a notification on the right-hand side.
+     * @memberof player
+     * @param {string} msg The message to send to the user.
+     */
     player.notify = msg => {
         player.emitMeta('queueNotification', msg);
     };
@@ -88,13 +120,21 @@ export function setupPlayerFunctions(player) {
         systemsTime.setTimeForNewPlayer(player);
     };
 
-    // ====================================
-    // Save Last Location
+    /**
+     *  Save the user's location.
+     * @memberof player
+     * @param {Vector3} pos A vector3 object.
+     */
     player.saveLocation = pos => {
         player.data.lastposition = pos;
         player.saveField(player.data.id, 'lastposition', JSON.stringify(pos));
     };
 
+    /**
+     *  Save the player's dead state.
+     * @memberof player
+     * @param {bool} value isPlayerDead?
+     */
     player.saveDead = value => {
         player.data.dead = value;
 
@@ -106,6 +146,10 @@ export function setupPlayerFunctions(player) {
         player.saveField(player.data.id, 'dead', value);
     };
 
+    /**
+     *  Save Common Data; health, armour, position.
+     * @memberof player
+     */
     player.saveData = () => {
         player.data.health = player.health;
         player.data.armour = player.armour;
@@ -113,67 +157,116 @@ export function setupPlayerFunctions(player) {
         player.save();
     };
 
-    // ====================================
-    // Sync Interaction Blips
+    /**
+     *  Synchronize interaction blips for the interaction system.
+     * @memberof player
+     */
     player.syncInteractionBlips = () => {
         systemsInteraction.syncBlips(player);
     };
 
-    // ====================================
-    // Registration Webview Related Events
+    /**
+     *  Show the Registration Dialogue
+     * @memberof player
+     * @param {vector3} regCamCoord Where to base the registration camera.
+     * @param {vector3} regCamPointAtCoord Where to point the camera.
+     */
     player.showRegisterDialogue = (regCamCoord, regCamPointAtCoord) => {
         alt.emitClient(player, 'register:ShowDialogue', regCamCoord, regCamPointAtCoord);
     };
 
-    // Clear player blood
+    /**
+     *  Remove pedestrian blood.
+     * @memberof player
+     */
     player.clearBlood = () => {
         alt.emitClient(player, 'respawn:ClearPedBloodDamage');
     };
 
-    // Show Error Message
+    /**
+     *  Display error message to registration dialogue.
+     * @memberof player
+     * @param {string} msg Error to display.
+     */
     player.showRegisterEventError = msg => {
         alt.emitClient(player, 'register:EmitEventError', msg);
     };
 
-    // Show Success Message
+    /**
+     *  Display success message to registration dialogue.
+     * @memberof player
+     * @param {string} msg Message to display.
+     */
     player.showRegisterEventSuccess = msg => {
         alt.emitClient(player, 'register:EmitEventSuccess', msg);
     };
 
-    // Show Success Message
+    /**
+     *  Switch registration over to login form.
+     * @memberof player
+     */
     player.showRegisterLogin = () => {
         alt.emitClient(player, 'register:ShowLogin');
     };
 
-    // Close Dialogue
+    /**
+     *  Close the registration dialogue.
+     * @memberof player
+     */
     player.closeRegisterDialogue = () => {
         alt.emitClient(player, 'register:CloseDialogue');
     };
 
-    // ====================================
-    // Screen Effects
+    /**
+     *  Fade the screen in and out over a period of time.
+     * @memberof player
+     * @param {number} fadeInOutMS Fade out for how long.
+     * @param {number} timeoutMS Fade in after this time.
+     */
     player.screenFadeOutFadeIn = (fadeInOutMS, timeoutMS) => {
         alt.emitClient(player, 'screen:FadeOutFadeIn', fadeInOutMS, timeoutMS);
     };
 
+    /**
+     *  Fade the screen out.
+     * @memberof player
+     * @param {number} timeInMS How long to fade the screen out for.
+     */
     player.screenFadeOut = timeInMS => {
         alt.emitClient(player, 'screen:FadeOut', timeInMS);
     };
 
+    /**
+     *  Fade the screen in.
+     * @memberof player
+     * @param {number} timeInMS How long to fade the screen in.
+     */
     player.screenFadeIn = timeInMS => {
         alt.emitClient(player, 'screen:FadeIn', timeInMS);
     };
 
+    /**
+     *  Blur the screen.
+     * @memberof player
+     * @param {number} timeInMS How long it takes to blur the screen.
+     */
     player.screenBlurOut = timeInMS => {
         alt.emitClient(player, 'screen:BlurOut', timeInMS);
     };
 
+    /**
+     *  Unblur the screen.
+     * @memberof player
+     * @param {number} timeInMS How long to unblur the screen.
+     */
     player.screenBlurIn = timeInMS => {
         alt.emitClient(player, 'screen:BlurIn', timeInMS);
     };
 
-    // ====================================
-    // Player Health + Armor / Reviving
+    /**
+     *  Revive the player.
+     * @memberof player
+     */
     player.revive = () => {
         player.screenFadeOutFadeIn(1000, 5000);
 
@@ -203,12 +296,22 @@ export function setupPlayerFunctions(player) {
         player.setSyncedMeta('dead', false);
     };
 
+    /**
+     *  Set the user's health.
+     * @memberof player
+     * @param {number} amount The amount to set the user's health.
+     */
     player.setHealth = amount => {
         player.health = amount;
         player.data.health = amount;
         player.lastHealth = player.health;
     };
 
+    /**
+     *  Set the user's armour.
+     * @memberof player
+     * @param {number} amount The amount to set the user's armour.
+     */
     player.setArmour = amount => {
         player.armour = amount;
         player.data.armour = amount;

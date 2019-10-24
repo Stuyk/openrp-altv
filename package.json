@@ -4,7 +4,8 @@
     "description": "An open source roleplay project for alt:V",
     "main": "index.js",
     "scripts": {
-        "orp": "npm install && node ./install.js"
+        "orp": "npm install && node ./install.js",
+        "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
     },
     "author": "stuyk",
     "license": "ISC",
@@ -20,6 +21,7 @@
         "eslint-config-prettier": "^6.1.0",
         "eslint-plugin-prettier": "^3.1.0",
         "eslint-plugin-react": "^7.14.3",
+        "jsdoc": "^3.6.3",
         "prettier": "^1.18.2"
     }
 }

@@ -86,7 +86,8 @@ class App extends Component {
             speed: '',
             hide: false,
             sprintBarWidth: `1920`,
-            minigameText: ''
+            minigameText: '',
+            showingInput: false
         };
     }
 
@@ -128,10 +129,9 @@ class App extends Component {
         document.addEventListener('keyup', e => {
             // Enter
             if (e.key === 'Enter') {
+                if (!this.state.showingInput) return;
                 const input = this.chatInput.current;
                 if (!input) return;
-
-                input.classList.add('hidden');
                 if (input.value.length <= 0) {
                     if ('alt' in window) {
                         alt.emit('routeMessage');
@@ -142,15 +142,17 @@ class App extends Component {
                         alt.emit('routeMessage', result);
                     }
                 }
+                this.setState({ showingInput: false });
                 input.value = '';
             }
 
             // Escape
             if (e.key === 'Escape') {
+                if (!this.state.showingInput) return;
                 let input = this.chatInput.current;
                 if (!input) return;
-                input.classList.add('hidden');
                 input.value = '';
+                this.setState({ showingInput: false });
                 if ('alt' in window) {
                     alt.emit('routeMessage');
                 }
@@ -173,8 +175,7 @@ class App extends Component {
     }
 
     showChatInput() {
-        this.chatInput.current.classList.remove('hidden');
-        this.chatInput.current.focus();
+        this.setState({ showingInput: true });
     }
 
     scrollToBottom() {
@@ -227,6 +228,10 @@ class App extends Component {
         } else {
             this.page.current.classList.remove('hidden');
             this.scrollToBottom();
+
+            if (this.state.showingInput) {
+                this.chatInput.current.focus();
+            }
         }
     }
 
@@ -241,21 +246,17 @@ class App extends Component {
                 lastMessageRef: this.lastMessage,
                 messagesBlockRef: this.messagesBlock
             }),
-            h(
-                'div',
-                { id: 'chat-input-wrapper' },
+            this.state.showingInput &&
                 h(
-                    'input',
-                    {
-                        class: 'hidden',
+                    'div',
+                    { id: 'chat-input-wrapper' },
+                    h('input', {
                         id: 'chat-input',
                         type: 'text',
                         maxlength: '255',
                         ref: this.chatInput
-                    },
-                    'test'
+                    })
                 )
-            )
         );
         // Render HTML / Components and Shit Here
     }

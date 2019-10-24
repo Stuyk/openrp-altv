@@ -98,7 +98,6 @@ class App extends Component {
 
     shouldComponentUpdate() {
         const data = document.querySelectorAll('.tabcon');
-
         for (let doc in data) {
             while (data[doc].firstChild) {
                 data[doc].removeChild(data[doc].firstChild);

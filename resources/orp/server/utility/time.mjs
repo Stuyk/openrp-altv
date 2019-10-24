@@ -1,6 +1,10 @@
 import * as alt from 'alt';
 
-// Returns in Minutes
+/**
+ * Get the player's current playing time.
+ * @param startTimeMS
+ * @param endTimeMS
+ */
 export function getPlayingTime(startTimeMS, endTimeMS) {
     return (endTimeMS - startTimeMS) / 1000 / 60;
 }

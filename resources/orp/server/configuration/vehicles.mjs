@@ -334,14 +334,14 @@ export const Vehicles = [
         name: 'issi4',
         type: 'vehicle',
         class: 'compact',
-        sell: true
+        sell: false
     },
     {
         display: 'Issi 5',
         name: 'issi5',
         type: 'vehicle',
         class: 'compact',
-        sell: true
+        sell: false
     },
     {
         display: 'Panto',
@@ -1229,21 +1229,21 @@ export const Vehicles = [
         name: 'deathbike',
         type: 'vehicle',
         class: 'motorcycle',
-        sell: true
+        sell: false
     },
     {
         display: 'Deathbike 2',
         name: 'deathbike2',
         type: 'vehicle',
         class: 'motorcycle',
-        sell: true
+        sell: false
     },
     {
         display: 'Deathbike 3',
         name: 'deathbike3',
         type: 'vehicle',
         class: 'motorcycle',
-        sell: true
+        sell: false
     },
     {
         display: 'Diablous',
@@ -4536,4 +4536,3 @@ export const Vehicles = [
         sell: true
     }
 ];
-

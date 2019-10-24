@@ -33,7 +33,7 @@ export function cacheCharacter(id, name) {
 }
 
 export function setVehicleID(lastVehicleID) {
-    vehicleID = lastVehicleID + 1;
+    vehicleID = lastVehicleID;
     alt.log(`Next vehicle ID is set to ${vehicleID}`);
 }
 

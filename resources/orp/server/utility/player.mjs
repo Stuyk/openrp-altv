@@ -1081,15 +1081,6 @@ export function setupPlayerFunctions(player) {
     };
 
     player.deleteVehicle = id => {
-        player.emitMeta('vehicles', player.vehicles);
-
-        const vehData = [];
-        player.vehicles.forEach(veh => {
-            vehData.push(JSON.stringify(veh.data));
-        });
-
-        player.emitMeta('vehiclesMeta', vehData);
-
         db.deleteByIds([id], 'Vehicle', res => {
             console.log(res);
         });

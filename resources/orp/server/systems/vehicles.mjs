@@ -85,7 +85,6 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     */
     if (veh.stats !== null) {
         let stats = JSON.parse(veh.stats);
-
         vehicle.setAppearanceDataBase64(stats.appearance);
         vehicle.setDamageStatusBase64(stats.damageStatus);
         vehicle.setHealthDataBase64(stats.health);
@@ -100,28 +99,15 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
     }
 
-    // Create the vehicles array for the player.
-    if (!Array.isArray(player.vehicles)) {
-        player.vehicles = [];
-        player.vehicles.push(vehicle);
-    } else {
-        // Keep track of player vehicles.
-        player.vehicles.push(vehicle);
-    }
-
+    player.vehicles.push(vehicle);
     player.emitMeta('vehicles', player.vehicles);
 
     const vehData = [];
-    player.vehicles.forEach(veh => {
-        vehData.push(JSON.stringify(veh.data));
+    player.vehicles.forEach(currentVehicle => {
+        vehData.push(JSON.stringify(currentVehicle.data));
     });
     player.emitMeta('vehiclesMeta', vehData);
     return vehicle;
-}
-
-export function appendNewVehicle(id, vehicle) {
-    vehicle.data.id = id;
-    VehicleMap.set(id, vehicle);
 }
 
 /*
@@ -302,7 +288,7 @@ export function trackVehicle(player, id) {
 
 export function destroyVehicle(player, id) {
     if (!player.vehicles) return;
-    const vehicle = player.vehicles.find(x => x.data.id === id);
+    const vehicle = player.vehicles.find(x => parseInt(x.data.id) === id);
     if (!vehicle) return;
     player.send(`{FFFF00} Confirm Destroying your ${vehicle.data.model} at ${id}.`);
     player.send(`{FFFF00} Type: {FFFFFF}/destroyvehicle`);

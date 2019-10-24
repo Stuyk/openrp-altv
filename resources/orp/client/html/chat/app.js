@@ -88,52 +88,9 @@ class App extends Component {
             sprintBarWidth: `1920`,
             minigameText: '',
             showingInput: false,
-            language: 'es',
-            yandexKey:
-                'trnsl.1.1.20191018T231031Z.571b4557a59e0d54.977c91139753ee2dd294b4f6229e4cbeaaeae4e1'
+            language: null,
+            yandexKey: null
         };
-    }
-
-    yandexKey(key) {
-        this.setState({ yandexKey: key });
-    }
-
-    language(language) {
-        this.setState({ language });
-    }
-
-    async translateToEnglish(msg) {
-        return new Promise(async resolve => {
-            const fetcher = await fetch(
-                `https://cors-anywhere.herokuapp.com/https://translate.yandex.net/api/v1.5/tr.json/translate?key=${this.state.yandexKey}&lang=${this.state.language}-en&text=${msg}`,
-                {
-                    method: 'post'
-                }
-            );
-
-            console.log(JSON.stringify(fetcher));
-
-            /*
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = false;
-            xhr.open(
-                'POST',
-                `https://translate.yandex.net/api/v1.5/tr.json/translate`,
-                true
-            );
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            const data = `key=${this.state.yandexKey}&lang=${this.state.language}-en&text=${msg}`;
-            xhr.send(data);
-            xhr.addEventListener('readystatechange', () => {
-                if (this.readyState === 4 && this.status === 200) {
-                    console.log(this.responseText);
-                    resolve(this.responseText);
-                }
-
-                console.log(this.responseText);
-            });
-            */
-        });
     }
 
     componentDidMount() {
@@ -141,11 +98,11 @@ class App extends Component {
             alt.on('chat:ShowChatInput', this.showChatInput.bind(this)); // Show the input.
             alt.on('chat:AppendMessage', this.appendMessage.bind(this)); // Non Formatted Messages
             alt.on('chat:AppendMessageSpecial', this.appendMessageSpecial.bind(this)); // Preformated Objects
+            alt.on('chat:YandexKey', this.yandexKey.bind(this));
+            alt.on('chat:Language', this.language.bind(this));
             //alt.on('appendMessageClickable'); // Soon ^tm;
             alt.on('chat:ClearChatBox', this.clearChatBox.bind(this)); // Clears the chat box.
             alt.on('chat:Hide', this.hide.bind(this));
-            alt.on('chat:YandexKey', this.yandexKey.bind(this));
-            alt.on('chat:Language', this.language.bind(this));
             //alt.on('chat:AppendTask', appendTask);
             alt.emit('chat:Ready');
         } else {
@@ -170,7 +127,19 @@ class App extends Component {
                 } else {
                     let result = removeTags(input.value);
                     if ('alt' in window) {
-                        alt.emit('routeMessage', result);
+                        if (
+                            this.state.yandexKey.length > 64 &&
+                            this.state.language !== null
+                        ) {
+                            console.log(result);
+
+                            this.translateToEnglish(result).then(res => {
+                                console.log(res);
+                                alt.emit('routeMessage', res);
+                            });
+                        } else {
+                            alt.emit('routeMessage', result);
+                        }
                     }
                 }
                 this.setState({ showingInput: false });
@@ -205,8 +174,71 @@ class App extends Component {
         });
     }
 
+    yandexKey(key) {
+        this.setState({ yandexKey: key });
+    }
+
+    language(language) {
+        this.setState({ language });
+    }
+
+    async translateToEnglish(msg) {
+        return new Promise(async (resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open(
+                'POST',
+                `https://translate.yandex.net/api/v1.5/tr.json/translate`,
+                true
+            );
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            const data = `key=${this.state.yandexKey}&lang=${this.state.language}-en&text=${msg}`;
+            xhr.send(data);
+            xhr.addEventListener('readystatechange', res => {
+                const current = res.currentTarget;
+                if (current.readyState === 4 && current.status === 200) {
+                    const response = JSON.parse(current.responseText);
+                    resolve(response.text.join(''));
+                }
+
+                if (current.status !== 200) {
+                    reject(msg);
+                }
+            });
+        });
+    }
+
+    async translateFromEnglish(msg) {
+        return new Promise(async (resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open(
+                'POST',
+                `https://translate.yandex.net/api/v1.5/tr.json/translate`,
+                true
+            );
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            const data = `key=${this.state.yandexKey}&lang=en-${this.state.language}&text=${msg}`;
+            xhr.send(data);
+            xhr.addEventListener('readystatechange', res => {
+                const current = res.currentTarget;
+                if (current.readyState === 4 && current.status === 200) {
+                    const response = JSON.parse(current.responseText);
+                    resolve(response.text.join(''));
+                }
+
+                if (current.status !== 200) {
+                    reject(msg);
+                }
+            });
+        });
+    }
+
     showChatInput() {
         this.setState({ showingInput: true });
+        if ('alt' in window) {
+            alt.emit('chat:FetchLanguage');
+        }
     }
 
     scrollToBottom() {
@@ -218,6 +250,22 @@ class App extends Component {
     appendMessage(msg) {
         let messages = [...this.state.messages];
         if (!msg) return;
+
+        if (this.state.yandexKey.length > 64 && this.state.language !== null) {
+            this.translateFromEnglish(msg).then(res => {
+                const coloredMSG = colorify(res);
+                messages.push({ message: coloredMSG });
+
+                if (messages.length >= 50) {
+                    messages.shift();
+                }
+
+                this.setState({ messages });
+                this.scrollToBottom();
+            });
+            return;
+        }
+
         msg = colorify(msg);
         messages.push({ message: msg });
 

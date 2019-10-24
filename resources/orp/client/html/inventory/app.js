@@ -230,7 +230,7 @@ class Settings extends Component {
         this.setState({ YandexKey: e.target.value });
 
         if ('alt' in window) {
-            alt.emit('option:SetOption', 'option:YandexKey', e.target.value);
+            alt.emit('option:SetOption', 'option:YandexKey', this.state.YandexKey);
         } else {
             console.log(e.target.value);
         }
@@ -238,7 +238,6 @@ class Settings extends Component {
 
     setPreferredLanguage(e) {
         this.setState({ Language: e.target.value });
-
         if ('alt' in window) {
             alt.emit('option:SetOption', 'option:Language', e.target.value);
         } else {

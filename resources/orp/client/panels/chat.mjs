@@ -29,6 +29,7 @@ export function toggleDialogue() {
         webview = new alt.WebView(url);
         webview.on('routeMessage', routeMessage);
         webview.on('chat:Ready', ready);
+        webview.on('chat:FetchLanguage', fetchLanguage);
         return;
     }
 
@@ -94,18 +95,24 @@ export function setStatus(player, value) {
     player.setMeta('isChatting', value);
 }
 
-alt.on('option:Changed', (key, value) => {
-    if (key !== 'option:YandexKey' || key !== 'option:Language') return;
+function fetchLanguage() {
     if (!webview) return;
+    webview.emit('chat:YandexKey', yandexKey);
+    webview.emit('chat:Language', language);
+}
 
-    if (key === 'option:YandexKey') {
-        yandexKey = value;
-    } else {
+alt.on('option:Changed', (key, value) => {
+    const opt = `option:${key}`;
+    if (opt !== 'option:YandexKey' && opt !== 'option:Language') return;
+    if (opt === 'option:Language') {
         language = value;
-    }
-
-    if (webview) {
-        webview.emit('chat:YandexKey', yandexKey);
-        webview.emit('chat:Language', language);
+        if (webview) {
+            webview.emit('chat:Language', language);
+        }
+    } else {
+        yandexKey = value;
+        if (webview) {
+            webview.emit('chat:YandexKey', yandexKey);
+        }
     }
 });

@@ -34,6 +34,8 @@ alt.on('meta:Changed', (key, value) => {
             fetchContacts();
             break;
     }
+
+    loadOptions();
 });
 
 // Show the Dialogue for the Inventory
@@ -220,7 +222,9 @@ function setOption(key, value) {
     const cache = alt.LocalStorage.get();
     cache.set(key, value);
     cache.save();
-    alt.emit('option:Changed', key, value);
+    loadOptions();
+
+    alt.emit('hud:QueueNotification', `Option: ${key} updated to ${value}`);
 }
 
 function loadOptions() {
@@ -234,8 +238,7 @@ function loadOptions() {
     }
 
     options.forEach(option => {
+        alt.emit('option:Changed', option, cache.get(`option:${option}`));
         webview.emit('option:SetOption', option, cache.get(`option:${option}`));
     });
 }
-
-loadOptions();

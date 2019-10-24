@@ -17,11 +17,11 @@ let keybinds = {
         shiftModifier: true,
         onKeyUp: systemsVehicles.keepEngineRunning
     },
-    // Shift + F - Keep Engine Running
+    // Shift + G - Toggle Engine
     71: {
         altModifier: false,
         shiftModifier: true,
-        onKeyUp: systemsVehicles.toggleEngine
+        onKeyDown: systemsVehicles.toggleEngine
     },
     // H - Toggle Vehicle Lock
     72: {

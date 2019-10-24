@@ -1,12 +1,12 @@
 const helpCommands = {
-    'TAB': 'Context menu toggle',
-    'I': 'Inventory',
-    'F': 'Enter/exit vehicle',
+    TAB: 'Context menu toggle',
+    I: 'Inventory',
+    F: 'Enter/exit vehicle',
     'Shift + H': 'Lock/Unlock Vehicle (Must enter vehicle once)',
     'Shift + G': 'Start/Stop Engine',
     'Shift + F': 'Keep Engine Running',
     'Shift + F7': 'Toggle Chat',
-    'T': 'Toggle chat window',
+    T: 'Toggle chat window',
     '/me <action>': 'Perform an action',
     '/b <msg>': 'Speak out of character',
     '/players': 'List online players',
@@ -33,11 +33,20 @@ class App extends Component {
         super(props);
         this.page = preact.createRef();
         this.state = { helpCommands: helpCommands };
+        window.addEventListener('keydown', this.exit.bind(this));
     }
 
     componentDidMount() {
         if ('alt' in window) {
             alt.on('help:Toggle', this.toggle.bind(this));
+        }
+    }
+
+    exit(e) {
+        if (e.key === 'F1' || e.key === 'Escape') {
+            if ('alt' in window) {
+                alt.emit('help:Close');
+            }
         }
     }
 

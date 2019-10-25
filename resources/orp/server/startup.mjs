@@ -83,11 +83,11 @@ function cacheInformation() {
     });
 
     // Passwords are encrypted.
-    db.selectData('Account', ['id', 'username', 'password'], data => {
+    db.selectData('Account', ['id', 'userid'], data => {
         if (data === undefined) return;
 
         for (let i = 0; i < data.length; i++) {
-            cacheAccount(data[i].username, data[i].id, data[i].password);
+            cacheAccount(data[i].userid, data[i].id);
         }
 
         alt.log(`=====> Cached: ${data.length} Accounts`);

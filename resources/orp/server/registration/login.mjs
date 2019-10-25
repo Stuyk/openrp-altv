@@ -1,55 +1,30 @@
 import * as alt from 'alt';
-import * as utilityEncryption from '../utility/encryption.mjs';
-import * as cache from '../cache/cache.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { Config } from '../configuration/config.mjs';
 
 const db = new SQL(); // Get DB Reference
 const LoggedInPlayers = [];
 
-// Called when a user wants to login from events folder.
-export function existingAccount(player, username, password) {
-    if (player.guid !== undefined) return;
+alt.on('orp:Login', (player, id, discordID) => {
+    // id is the unique id we want to use for looking up users.
+    if (player.data) return;
 
-    // Console Logging for Login Attempts
-    alt.log(`${player.name} is attempting a login with ${username}.`);
-
-    // Insure that username and password field are filled out.
-    if (username === undefined || password === undefined) {
-        player.showRegisterEventError('Username or password is undefined.');
+    if (LoggedInPlayers.includes(discordID)) {
+        player.kick('Already logged in.');
         return;
     }
 
-    // Get the account from the cache.
-    const account = cache.getAccount(username);
+    player.setMeta('id', id);
+    player.setMeta('discord', discordID);
 
-    if (account === undefined) {
-        player.showRegisterEventError('Account was not found.');
-        return;
-    }
-
-    if (!utilityEncryption.verifyPassword(password, account.password)) {
-        player.showRegisterEventError('Username or Password does not match.');
-        return;
-    }
-
-    if (LoggedInPlayers.includes(username)) {
-        player.showRegisterEventError('This account is already logged in.');
-        return;
-    }
-
-    // Keep track of logged in players.
-    LoggedInPlayers.push(username);
-
-    player.username = username;
-    player.showRegisterEventSuccess('Successful login! Please wait...');
-    finishPlayerLogin(player, account.id);
-    alt.log(`${player.name} has logged in.`);
-}
+    player.username = discordID;
+    LoggedInPlayers.push(discordID);
+    finishPlayerLogin(player, id);
+});
 
 // Called when the player is finishing their login.
 export function finishPlayerLogin(player, databaseID) {
-    player.closeRegisterDialogue();
+    //player.closeRegisterDialogue();
     player.screenFadeOut(500);
     player.guid = databaseID;
 
@@ -93,7 +68,7 @@ export function removeLoggedInPlayer(username) {
     if (res <= -1) return;
 
     let removedUser = LoggedInPlayers.splice(res, 1);
-    console.log(`${removedUser} was was logged out.`);
+    alt.log(`${removedUser} was was logged out.`);
 }
 
 /**
@@ -126,7 +101,6 @@ export function sync(player) {
         player.showFaceCustomizerDialogue(lastPos);
     } else {
         player.applyFace(player.data.face);
-
         if (player.needsRoleplayInfo) {
             player.showRoleplayInfoDialogue();
         }

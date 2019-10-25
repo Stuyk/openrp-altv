@@ -13,7 +13,7 @@ class App extends Component {
             showContext: false,
             data: {
                 cash: 25,
-                location: 'Some Stupid Street',
+                location: '404 Location Not Found',
                 speed: '',
                 sprintbar: 0.5,
                 minigametext: '',

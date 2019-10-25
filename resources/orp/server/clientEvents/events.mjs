@@ -1,7 +1,6 @@
 import * as alt from 'alt';
 // Imports are named after the folder and
 // file name. ie. characterClothing = ../character/clothing
-import * as registrationRegister from '../registration/register.mjs';
 import * as registrationLogin from '../registration/login.mjs';
 import * as characterFace from '../character/face.mjs';
 import * as utilityLocationHelper from '../utility/locationhelper.mjs';
@@ -20,11 +19,6 @@ import * as chat from '../chat/chat.mjs';
 // ====================================================
 // Registration
 // Called when a client attempts to Register an account.
-alt.onClient('register:NewAccount', registrationRegister.newAccount);
-
-// Called when a client attempts to Login to an account.
-alt.onClient('register:ExistingAccount', registrationLogin.existingAccount);
-
 alt.onClient('sync:Ready', registrationLogin.sync);
 
 // ====================================================

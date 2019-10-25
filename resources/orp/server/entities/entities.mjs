@@ -10,10 +10,7 @@ export const Account = new orm.EntitySchema({
             type: 'int',
             generated: true
         },
-        username: {
-            type: 'varchar'
-        },
-        password: {
+        userid: {
             type: 'varchar'
         }
     }

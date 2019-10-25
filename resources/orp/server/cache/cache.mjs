@@ -11,15 +11,14 @@ const accounts = {};
 const characters = {};
 let vehicleID;
 
-export function cacheAccount(username, id, password) {
-    accounts[username] = {
-        id,
-        password
+export function cacheAccount(userid, id) {
+    accounts[userid] = {
+        id
     };
 }
 
-export function getAccount(username) {
-    let dat = accounts[username];
+export function getAccount(userid) {
+    let dat = accounts[userid];
     return dat;
 }
 

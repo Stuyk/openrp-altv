@@ -166,55 +166,11 @@ export function setupPlayerFunctions(player) {
     };
 
     /**
-     *  Show the Registration Dialogue
-     * @memberof player
-     * @param {vector3} regCamCoord Where to base the registration camera.
-     * @param {vector3} regCamPointAtCoord Where to point the camera.
-     */
-    player.showRegisterDialogue = (regCamCoord, regCamPointAtCoord) => {
-        alt.emitClient(player, 'register:ShowDialogue', regCamCoord, regCamPointAtCoord);
-    };
-
-    /**
      *  Remove pedestrian blood.
      * @memberof player
      */
     player.clearBlood = () => {
         alt.emitClient(player, 'respawn:ClearPedBloodDamage');
-    };
-
-    /**
-     *  Display error message to registration dialogue.
-     * @memberof player
-     * @param {string} msg Error to display.
-     */
-    player.showRegisterEventError = msg => {
-        alt.emitClient(player, 'register:EmitEventError', msg);
-    };
-
-    /**
-     *  Display success message to registration dialogue.
-     * @memberof player
-     * @param {string} msg Message to display.
-     */
-    player.showRegisterEventSuccess = msg => {
-        alt.emitClient(player, 'register:EmitEventSuccess', msg);
-    };
-
-    /**
-     *  Switch registration over to login form.
-     * @memberof player
-     */
-    player.showRegisterLogin = () => {
-        alt.emitClient(player, 'register:ShowLogin');
-    };
-
-    /**
-     *  Close the registration dialogue.
-     * @memberof player
-     */
-    player.closeRegisterDialogue = () => {
-        alt.emitClient(player, 'register:CloseDialogue');
     };
 
     /**

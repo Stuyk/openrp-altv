@@ -14,5 +14,8 @@ alt.on('playerConnect', player => {
     player.pos = Config.registerCamPoint;
     player.dimension = 0;
     player.setSyncedMeta('loggedin', false);
-    player.showRegisterDialogue(Config.registerCamPoint);
+
+    alt.emitClient(player, 'discord:Request');
+
+    //player.showRegisterDialogue(Config.registerCamPoint);
 });

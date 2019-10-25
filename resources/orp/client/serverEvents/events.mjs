@@ -1,8 +1,5 @@
 import * as alt from 'alt';
 
-// Registration
-import * as panelsRegistration from '/client/panels/registration.mjs';
-
 // Blips
 import * as blipsBlipHelper from '/client/blips/bliphelper.mjs';
 
@@ -40,23 +37,7 @@ alt.log('Loaded: client->serverEvents->events.mjs');
 // Importing each individual file this way; allows us
 // to easily import a majority of code without importing
 // nearly as many files in various other places.
-// =============================================
-// REGISTRATION / LOGIN
-// Called when the player first joins the server,
-// displays the login camera to the user.
-// Takes two parameters: (regCamCoord, regCamPointAtCoord)
-alt.onServer('register:ShowDialogue', panelsRegistration.showDialogue);
-
-// Called when there's an error/alert in the registration.
-// Params: msg
-alt.onServer('register:EmitEventError', panelsRegistration.showError);
-alt.onServer('register:EmitEventSuccess', panelsRegistration.showSuccess);
-// Params: NONE
-alt.onServer('register:ShowLogin', panelsRegistration.showLogin);
-
-// Finish the login; and disable un-necessary events.
-alt.onServer('register:CloseDialogue', panelsRegistration.closeDialogue);
-
+// ============================================
 // =======================================================
 // PLAYER RESPAWN
 // Reset the characters blood

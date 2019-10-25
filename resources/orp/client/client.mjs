@@ -21,6 +21,7 @@ import * as systemsCallbacks from '/client/systems/callbacks.mjs';
 import * as systemsContext from '/client/systems/context.mjs';
 import * as systemsCombat from '/client/systems/combat.mjs';
 import * as systemsDoors from '/client/systems/doors.mjs';
+import * as systemsDiscord from '/client/systems/discord.mjs';
 import * as systemsJob from '/client/systems/job.mjs';
 import * as systemsShop from '/client/systems/shop.mjs';
 import * as systemsSkills from '/client/systems/skills.mjs';
@@ -33,22 +34,3 @@ import * as contextmenuObject from '/client/contextmenus/object.mjs';
 import * as contextmenuPed from '/client/contextmenus/ped.mjs';
 import * as contextmenuVehicle from '/client/contextmenus/vehicle.mjs';
 import * as contextmenuPlaye from '/client/contextmenus/player.mjs';
-
-let ready = false;
-
-alt.setInterval(() => {
-    if (!ready) {
-        ready = true;
-        alt.discordRequestOAuth2();
-    }
-
-    if (!alt.isDiscordOAuth2Finished()) return;
-
-    const object = alt.getDiscordOAuth2Result();
-
-    Object.keys(object).forEach(key => {
-        alt.log(`${key} -> ${object[key]}`);
-    });
-
-    alt.log(JSON.stringify(alt.discordInfo(), null, '\t'));
-}, 2000);

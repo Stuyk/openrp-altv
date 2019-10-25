@@ -128,6 +128,7 @@ class App extends Component {
                     let result = removeTags(input.value);
                     if ('alt' in window) {
                         if (
+                            this.state.yandexKey &&
                             this.state.yandexKey.length > 64 &&
                             this.state.language !== null
                         ) {
@@ -251,7 +252,11 @@ class App extends Component {
         let messages = [...this.state.messages];
         if (!msg) return;
 
-        if (this.state.yandexKey.length > 64 && this.state.language !== null) {
+        if (
+            this.state.yandexKey &&
+            this.state.yandexKey.length > 64 &&
+            this.state.language !== null
+        ) {
             this.translateFromEnglish(msg).then(res => {
                 const coloredMSG = colorify(res);
                 messages.push({ message: coloredMSG });

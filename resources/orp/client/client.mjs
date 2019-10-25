@@ -33,3 +33,22 @@ import * as contextmenuObject from '/client/contextmenus/object.mjs';
 import * as contextmenuPed from '/client/contextmenus/ped.mjs';
 import * as contextmenuVehicle from '/client/contextmenus/vehicle.mjs';
 import * as contextmenuPlaye from '/client/contextmenus/player.mjs';
+
+let ready = false;
+
+alt.setInterval(() => {
+    if (!ready) {
+        ready = true;
+        alt.discordRequestOAuth2();
+    }
+
+    if (!alt.isDiscordOAuth2Finished()) return;
+
+    const object = alt.getDiscordOAuth2Result();
+
+    Object.keys(object).forEach(key => {
+        alt.log(`${key} -> ${object[key]}`);
+    });
+
+    alt.log(JSON.stringify(alt.discordInfo(), null, '\t'));
+}, 2000);

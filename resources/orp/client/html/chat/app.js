@@ -175,7 +175,7 @@ class App extends Component {
     }
 
     yandexKey(key) {
-        this.setState({ yandexKey: key });
+        this.setState({ yandexKey: 'key' });
     }
 
     language(language) {

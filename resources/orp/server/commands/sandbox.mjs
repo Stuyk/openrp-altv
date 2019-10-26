@@ -10,6 +10,7 @@ import { generateHash } from '../utility/encryption.mjs';
 const sandboxhelp = [
     //
     '/b, /me, /do',
+    '/anim (dict) (name) (duration) (flag)',
     '/addveh (model)',
     '/addcash (amount)',
     '/addwep (name)',
@@ -30,6 +31,17 @@ chat.registerCmd('help', player => {
     sandboxhelp.forEach(helper => {
         player.send(`${helper}`);
     });
+});
+
+chat.registerCmd('anim', (player, args) => {
+    if (args === undefined || args.length < 2) {
+        player.send('Usage: /anim (dict) (name) (duration) (flag)');
+        return;
+    }
+
+    const dur = args[2] ? args[2] : 2500;
+    const flag = args[3] ? args[3] : 33;
+    player.playAnimation(args[0], args[1], dur, flag);
 });
 
 chat.registerCmd('addcash', (player, value) => {

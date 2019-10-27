@@ -30,7 +30,7 @@ alt.onServer('discord:Request', () => {
             return;
         }
 
-        alt.emitServer('discord:Authorization', object);
+        alt.emitServer('discord:Authorization', object.token);
         alt.clearInterval(interval);
     }, 2000);
 });

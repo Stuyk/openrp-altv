@@ -17,7 +17,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
 **Roadmap**
 
 -   [x] PostgreSQL Integration
--   [x] Login and Registration
+-   [x] Login and Registration through Discord (Overlay must be turned on.)
 -   [x] Player
     -   [x] Character Facial Customization
     -   [x] Roleplay Name Formatting

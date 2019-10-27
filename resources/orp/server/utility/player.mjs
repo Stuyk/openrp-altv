@@ -73,7 +73,11 @@ export function setupPlayerFunctions(player) {
         if (points <= 0) return;
 
         player.data.upgradestotal = points;
-        player.saveField(player.data.id, 'upgradestotal', player.data.upgradestotal);
+        player.saveField(
+            player.data.id,
+            'upgradestotal',
+            parseInt(player.data.upgradestotal)
+        );
     };
 
     /**

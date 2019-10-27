@@ -73,6 +73,7 @@ alt.onClient('vehicle:RepairVehicle', systemsVehicles.repairVehicle);
 alt.onClient('vehicle:TrackVehicle', systemsVehicles.trackVehicle);
 alt.onClient('vehicle:RefuelVehicle', systemsVehicles.refuelVehicle); // gas can
 alt.onClient('vehicle:DestroyVehicle', systemsVehicles.destroyVehicle);
+alt.onClient('vehicle:LeaveEngineRunning', systemsVehicles.leaveEngineRunning);
 
 // Phone
 alt.onClient('phone:AddContact', systemsPhone.addContact);

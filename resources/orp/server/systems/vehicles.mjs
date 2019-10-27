@@ -97,6 +97,7 @@ export function spawnVehicle(player, veh, newVehicle = false) {
 
     if (newVehicle) {
         alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
+        vehicle.lockState = 1;
     }
 
     player.vehicles.push(vehicle);
@@ -181,7 +182,7 @@ export function toggleLock(player, data) {
 
     if (!player.vehicles.includes(vehicle)) return;
 
-    if (vehicle.lockState === 2) {
+    if (vehicle.lockState >= 2 || vehicle.lockState === 0) {
         vehicle.lockState = 1; // Unlocked
         player.send('Your vehicle is now unlocked.');
 
@@ -303,4 +304,17 @@ export function refuelVehicle(player, data) {
         time: Date.now() + Config.vehicleFuelTime,
         player
     };
+}
+
+export function leaveEngineRunning(player) {
+    const vehicle = player.lastVehicle;
+    if (!vehicle) return;
+
+    const dist = distance(player.pos, vehicle.pos);
+    if (dist > 5) return;
+
+    if (player.vehicles === undefined) return;
+    if (!player.vehicles.includes(vehicle)) return;
+    vehicle.isEngineOn = true;
+    alt.emitClient(null, 'vehicle:ForceEngineOn', vehicle);
 }

@@ -159,18 +159,11 @@ export function toggleLock() {
 
 // Called from a keybind.
 export function keepEngineRunning() {
-    if (!alt.Player.local.vehicle) return;
-    const pedInSeat = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, -1);
-    if (pedInSeat !== alt.Player.local.scriptID) return;
-    alt.setTimeout(() => {
-        native.setVehicleEngineOn(
-            // Retrieves last vehicle ped was in.
-            native.getVehiclePedIsIn(alt.Player.local.scriptID, 1),
-            true,
-            true,
-            true
-        );
-    }, 250);
+    alt.emitServer('vehicle:LeaveEngineRunning');
+}
+
+export function forceEngineOn(vehicle) {
+    native.setVehicleEngineOn(vehicle.scriptID, true, true, false);
 }
 
 // Called when the user locks their vehicle.

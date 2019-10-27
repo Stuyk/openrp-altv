@@ -16,6 +16,18 @@ const currentSkills = {
     woodcutting: { xp: 0 } //
 };
 
+/**
+ * Returns the XP for given player's skill
+ * @param player
+ * @param skill
+ */
+export function getXP(player, skill) {
+    skill = skill.toLowerCase();
+    let skills = JSON.parse(player.data.skills)
+    if (!skills[skill]) return 0;
+    return skills[skill].xp;
+}
+
 export function addXP(player, skill, xpToAdd) {
     if (parseInt(xpToAdd) > 13034431) return;
 

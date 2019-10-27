@@ -1,15 +1,27 @@
 import * as alt from 'alt';
+import { getXP, addXP } from '../systems/skills.mjs';
 
-// Props is defined in the configuration.
 alt.on('itemeffects:UseMedkit', (player, item, hash) => {
+    // Do nothing if at full health
+    if (player.health >= 200) {
+        player.notify("You are already at full health!");
+        return;
+    }
+
+    // Remove from inventory
     if (!player.subItem(item.key, 1)) {
         return;
     }
 
-    // Add health to the user.
-    if (item.props.health !== undefined) {
-        player.health += item.props.health;
-    }
+    const xp = getXP(player, 'medicine');
 
-    player.notify(`You use the ${item.name}`);
+    // Add health to the user. The amount healed is based
+    // on the level of the user's medical experience.
+    // ie.A level 5 medic skill will only heal 5 health.
+    player.setHealth(player.health + xp);
+
+    // increase medicine skill
+    addXP(player, 'medicine', 5);
+
+    player.notify(`Health has increased: +${xp}`);
 });

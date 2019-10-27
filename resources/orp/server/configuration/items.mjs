@@ -812,9 +812,7 @@ export const Items = {
         name: 'Medical Kit',
         base: 'medkit',
         key: 'medkit',
-        props: {
-            health: 25
-        },
+        props: {},
         quantity: 0,
         icon: 'medical-pack'
     },

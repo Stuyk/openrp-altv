@@ -104,7 +104,7 @@ alt.on('meta:Changed', (key, value) => {
     }
 
     if (key === 'hudNotice') {
-        webview.emit('hud:SetHudNotice', msg);
+        webview.emit('hud:SetHudNotice', value);
     }
 });
 

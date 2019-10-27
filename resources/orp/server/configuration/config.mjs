@@ -18,9 +18,9 @@ export const Config = {
         z: 1.98758864402771
     },
     defaultSpawnPoint: {
-        x: 813,
-        y: -279,
-        z: 66
+        x: -725.7460327148438,
+        y: -282.2967224121094,
+        z: 36.959503173828125
     },
     // Player Data
     defaultPlayerCash: 100.0, // Starting Cash

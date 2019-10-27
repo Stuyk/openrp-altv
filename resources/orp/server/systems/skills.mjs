@@ -24,7 +24,7 @@ const currentSkills = {
 export function getXP(player, skill) {
     skill = skill.toLowerCase();
     let skills = JSON.parse(player.data.skills)
-    if (!skills[skill]) return 0;
+    if (!skills[skill]) return;
     return skills[skill].xp;
 }
 

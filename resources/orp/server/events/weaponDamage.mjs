@@ -26,7 +26,11 @@ function tazer(attacker, target) {
     alt.emitClient(target, 'arrest:Tazed', 10000);
     setTimeout(() => {
         if (!target) return;
-        target.setSyncedMeta('tazed', false);
+        try {
+            target.setSyncedMeta('tazed', false);
+        } catch (err) {
+            console.log('Could not taze entity.');
+        }
     }, 10000);
     return false;
 }

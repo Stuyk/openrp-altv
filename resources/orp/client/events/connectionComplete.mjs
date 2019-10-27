@@ -4,6 +4,8 @@ import * as native from 'natives';
 alt.log('Loaded: client->events->connectionComplete.mjs');
 
 alt.on('connectionComplete', () => {
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
+
     alt.log('Loading Interiors');
 
     alt.requestIpl('ex_dt1_02_office_02b');

@@ -11,11 +11,8 @@ alt.on('playerConnect', player => {
     if (player.getMeta('isLoggedIn')) return;
 
     // Setup the Login Camera
-    player.pos = Config.registerCamPoint;
-    player.dimension = 0;
+    player.pos = Config.characterPoint;
+    player.dimension = Math.floor(Math.random() * 50000);
     player.setSyncedMeta('loggedin', false);
-
     alt.emitClient(player, 'discord:Request');
-
-    //player.showRegisterDialogue(Config.registerCamPoint);
 });

@@ -24,14 +24,20 @@ alt.on('orp:Login', (player, id, discordID) => {
 
 // Called when the player is finishing their login.
 export function finishPlayerLogin(player, databaseID) {
-    //player.closeRegisterDialogue();
-    player.screenFadeOut(500);
+    player.screenFadeIn(500);
     player.guid = databaseID;
 
-    db.fetchByIds(player.guid, 'Character', results => {
+    db.fetchAllByField('guid', databaseID, 'Character', results => {
         // Existing Character
         if (Array.isArray(results) && results.length >= 1) {
-            existingCharacter(player, results[0]);
+            player.characters = results;
+            alt.emitClient(
+                player,
+                'character:Select',
+                results,
+                Config.characterPoint,
+                Config.characterCamPoint
+            );
             return;
         }
 
@@ -39,7 +45,7 @@ export function finishPlayerLogin(player, databaseID) {
 
         // New Character
         const data = {
-            id: player.guid,
+            guid: databaseID,
             lastposition: JSON.stringify(Config.defaultSpawnPoint),
             model: 'mp_m_freemode_01',
             health: 200,
@@ -57,9 +63,10 @@ export function finishPlayerLogin(player, databaseID) {
 }
 
 // Called for any existing characters.
-function existingCharacter(player, data) {
+export function existingCharacter(player, data) {
     player.data = data;
     player.emitMeta('loggedin', true);
+    player.dimension = 0;
 }
 
 export function removeLoggedInPlayer(username) {

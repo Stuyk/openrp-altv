@@ -7,10 +7,15 @@ export const Config = {
     maxDoRange: 15,
     maxOocRange: 15,
     // Spawn Location / Camera Point
-    registerCamPoint: {
-        x: -443.31427001953125,
-        y: 1059.4945068359375,
-        z: 327.6732177734375
+    characterPoint: {
+        x: 2827.42333984375,
+        y: -729.071044921875,
+        z: 1.9250786304473877
+    },
+    characterCamPoint: {
+        x: 2826.87939453125,
+        y: -723.9521484375,
+        z: 1.98758864402771
     },
     defaultSpawnPoint: {
         x: 813,

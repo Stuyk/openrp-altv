@@ -22,6 +22,7 @@ import * as panelsCharacter from '/client/panels/character.mjs';
 import * as panelsMdc from '/client/panels/mdc.mjs';
 import * as panelsHud from '/client/panels/hud.mjs';
 import * as panelsVehicleVendor from '/client/panels/vehiclevendor.mjs';
+import * as panelsCharacterSelect from '/client/panels/characterselect.mjs';
 
 import * as meta from '/client/meta/meta.mjs';
 
@@ -129,3 +130,7 @@ alt.onServer('meta:Emit', meta.emit);
 // =======================================================
 // Vehicle Vendors
 alt.onServer('vehiclevendor:ShowDialogue', panelsVehicleVendor.showDialogue);
+
+// =======================================================
+// Character Select
+alt.onServer('character:Select', panelsCharacterSelect.showDialogue);

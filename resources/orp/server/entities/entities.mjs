@@ -23,7 +23,11 @@ export const Character = new orm.EntitySchema({
         id: {
             primary: true,
             type: 'int',
-            generated: false
+            generated: true
+        },
+        guid: {
+            type: 'text',
+            default: ''
         },
         name: {
             type: 'text',

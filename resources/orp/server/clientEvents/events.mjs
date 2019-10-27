@@ -35,6 +35,8 @@ alt.onClient('utility:GoToLastLocation', utilityLocationHelper.goToLastLocation)
 // Registration
 // Set the users roleplay info
 alt.onClient('character:SetRoleplayInfo', characterInfo.setRoleplayInfo);
+alt.onClient('character:Select', characterInfo.select);
+alt.onClient('character:New', characterInfo.newCharacter);
 
 // Interaction Stuff
 alt.onClient('interaction:Exec', systemsInteraction.attemptToExecuteInteraction);

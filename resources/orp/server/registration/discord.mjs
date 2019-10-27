@@ -30,44 +30,8 @@ alt.onClient('discord:Authorization', async (player, object) => {
         return;
     }
 
-    console.log(object);
-
-    const revoke = await new Promise(resolve => {
-        /*
-        request('https://discordapp.com/api/oauth2/token/revoke', {
-            headers: {
-                method: 'POST',
-                Authorization: `Bearer ${bearerToken}`
-            }
-        });
-
-        
-        request(
-            'https://discordapp.com/api/oauth2/token/revoke',
-            {
-                headers: {
-                    token: `Bearer ${bearerToken}`
-                }
-            },
-            res => {
-                res.on('data', d => {
-                    return resolve(d);
-                });
-            }
-        ).on('error', e => {
-            return resolve(e);
-        });
-        */
-
-        resolve();
-    });
-
-    //console.log(revoke.toString());
-
     const userData = JSON.parse(result.data);
     const account = cache.getAccount(userData.id);
-
-    console.log(userData);
 
     if (account) {
         alt.emit('orp:Login', player, account.id, userData.id);

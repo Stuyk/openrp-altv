@@ -56,7 +56,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
     -   [ ] Destroy Vehicles
     -   [ ] Sell Vehicles
     -   [x] Track Vehicles
--   [ ] Door System
+-   [x] Door System
     -   [ ] House Type
     -   [ ] Shop System
         -   [ ] Gun Store

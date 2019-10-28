@@ -2,7 +2,7 @@ import * as alt from 'alt';
 
 let ready = false;
 
-alt.onServer('discord:Request', () => {
+alt.on('discord:Request', () => {
     const interval = alt.setInterval(() => {
         // Make a single request for authentication.
         if (!ready && !alt.isDiscordOAuth2Finished()) {

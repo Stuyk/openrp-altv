@@ -14,5 +14,4 @@ alt.on('playerConnect', player => {
     player.pos = Config.characterPoint;
     player.dimension = Math.floor(Math.random() * 50000);
     player.setSyncedMeta('loggedin', false);
-    alt.emitClient(player, 'discord:Request');
 });

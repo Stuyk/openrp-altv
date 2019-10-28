@@ -16,6 +16,7 @@ export function showDialogue(passedCharacters, characterPoint, characterCamPoint
     }
 
     characters = passedCharacters;
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
 
     // Setup Webview
     webview.open(url, true);

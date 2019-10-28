@@ -22,6 +22,7 @@ import * as systemsContext from '/client/systems/context.mjs';
 import * as systemsCombat from '/client/systems/combat.mjs';
 import * as systemsDoors from '/client/systems/doors.mjs';
 import * as systemsDiscord from '/client/systems/discord.mjs';
+import * as systemsInteriors from '/client/systems/interiors.mjs';
 import * as systemsJob from '/client/systems/job.mjs';
 import * as systemsShop from '/client/systems/shop.mjs';
 import * as systemsSkills from '/client/systems/skills.mjs';

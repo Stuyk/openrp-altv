@@ -257,7 +257,7 @@ export function setupPlayerFunctions(player) {
     };
 
     /**
-     *  Set the user's health.
+     * Set the user's health.
      * @memberof player
      * @param {number} amount The amount to set the user's health.
      */

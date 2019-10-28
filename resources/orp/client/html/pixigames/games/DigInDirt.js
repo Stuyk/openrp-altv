@@ -29,7 +29,6 @@ function digInDirt(hash) {
         let index = Math.floor(Math.random() * (positions.length - 1));
         seed.container.x = positions[index].x;
         seed.container.y = positions[index].y;
-
         setDescription('Dig in the dirt; and find the seed.');
         loadGameState('DigInDirt');
     });

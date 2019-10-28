@@ -6,9 +6,9 @@ import * as alt from 'alt';
  * @param endTimeMS
  */
 export function getPlayingTime(startTimeMS, endTimeMS) {
-    return (endTimeMS - startTimeMS) / 1000 / 60;
+    return (parseInt(endTimeMS) - parseInt(startTimeMS)) / 1000 / 60;
 }
 
 export function minutesToUpgradePoints(minutes) {
-    return Math.floor(minutes / 60 / 10);
+    return Math.floor(parseInt(minutes) / 60 / 10);
 }

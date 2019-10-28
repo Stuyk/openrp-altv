@@ -64,6 +64,8 @@ export function setupPlayerFunctions(player) {
         const minutes = utilityTime.getPlayingTime(player.startTime, Date.now());
         player.data.playingtime += Math.round(minutes);
 
+        if (isNaN(player.data.playingtime)) return;
+
         if (minutes >= 0)
             player.saveField(player.data.id, 'playingtime', player.data.playingtime);
 

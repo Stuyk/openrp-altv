@@ -242,8 +242,7 @@ class App extends Component {
                     this.state.data.speed
                 ),
             // player.notice
-            this.state.data.notice !== '' &&
-                h('div', { class: 'notice' }, this.state.data.notice),
+            this.state.notice !== '' && h('div', { class: 'notice' }, this.state.notice),
             // Minigame Text for Jobs
             this.state.data.minigametext !== '' &&
                 h('div', { class: 'minigametext' }, this.state.data.minigametext),

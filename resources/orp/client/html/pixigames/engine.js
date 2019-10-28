@@ -31,7 +31,9 @@ function gameLoop(delta) {
     if (!ready) {
         ready = true;
         if ('alt' in window) {
-            alt.emit('minigame:Ready');
+            setTimeout(() => {
+                alt.emit('minigame:Ready');
+            }, 2000);
         }
     }
 

@@ -18,6 +18,7 @@ const width = 600;
 const length = 600;
 
 const sectors = new Map();
+export const colshapes = [];
 
 let pairs = [];
 for (let row = 0; row <= rows; row++) {
@@ -58,11 +59,13 @@ pairs.forEach((row, sector) => {
                 }
             },
             width: width,
-            length: length
+            length: length,
+            doors: []
         };
         colshape.sector.seed = new RandomNumberGenerator(
             JSON.stringify(colshape.sector),
             false
         );
+        colshapes.push(colshape);
     });
 });

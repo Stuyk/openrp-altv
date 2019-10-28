@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
-import { Account, Character, Vehicle, Details } from './entities/entities.mjs'; // Schemas for Database
-import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.mjs';
+import { Account, Character, Vehicle, Details, Door } from './entities/entities.mjs'; // Schemas for Database
+import { cacheAccount, setVehicleID, cacheCharacter, cacheDoor } from './cache/cache.mjs';
 import fs from 'fs';
 import path from 'path';
 
@@ -28,7 +28,7 @@ let db = new SQL(
     dbInfo.password,
     dbInfo.dbname,
     // Specify New Table Schemas Here
-    [Account, Character, Vehicle, Details]
+    [Account, Character, Vehicle, Details, Door]
 );
 
 alt.on('ConnectionComplete', () => {
@@ -98,6 +98,15 @@ function cacheInformation() {
 
         for (let i = 0; i < data.length; i++) {
             cacheCharacter(data[i].id, data[i].name);
+        }
+    });
+
+    db.fetchAllData('Door', res => {
+        if (res === undefined) return;
+        for (let i = 0; i < res.length; i++) {
+            res[i].enter = JSON.parse(res[i].enter);
+            res[i].exit = JSON.parse(res[i].exit);
+            cacheDoor(res[i].id, res[i]);
         }
     });
 }

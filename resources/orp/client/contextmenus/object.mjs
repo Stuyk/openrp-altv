@@ -4,6 +4,7 @@ import * as native from 'natives';
 import { distance } from '/client/utility/vector.mjs';
 import { playAnimation } from '/client/systems/animation.mjs';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
+import { findDoor } from '/client/systems/doors.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -213,6 +214,9 @@ let objectInteractions = {
     },
     3628385663: {
         func: fireExtinguisher
+    },
+    1693207013: {
+        func: dynamicDoor
     }
 };
 
@@ -385,4 +389,15 @@ function gasPump(ent) {
 function fireExtinguisher(ent) {
     appendContextItem(`Fire Extinguisher`, true, 'use:FireExtinguisher', {});
     setContextTitle(`Fire Extinguisher`);
+}
+
+function dynamicDoor(ent) {
+    const door = findDoor(ent);
+    if (!door) return;
+
+    appendContextItem('Use', true, 'use:UseDynamicDoor', { id: door.id });
+    appendContextItem(`Toggle Lock: ${door.lockstate}`, true, 'use:LockDynamicDoor', {
+        id: door.id
+    });
+    setContextTitle(`${door.id} - Owner: ${door.guid}`);
 }

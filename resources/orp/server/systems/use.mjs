@@ -4,6 +4,8 @@ import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 import { appendToMdc } from './mdc.mjs';
 import { addBoundWeapon } from './inventory.mjs';
+import { getDoor } from '../cache/cache.mjs';
+import { distance } from '../utility/vector.mjs';
 
 export let doorStates = {
     '{"x":461.8065185546875,"y":-994.4085693359375,"z":25.06442642211914}': {
@@ -282,4 +284,31 @@ export function fireExtinguisher(player) {
 
     addBoundWeapon(player, 'FireExtinguisher');
     player.send('You pick up the fire extinguisher.');
+}
+
+export function useDynamicDoor(player, data) {
+    const id = data.id;
+    const door = getDoor(id);
+    if (!door) return;
+    const dist = distance(door.enter.position, player.pos);
+    if (dist > 5) return;
+    player.lastLocation = door.enter.position;
+    player.pos = door.exit.position;
+    player.dimension = door.id;
+    player.emitMeta('door:EnteredInterior', door);
+}
+
+export function exitDynamicDoor(player, id) {
+    const door = getDoor(id);
+    if (!door) return;
+    const dist = distance(door.exit.position, player.pos);
+    if (dist > 5) return;
+    player.emitMeta('door:EnteredInterior', undefined);
+    player.pos = door.enter.position;
+    player.lastLocation = null;
+    player.dimension = 0;
+}
+
+export function lockDynamicDoor(player, data) {
+    const id = data.id;
 }

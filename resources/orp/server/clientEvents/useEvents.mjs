@@ -19,7 +19,10 @@ const events = {
     'use:FriskPlayer': systemsUse.friskPlayer,
     'use:CoffeeMachine': systemsUse.coffeeMachine,
     'use:HospitalBed': systemsUse.hospitalBed,
-    'use:FireExtinguisher': systemsUse.fireExtinguisher
+    'use:FireExtinguisher': systemsUse.fireExtinguisher,
+    'use:UseDynamicDoor': systemsUse.useDynamicDoor,
+    'use:LockDynamicDoor': systemsUse.lockDynamicDoor,
+    'use:ExitDynamicDoor': systemsUse.exitDynamicDoor
 };
 
 Object.keys(events).forEach(key => {

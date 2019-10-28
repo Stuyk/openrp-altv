@@ -276,8 +276,12 @@ export function checkFuel(player, data) {
 export function repairVehicle(player, data) {
     const vehicle = data.vehicle;
     if (!vehicle) return;
-    vehicle.repair();
-    player.send(`{FFFF00}Vehicle has been repaired.`);
+    actionMessage(player, 'Begins repairing the vehicle...');
+    player.playAnimation('missmechanic', 'work2_base', Config.vehicleRepairTime, 49);
+    vehicle.isBeingRepaired = {
+        time: Date.now() + Config.vehicleRepairTime,
+        player
+    };
 }
 
 export function trackVehicle(player, id) {

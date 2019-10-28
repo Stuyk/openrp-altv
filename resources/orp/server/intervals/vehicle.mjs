@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import { Config } from '../configuration/config.mjs';
 import { actionMessage } from '../chat/chat.mjs';
+import { addXP } from '../systems/skills.mjs';
 
 let nextVehicleSaveTime = Date.now() + Config.vehicleSaveTime;
 let handling = false;
@@ -53,6 +54,25 @@ alt.on('parse:Vehicle', (vehicle, now) => {
                 vehicle.isBeingFilled = undefined;
             } catch (err) {
                 console.error('Failed to refill tank of vehicle.');
+            }
+        }
+    }
+
+    // Check for Repair Update
+    if (vehicle.isBeingRepaired) {
+        if (now > vehicle.isBeingRepaired.time) {
+            try {
+                vehicle.repair();
+                if (vehicle.isBeingRepaired.player) {
+                    addXP(vehicle.isBeingRepaired.player, 'mechanic', 25);
+                    actionMessage(
+                        vehicle.isBeingRepaired.player,
+                        'Successfully repairs the vehicle.'
+                    );
+                }
+                vehicle.isBeingRepaired = undefined;
+            } catch (err) {
+                console.error('Failed to repair the vehicle.');
             }
         }
     }

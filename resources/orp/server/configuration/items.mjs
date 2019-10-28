@@ -325,6 +325,18 @@ export const BaseItems = {
         },
         slot: -1
     },
+    medkit: {
+        eventcall: 'itemeffects:UseMedkit',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: true
+        },
+        slot: -1
+    },
     repairkit: {
         eventcall: 'itemeffects:RepairVehicle',
         abilities: {
@@ -795,6 +807,14 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'id-card'
+    },
+    medkit: {
+        name: 'Medical Kit',
+        base: 'medkit',
+        key: 'medkit',
+        props: {},
+        quantity: 0,
+        icon: 'medical-pack'
     },
     repairkit: {
         name: 'Repair Kit',

@@ -41,6 +41,7 @@ const icons = [
     'leaf',
     'mechanic',
     'medicine',
+    'medical-pack',
     'metal',
     'mining',
     'nobility',

@@ -38,6 +38,7 @@ export const Config = {
     vehicleSaveTime: 60000 * 5, // 5 Minutes
     vehicleBaseFuel: 100, // Increase this to visit the pump less often.
     vehicleFuelTime: 1000 * 10,
+    vehicleRepairTime: 1000 * 10,
     // Hospital
     hospitalPctFee: 0.02 // Percentage fee for hospital.
 };

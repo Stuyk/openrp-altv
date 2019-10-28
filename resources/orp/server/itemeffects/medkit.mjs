@@ -1,5 +1,6 @@
 import * as alt from 'alt';
-import { getXP, addXP } from '../systems/skills.mjs';
+import { addXP } from '../systems/skills.mjs';
+import { getLevel } from '../systems/xp.mjs';
 
 alt.on('itemeffects:UseMedkit', (player, item, hash) => {
     // Do nothing if at full health
@@ -13,15 +14,16 @@ alt.on('itemeffects:UseMedkit', (player, item, hash) => {
         return;
     }
 
-    const xp = getXP(player, 'medicine');
-
     // Add health to the user. The amount healed is based
     // on the level of the user's medical experience.
-    // ie.A level 5 medic skill will only heal 5 health.
-    player.setHealth(player.health + xp);
+    // ie. A level 5 medic skill will only heal 5 health.
+    const skills = JSON.parse(player.data.skills);
+    const level = getLevel(skills['medicine'].xp);
+
+    player.setHealth(player.health + level);
 
     // increase medicine skill
-    addXP(player, 'medicine', 5);
+    addXP(player, 'medicine', 25);
 
-    player.notify(`Health has increased: +${xp}`);
+    player.notify(`Health has increased: +${level}`);
 });

@@ -253,12 +253,11 @@ export function setupPlayerFunctions(player) {
     };
 
     /**
-     * Set the user's health. Maximum is 200.
+     * Set the user's health.
      * @memberof player
      * @param {number} amount The amount to set the user's health.
      */
     player.setHealth = amount => {
-        amount = Math.max(200, amount);
         player.health = amount;
         player.data.health = amount;
         player.lastHealth = player.health;

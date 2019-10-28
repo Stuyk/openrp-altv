@@ -3200,7 +3200,7 @@ export const Vehicles = [
         name: 'paragon2',
         type: 'vehicle',
         class: 'sport',
-        sell: true
+        sell: false
     },
     {
         display: 'Pariah',

@@ -71,7 +71,7 @@ alt.onServer('door:RenderDoors', doors => {
             false
         );
         native.setEntityHeading(enter, door.enter.doorRot);
-        //native.setEntityAlpha(enter, 0, false);
+        native.setEntityAlpha(enter, 0, false);
 
         dynamicDoors.push({
             id: door.id,

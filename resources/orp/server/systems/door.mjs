@@ -31,15 +31,15 @@ const door = {
     salePrice: -1
 };
 
+/*
 db.upsertData(door, 'Door', res => {
     console.log(res);
 });
+*/
 
-/*
 alt.on('updateDoorLockState', (id, state) => {
     db.updatePartialData(id, { lockstate: state }, 'Door', () => {});
 });
-*/
 
 alt.on('updateDoorSector', (id, index) => {
     db.updatePartialData(id, { sector: index }, 'Door', () => {});

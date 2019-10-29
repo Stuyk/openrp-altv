@@ -301,6 +301,8 @@ export function useDynamicDoor(player, data) {
         return;
     }
 
+    if (player.colshape) player.lastColshape = player.colshape;
+
     if (player.vehicle) {
         player.vehicle.pos = door.exit.position;
         player.vehicle.dimension = door.id;
@@ -324,6 +326,9 @@ export function exitDynamicDoor(player, id) {
     if (dist > 5) return;
     player.emitMeta('door:EnteredInterior', undefined);
 
+    player.dimension = 0;
+    player.saveDimension(0);
+
     if (player.vehicle) {
         player.vehicle.pos = door.enter.position;
         player.vehicle.dimension = 0;
@@ -334,8 +339,11 @@ export function exitDynamicDoor(player, id) {
         player.pos = door.enter.position;
     }
 
-    player.dimension = 0;
-    player.saveDimension(0);
+    if (player.lastColshape) {
+        alt.emit('entityEnterColshape', player.lastColshape, player);
+    }
+
+    player.lastColshape = undefined;
 }
 
 export function lockDynamicDoor(player, data) {

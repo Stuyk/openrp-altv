@@ -102,7 +102,7 @@ function cacheInformation() {
     });
 
     db.fetchAllData('Door', res => {
-        if (res === undefined) {
+        if (!res) {
             alt.emit('door:SetupDoorConfiguration');
             return;
         }

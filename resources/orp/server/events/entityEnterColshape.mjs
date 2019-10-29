@@ -3,8 +3,11 @@ import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsPolice from '../systems/police.mjs';
 
 alt.on('entityEnterColshape', (colshape, entity) => {
+    if (!entity) return;
+
     // Forward any interaction events to the player.
     if (entity.constructor.name === 'Player') {
+        if (entity.dimension !== 0) return;
         if (colshape.sector) {
             entity.colshape = colshape;
             entity.sector = colshape.sector;

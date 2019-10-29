@@ -1,41 +1,162 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
+import { Doors } from '../configuration/doors.mjs';
 import { colshapes } from '../systems/grid.mjs';
+import { distance } from '../utility/vector.mjs';
 
 const db = new SQL();
+const doors = {};
 
-// Normal Doors Use -> prop_cntrdoor_ld_l
+export function getDoor(id) {
+    return doors[id];
+}
 
-const doorParamsEnter = {
-    // Where we spawn player.
-    position: { x: 8.257935523986816, y: -243.91233825683594, z: 51.860504150390625 },
-    // Where an invisible door is placed.
-    doorPos: { x: 8.71374225616455, y: -243.2096405029297, z: 51.860504150390625 },
-    // The rotation of the door.
-    doorRot: 90,
-    // Door Model for the invisible door.
-    doorModel: 'prop_cntrdoor_ld_l'
-};
+function setDoorState(id, state) {
+    if (!doors[id]) return;
+    doors[id].lockstate = state;
+}
 
-const doorParamsExit = {
-    position: { x: -786.8663, y: 315.7642, z: 217.6385 }
-};
+alt.on('door:ExitDynamicDoor', (player, id) => {
+    const door = getDoor(id);
+    if (!door) return;
+    const exitData = JSON.parse(door.exit);
+    const dist = distance(exitData.position, player.pos);
+    if (dist > 5) return;
 
-const door = {
-    guid: 2,
-    enter: JSON.stringify(doorParamsEnter),
-    exit: JSON.stringify(doorParamsExit),
-    interior: 'apa_v_mp_h_01_a',
-    lockstate: 0,
-    isGarage: 0,
-    salePrice: -1
-};
+    player.emitMeta('door:EnteredInterior', undefined);
+    player.dimension = 0;
+    player.saveDimension(0);
 
-/*
-db.upsertData(door, 'Door', res => {
-    console.log(res);
+    const enterData = JSON.parse(door.enter);
+
+    if (player.vehicle) {
+        player.vehicle.pos = enterData.position;
+        player.vehicle.dimension = 0;
+        if (player.vehicle.saveDimension) {
+            player.vehicle.saveDimension(0);
+        }
+    } else {
+        player.pos = enterData.position;
+    }
+
+    if (player.preColshape) {
+        alt.emit('entityEnterColshape', player.preColshape, player);
+    }
 });
-*/
+
+alt.on('door:UseDynamicDoor', (player, data) => {
+    const id = data.id;
+    const door = getDoor(id);
+    if (!door) return;
+    const enterData = JSON.parse(door.enter);
+    const dist = distance(enterData.position, player.pos);
+    if (dist > 5) return;
+
+    if (door.lockstate) {
+        player.notify('The door seems to be locked.');
+        return;
+    }
+
+    if (player.vehicle && !door.isGarage) {
+        player.notify('You cannot enter this interior with a vehicle.');
+        return;
+    }
+
+    const exitData = JSON.parse(door.exit);
+    player.preColshape = player.colshape;
+
+    if (player.vehicle) {
+        player.vehicle.dimension = door.id;
+        player.dimension = door.id;
+        player.vehicle.pos = door.exit.position;
+        if (player.vehicle.saveDimension) {
+            player.vehicle.saveDimension(door.id);
+        }
+    } else {
+        player.dimension = door.id;
+        player.pos = exitData.position;
+    }
+
+    player.saveDimension(door.id);
+    player.emitMeta('door:EnteredInterior', door);
+});
+
+alt.on('door:LockDynamicDoor', (player, data) => {
+    const id = data.id;
+    const door = getDoor(id);
+    if (!door) return;
+    const enterData = JSON.parse(door.enter);
+    const dist = distance(enterData.position, player.pos);
+    if (dist > 5) return;
+
+    if (door.guid !== player.data.id) {
+        player.send('You do not have the keys for this door.');
+        return;
+    }
+
+    const state = door.lockstate === 1 ? 0 : 1;
+    alt.emit('updateDoorLockState', door.id, state);
+    setDoorState(id, state);
+    alt.emitClient(null, 'door:SetDoorState', door.id, state);
+
+    if (state) {
+        player.notify('You have locked the door.');
+    } else {
+        player.notify('You have unlocked the door.');
+    }
+});
+
+alt.on('door:CacheDoor', (id, data) => {
+    if (data.sector === -1) {
+        let lastDist;
+        let currentIndex = -1;
+        colshapes.forEach((colshape, index) => {
+            const sector = colshape.sector;
+            let pos = {
+                x: (sector.coords.first.x + sector.coords.second.x) / 2,
+                y: (sector.coords.first.y + sector.coords.second.y) / 2,
+                z: (sector.coords.first.z + sector.coords.second.z) / 2
+            };
+
+            const dist = distance(data.enter.position, pos);
+            if (!lastDist) {
+                lastDist = dist;
+                currentIndex = index;
+                return;
+            }
+
+            if (dist < lastDist) {
+                lastDist = dist;
+                currentIndex = index;
+            }
+        });
+
+        alt.emit('updateDoorSector', id, currentIndex);
+        data.sector = currentIndex;
+    }
+
+    doors[id] = data;
+    alt.emit('parseDoorSector', data);
+});
+
+alt.on('door:SetupDoorConfiguration', () => {
+    let id = 1;
+    Doors.forEach(door => {
+        door.id = id;
+        db.upsertData(door, 'Door', res => {
+            alt.emit('door:CacheDoor', res.id, res);
+        });
+        id += 1;
+    });
+
+    console.log(`Doors Created: ${Doors.length}`);
+});
+
+alt.on('door:CreateDoor', data => {
+    db.upsertData(data, 'Door', res => {
+        alt.emit('door:CacheDoor', res.id, res);
+    });
+});
 
 alt.on('updateDoorLockState', (id, state) => {
     db.updatePartialData(id, { lockstate: state }, 'Door', () => {});

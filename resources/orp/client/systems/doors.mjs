@@ -5,6 +5,11 @@ import { distance } from '/client/utility/vector.mjs';
 export let doorState = {};
 const dynamicDoors = [];
 let interval;
+let editDoorId;
+let isEditingDoor = false;
+let editDoorInterval;
+let doorRotation = 0;
+let doorPosition;
 
 alt.onServer('door:Lock', (type, pos, heading) => {
     doorState[`${JSON.stringify(pos)}`] = {
@@ -52,25 +57,23 @@ alt.onServer('door:RenderDoors', doors => {
 
     if (doors.length <= 0) return;
     doors.forEach(door => {
-        const enterHash = native.getHashKey(door.enter.doorModel);
-        const exitHash = native.getHashKey(door.exit.doorModel);
+        alt.log(JSON.stringify(door, null, '\t'));
+
+        const enterData = JSON.parse(door.enter);
+        const enterHash = native.getHashKey(enterData.doorModel);
 
         alt.loadModel(enterHash);
-        alt.loadModel(exitHash);
         native.requestModel(enterHash);
-        native.requestModel(exitHash);
-
-        const enterPos = door.enter.doorPos;
         const enter = native.createObject(
             enterHash,
-            enterPos.x,
-            enterPos.y,
-            enterPos.z,
+            enterData.doorPos.x,
+            enterData.doorPos.y,
+            enterData.doorPos.z,
             false,
             false,
             false
         );
-        native.setEntityHeading(enter, door.enter.doorRot);
+        native.setEntityHeading(enter, enterData.doorRot);
         native.setEntityAlpha(enter, 0, false);
 
         dynamicDoors.push({
@@ -83,17 +86,25 @@ alt.onServer('door:RenderDoors', doors => {
     });
 });
 
+alt.onServer('door:SetDoorState', (id, state) => {
+    const index = dynamicDoors.findIndex(door => {
+        if (door.id === id) return door;
+    });
+
+    dynamicDoors[index].lockstate = state;
+});
+
 export function findDoor(ent) {
-    const door = dynamicDoors.find(door => {
+    const index = dynamicDoors.findIndex(door => {
         if (door.enter === ent) return door;
     });
 
-    if (!door) {
+    if (!index <= -1) {
         alt.log('Door was not found.');
         return;
     }
 
-    return door;
+    return dynamicDoors[index];
 }
 
 // player.emitMeta('door:EnteredInterior', data);
@@ -106,6 +117,8 @@ alt.on('meta:Changed', (key, data) => {
         return;
     }
 
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
+
     if (interval) {
         alt.clearInterval(interval);
     }
@@ -114,8 +127,10 @@ alt.on('meta:Changed', (key, data) => {
         native.requestIpl(data.interior);
     }
 
+    const exitData = JSON.parse(data.exit);
+
     interval = alt.setInterval(() => {
-        const dist = distance(alt.Player.local.pos, data.exit.position);
+        const dist = distance(alt.Player.local.pos, exitData.position);
         if (dist >= 3) return;
         native.beginTextCommandDisplayHelp('STRING');
         native.addTextComponentSubstringPlayerName(
@@ -126,5 +141,110 @@ alt.on('meta:Changed', (key, data) => {
         if (native.isControlJustPressed(0, 38)) {
             alt.emitServer('use:ExitDynamicDoor', data.id);
         }
+    }, 0);
+
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
+});
+
+alt.onServer('editingDoor', state => {
+    if (editDoorInterval && !state) {
+        alt.clearInterval(editDoorInterval);
+        native.deleteEntity(editDoorId);
+
+        const doorData = {
+            guid: -1,
+            enter: {
+                position: alt.Player.local.pos,
+                doorPos: doorPosition,
+                doorRot: doorRotation,
+                doorModel: 'prop_cntrdoor_ld_l'
+            },
+            exit: {
+                position: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
+            },
+            interior: '',
+            lockstate: 0,
+            isGarage: 0,
+            salePrice: -1
+        };
+
+        alt.log(JSON.stringify(doorData, null, '\t'));
+        return;
+    }
+
+    const hash = native.getHashKey('prop_cntrdoor_ld_l');
+    const pos = alt.Player.local.pos;
+    alt.loadModel(hash);
+    native.requestModel(hash);
+
+    editDoorId = native.createObject(hash, pos.x, pos.y, pos.z, false, false, false);
+    editDoorInterval = alt.setInterval(() => {
+        native.disableInputGroup(0);
+        let pos = native.getEntityCoords(editDoorId, false);
+
+        // Scroll Down
+        if (native.isDisabledControlJustPressed(0, 14)) {
+            doorRotation -= 3;
+
+            if (doorRotation < -180) {
+                doorRotation = 180;
+            }
+        }
+
+        // Scroll Up
+        if (native.isDisabledControlJustPressed(0, 15)) {
+            doorRotation += 3;
+
+            if (doorRotation > 180) {
+                doorRotation = -180;
+            }
+        }
+
+        // Right Arrow
+        if (native.isDisabledControlPressed(0, 190)) {
+            pos.x += 0.005;
+        }
+
+        // left arr
+        if (native.isDisabledControlPressed(0, 189)) {
+            pos.x -= 0.005;
+        }
+
+        // down arr
+        if (native.isDisabledControlPressed(0, 187)) {
+            pos.y -= 0.005;
+        }
+
+        // up arro
+        if (native.isDisabledControlPressed(0, 188)) {
+            pos.y += 0.005;
+        }
+
+        // pgup
+        if (native.isDisabledControlPressed(0, 10)) {
+            pos.z += 0.005;
+        }
+
+        // pgdown
+        if (native.isDisabledControlPressed(0, 11)) {
+            pos.z -= 0.005;
+        }
+
+        native.setEntityCoords(
+            editDoorId,
+            pos.x,
+            pos.y,
+            pos.z,
+            false,
+            false,
+            false,
+            false
+        );
+        native.setEntityHeading(editDoorId, doorRotation);
+        doorPosition = pos;
     }, 0);
 });

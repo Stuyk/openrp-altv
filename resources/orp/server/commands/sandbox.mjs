@@ -248,3 +248,13 @@ chat.registerCmd('createobj', (player, args) => {
     const name = args[0];
     alt.emitClient(player, 'create:Object', name);
 });
+
+chat.registerCmd('tempdoor', (player, args) => {
+    if (!player.isEditingDoor) {
+        player.isEditingDoor = true;
+        alt.emitClient(player, 'editingDoor', true);
+    } else {
+        player.isEditingDoor = false;
+        alt.emitClient(player, 'editingDoor', false);
+    }
+});

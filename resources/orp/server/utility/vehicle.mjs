@@ -138,42 +138,40 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         alt.emitClient(player, 'vehicle:ToggleDoor', vehicle, id, vehicle.doorStates[id]);
     };
 
-    if (vehicle.data && !notVehicles.includes(vehicle.data.model)) {
-        vehicle.syncFuel = () => {
-            const currentFuel = vehicle.fuel;
+    vehicle.syncFuel = () => {
+        const currentFuel = vehicle.fuel;
 
-            if (!vehicle.lastPosition) {
-                vehicle.lastPosition = vehicle.pos;
-            }
+        if (!vehicle.lastPosition) {
+            vehicle.lastPosition = vehicle.pos;
+        }
 
-            const dist = distance(vehicle.pos, vehicle.lastPosition);
-            if (dist > 10 && vehicle.driver) {
-                const fuelConsumed = dist / Config.vehicleBaseFuel;
-                const remainingFuel = currentFuel - fuelConsumed;
-                vehicle.lastPosition = vehicle.pos;
-                vehicle.fuel = remainingFuel <= 0 ? 0 : remainingFuel;
+        const dist = distance(vehicle.pos, vehicle.lastPosition);
+        if (dist > 10 && vehicle.driver) {
+            const fuelConsumed = dist / Config.vehicleBaseFuel;
+            const remainingFuel = currentFuel - fuelConsumed;
+            vehicle.lastPosition = vehicle.pos;
+            vehicle.fuel = remainingFuel <= 0 ? 0 : remainingFuel;
 
-                if (vehicle.fuel <= 0 && vehicle.isEngineOn) {
-                    vehicle.isEngineOn = false;
-                    if (vehicle.driver) {
-                        alt.emitClient(vehicle.driver, 'vehicle:StartEngine', false);
-                        vehicle.driver.send(`{FFFF00} You are out of fuel.`);
-                    }
+            if (vehicle.fuel <= 0 && vehicle.isEngineOn) {
+                vehicle.isEngineOn = false;
+                if (vehicle.driver) {
+                    alt.emitClient(vehicle.driver, 'vehicle:StartEngine', false);
+                    vehicle.driver.send(`{FFFF00} You are out of fuel.`);
                 }
             }
+        }
 
-            vehicle.setSyncedMeta('fuel', vehicle.fuel);
-            vehicle.setSyncedMeta('basefuel', Config.vehicleBaseFuel);
-        };
+        vehicle.setSyncedMeta('fuel', vehicle.fuel);
+        vehicle.setSyncedMeta('basefuel', Config.vehicleBaseFuel);
+    };
 
-        vehicle.fillFuel = () => {
-            vehicle.fuel = Config.vehicleBaseFuel;
-            vehicle.setSyncedMeta('fuel', vehicle.fuel);
-            if (vehicle.data) {
-                vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
-            }
-        };
-    }
+    vehicle.fillFuel = () => {
+        vehicle.fuel = Config.vehicleBaseFuel;
+        vehicle.setSyncedMeta('fuel', vehicle.fuel);
+        if (vehicle.data) {
+            vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
+        }
+    };
 }
 
 alt.on('orp:VehicleFunc', (...args) => {

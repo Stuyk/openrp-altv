@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
 import { Account, Character, Vehicle, Details, Door } from './entities/entities.mjs'; // Schemas for Database
-import { cacheAccount, setVehicleID, cacheCharacter, cacheDoor } from './cache/cache.mjs';
+import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.mjs';
 import fs from 'fs';
 import path from 'path';
 
@@ -102,11 +102,17 @@ function cacheInformation() {
     });
 
     db.fetchAllData('Door', res => {
-        if (res === undefined) return;
-        for (let i = 0; i < res.length; i++) {
-            res[i].enter = JSON.parse(res[i].enter);
-            res[i].exit = JSON.parse(res[i].exit);
-            cacheDoor(res[i].id, res[i]);
+        if (res === undefined) {
+            alt.emit('door:SetupDoorConfiguration');
+            return;
         }
+
+        for (let i = 0; i < res.length; i++) {
+            alt.emit('door:CacheDoor', res[i].id, res[i]);
+        }
+
+        alt.log(`=====> Loaded: ${res.length} Doors`);
     });
+
+    alt.emit('cache:Complete');
 }

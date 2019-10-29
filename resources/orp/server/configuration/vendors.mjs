@@ -1,7 +1,6 @@
 import * as alt from 'alt';
-import { Interaction } from '../systems/interaction.mjs';
 
-export const vendors = [
+export const Vendors = [
     {
         base: 'vehicle',
         type: 'sportclassic',
@@ -225,22 +224,3 @@ export const vendors = [
         }
     }
 ];
-
-vendors.forEach((vendor, index) => {
-    // Vehicle Vendors
-    if (vendor.base === 'vehicle') {
-        let interactionPoint = { ...vendor.interaction };
-        interactionPoint.z -= 0.5;
-        let interaction = new Interaction(
-            interactionPoint,
-            'vendor',
-            'vehicle:Vendor',
-            3,
-            3,
-            'to browse the vehicle lot.',
-            index
-        );
-        interaction.addBlip(vendor.blip.sprite, vendor.blip.color, vendor.blip.name);
-        alt.emit('register:VehicleVendor', vendor, index);
-    }
-});

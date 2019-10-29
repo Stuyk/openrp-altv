@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { Config } from '../configuration/config.mjs';
-import { getDoor } from '../cache/cache.mjs';
+import { getDoor } from '../systems/door.mjs';
 
 const db = new SQL(); // Get DB Reference
 const LoggedInPlayers = [];

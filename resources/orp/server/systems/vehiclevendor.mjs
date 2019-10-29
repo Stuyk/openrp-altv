@@ -1,15 +1,19 @@
 import * as alt from 'alt';
 import { Vehicles, VehiclePriceType } from '../configuration/vehicles.mjs';
+import { Vendors } from '../configuration/vendors.mjs';
+import { Interaction } from '../systems/interaction.mjs';
 
-let vendors = new Map();
+let vendors = {};
 
-alt.on('register:VehicleVendor', (vendor, index) => {
-    vendors.set(`${index}`, vendor);
-});
+export function registerVehicleVendor(vendor, index) {
+    vendors[index] = vendor;
+}
 
 alt.on('vehicle:Vendor', (player, index) => {
-    if (!vendors.has(`${index}`)) return;
-    const vendor = vendors.get(`${index}`);
+    if (!vendors[index]) return;
+    const vendor = vendors[index];
+    alt.log('Got Vendor');
+
     alt.emitClient(
         player,
         'vehiclevendor:ShowDialogue',
@@ -50,3 +54,22 @@ export function purchaseVehicle(player, name) {
 
     player.addVehicle(name, player.vendor.exit, true);
 }
+
+Vendors.forEach((vendor, index) => {
+    // Vehicle Vendors
+    if (vendor.base === 'vehicle') {
+        let interactionPoint = { ...vendor.interaction };
+        interactionPoint.z -= 0.5;
+        let interaction = new Interaction(
+            interactionPoint,
+            'vendor',
+            'vehicle:Vendor',
+            3,
+            3,
+            'to browse the vehicle lot.',
+            index
+        );
+        interaction.addBlip(vendor.blip.sprite, vendor.blip.color, vendor.blip.name);
+        registerVehicleVendor(vendor, index);
+    }
+});

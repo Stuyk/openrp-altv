@@ -769,6 +769,55 @@ const facialFeatures = {
     }
 };
 
+const faceNames = [
+    'Benjamin',
+    'Daniel',
+    'Joshua',
+    'Noah',
+    'Andrew',
+    'Joan',
+    'Alex',
+    'Isaac',
+    'Evan',
+    'Ethan',
+    'Vincent',
+    'Angel',
+    'Diego',
+    'Adrian',
+    'Gabriel',
+    'Michael',
+    'Santiago',
+    'Kevin',
+    'Louis',
+    'Samuel',
+    'Anthony',
+    'Hannah',
+    'Audrey',
+    'Jasmine',
+    'Giselle',
+    'Amelia',
+    'Isabella',
+    'Zoe',
+    'Ava',
+    'Camilla',
+    'Violet',
+    'Sophia',
+    'Eveline',
+    'Nicole',
+    'Ashley',
+    'Grace',
+    'Brianna',
+    'Natalie',
+    'Olivia',
+    'Elizabeth',
+    'Charlotte',
+    'Emma',
+    'Claude',
+    'Niko',
+    'John',
+    'Misty'
+];
+
 // Create Element, Render, Component, etc.
 const { createElement, render, Component } = preact;
 const h = createElement;
@@ -990,7 +1039,13 @@ const FaceItem = ({ index, item, setItemValue }) => {
     return h(
         'div',
         { class: 'mod' },
-        h('div', { class: 'title' }, `${item.label}`),
+        h(
+            'div',
+            { class: 'title' },
+            index >= 1 && index <= 4
+                ? `${item.label} - ${faceNames[item.value]}`
+                : `${item.label}`
+        ),
         h('div', { class: 'count' }, `${item.value}/${item.max}`),
         h(
             'div',

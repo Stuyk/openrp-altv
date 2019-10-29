@@ -35,7 +35,8 @@ alt.on('parse:Player', (player, now) => {
             try {
                 player.saveData();
             } catch (err) {
-                console.error(`Could not save player data.`);
+                alt.log(err);
+                alt.error(`Could not save player data.`);
             }
         }
     }
@@ -47,7 +48,8 @@ alt.on('parse:Player', (player, now) => {
             try {
                 player.updatePlayingTime();
             } catch (err) {
-                console.error(`Could not save playing time.`);
+                alt.log(err);
+                alt.error(`Could not save playing time.`);
             }
         }
     }
@@ -59,7 +61,8 @@ alt.on('parse:Player', (player, now) => {
                 const msg = `+$${Config.defaultPlayerPaycheck} from Paycheck`;
                 player.notify(msg);
             } catch (err) {
-                console.error(`Could not add paycheck.`);
+                alt.log(err);
+                alt.error(`Could not add paycheck.`);
             }
         }
     }
@@ -76,7 +79,8 @@ alt.on('parse:Player', (player, now) => {
             try {
                 player.setArrestTime(-1);
             } catch (err) {
-                console.error(`Could not handle arrest time in interval.`);
+                alt.log(err);
+                alt.error(`Could not handle arrest time in interval.`);
             }
         }
     }
@@ -87,7 +91,8 @@ alt.on('parse:Player', (player, now) => {
             try {
                 player.revive();
             } catch (err) {
-                console.error(`Could not revive player.`);
+                alt.log(err);
+                alt.error(`Could not revive player.`);
             }
         }
     }

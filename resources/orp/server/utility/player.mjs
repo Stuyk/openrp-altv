@@ -61,25 +61,32 @@ export function setupPlayerFunctions(player) {
      * @memberof player
      */
     player.updatePlayingTime = () => {
-        const minutes = utilityTime.getPlayingTime(player.startTime, Date.now());
-        player.data.playingtime += Math.round(minutes);
+        console.log('Updating Playing Time');
+        if (!player.startTime) {
+            player.startTime = Date.now();
+            return;
+        }
 
-        if (isNaN(player.data.playingtime)) return;
-
-        if (minutes >= 0)
-            player.saveField(player.data.id, 'playingtime', player.data.playingtime);
-
+        const minutesPlayed = utilityTime.getPlayingTime(player.startTime, Date.now());
+        player.data.playingtime += parseInt(Math.round(minutesPlayed));
+        let isAboveThreshold = minutesPlayed >= 1 ? true : false;
         player.startTime = Date.now();
 
-        const points = utilityTime.minutesToUpgradePoints(player.data.playingtime);
-        if (points <= 0) return;
+        if (isAboveThreshold) {
+            const points = utilityTime.minutesToUpgradePoints(player.data.playingtime);
+            player.data.upgradestotal = points;
 
-        player.data.upgradestotal = points;
-        player.saveField(
-            player.data.id,
-            'upgradestotal',
-            parseInt(player.data.upgradestotal)
-        );
+            // db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
+            db.updatePartialData(
+                player.data.id,
+                {
+                    playingtime: player.data.playingtime,
+                    upgradestotal: player.data.upgradestotal
+                },
+                'Character',
+                () => {}
+            );
+        }
     };
 
     /**

@@ -243,3 +243,8 @@ chat.registerCmd('trackdone', () => {
     fs.writeFileSync(`trackpoints.json`, JSON.stringify(trackPoints, null, '\t'));
     trackPoints = [];
 });
+
+chat.registerCmd('createobj', (player, args) => {
+    const name = args[0];
+    alt.emitClient(player, 'create:Object', name);
+});

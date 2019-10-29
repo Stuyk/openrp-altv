@@ -4,36 +4,40 @@ import { colshapes } from '../systems/grid.mjs';
 
 const db = new SQL();
 
+// Normal Doors Use -> prop_cntrdoor_ld_l
+
 const doorParamsEnter = {
     // Where we spawn player.
-    position: { x: 347.47271728515625, y: -1103.85791015625, z: 29.4061222076416 },
+    position: { x: 8.257935523986816, y: -243.91233825683594, z: 51.860504150390625 },
     // Where an invisible door is placed.
-    doorPos: { x: 350.0965881347656, y: -1103.873046875, z: 29.491796493530273 },
+    doorPos: { x: 8.71374225616455, y: -243.2096405029297, z: 51.860504150390625 },
     // The rotation of the door.
     doorRot: 90,
     // Door Model for the invisible door.
-    doorModel: 'v_ilev_csr_garagedoor'
+    doorModel: 'prop_cntrdoor_ld_l'
 };
 
 const doorParamsExit = {
-    position: { x: 198.1461181640625, y: -1001.44091796875, z: -99.00003051757812 },
-    doorPos: { x: 201.78433227539062, y: -1007.7326049804688, z: -99.00003051757812 },
-    doorRot: 90,
-    doorModel: 'v_ilev_csr_garagedoor'
+    position: { x: -786.8663, y: 315.7642, z: 217.6385 }
 };
 
 const door = {
-    guid: -1,
+    guid: 2,
     enter: JSON.stringify(doorParamsEnter),
     exit: JSON.stringify(doorParamsExit),
-    interior: '',
+    interior: 'apa_v_mp_h_01_a',
     lockstate: 0,
-    isGarage: 1,
+    isGarage: 0,
     salePrice: -1
 };
-/*
+
 db.upsertData(door, 'Door', res => {
     console.log(res);
+});
+
+/*
+alt.on('updateDoorLockState', (id, state) => {
+    db.updatePartialData(id, { lockstate: state }, 'Door', () => {});
 });
 */
 

@@ -217,6 +217,9 @@ let objectInteractions = {
     },
     1693207013: {
         func: dynamicDoor
+    },
+    2446598557: {
+        func: dynamicDoor
     }
 };
 
@@ -228,7 +231,6 @@ chairs.forEach(item => {
 
 alt.on('menu:Object', ent => {
     if (alt.Player.local.getMeta('arrest')) return;
-    if (alt.Player.local.vehicle) return;
 
     let model = native.getEntityModel(ent);
 
@@ -247,31 +249,37 @@ function unknown(ent) {
 }
 
 function sodaMachine(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Buy Soda', true, 'use:SodaMachine', {});
     setContextTitle(`Soda Machine`);
 }
 
 function coffeeMachine(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Buy Coffee', true, 'use:CoffeeMachine', {});
     setContextTitle(`Coffee Machine`);
 }
 
 function payPhone(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Use Phone', true, 'use:PayPhone', {});
     setContextTitle('Pay Phone');
 }
 
 function metroTicketMachine(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Buy Ticket', true, 'use:MetroTicketMachine', {});
     setContextTitle('Metro Ticket Machine');
 }
 
 function postalBox(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Use', true, 'use:PostalBox', {});
     setContextTitle('Postal Box');
 }
 
 function dumpster(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Hide', true, 'use:HideDumpster', {});
     appendContextItem('Search', true, 'use:SearchDumpster', {});
     appendContextItem('Leave', true, 'use:LeaveDumpster', {});
@@ -279,6 +287,7 @@ function dumpster(ent) {
 }
 
 function atm(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem('Use', true, 'use:Atm', {});
     setContextTitle('ATM');
 }
@@ -294,6 +303,7 @@ function mineshaft(ent) {
 }
 
 function humanelabs(ent) {
+    if (alt.Player.local.vehicle) return;
     const dist = distance(
         { x: 3626.514404296875, y: 3752.325439453125, z: 28.515737533569336 },
         alt.Player.local.pos
@@ -304,6 +314,8 @@ function humanelabs(ent) {
 }
 
 function doorControl(ent) {
+    if (alt.Player.local.vehicle) return;
+
     const pos = native.getEntityCoords(ent, false);
     const type = native.getEntityModel(ent);
     const [_, locked, _2] = native.getStateOfClosestDoorOfType(
@@ -325,6 +337,7 @@ function doorControl(ent) {
 }
 
 function hospitalBed(ent) {
+    if (alt.Player.local.vehicle) return;
     let pos = native.getEntityCoords(ent, false);
     let heading = native.getEntityHeading(ent) + 180.0;
 
@@ -343,6 +356,7 @@ function hospitalBed(ent) {
 }
 
 function chair(ent) {
+    if (alt.Player.local.vehicle) return;
     native.freezeEntityPosition(ent, true);
     let pos = native.getEntityCoords(ent, false);
     let heading = native.getEntityHeading(ent) + 180.0;
@@ -373,6 +387,7 @@ function chair(ent) {
 }
 
 function clearSit(key) {
+    if (alt.Player.local.vehicle) return;
     if (key === 'W'.charCodeAt(0)) {
         alt.off('keyup', clearSit);
         native.clearPedTasksImmediately(alt.Player.local.scriptID);
@@ -382,11 +397,13 @@ function clearSit(key) {
 }
 
 function gasPump(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem(`Fuel Vehicle`, false, 'vehicle:Fuel', {});
     setContextTitle(`Gas Pump`);
 }
 
 function fireExtinguisher(ent) {
+    if (alt.Player.local.vehicle) return;
     appendContextItem(`Fire Extinguisher`, true, 'use:FireExtinguisher', {});
     setContextTitle(`Fire Extinguisher`);
 }

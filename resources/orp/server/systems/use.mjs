@@ -4,7 +4,7 @@ import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 import { appendToMdc } from './mdc.mjs';
 import { addBoundWeapon } from './inventory.mjs';
-import { getDoor } from '../cache/cache.mjs';
+import { getDoor, setDoorState } from '../cache/cache.mjs';
 import { distance } from '../utility/vector.mjs';
 
 export let doorStates = {
@@ -230,8 +230,6 @@ export function cuffPlayer(arrester, data) {
 }
 
 export function uncuffPlayer(arrester, data) {
-    console.log('We called it.');
-
     const arrestee = data.player;
     if (!arrester || !arrestee) return;
     arrester.cuffedPlayer = null;
@@ -292,9 +290,30 @@ export function useDynamicDoor(player, data) {
     if (!door) return;
     const dist = distance(door.enter.position, player.pos);
     if (dist > 5) return;
-    player.lastLocation = door.enter.position;
-    player.pos = door.exit.position;
-    player.dimension = door.id;
+
+    if (door.lockstate) {
+        player.notify('The door seems to be locked.');
+        return;
+    }
+
+    if (player.vehicle && !door.isGarage) {
+        player.notify('You cannot enter this interior with a vehicle.');
+        return;
+    }
+
+    if (player.vehicle) {
+        player.vehicle.pos = door.exit.position;
+        player.vehicle.dimension = door.id;
+        player.dimension = door.id;
+        if (player.vehicle.saveDimension) {
+            player.vehicle.saveDimension(door.id);
+        }
+    } else {
+        player.pos = door.exit.position;
+        player.dimension = door.id;
+    }
+
+    player.saveDimension(door.id);
     player.emitMeta('door:EnteredInterior', door);
 }
 
@@ -304,11 +323,40 @@ export function exitDynamicDoor(player, id) {
     const dist = distance(door.exit.position, player.pos);
     if (dist > 5) return;
     player.emitMeta('door:EnteredInterior', undefined);
-    player.pos = door.enter.position;
-    player.lastLocation = null;
+
+    if (player.vehicle) {
+        player.vehicle.pos = door.enter.position;
+        player.vehicle.dimension = 0;
+        if (player.vehicle.saveDimension) {
+            player.vehicle.saveDimension(0);
+        }
+    } else {
+        player.pos = door.enter.position;
+    }
+
     player.dimension = 0;
+    player.saveDimension(0);
 }
 
 export function lockDynamicDoor(player, data) {
     const id = data.id;
+    const door = getDoor(id);
+    if (!door) return;
+    const dist = distance(door.enter.position, player.pos);
+    if (dist > 5) return;
+
+    if (door.guid !== player.data.id) {
+        player.send('You do not have the keys for this door.');
+        return;
+    }
+
+    const state = door.lockstate === 1 ? 0 : 1;
+    alt.emit('updateDoorLockState', door.id, state);
+    setDoorState(id, state);
+
+    if (state) {
+        player.notify('You have locked the door.');
+    } else {
+        player.notify('You have unlocked the door.');
+    }
 }

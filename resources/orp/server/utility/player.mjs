@@ -120,6 +120,11 @@ export function setupPlayerFunctions(player) {
         player.emitMeta('queueNotification', msg);
     };
 
+    player.saveDimension = number => {
+        player.data.dimension = number;
+        player.saveField(player.data.id, 'dimension', number);
+    };
+
     // ====================================
     // Weather & Time
     player.updateTime = () => {

@@ -102,3 +102,8 @@ export function cacheDoor(id, data) {
 export function getDoor(id) {
     return doors[id];
 }
+
+export function setDoorState(id, state) {
+    if (!doors[id]) return;
+    doors[id].lockstate = state;
+}

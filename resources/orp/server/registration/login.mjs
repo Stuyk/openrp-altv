@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { Config } from '../configuration/config.mjs';
+import { getDoor } from '../cache/cache.mjs';
 
 const db = new SQL(); // Get DB Reference
 const LoggedInPlayers = [];
@@ -119,6 +120,17 @@ export function sync(player) {
 
     // Setup data on the player.
     player.dimension = 0;
+
+    if (player.data.dimension !== 0) {
+        player.dimension = parseInt(player.data.dimension);
+        const door = getDoor(player.data.dimension);
+        if (!door) {
+            player.pos = Config.defaultSpawnPoint;
+        } else {
+            player.emitMeta('door:EnteredInterior', door);
+        }
+    }
+
     player.startTime = Date.now(); // Used for time tracking
     player.spawnVehicles();
     player.screenFadeIn(1000);

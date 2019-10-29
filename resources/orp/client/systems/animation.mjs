@@ -3,6 +3,8 @@ import * as native from 'natives';
 
 alt.log('Loaded: client->systems->animation.mjs');
 
+const maxCountLoadTry = 255;
+
 /*
 	Flags need to be added together for desired effects.
 	ie. Upper Body + Last Frame = 16 + 2 = 18 <-- This value.
@@ -76,12 +78,21 @@ function startAnimation(player, dict, name, duration, flag) {
 export async function loadAnim(dict) {
     return new Promise(resolve => {
         native.requestAnimDict(dict);
+
+        let count = 0;
         let inter = alt.setInterval(() => {
+            if (count > maxCountLoadTry) {
+                alt.clearInterval(inter);
+                return;
+            }
+
             if (native.hasAnimDictLoaded(dict)) {
                 resolve(true);
                 alt.clearInterval(inter);
                 return;
             }
+
+            count += 1;
         }, 5);
     });
 }

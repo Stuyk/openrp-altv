@@ -131,6 +131,10 @@ export const Character = new orm.EntitySchema({
         extraBusinessSlots: {
             type: 'numeric',
             default: 0
+        },
+        dimension: {
+            type: 'int',
+            default: 0
         }
     }
 });
@@ -170,6 +174,10 @@ export const Vehicle = new orm.EntitySchema({
         fuel: {
             type: 'decimal',
             default: 100
+        },
+        dimension: {
+            type: 'int',
+            default: 0
         }
     }
 });

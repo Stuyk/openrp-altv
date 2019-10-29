@@ -71,6 +71,11 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
             vehicle.syncCustom();
         };
 
+        vehicle.saveDimension = number => {
+            vehicle.data.dimension = number;
+            vehicle.saveField(vehicle.data.id, 'dimension', number);
+        };
+
         vehicle.syncCustom = () => {
             if (!vehicle.data.customization) return;
             let mods = JSON.parse(vehicle.data.customization);

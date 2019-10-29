@@ -44,8 +44,13 @@ export function syncDoors() {
 
 // Dynamic Door Functionality
 alt.onServer('door:RenderDoors', doors => {
-    if (doors.length <= 0) return;
+    if (dynamicDoors.length >= 1) {
+        dynamicDoors.forEach(door => {
+            native.deleteEntity(door.enter);
+        });
+    }
 
+    if (doors.length <= 0) return;
     doors.forEach(door => {
         const enterHash = native.getHashKey(door.enter.doorModel);
         const exitHash = native.getHashKey(door.exit.doorModel);
@@ -66,13 +71,12 @@ alt.onServer('door:RenderDoors', doors => {
             false
         );
         native.setEntityHeading(enter, door.enter.doorRot);
-        native.setEntityAlpha(enter, 0, false);
+        //native.setEntityAlpha(enter, 0, false);
 
         dynamicDoors.push({
             id: door.id,
             guid: door.guid,
             enter,
-            //exit,
             interior: door.interior,
             lockstate: door.lockstate
         });
@@ -106,7 +110,9 @@ alt.on('meta:Changed', (key, data) => {
         alt.clearInterval(interval);
     }
 
-    alt.log(JSON.stringify(data));
+    if (data.interior !== '') {
+        native.requestIpl(data.interior);
+    }
 
     interval = alt.setInterval(() => {
         const dist = distance(alt.Player.local.pos, data.exit.position);

@@ -118,7 +118,8 @@ alt.on('door:CacheDoor', (id, data) => {
                 z: (sector.coords.first.z + sector.coords.second.z) / 2
             };
 
-            const dist = distance(data.enter.position, pos);
+            const enterData = JSON.parse(data.enter);
+            const dist = distance(enterData.position, pos);
             if (!lastDist) {
                 lastDist = dist;
                 currentIndex = index;
@@ -143,6 +144,8 @@ alt.on('door:SetupDoorConfiguration', () => {
     let id = 1;
     Doors.forEach(door => {
         door.id = id;
+        door.enter = JSON.stringify(door.enter);
+        door.exit = JSON.stringify(door.exit);
         db.upsertData(door, 'Door', res => {
             alt.emit('door:CacheDoor', res.id, res);
         });

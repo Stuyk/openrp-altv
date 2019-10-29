@@ -260,7 +260,11 @@ After; it should be running automatically in your services on windows. You can a
 
 ---
 
--   Download the latest version of this resource.
+-   Open a Power Shell or Command Prompt or Terminal
+
+-   Download the latest version of this resource (100% Recommend CLONING the REPO).
+
+-   After CLONING, CD into the repo through the same command prompt.
 
 -   Open a command prompt and run `npm run orp`. **FOLLOW THE INSTRUCTIONS CAREFULLY ON PROMPT**.
 

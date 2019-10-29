@@ -84,7 +84,7 @@ function cacheInformation() {
 
     // Passwords are encrypted.
     db.selectData('Account', ['id', 'userid'], data => {
-        if (data === undefined) return;
+        if (!data) return;
 
         for (let i = 0; i < data.length; i++) {
             cacheAccount(data[i].userid, data[i].id);
@@ -94,7 +94,7 @@ function cacheInformation() {
     });
 
     db.selectData('Character', ['id', 'name'], data => {
-        if (data === undefined) return;
+        if (!data) return;
 
         for (let i = 0; i < data.length; i++) {
             cacheCharacter(data[i].id, data[i].name);

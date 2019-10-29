@@ -57,8 +57,6 @@ alt.onServer('door:RenderDoors', doors => {
 
     if (doors.length <= 0) return;
     doors.forEach(door => {
-        alt.log(JSON.stringify(door, null, '\t'));
-
         const enterData = JSON.parse(door.enter);
         const enterHash = native.getHashKey(enterData.doorModel);
 

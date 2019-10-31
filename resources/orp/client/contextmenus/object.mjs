@@ -416,5 +416,17 @@ function dynamicDoor(ent) {
     appendContextItem(`Toggle Lock: ${door.lockstate}`, true, 'use:LockDynamicDoor', {
         id: door.id
     });
+
+    if (door.salePrice >= 0) {
+        appendContextItem(
+            `Purchase for $${door.salePrice}`,
+            true,
+            'use:PurchaseDynamicDoor',
+            {
+                id: door.id
+            }
+        );
+    }
+
     setContextTitle(`${door.id} - Owner: ${door.guid}`);
 }

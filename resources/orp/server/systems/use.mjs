@@ -293,3 +293,7 @@ export function exitDynamicDoor(player, id) {
 export function lockDynamicDoor(player, data) {
     alt.emit('door:LockDynamicDoor', player, data);
 }
+
+export function purchaseDynamicDoor(player, data) {
+    alt.emit('door:PurchaseDynamicDoor', player, data);
+}

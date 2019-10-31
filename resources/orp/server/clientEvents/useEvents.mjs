@@ -22,7 +22,8 @@ const events = {
     'use:FireExtinguisher': systemsUse.fireExtinguisher,
     'use:UseDynamicDoor': systemsUse.useDynamicDoor,
     'use:LockDynamicDoor': systemsUse.lockDynamicDoor,
-    'use:ExitDynamicDoor': systemsUse.exitDynamicDoor
+    'use:ExitDynamicDoor': systemsUse.exitDynamicDoor,
+    'use:PurchaseDynamicDoor': systemsUse.purchaseDynamicDoor
 };
 
 Object.keys(events).forEach(key => {

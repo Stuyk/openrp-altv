@@ -16,6 +16,14 @@ function setDoorState(id, state) {
     doors[id].lockstate = state;
 }
 
+function changeDoorOwnership(door) {
+    if (!door.id) return;
+    if (!doors[door.id]) return;
+    doors[door.id] = door;
+    alt.emitClient(null, 'door:UpdateDynamicDoor', door);
+    alt.emit('door:CacheDoor', door.id, door);
+}
+
 alt.on('door:ExitDynamicDoor', (player, id) => {
     const door = getDoor(id);
     if (!door) return;
@@ -95,9 +103,12 @@ alt.on('door:LockDynamicDoor', (player, data) => {
     }
 
     const state = door.lockstate === 1 ? 0 : 1;
+    door.lockstate = state;
+
     alt.emit('updateDoorLockState', door.id, state);
-    setDoorState(id, state);
     alt.emitClient(null, 'door:SetDoorState', door.id, state);
+    alt.emit('door:CacheDoor', door.id, door);
+    setDoorState(id, state);
 
     if (state) {
         player.notify('You have locked the door.');
@@ -170,5 +181,57 @@ alt.on('updateDoorSector', (id, index) => {
 });
 
 alt.on('parseDoorSector', data => {
-    colshapes[parseInt(data.sector)].sector.doors.push(data);
+    const index = colshapes[parseInt(data.sector)].sector.doors.findIndex(door => {
+        if (door.id === data.id) return door;
+    });
+
+    if (index <= -1) {
+        colshapes[parseInt(data.sector)].sector.doors.push(data);
+    } else {
+        colshapes[parseInt(data.sector)].sector.doors[index] = data;
+    }
+});
+
+alt.on('door:PurchaseDynamicDoor', (player, data) => {
+    const id = data.id;
+    let door = getDoor(id);
+    if (!door) return;
+    const enterData = JSON.parse(door.enter);
+    const dist = distance(enterData.position, player.pos);
+    if (dist > 5) return;
+
+    // Server Ownership
+    if (door.guid <= -1) {
+        if (!player.subCash(door.salePrice)) {
+            player.notify('You do not have enough cash.');
+            return;
+        }
+
+        door.guid = player.data.id;
+        door.salePrice = -1;
+        db.upsertData(door, 'Door', res => {});
+        changeDoorOwnership(door);
+        return;
+    }
+
+    db.fetchByIds(door.guid, 'Character', res => {
+        if (!res) {
+            player.notify('User does not exist.');
+            return;
+        }
+
+        if (!player.subCash(door.salePrice)) {
+            player.notify('You do not have enough cash.');
+            return;
+        }
+
+        res.cash += door.salePrice;
+        door.guid = player.data.id;
+        door.salePrice = -1;
+        db.upsertData(door, 'Door', res => {});
+        db.updatePartialData(res.id, { cash: res.cash }, 'Character', res => {
+            console.log('Cash was recieved by other user for door sale.');
+        });
+        changeDoorOwnership(door);
+    });
 });

@@ -79,7 +79,8 @@ alt.onServer('door:RenderDoors', doors => {
             guid: door.guid,
             enter,
             interior: door.interior,
-            lockstate: door.lockstate
+            lockstate: door.lockstate,
+            salePrice: door.salePrice
         });
     });
 });
@@ -89,7 +90,19 @@ alt.onServer('door:SetDoorState', (id, state) => {
         if (door.id === id) return door;
     });
 
+    if (index <= -1) return;
     dynamicDoors[index].lockstate = state;
+});
+
+alt.onServer('door:UpdateDynamicDoor', dynDoor => {
+    const index = dynamicDoors.findIndex(door => {
+        if (door.id === dynDoor.id) return door;
+    });
+
+    if (index <= -1) return;
+
+    dynamicDoors[index].guid = dynDoor.guid;
+    dynamicDoors[index].salePrice = dynDoor.salePrice;
 });
 
 export function findDoor(ent) {

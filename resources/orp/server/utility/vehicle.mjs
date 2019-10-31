@@ -144,7 +144,6 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
     });
 
     if (included) {
-        console.log('We found a matching vehicle.');
         return;
     }
 

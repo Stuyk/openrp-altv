@@ -161,11 +161,11 @@ class App extends Component {
                 // Inventory
                 this.state.tabIndex == 2 && h(Inventory),
                 // Vehicles
-                this.state.tabIndex === 3 && h('div', {}, h(Vehicles)),
+                this.state.tabIndex === 3 && h(Vehicles),
                 // Contacts
-                this.state.tabIndex == 4 && h('div', {}, h(Contacts)),
+                this.state.tabIndex == 4 && h(Contacts),
                 // Settings
-                this.state.tabIndex == 5 && h('div', {}, h(Settings))
+                this.state.tabIndex == 5 && h(Settings)
             )
         );
     }

@@ -138,6 +138,16 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
         alt.emitClient(player, 'vehicle:ToggleDoor', vehicle, id, vehicle.doorStates[id]);
     };
 
+    const included = notVehicles.find(veh => {
+        const hash = alt.hash(veh);
+        if (hash === vehicle.model) return veh;
+    });
+
+    if (included) {
+        console.log('We found a matching vehicle.');
+        return;
+    }
+
     vehicle.syncFuel = () => {
         const currentFuel = vehicle.fuel;
 

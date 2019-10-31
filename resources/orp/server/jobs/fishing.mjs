@@ -99,7 +99,9 @@ function startFishing(player, callbackEventName, isNearWater, castLocation) {
     );
     obj.setFinishedSound('complete');
     obj.setAnimationAndSound('amb@world_human_stand_fishing@idle_a', 'idle_c', 1, -1);
-    obj.setRewards([{ type: 'xp', prop: 'fishing', quantity: 85 }]);
+    obj.setRewards([
+        { type: 'table', prop: 'rawfish', skill: 'fishing', quantity: 1, givexp: true }
+    ]);
     job.add(copyObjective(obj));
 
     job.start(player);

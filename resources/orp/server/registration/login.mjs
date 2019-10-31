@@ -25,7 +25,11 @@ alt.on('orp:Login', (player, id, discordID) => {
 
 // Called when the player is finishing their login.
 export function finishPlayerLogin(player, databaseID) {
-    player.screenFadeIn(500);
+    if (!player.screenFadeIn) {
+        player.kick();
+        return;
+    }
+
     player.guid = databaseID;
 
     db.fetchAllByField('guid', databaseID, 'Character', results => {

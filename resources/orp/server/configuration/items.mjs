@@ -393,6 +393,39 @@ export const BaseItems = {
             rename: false,
             stack: false
         }
+    },
+    rawfood: {
+        eventcall: 'itemeffects:RawFood',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: false,
+            sell: true,
+            rename: false,
+            stack: false
+        }
+    },
+    burntfood: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: false,
+            sell: true,
+            rename: false,
+            stack: false
+        }
+    },
+    cookedfood: {
+        eventcall: 'itemeffects:CookedFood',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: false,
+            sell: true,
+            rename: false,
+            stack: false
+        }
     }
 };
 
@@ -449,6 +482,14 @@ export const Items = {
         },
         quantity: 0,
         icon: 'soda'
+    },
+    rawfish: {
+        name: '',
+        base: 'rawfood',
+        key: 'rawfish',
+        props: { xp: 0 },
+        quantity: 0,
+        icon: 'fish'
     },
     hat: {
         name: 'Hat',

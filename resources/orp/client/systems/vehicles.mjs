@@ -86,14 +86,12 @@ alt.on('vehicle:Fuel', () => {
 
 function startInterval(key, value) {
     if (key !== 'pedflags') return;
-    alt.off('meta:Changed', startInterval);
     // Disable Vehicle Engine Startup
     // Disable Shuffling to Driver Seat - Doesn't work?
     // Disable Motorcylce Helmet
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
-    // Interval Removed
 }
 
 export function toggleDoor(vehicle, id, state) {

@@ -6,6 +6,8 @@ import { addXP } from '../systems/skills.mjs';
 import { Items, BaseItems } from '../configuration/items.mjs';
 import { generateHash } from '../utility/encryption.mjs';
 import { setupVehicleFunctions } from '../utility/vehicle.mjs';
+import { getRandomLoot } from '../systems/loot.mjs';
+import { getLevel } from '../systems/xp.mjs';
 
 const Debug = true;
 
@@ -103,7 +105,8 @@ export class Objective {
      * Set an array of rewards to give.
      * [
      * { type: 'item', prop: 'itemKey', quantity: 1 },
-     * { type: 'xp', prop: 'agility', quantity: 25 }
+     * { type: 'xp', prop: 'agility', quantity: 25 },
+     * { type:'table', prop: 'fish', skill: 'fishing', quantity: 1 }
      * ]
      * @param arrayOfRewards
      */
@@ -429,12 +432,67 @@ export class Objective {
             if (reward && reward.type === 'item') return reward;
         });
 
+        const tableRewards = this.rewards.filter(reward => {
+            if (reward && reward.type === 'table') return reward;
+        });
+
         xpRewards.forEach(reward => {
             this.rewardXP(player, reward.prop, reward.quantity);
         });
 
         itemRewards.forEach(reward => {
             this.rewardItem(player, reward);
+        });
+
+        tableRewards.forEach(reward => {
+            console.log(reward);
+
+            //  type:'table', prop: 'fish', skill: 'fishing', quantity: 1, givexp: true }
+            if (!Items[reward.prop]) return;
+
+            console.log('checking...');
+
+            const skills = JSON.parse(player.data.skills);
+            const baseItem = BaseItems[Items[reward.prop].base];
+            if (baseItem.abilities.stack) {
+                const itemLoot = getRandomLoot(
+                    reward.prop,
+                    getLevel(skills[reward.skill].xp)
+                );
+                player.addItem(
+                    Items[reward.prop].key,
+                    reward.quantity,
+                    { xp: itemLoot.xp },
+                    false,
+                    false,
+                    itemLoot.name
+                );
+                player.send(`${itemLoot.name} was added to your inventory.`);
+
+                if (itemLoot.givexp) {
+                    const totalXP = itemLoot.xp * reward.quantity;
+                    this.rewardXP(player, reward.skill, totalXP);
+                }
+            } else {
+                for (let i = 0; i < reward.quantity; i++) {
+                    const itemLoot = getRandomLoot(
+                        reward.prop,
+                        getLevel(skills[reward.skill].xp)
+                    );
+                    player.addItem(
+                        Items[reward.prop].key,
+                        1,
+                        { xp: itemLoot.xp },
+                        false,
+                        false,
+                        itemLoot.name
+                    );
+                    player.send(`${itemLoot.name} was added to your inventory.`);
+                    if (itemLoot.givexp) {
+                        this.rewardXP(player, reward.skill, itemLoot.xp);
+                    }
+                }
+            }
         });
     }
 

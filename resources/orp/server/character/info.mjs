@@ -56,6 +56,9 @@ export function newCharacter(player) {
         lastlogin: currentTime
     };
 
+    // Update ped flags for new user.
+    player.emitMeta('pedflags', undefined);
+
     // Save the new Character data to the database and assign to the player.
     db.upsertData(data, 'Character', data => {
         existingCharacter(player, data);

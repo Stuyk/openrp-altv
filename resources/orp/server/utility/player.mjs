@@ -634,6 +634,14 @@ export function setupPlayerFunctions(player) {
         return true;
     };
 
+    player.subItemByHash = hash => {
+        const index = player.inventory.findIndex(item => item && item.hash === hash);
+        if (index <= -1) return false;
+        player.inventory[index] = null;
+        player.saveInventory();
+        return true;
+    };
+
     player.hasQuantityOfItem = (key, quantity) => {
         const indexes = [];
         const entries = player.inventory.entries();

@@ -126,9 +126,6 @@ export function repair(vehicle) {
 
 export function startEngine(value) {
     if (!alt.Player.local.vehicle) return;
-
-    alt.log('Starting engine...');
-    alt.log(value);
     native.setVehicleEngineOn(alt.Player.local.vehicle.scriptID, value, false, true);
 }
 
@@ -162,6 +159,10 @@ export function keepEngineRunning() {
 
 export function forceEngineOn(vehicle) {
     native.setVehicleEngineOn(vehicle.scriptID, true, true, false);
+}
+
+export function killEngine(vehicle) {
+    native.setVehicleEngineOn(vehicle.scriptID, false, true, false);
 }
 
 // Called when the user locks their vehicle.

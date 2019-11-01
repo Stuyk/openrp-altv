@@ -417,7 +417,7 @@ export const BaseItems = {
         }
     },
     cookedfood: {
-        eventcall: 'itemeffects:CookedFood',
+        eventcall: 'itemeffects:Consume',
         abilities: {
             drop: true,
             use: true,
@@ -490,6 +490,14 @@ export const Items = {
         props: { xp: 0 },
         quantity: 0,
         icon: 'fish'
+    },
+    cookedfood: {
+        name: '',
+        base: 'cookedfood',
+        key: 'cookedfood',
+        props: { health: 0 },
+        quantity: 0,
+        icon: 'can'
     },
     hat: {
         name: 'Hat',

@@ -107,8 +107,8 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   [x] Increase Stamina
         -   [x] Increase Level of Stamina
         -   [x] Run Longer / Swim Longer
-    -   [ ] Cooking (Craft Better Food)
-        -   [ ] Create Better Healing Food
+    -   [x] Cooking (Craft Better Food)
+        -   [x] Create Better Healing Food
         -   [ ] Create Better Healing Drinks
     -   [ ] Crafting (Better Quality Items)
         -   [ ] Craft Weapons
@@ -120,7 +120,7 @@ Open Roleplay is a base gamemode for Roleplay servers. It will include the ideal
         -   [ ] All Crafting Items Take Wood
     -   [x] Fishing
         -   [x] Use a fishing rod to fish ANYWHERE.
-        -   [ ] Fish Loot Table
+        -   [x] Fish Loot Table
     -   [ ] Medicine (Health Healed on Player Revivals)
         -   [ ] Heal users quicker.
         -   [ ] Revive users quicker.

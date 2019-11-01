@@ -9,11 +9,23 @@ alt.on('itemeffects:Consume', (player, item, hash) => {
     // Add health to the user.
     if (item.props.health !== undefined) {
         player.health += item.props.health;
+
+        if (item.props.health <= 0) {
+            player.notify(`Health Removed: ${item.props.health}`);
+        } else {
+            player.notify(`Health Added: ${item.props.health}`);
+        }
     }
 
     // Add armor to the user.
     if (item.props.armour !== undefined) {
         player.armour += item.props.armour;
+
+        if (item.props.armour <= 0) {
+            player.notify(`Health Removed: ${item.props.armour}`);
+        } else {
+            player.notify(`Health Added: ${item.props.armour}`);
+        }
     }
 
     if (item.props.skillbonus) {

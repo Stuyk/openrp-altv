@@ -5,6 +5,7 @@ import { distance } from '/client/utility/vector.mjs';
 import { playAnimation } from '/client/systems/animation.mjs';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 import { findDoor } from '/client/systems/doors.mjs';
+import { getLevel } from '/client/systems/xp.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -220,6 +221,18 @@ let objectInteractions = {
     },
     2446598557: {
         func: dynamicDoor
+    },
+    3229200997: {
+        func: cookingSource
+    },
+    286252949: {
+        func: cookingSource
+    },
+    1903501406: {
+        func: cookingSource
+    },
+    977744387: {
+        func: cookingSource
     }
 };
 
@@ -429,4 +442,33 @@ function dynamicDoor(ent) {
     }
 
     setContextTitle(`${door.id} - Owner: ${door.guid}`);
+}
+
+function cookingSource(ent) {
+    const inventory = JSON.parse(alt.Player.local.getMeta('inventory'));
+    const foodItems = inventory.filter(item => {
+        if (item && item.base === 'rawfood') return item;
+    });
+
+    const skills = JSON.parse(alt.Player.local.getMeta('skills'));
+    const cookingLVL = getLevel(skills.cooking.xp);
+
+    const items = [];
+    foodItems.forEach(item => {
+        if (item && cookingLVL < item.props.lvl) return;
+        const index = items.findIndex(x => x && x.name === item.name);
+        if (index <= -1) {
+            items.push({ name: item.name, hashes: [item.hash] });
+            return;
+        }
+        items[index].hashes.push(item.hash);
+    });
+
+    items.forEach(item => {
+        appendContextItem(`Cook All ${item.name}`, true, 'use:CookFood', {
+            hashes: item.hashes
+        });
+    });
+
+    setContextTitle(`Cooking Source`);
 }

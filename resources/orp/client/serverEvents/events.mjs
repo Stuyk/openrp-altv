@@ -113,6 +113,7 @@ alt.onServer('vehicle:SoundHorn', systemsVehicles.soundHorn);
 alt.onServer('vehicle:SetIntoVehicle', systemsVehicles.setIntoVehicle);
 alt.onServer('vehicle:TrackVehicle', systemsVehicles.trackVehicle);
 alt.onServer('vehicle:ForceEngineOn', systemsVehicles.forceEngineOn);
+alt.onServer('vehicle:KillEngine', systemsVehicles.killEngine);
 
 // =======================================================
 // Chat

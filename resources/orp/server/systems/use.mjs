@@ -4,6 +4,7 @@ import * as chat from '../chat/chat.mjs';
 import { actionMessage } from '../chat/chat.mjs';
 import { appendToMdc } from './mdc.mjs';
 import { addBoundWeapon } from './inventory.mjs';
+import { getLevel } from './xp.mjs';
 
 export let doorStates = {
     '{"x":461.8065185546875,"y":-994.4085693359375,"z":25.06442642211914}': {
@@ -296,4 +297,37 @@ export function lockDynamicDoor(player, data) {
 
 export function purchaseDynamicDoor(player, data) {
     alt.emit('door:PurchaseDynamicDoor', player, data);
+}
+
+export function cookFood(player, data) {
+    const hashes = data.hashes;
+    if (hashes.length <= 0) return;
+
+    const skills = JSON.parse(player.data.skills);
+    const cookingLVL = getLevel(skills.cooking.xp);
+
+    const rawfood = player.inventory.filter(item => {
+        if (item && hashes.includes(item.hash)) return item;
+    });
+
+    let allValid = true;
+    rawfood.forEach(rawfood => {
+        if (rawfood.props.lvl <= cookingLVL) return;
+        allValid = false;
+    });
+
+    if (!allValid) {
+        player.notify('An invalid cooking item was in your list.');
+        return;
+    }
+
+    const totalCookable = Math.floor(cookingLVL / 7);
+
+    player.cooking = {
+        list: rawfood,
+        time: Date.now(),
+        cookable: totalCookable <= 0 ? 1 : totalCookable
+    };
+
+    player.notify('You begin cooking...');
 }

@@ -163,6 +163,7 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
 
             if (vehicle.fuel <= 0 && vehicle.isEngineOn) {
                 vehicle.isEngineOn = false;
+                alt.emitClient(null, 'vehicle:KillEngine', vehicle);
                 if (vehicle.driver) {
                     alt.emitClient(vehicle.driver, 'vehicle:StartEngine', false);
                     vehicle.driver.send(`{FFFF00} You are out of fuel.`);

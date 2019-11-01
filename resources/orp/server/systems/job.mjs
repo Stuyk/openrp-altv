@@ -462,7 +462,7 @@ export class Objective {
                 player.addItem(
                     Items[reward.prop].key,
                     reward.quantity,
-                    { xp: itemLoot.xp },
+                    { xp: itemLoot.xp, lvl: itemLoot.lvl },
                     false,
                     false,
                     itemLoot.name
@@ -482,7 +482,7 @@ export class Objective {
                     player.addItem(
                         Items[reward.prop].key,
                         1,
-                        { xp: itemLoot.xp },
+                        { xp: itemLoot.xp, lvl: itemLoot.lvl },
                         false,
                         false,
                         itemLoot.name

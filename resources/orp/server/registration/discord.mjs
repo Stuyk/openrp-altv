@@ -7,6 +7,7 @@ import * as cache from '../cache/cache.mjs';
 const db = new SQL(); // Get DB Reference
 
 alt.onClient('discord:Authorization', async (player, token) => {
+    if (!player) return;
     const result = await new Promise(resolve => {
         get(
             'https://discordapp.com/api/users/@me',

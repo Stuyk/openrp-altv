@@ -5,6 +5,7 @@ Remember to 🌟 this Github if you 💖 it.
 ---
 
 ### Sponsor this Project to keep it **FREE**
+
 [Github Sponsorship Program](https://www.github.com/sponsors/stuyk)
 
 Open Roleplay is a base gamemode for Roleplay servers.
@@ -50,9 +51,11 @@ F1 ---------> Help Menu
 
 **Creating on Windows with pgAdmin4**
 Where to navigate:
+
 [https://i.imgur.com/FBBeMTt.png](https://i.imgur.com/FBBeMTt.png)
 
 Postgres is the username for this database; and altv is the name:
+
 [https://i.imgur.com/FaEmnvg.png](https://i.imgur.com/FaEmnvg.png)
 
 After; it should be running automatically in your services on windows. You can always restart your database through your Task Manager.

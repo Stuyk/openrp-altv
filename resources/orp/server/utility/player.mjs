@@ -691,6 +691,7 @@ export function setupPlayerFunctions(player) {
     };
 
     player.dropItemsOnDeath = () => {
+        if (!player.inventory) return;
         player.inventory.forEach((item, index) => {
             if (!item) return;
             if (item.base.includes('weapon') || item.base.includes('unrefined')) {

@@ -50,6 +50,7 @@ F1 ---------> Help Menu
 -   Once installed you need to create a username and password for your database; and create a database called 'altv' or something else if you know what you're doing. **PAY ATTENTION HERE YOU'LL NEED THIS INFO**
 
 **Creating on Windows with pgAdmin4**
+
 Where to navigate:
 
 [https://i.imgur.com/FBBeMTt.png](https://i.imgur.com/FBBeMTt.png)

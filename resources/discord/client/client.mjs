@@ -8,6 +8,8 @@ alt.onServer('discord:Request', endpoint => {
     webview.focus();
     alt.showCursor(true);
     native.freezeEntityPosition(alt.Player.local.scriptID, true);
+    native.doScreenFadeOut(1);
+    native.transitionToBlurred(1);
 });
 
 alt.onServer('discord:LoggedIn', () => {
@@ -15,4 +17,6 @@ alt.onServer('discord:LoggedIn', () => {
     webview.destroy();
     webview = undefined;
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
+    native.doScreenFadeIn(5000);
+    native.transitionFromBlurred(5000);
 });

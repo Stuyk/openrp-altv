@@ -3,7 +3,6 @@ import { getEndPoint, getRemoteIP } from './express.mjs';
 
 alt.on('playerConnect', player => {
     player.loginTimeout = Date.now() + 60000 * 2;
-    pendingLogins.push(player);
     alt.emitClient(player, 'discord:Request', `${getEndPoint()}`);
 });
 

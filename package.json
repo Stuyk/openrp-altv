@@ -11,7 +11,10 @@
     "license": "ISC",
     "dependencies": {
         "download": "^7.1.0",
+        "express": "^4.17.1",
+        "external-ip": "^2.1.1",
         "pg": "^7.12.1",
+        "request": "^2.88.0",
         "sjcl": "^1.0.8",
         "typeorm": "^0.2.18"
     },

@@ -22,6 +22,7 @@ const terms = {
     ],
     do_you_agree: false
 };
+
 let dbDefault = {
     type: 'postgres',
     username: 'postgres',
@@ -29,6 +30,11 @@ let dbDefault = {
     address: 'localhost',
     port: 5432,
     dbname: 'altv'
+};
+
+let discordAppInfo = {
+    client_id: '',
+    client_secret: ''
 };
 
 let windowsURLS = [
@@ -202,6 +208,52 @@ async function startup() {
         });
     } else {
         console.log('\r\nSkipping DB setup.');
+    }
+
+    const newDiscordInfo =
+        'Setup new Discord information for Login Data? (y/n). Default: Y';
+    res = await question(newDiscordInfo);
+
+    if (!res) res = 'y';
+
+    if (res === 'y') {
+        res = undefined;
+
+        console.log('Please Create a Discord Application for your Login System. \r\n');
+        console.log('Please Visit: https://discordapp.com/developers/applications/ \r\n');
+        console.log('PLEASE OPEN PORT: 17888 FOR YOUR DISCORD LOGIN TO WORK.');
+
+        const discordClient = 'Please enter your Client ID.';
+        res = await question(discordClient);
+
+        if (res) {
+            discordAppInfo.client_id = res;
+            res = undefined;
+        }
+
+        const discordSecret = 'Please enter your Discord Secret';
+        res = await question(discordSecret);
+
+        if (res) {
+            discordAppInfo.client_secret = res;
+            res = undefined;
+        }
+
+        const discordConfigPath = path.join(
+            __dirname,
+            '/resources/discord/server/configuration.json'
+        );
+
+        await new Promise(resolve => {
+            fs.writeFile(
+                discordConfigPath,
+                JSON.stringify(discordAppInfo, null, '\t'),
+                () => {
+                    console.log('\r\nDiscord Login Configured\r\n');
+                    resolve();
+                }
+            );
+        });
     }
 
     console.log(`Downloading Latest alt:V Server Files.`);

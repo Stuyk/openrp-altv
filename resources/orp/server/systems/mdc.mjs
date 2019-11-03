@@ -31,15 +31,18 @@ export function appendToMdc(victim, attacker, reason) {
         currentMdc = [];
     }
 
-    if (victim.includes('Frisked')) {
-        victim = {
-            data: {
-                name: victim
-            }
-        };
+    const mdc = JSON.parse(details.mdc);
+
+    if (victim.constructor.name !== 'Player') {
+        if (victim.includes('Frisked')) {
+            victim = {
+                data: {
+                    name: victim
+                }
+            };
+        }
     }
 
-    const mdc = JSON.parse(details.mdc);
     mdc.push({
         victim: victim.data.name,
         attacker: attacker.data.name,

@@ -45,9 +45,6 @@ alt.on('discord:CheckLoginTimeout', player => {
     if (Date.now() > player.loginTimeout) {
         player.kick();
         alt.log(`${player.name} was kicked for not logging in.`);
-        const index = pendingLogins.findIndex(player);
-        if (index <= -1) return;
-        pendingLogins.splice(index, 1);
     }
 });
 

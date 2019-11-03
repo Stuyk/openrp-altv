@@ -25,12 +25,12 @@ getIp((err, ip) => {
     setupEndpoints();
 });
 
-function cleanseIP(ip) {
-    return ip.replace('::ffff:', '');
-}
-
 export function getEndPoint() {
     return `http://${remoteIP}:${port}/`;
+}
+
+export function getRemoteIP() {
+    return remoteIP;
 }
 
 function setupEndpoints() {
@@ -69,12 +69,16 @@ function setupEndpoints() {
             });
 
             getData.on('data', newData => {
-                let address = res.connection.remoteAddress;
-                if (address.includes(remoteIP)) {
-                    address = '::ffff:127.0.0.1';
-                }
+                try {
+                    let address = res.connection.remoteAddress;
+                    if (address.includes(remoteIP)) {
+                        address = '::ffff:127.0.0.1';
+                    }
 
-                alt.emit('discord:ParseLogin', address, newData.toString());
+                    alt.emit('discord:ParseLogin', address, newData.toString());
+                } catch (err) {
+                    console.log('Failed to authorization user.');
+                }
 
                 const revokeRequest = request.post(
                     'https://discordapp.com/api/oauth2/token/revoke',

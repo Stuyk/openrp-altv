@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import { getEndPoint } from './express.mjs';
+import { getEndPoint, getRemoteIP } from './express.mjs';
 
 let pendingLogins = [];
 
@@ -10,8 +10,18 @@ alt.on('playerConnect', player => {
 });
 
 alt.on('discord:ParseLogin', (ip, data) => {
+    const remoteIP = getRemoteIP();
     const index = pendingLogins.findIndex(player => {
-        if (player && player.ip === ip) return player;
+        const userID = player.getMeta('id');
+        if (!userID && player && player.ip === ip) {
+            return player;
+        }
+
+        if (ip.includes('127.0.0.1')) {
+            if (!userID && player.ip.includes(remoteIP)) {
+                return player;
+            }
+        }
     });
 
     if (index <= -1) {
@@ -26,6 +36,7 @@ alt.on('discord:ParseLogin', (ip, data) => {
 
 alt.on('discord:Login', (player, data) => {
     delete player.loginTimeout;
+    player.authenticated = true;
     alt.emitClient(player, 'discord:LoggedIn');
     alt.emit('discord:FinishLogin', player, data);
 });

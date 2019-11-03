@@ -123,14 +123,18 @@ chat.registerCmd('tpto', (player, arg) => {
         return;
     }
 
-    let target = alt.Player.all.find(x => x.data.name.includes(arg[0]));
+    try {
+        let target = alt.Player.all.find(x => x.data.name.includes(arg[0]));
 
-    if (target === undefined) {
-        player.send('User was not found.');
-        return;
+        if (target === undefined) {
+            player.send('User was not found.');
+            return;
+        }
+
+        player.pos = target.pos;
+    } catch (err) {
+        player.send('Invalid name to teleport to.');
     }
-
-    player.pos = target.pos;
 });
 
 chat.registerCmd('tpwp', player => {

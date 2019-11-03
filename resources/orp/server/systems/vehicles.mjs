@@ -312,9 +312,12 @@ export function refuelVehicle(player, data) {
 }
 
 export function leaveEngineRunning(player) {
+    if (!player) return;
+
     const vehicle = player.lastVehicle;
     if (!vehicle) return;
 
+    
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
 

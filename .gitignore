@@ -1,6 +1,8 @@
 resources/*
 !resources/orp
 !resources/orp-addon/*
+!resources/discord/
+resources/discord/server/configuration.json
 resources/orp/terms-and-conditions.json
 resources/orp/server/configuration/database.mjs
 resources/orp/server/configuration/database.json

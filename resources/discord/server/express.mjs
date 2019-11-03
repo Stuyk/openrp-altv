@@ -4,6 +4,7 @@ import fs from 'fs';
 import request from 'request';
 import path from 'path';
 import externalIP from 'external-ip';
+import { fetchPlayerByIP } from './utility.mjs';
 
 const getIp = externalIP();
 const app = express();
@@ -35,6 +36,18 @@ export function getRemoteIP() {
 
 function setupEndpoints() {
     app.get('/', (req, res) => {
+        let address = res.connection.remoteAddress;
+
+        if (address.includes(remoteIP)) {
+            address = '::ffff:127.0.0.1';
+        }
+
+        const player = fetchPlayerByIP(address);
+        if (!player) {
+            res.send('You seem lost.');
+            return;
+        }
+
         res.redirect(
             `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify%20email&redirect_uri=http://${remoteIP}:${port}/login`
         );

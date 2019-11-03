@@ -1,5 +1,6 @@
 import * as alt from 'alt';
-import { getEndPoint, getRemoteIP } from './express.mjs';
+import { getEndPoint } from './express.mjs';
+import { fetchPlayerByIP } from './utility.mjs';
 
 alt.on('playerConnect', player => {
     player.loginTimeout = Date.now() + 60000 * 2;
@@ -7,23 +8,7 @@ alt.on('playerConnect', player => {
 });
 
 alt.on('discord:ParseLogin', (ip, data) => {
-    const remoteIP = getRemoteIP();
-    const target = alt.Player.all.find(player => {
-        if (player) {
-            if (!player.authenticated) {
-                const userID = player.getMeta('id');
-                if (!userID && player.ip === ip) {
-                    return player;
-                }
-
-                if (ip.includes('127.0.0.1')) {
-                    if (!userID && player.ip.includes(remoteIP)) {
-                        return player;
-                    }
-                }
-            }
-        }
-    });
+    const target = fetchPlayerByIP(ip);
 
     if (!target) {
         console.log('A user was not able to login.');

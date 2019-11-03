@@ -1,8 +1,6 @@
 import * as alt from 'alt';
 import { getEndPoint, getRemoteIP } from './express.mjs';
 
-let pendingLogins = [];
-
 alt.on('playerConnect', player => {
     player.loginTimeout = Date.now() + 60000 * 2;
     pendingLogins.push(player);
@@ -11,27 +9,27 @@ alt.on('playerConnect', player => {
 
 alt.on('discord:ParseLogin', (ip, data) => {
     const remoteIP = getRemoteIP();
-    const index = pendingLogins.findIndex(player => {
-        const userID = player.getMeta('id');
-        if (!userID && player && player.ip === ip) {
-            return player;
-        }
-
-        if (ip.includes('127.0.0.1')) {
-            if (!userID && player.ip.includes(remoteIP)) {
+    const target = alt.Player.all.find(player => {
+        if (player) {
+            const userID = player.getMeta('id');
+            if (!userID && player.ip === ip) {
                 return player;
+            }
+
+            if (ip.includes('127.0.0.1')) {
+                if (!userID && player.ip.includes(remoteIP)) {
+                    return player;
+                }
             }
         }
     });
 
-    if (index <= -1) {
+    if (!target) {
         console.log('A user was not able to login.');
         return;
     }
 
-    const player = pendingLogins[index];
-    pendingLogins.splice(index, 1);
-    alt.emit('discord:Login', player, data);
+    alt.emit('discord:Login', target, data);
 });
 
 alt.on('discord:Login', (player, data) => {

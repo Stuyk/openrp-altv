@@ -34,6 +34,8 @@ alt.onClient('discord:Authorization', async (player, token) => {
     const userData = JSON.parse(result.data);
     const account = cache.getAccount(userData.id);
 
+    alt.log(`${player.name} authenticated as ${userData.username}#${userData.discriminator}`);
+
     if (account) {
         alt.emit('orp:Login', player, account.id, userData.id);
         return;

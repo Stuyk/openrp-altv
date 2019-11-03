@@ -11,14 +11,16 @@ alt.on('discord:ParseLogin', (ip, data) => {
     const remoteIP = getRemoteIP();
     const target = alt.Player.all.find(player => {
         if (player) {
-            const userID = player.getMeta('id');
-            if (!userID && player.ip === ip) {
-                return player;
-            }
-
-            if (ip.includes('127.0.0.1')) {
-                if (!userID && player.ip.includes(remoteIP)) {
+            if (!player.authenticated) {
+                const userID = player.getMeta('id');
+                if (!userID && player.ip === ip) {
                     return player;
+                }
+
+                if (ip.includes('127.0.0.1')) {
+                    if (!userID && player.ip.includes(remoteIP)) {
+                        return player;
+                    }
                 }
             }
         }

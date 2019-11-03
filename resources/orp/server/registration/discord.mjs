@@ -10,6 +10,8 @@ alt.on('discord:FinishLogin', (player, result) => {
     const account = cache.getAccount(userData.id);
     setupPlayerFunctions(player);
 
+    alt.log(`${player.name} authenticated as ${userData.username}#${userData.discriminator}`);
+
     if (account) {
         alt.emit('orp:Login', player, account.id, userData.id);
         return;

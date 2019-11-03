@@ -211,7 +211,7 @@ async function startup() {
     }
 
     const newDiscordInfo =
-        'Setup new Discord information for Login Data? (y/n). Default: Y';
+        'Setup new Discord information for Login Data? (y/n). Default is y\r\n';
     res = await question(newDiscordInfo);
 
     if (!res) res = 'y';
@@ -219,11 +219,14 @@ async function startup() {
     if (res === 'y') {
         res = undefined;
 
+        console.log('!!! IMPORTANT INFORMATION !!!');
         console.log('Please Create a Discord Application for your Login System. \r\n');
         console.log('Please Visit: https://discordapp.com/developers/applications/ \r\n');
-        console.log('PLEASE OPEN PORT: 17888 FOR YOUR DISCORD LOGIN TO WORK.');
+        console.log('PLEASE OPEN PORT: 17888 FOR YOUR DISCORD LOGIN TO WORK. \r\n');
+        console.log('Add a OAuth2 Redirect to your Discord application for: \r\n');
+        console.log('http://<your_external_ip:17888/login \r\n \r\n');
 
-        const discordClient = 'Please enter your Client ID.';
+        const discordClient = '\r\nPlease enter your Client ID...\r\n';
         res = await question(discordClient);
 
         if (res) {
@@ -231,7 +234,7 @@ async function startup() {
             res = undefined;
         }
 
-        const discordSecret = 'Please enter your Discord Secret';
+        const discordSecret = '\r\nPlease enter your Discord Secret...\r\n';
         res = await question(discordSecret);
 
         if (res) {

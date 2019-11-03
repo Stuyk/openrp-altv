@@ -1,38 +1,14 @@
 import * as alt from 'alt';
-import { get, request } from 'https';
 import SQL from '../../../postgres-wrapper/database.mjs';
-import { Config } from '../configuration/config.mjs';
 import * as cache from '../cache/cache.mjs';
+import { setupPlayerFunctions } from '../utility/player.mjs';
 
 const db = new SQL(); // Get DB Reference
 
-alt.onClient('discord:Authorization', async (player, token) => {
-    if (!player) return;
-    const result = await new Promise(resolve => {
-        get(
-            'https://discordapp.com/api/users/@me',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            },
-            res => {
-                res.on('data', d => {
-                    resolve({ statusCode: res.statusCode, data: d.toString() });
-                });
-            }
-        ).on('error', e => {
-            return resolve({ statusCode: e.statusCode, data: '' });
-        });
-    });
-
-    if (result.statusCode !== 200) {
-        alt.emitClient(player, 'discord:AuthorizationFailure');
-        return;
-    }
-
-    const userData = JSON.parse(result.data);
+alt.on('discord:FinishLogin', (player, result) => {
+    const userData = JSON.parse(result);
     const account = cache.getAccount(userData.id);
+    setupPlayerFunctions(player);
 
     if (account) {
         alt.emit('orp:Login', player, account.id, userData.id);

@@ -3,6 +3,7 @@ import * as alt from 'alt';
 let ready = false;
 
 alt.on('discord:Request', () => {
+    /*
     const interval = alt.setInterval(() => {
         // Make a single request for authentication.
         if (!ready && !alt.isDiscordOAuth2Finished()) {
@@ -24,7 +25,7 @@ alt.on('discord:Request', () => {
                 expires: 0,
                 scopes: 'identify'
             }
-        */
+        
         if (!object) {
             alt.log('Did not accept oAuth request.');
             return;
@@ -33,4 +34,5 @@ alt.on('discord:Request', () => {
         alt.emitServer('discord:Authorization', object.token);
         alt.clearInterval(interval);
     }, 2000);
+    */
 });

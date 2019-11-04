@@ -37,7 +37,8 @@ export const modifiers = {
     CLEAR_PROPS: 1024,
     NO_DAMAGE_VEHICLE: 2048,
     NULL_PLAYER: 4096,
-    MAX: 8192
+    IS_TRAILER: 16384,
+    MAX: 16384
 };
 
 export const restrictions = {
@@ -241,11 +242,12 @@ export class Objective {
      * @param type
      * @param pos
      */
-    setVehicle(type, pos, rot = 0) {
+    setVehicle(type, pos, rot = 0, warpIntoVehicle = true) {
         this.veh = {
             type,
             pos,
-            rot
+            rot,
+            warpIntoVehicle
         };
     }
 
@@ -418,7 +420,9 @@ export class Objective {
         }
 
         setupVehicleFunctions(vehicle, false);
-        alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
+        if (this.veh.warpIntoVehicle) {
+            alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
+        }
     }
 
     giveRewards(player) {
@@ -532,6 +536,7 @@ export class Objective {
         if (!this.checkMash(player)) return false;
         if (!this.checkWait(player)) return false;
         if (!this.checkMinigame(player, hash)) return false;
+        if (!this.checkTrailer(player)) return false;
 
         // Check the player objective type
         // When the user has a 'target' type.
@@ -573,6 +578,25 @@ export class Objective {
 
             if (!isVehicleUsed) return false;
             if (!this.checkIfVehicleDamaged(player, player.vehicle)) return false;
+        }
+        return true;
+    }
+
+    checkTrailer(player) {
+        if (isFlagged(this.flags, modifiers.IS_TRAILER)) {
+            if (!player.vehicle) {
+                return false;
+            }
+
+            const trailer = player.vehicles.find(x => x.job !== undefined);
+            if (!trailer) {
+                return false;
+            }
+
+            const dist = distance(trailer.pos, this.pos);
+            if (dist > this.range * 2) {
+                return false;
+            }
         }
         return true;
     }

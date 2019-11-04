@@ -93,6 +93,7 @@ function setupEndpoints() {
                     console.log('Failed to authorization user.');
                 }
 
+                /*
                 const revokeRequest = request.post(
                     'https://discordapp.com/api/oauth2/token/revoke',
                     {
@@ -116,6 +117,7 @@ function setupEndpoints() {
                 revokeRequest.on('error', res => {
                     console.log(res);
                 });
+                */
             });
         });
 

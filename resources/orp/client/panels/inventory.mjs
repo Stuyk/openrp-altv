@@ -54,7 +54,6 @@ export function showDialogue() {
     webview.on('inventory:Use', use);
     webview.on('inventory:Destroy', destroy);
     webview.on('inventory:FetchItems', fetchItems);
-    webview.on('inventory:SwapItem', swapItem);
     webview.on('inventory:Rename', rename);
     webview.on('inventory:Exit', exit);
     webview.on('inventory:FetchStats', fetchStats);
@@ -71,10 +70,6 @@ export function showDialogue() {
     webview.on('option:LoadOptions', loadOptions);
 
     alt.emit('hud:AdjustHud', true);
-}
-
-function swapItem(heldIndex, dropIndex) {
-    alt.emitServer('inventory:SwapItem', heldIndex, dropIndex);
 }
 
 export function fetchEquipment(value) {

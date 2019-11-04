@@ -55,7 +55,6 @@ alt.onClient('inventory:DestroyItem', systemsInventory.destroy);
 alt.onClient('inventory:UseItem', systemsInventory.use);
 alt.onClient('inventory:DropItem', systemsInventory.drop);
 alt.onClient('inventory:Pickup', systemsInventory.pickup);
-alt.onClient('inventory:SwapItem', systemsInventory.swapItem);
 alt.onClient('inventory:RenameItem', systemsInventory.rename);
 alt.onClient('inventory:UnequipItem', systemsInventory.unequipItem);
 alt.onClient('inventory:Split', systemsInventory.splitItem);

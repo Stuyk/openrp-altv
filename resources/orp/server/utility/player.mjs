@@ -820,34 +820,6 @@ export function setupPlayerFunctions(player) {
         return false;
     };
 
-    player.swapItems = (heldIndex, dropIndex) => {
-        let heldItem = { ...player.inventory[heldIndex] };
-        let dropItem = { ...player.inventory[dropIndex] };
-        if (heldIndex === dropIndex) return;
-
-        if (heldItem) {
-            heldItem = objectToNull(heldItem);
-        }
-
-        if (dropItem) {
-            dropItem = objectToNull(dropItem);
-        }
-
-        if (heldItem && dropItem) {
-            const heldBase = BaseItems[heldItem.base];
-            if (heldItem.name === dropItem.name && heldBase.abilities.stack) {
-                player.inventory[dropIndex].quantity += parseInt(heldItem.quantity);
-                player.inventory[heldIndex] = null;
-                player.saveInventory();
-                return;
-            }
-        }
-
-        player.inventory[heldIndex] = dropItem;
-        player.inventory[dropIndex] = heldItem;
-        player.saveInventory();
-    };
-
     player.splitItem = index => {
         if (player.splitting) return;
         player.splitting = true;

@@ -304,6 +304,11 @@ export function destroyVehicle(player, id) {
 export function refuelVehicle(player, data) {
     const vehicle = data.vehicle;
     if (!vehicle) return;
+    if (vehicle.fuel >= 100) {
+        player.notify('The tank is already full.');
+        return;
+    }
+
     actionMessage(player, 'Begins to fill the vehicle with fuel.');
     vehicle.isBeingFilled = {
         time: Date.now() + Config.vehicleFuelTime,
@@ -317,7 +322,6 @@ export function leaveEngineRunning(player) {
     const vehicle = player.lastVehicle;
     if (!vehicle) return;
 
-    
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
 

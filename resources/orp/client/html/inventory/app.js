@@ -93,8 +93,10 @@ class App extends Component {
         super(props);
         this.state = {
             tabIndex: 2,
-            tabIcons: true
+            tabIcons: true,
+            inputIsFocused: false
         };
+        this.inputIsFocused = false;
     }
 
     shouldComponentUpdate() {
@@ -124,17 +126,28 @@ class App extends Component {
     }
 
     close(e) {
-        // I Key
-        if (e.keyCode === 'I'.charCodeAt(0)) {
-            alt.emit('inventory:Exit');
-            return;
-        }
+        if (this.inputIsFocused) return;
+        if ('alt' in window) {
+            // I Key
+            if (e.keyCode === 'I'.charCodeAt(0)) {
+                alt.emit('inventory:Exit');
+                return;
+            }
 
-        // Escape
-        if (e.keyCode === 27) {
-            alt.emit('inventory:Exit');
-            return;
+            // Escape
+            if (e.keyCode === 27) {
+                alt.emit('inventory:Exit');
+                return;
+            }
         }
+    }
+
+    setInputFocused(e) {
+        this.inputIsFocused = true;
+    }
+
+    setInputUnfocused(e) {
+        this.inputIsFocused = false;
     }
 
     render() {
@@ -159,7 +172,11 @@ class App extends Component {
                 // Stats
                 this.state.tabIndex == 1 && h(Stats),
                 // Inventory
-                this.state.tabIndex == 2 && h(Inventory),
+                this.state.tabIndex == 2 &&
+                    h(Inventory, {
+                        setInputFocused: this.setInputFocused.bind(this),
+                        setInputUnfocused: this.setInputUnfocused.bind(this)
+                    }),
                 // Vehicles
                 this.state.tabIndex === 3 && h(Vehicles),
                 // Contacts
@@ -624,14 +641,11 @@ class Inventory extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inventory: new Array(128).fill(null)
+            inventory: new Array(128).fill(null),
+            search: ''
         };
-        this.mouseMoveEvent = this.mousemove.bind(this);
-        this.hoverContextMenu = this.hoverWhileContextMenu.bind(this);
-        this.addItemBind = this.addItem.bind(this);
-        this.keydownBind = this.keydown.bind(this);
-        this.keyupBind = this.keyup.bind(this);
         this.forceUpdateBind = this.forceUpdate.bind(this);
+        this.addItemBind = this.addItem.bind(this);
     }
 
     componentDidMount() {
@@ -643,18 +657,21 @@ class Inventory extends Component {
             items[0] = {
                 name: 'Taco',
                 base: 'Food',
+                quantity: 1,
                 hash: '90840921921',
                 icon: 'leaf'
             };
             items[1] = {
                 name: 'Fish Taco That Is Super Delicious',
                 base: 'Food',
+                quantity: 1,
                 hash: '90840921922',
                 icon: 'fish'
             };
             items[2] = {
                 name: 'Fishing Rod',
                 base: 'Hand',
+                quantity: 1,
                 hash: '149214',
                 icon: 'fishingrod'
             };
@@ -709,203 +726,6 @@ class Inventory extends Component {
         } else {
             inventory[index] = null;
         }
-
-        this.setState({ inventory });
-    }
-
-    mouseover(e) {
-        this.hoverItem(e);
-    }
-
-    hoverWhileContextMenu(e) {
-        const classList = e.target.classList;
-
-        if (this.state.context && !classList.contains('contextOption')) {
-            document.removeEventListener('mouseover', this.hoverContextMenu);
-            this.setState({ context: false });
-            return;
-        } else if (this.state.context) {
-            return;
-        }
-    }
-
-    hoverItem(e) {
-        const classList = e.target.classList;
-        const id = e.target.id;
-
-        if (!classList.contains('item')) {
-            this.setState({ draggedItem: -1 });
-            return;
-        }
-
-        if (this.state.held) {
-            if (this.state.draggedItem === parseInt(id)) return;
-            this.setState({ draggedItem: parseInt(id) });
-            return;
-        }
-    }
-
-    mousemove(e) {
-        if (this.state.context) return;
-        this.setState({ x: e.clientX, y: e.clientY });
-    }
-
-    mousedown(e) {
-        if (this.state.context) return;
-        // Right-Click
-        if (e.which === 3) {
-            this.rightClick(e);
-            return;
-        } else {
-            this.leftClick(e);
-            return;
-        }
-    }
-
-    leftClick(e) {
-        const list = e.target.classList;
-        if (!list.contains('item') || list.contains('item-place')) return;
-        if (Date.now() < this.state.doubleClickTime) {
-            this.doubleClick(e);
-            return;
-        }
-
-        if (this.state.shiftModifier) {
-            this.shiftClick(e);
-            return;
-        }
-
-        document.addEventListener('mousemove', this.mouseMoveEvent);
-        this.setState({
-            held: true,
-            doubleClickTime: Date.now() + 200,
-            heldItem: e.target.id
-        });
-    }
-
-    rightClick(e) {
-        if (this.state.context) return;
-        const list = e.target.classList;
-        if (!list.contains('item') || list.contains('item-place')) return;
-
-        document.addEventListener('mouseover', this.hoverContextMenu);
-        this.setState({
-            context: true,
-            contextItem: parseInt(e.target.id),
-            contextX: e.clientX - 75,
-            contextY: e.clientY - 15
-        });
-    }
-
-    mouseup(e) {
-        if (this.state.context) return;
-        if (e.which === 3) {
-            return;
-        }
-
-        const list = e.target.classList;
-        document.removeEventListener('mousemove', this.mouseMoveEvent);
-        if (!list.contains('item') && !list.contains('item-place')) {
-            document.removeEventListener('mousemove', this.mouseMoveEvent);
-            this.setState({ held: false, heldItem: -1, draggedItem: -1 });
-            return;
-        }
-
-        this.moveItem(parseInt(this.state.heldItem), parseInt(e.target.id));
-    }
-
-    keydown(e) {
-        if (this.state.context) return;
-        // Shift
-        if (e.keyCode === 16) {
-            this.setState({ shiftModifier: true });
-        }
-    }
-
-    keyup(e) {
-        if (this.state.context) return;
-        if (e.keyCode === 16) {
-            this.setState({ shiftModifier: false });
-        }
-    }
-
-    moveItem(heldIndex, dropIndex) {
-        if (heldIndex <= -1 || dropIndex <= -1) {
-            document.removeEventListener('mousemove', this.mouseMoveEvent);
-            this.setState({ held: false, heldItem: -1, draggedItem: -1 });
-            return;
-        }
-
-        if (heldIndex === dropIndex) {
-            document.removeEventListener('mousemove', this.mouseMoveEvent);
-            this.setState({ held: false, heldItem: -1, draggedItem: -1 });
-            return;
-        }
-
-        let inventory = [...this.state.inventory];
-
-        if ('alt' in window) {
-            alt.emit('inventory:SwapItem', heldIndex, dropIndex);
-        }
-
-        if (inventory[heldIndex] && inventory[dropIndex]) {
-            const heldName = inventory[heldIndex].name;
-            const dropName = inventory[dropIndex].name;
-
-            if (heldName === dropName) {
-                inventory[dropIndex].quantity += inventory[heldIndex].quantity;
-                inventory[heldIndex] = null;
-            }
-        } else {
-            inventory[heldIndex] = inventory[dropIndex];
-            inventory[dropIndex] = inventory[heldIndex];
-        }
-
-        document.removeEventListener('mousemove', this.mouseMoveEvent);
-        this.setState({ held: false, heldItem: -1, inventory, draggedItem: -1 });
-    }
-
-    doubleClick(e) {
-        if (!e.target.id) {
-            this.setState({
-                held: false,
-                heldItem: -1,
-                draggedItem: -1
-            });
-            document.removeEventListener('mousemove', this.mouseMoveEvent);
-            return;
-        }
-
-        document.removeEventListener('mousemove', this.mouseMoveEvent);
-        let inventory = [...this.state.inventory];
-        inventory[parseInt(e.target.id)] = null;
-
-        if ('alt' in window) {
-            alt.emit('inventory:Use', this.state.inventory[parseInt(e.target.id)].hash);
-        } else {
-            console.log('Double Clicked');
-        }
-
-        this.setState({
-            held: false,
-            heldItem: -1,
-            draggedItem: -1,
-            inventory
-        });
-    }
-
-    shiftClick(e) {
-        if (!this.state.inventory[parseInt(e.target.id)]) return;
-        if (this.state.inventory[parseInt(e.target.id)].quantity <= 1) return;
-
-        if ('alt' in window) {
-            alt.emit('inventory:Split', this.state.inventory[parseInt(e.target.id)].hash);
-        } else {
-            console.log('Shift Clicked');
-        }
-
-        let inventory = [...this.state.inventory];
-        inventory[parseInt(e.target.id)] = null;
         this.setState({ inventory });
     }
 
@@ -914,204 +734,157 @@ class Inventory extends Component {
         return item;
     }
 
-    useItem() {
-        if (!this.state.inventory[this.state.contextItem]) return;
-
+    useItem(e) {
+        const item = this.state.inventory[parseInt(e.target.id)];
+        if (!item) return;
         if ('alt' in window) {
-            alt.emit('inventory:Use', this.state.inventory[this.state.contextItem].hash);
+            alt.emit('inventory:Use', item.hash);
+            this.mockRemove(parseInt(e.target.id));
+        } else {
+            this.mockRemove(parseInt(e.target.id));
+        }
+    }
+
+    dropItem(e) {
+        const item = this.state.inventory[parseInt(e.target.id)];
+        if (!item) return;
+        if ('alt' in window) {
+            alt.emit('inventory:Drop', item.hash);
+            this.mockRemove(parseInt(e.target.id));
+        } else {
+            this.mockRemove(parseInt(e.target.id));
+        }
+    }
+
+    destroyItem(e) {
+        const item = this.state.inventory[parseInt(e.target.id)];
+        if (!item) return;
+        if ('alt' in window) {
+            alt.emit('inventory:Destroy', item.hash);
+            this.mockRemove(parseInt(e.target.id));
+        } else {
+            this.mockRemove(parseInt(e.target.id));
+        }
+    }
+
+    splitItem(e) {
+        const item = this.state.inventory[parseInt(e.target.id)];
+        if (!item) return;
+        if ('alt' in window) {
+            alt.emit('inventory:Split', item.hash);
+            this.mockRemove(parseInt(e.target.id));
+        } else {
+            this.mockRemove(parseInt(e.target.id));
+        }
+    }
+
+    mockRemove(index) {
+        const items = [...this.state.inventory];
+        items[index] = null;
+        this.setState({ inventory: items });
+    }
+
+    renderItem({ item, index }) {
+        if (!item) return;
+        if (this.state.search.length >= 2) {
+            if (!item.name.includes(this.state.search)) return;
         }
 
-        let inventory = [...this.state.inventory];
-        inventory[parseInt(this.state.contextItem)] = null;
-
-        document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({
-            context: false,
-            contextItem: -1,
-            inventory
-        });
-    }
-
-    dropItem() {
-        if (!this.state.inventory[this.state.contextItem]) return;
-
-        if ('alt' in window) {
-            alt.emit('inventory:Drop', this.state.inventory[this.state.contextItem].hash);
+        let icon;
+        if (item && item.icon) {
+            icon = icons.includes(item.icon) ? item.icon : 'unknown';
         }
 
-        let inventory = [...this.state.inventory];
-        inventory[this.state.contextItem] = null;
-
-        document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1, inventory });
-    }
-
-    destroyItem() {
-        if (!this.state.inventory[this.state.contextItem]) return;
-
-        if ('alt' in window) {
-            alt.emit(
-                'inventory:Destroy',
-                this.state.inventory[this.state.contextItem].hash
-            );
-        }
-
-        let inventory = [...this.state.inventory];
-        inventory[this.state.contextItem] = null;
-
-        document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false, contextItem: -1, inventory });
-    }
-
-    renameItem() {
-        document.removeEventListener('mouseover', this.hoverContextMenu);
-        this.setState({ context: false });
-    }
-
-    contextMenu({ x, y }) {
         return h(
             'div',
-            { class: 'contextMenu', style: `left: ${x}px; top: ${y}px;` },
+            { class: 'item' },
             h(
-                'button',
-                { class: 'contextOption', onclick: this.useItem.bind(this) },
-                'Use'
+                'div',
+                { class: 'icon' },
+                h('svg', {
+                    type: 'image/svg+xml',
+                    style: `background: url('../icons/${icon}.svg');`
+                })
             ),
+            h('div', { class: 'item-name' }, `${item.quantity}x - ${item.name}`),
             h(
-                'button',
-                { class: 'contextOption', onclick: this.dropItem.bind(this) },
-                'Drop'
-            ),
-            h(
-                'button',
-                { class: 'contextOption', onclick: this.destroyItem.bind(this) },
-                'Destroy'
-            ),
-            h(
-                'button',
-                { class: 'contextOption', onclick: this.renameItem.bind(this) },
-                'Rename'
+                'div',
+                { class: 'buttons' },
+                h(
+                    'button',
+                    { class: 'item-button', id: index, onclick: this.useItem.bind(this) },
+                    'Use'
+                ),
+                h(
+                    'button',
+                    {
+                        class: 'item-button',
+                        id: index,
+                        onclick: this.dropItem.bind(this)
+                    },
+                    'Drop'
+                ),
+                h(
+                    'button',
+                    {
+                        class: 'item-button',
+                        id: index,
+                        onclick: this.destroyItem.bind(this)
+                    },
+                    'Destroy'
+                ),
+                item.quantity >= 2 &&
+                    h(
+                        'button',
+                        {
+                            class: 'item-button',
+                            id: index,
+                            onclick: this.splitItem.bind(this)
+                        },
+                        'Split'
+                    ),
+                item.quantity <= 1 &&
+                    h('button', { class: 'item-button disabled', id: index }, 'Split')
             )
         );
     }
 
-    renderItemHeld({ x, y, item }) {
-        let icon;
-        if (item && item.icon) {
-            icon = icons.includes(item.icon) ? item.icon : 'unknown';
-        }
-
-        return h(
-            'div',
-            {
-                class: 'item-held',
-                style: `left: ${x}px; top: ${y}px;`
-            },
-            h('svg', {
-                type: 'image/svg+xml',
-                style: `background: url('../icons/${icon}.svg');`
-            })
-        );
+    onInputEvent(e) {
+        this.setState({ search: e.target.value });
     }
 
-    renderItem({ index, item, draggedItem, mouseover, mousedown, mouseup, held }) {
-        let icon;
-        if (item && item.icon) {
-            icon = icons.includes(item.icon) ? item.icon : 'unknown';
-        }
-
-        let classData = 'item';
-        if (!item) {
-            classData += ' item-place';
-        }
-
-        if (index === draggedItem) {
-            classData += ' item-hovered';
-        }
-
-        const newItem = h(
-            'div',
-            {
-                class: classData,
-                id: index,
-                onmouseover: mouseover.bind(this),
-                onmouseup: mouseup.bind(this),
-                onmousedown: mousedown.bind(this)
-            },
-            item &&
-                h('svg', {
-                    type: 'image/svg+xml',
-                    style: `background: url('../icons/${icon}.svg');`
-                }),
-            item && !held && h('div', { class: 'itemname' }, item.name),
-            item && held && h('div', { class: 'itemnameheld' }, item.name),
-            item &&
-                !held &&
-                parseInt(item.quantity) >= 2 &&
-                h(
-                    'div',
-                    { class: 'itemquantity' },
-                    `${parseInt(item.quantity).toLocaleString()}`
-                ),
-            item &&
-                held &&
-                parseInt(item.quantity) >= 2 &&
-                h(
-                    'div',
-                    { class: 'itemquantityheld' },
-                    `${parseInt(item.quantity).toLocaleString()}`
-                ),
-            item &&
-                !held &&
-                h(
-                    'div',
-                    { class: 'tooltip' },
-                    h(
-                        'span',
-                        { class: 'tooltiptext' },
-                        h('h4', {}, item.name),
-                        h('p', {}, `Base: ${item.base}`)
-                    )
-                ),
-            !item && 'empty'
-        );
-        return newItem;
-    }
-
-    renderItems() {
+    renderItems({ setInputFocused, setInputUnfocused }) {
         const items = this.state.inventory.map((item, index) => {
             if (index >= 28) return;
-            return h(this.renderItem, {
+            return h(this.renderItem.bind(this), {
                 item,
-                index,
-                draggedItem: this.state.draggedItem,
-                mouseover: this.mouseover.bind(this),
-                mousedown: this.mousedown.bind(this),
-                mouseup: this.mouseup.bind(this),
-                held: this.state.held
+                index
             });
         });
 
-        return h(
-            'div',
-            { class: 'inventory' },
-            items,
-            this.state.held &&
-                h(this.renderItemHeld, {
-                    x: this.state.x,
-                    y: this.state.y,
-                    item: this.state.inventory[parseInt(this.state.heldItem)]
-                }),
-            this.state.context &&
-                h(this.contextMenu.bind(this), {
-                    x: this.state.contextX,
-                    y: this.state.contextY
+        items.unshift(
+            h(
+                'div',
+                { class: 'search-wrapper' },
+                h('input', {
+                    class: 'search',
+                    placeholder: 'Search for item...',
+                    onfocusin: setInputFocused,
+                    onfocusout: setInputUnfocused,
+                    onchange: this.onInputEvent.bind(this),
+                    value: this.state.search
                 })
+            )
         );
+
+        return h('div', { class: 'inventory' }, items);
     }
 
-    render() {
-        return h(this.renderItems.bind(this));
+    render(props, state) {
+        return h(this.renderItems.bind(this), {
+            setInputFocused: props.setInputFocused,
+            setInputUnfocused: props.setInputUnfocused
+        });
     }
 }
 

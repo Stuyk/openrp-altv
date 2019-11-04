@@ -122,8 +122,6 @@ export function fetchItems(value) {
         value = alt.Player.local.getMeta('inventory');
     }
 
-    alt.log('Fetched Items');
-
     const itemArray = JSON.parse(value);
     if (!itemArray) return;
     itemArray.forEach((item, index) => {

@@ -232,10 +232,6 @@ export function pickup(player, hash) {
     player.pickingUpItem = false;
 }
 
-export function swapItem(player, heldIndex, dropIndex) {
-    player.swapItems(heldIndex, dropIndex);
-}
-
 export function addWeapon(player, weaponName) {
     let weapon;
     Object.keys(Weapons).forEach(key => {

@@ -102,8 +102,6 @@ alt.on('job:TruckingUnrefinedMetal', player => {
     if (player.vehicles.length <= 0) return;
 
     const truck = player.vehicles.find(veh => {
-        console.log(veh.data.model);
-
         if (approvedVehicles.includes(veh.data.model)) return veh;
     });
 

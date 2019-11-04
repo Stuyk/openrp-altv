@@ -125,10 +125,7 @@ export function fetchItems(value) {
     const itemArray = JSON.parse(value);
     if (!itemArray) return;
     itemArray.forEach((item, index) => {
-        if (!item) {
-            webview.emit('inventory:AddItem', index, null);
-            return;
-        }
+        if (!item) return;
 
         // const [name, index, base, hash, quantity, props] = args;
         webview.emit(

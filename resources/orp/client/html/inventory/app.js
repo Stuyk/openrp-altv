@@ -641,7 +641,7 @@ class Inventory extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inventory: new Array(128).fill(null),
+            inventory: [],
             search: ''
         };
         this.forceUpdateBind = this.forceUpdate.bind(this);
@@ -854,6 +854,7 @@ class Inventory extends Component {
     }
 
     renderItems({ setInputFocused, setInputUnfocused }) {
+        const validItems = this.state.inventory.filter(item => item);
         const items = this.state.inventory.map((item, index) => {
             if (index >= 28) return;
             return h(this.renderItem.bind(this), {
@@ -861,6 +862,14 @@ class Inventory extends Component {
                 index
             });
         });
+
+        items.unshift(
+            h(
+                'div',
+                { class: 'item-stats-wrapper' },
+                h('div', { class: 'total-items' }, `${validItems.length}/28`)
+            )
+        );
 
         items.unshift(
             h(

@@ -38,6 +38,7 @@ export class Interaction {
 
     // Call the server event from anywhere on the server-side.
     exec(player) {
+        if (!player);
         if (utilityVector.distance(player.pos, this.pos) > this.radius) {
             player.emitMeta('interaction', undefined);
             return;
@@ -74,6 +75,7 @@ export function forwardEventToPlayer(colshape, entity) {
 // player hits the correct button. This is basically called
 // after the player press 'E' and is standing in a ColShape.
 export function attemptToExecuteInteraction(player) {
+    if (!player) return;
     const data = player.getMeta('interaction');
 
     if (data === undefined || data === null) return;
@@ -88,6 +90,7 @@ export function attemptToExecuteInteraction(player) {
 
 // Clear the interaction synced meta information.
 export function clearInteraction(player) {
+    if (!player) return;
     const data = player.getMeta('interaction');
 
     if (data === undefined || data === null) return;

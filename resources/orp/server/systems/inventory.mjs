@@ -222,7 +222,6 @@ export function pickup(player, hash) {
     if (!player.addItem(item.key, item.quantity, item.props, false, false, item.name)) {
         ItemDrops.set(hash, item);
         player.pickingUpItem = false;
-        alt.emitClient(null, 'inventory:ItemDrop', null, clonedItem, randomPos);
         return;
     }
 

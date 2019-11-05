@@ -423,6 +423,8 @@ export class Objective {
         if (this.veh.warpIntoVehicle) {
             alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
         }
+
+        alt.emitClient(player, 'vehicle:Rotate', vehicle, this.veh.rot);
     }
 
     giveRewards(player) {

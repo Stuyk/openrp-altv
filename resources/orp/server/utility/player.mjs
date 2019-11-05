@@ -839,9 +839,15 @@ export function setupPlayerFunctions(player) {
         const item = { ...player.inventory[index] };
         const split = Math.floor(parseInt(item.quantity) / 2);
         const remainder = parseInt(item.quantity) - split;
-        const nullIndexes = player.inventory.filter(item => !item);
-        if (nullIndexes.length <= 1) {
-            player.send('{FF0000} No room for item split.');
+        let nullIndexes = 0;
+        player.inventory.forEach(item => {
+            if (!item) {
+                nullIndexes += 1;
+            }
+        });
+
+        if (nullIndexes <= 1) {
+            player.notify('No room to split item.');
             player.splitting = false;
             return false;
         }

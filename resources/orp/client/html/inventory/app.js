@@ -32,6 +32,7 @@ const icons = [
     'fishingrod',
     'gathering',
     'glasses',
+    'globe',
     'hammer',
     'hand',
     'hat',
@@ -87,6 +88,21 @@ const slots = [
     'outfit' // 14
 ];
 
+const skillDescriptions = {
+    agility: 'Sprint for longer a longer period of time.',
+    cooking: 'Cook raw food like fish at campfires and bbqs.',
+    crafting: 'Craft weaponry, better tools, and more at their dedicated locations.',
+    mechanic: 'Repair vehicles and gain access to repair kits.',
+    notoriety: 'Be a bad citizen. Traffic refined drugs, and craft weaponry.',
+    nobility: 'Be a good citizen. Sell legal goods, food, and work in civil services.',
+    fishing: 'Catch raw fish and rarer fish with a Fishing Rod.',
+    smithing: 'Create refined metal for crafting tools.',
+    woodcutting: 'Chop wood for unrefined wood and refine that wood.',
+    medicine: 'Heal others with medical kits, and work as an EMS.',
+    gathering: 'Gather unrefined plants as as kevlarium and vigorium.',
+    mining: 'Mine unrefined metal from the quarries and shafts.'
+};
+
 // The main rendering function.
 class App extends Component {
     constructor(props) {
@@ -109,7 +125,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        SVGInject(document.getElementsByClassName('injectable'));
+        //SVGInject(document.getElementsByClassName('injectable'));
         window.addEventListener('keyup', this.close.bind(this));
 
         if ('alt' in window) {
@@ -118,10 +134,11 @@ class App extends Component {
     }
 
     componentDidUpdate() {
-        SVGInject(document.getElementsByClassName('injectable'));
+        //SVGInject(document.getElementsByClassName('injectable'));
     }
 
     navigate(e) {
+        console.log(e.target);
         this.setState({ tabIndex: parseInt(e.target.id) });
     }
 
@@ -190,17 +207,22 @@ class App extends Component {
 
 const Navigation = ({ navigate, index }) => {
     const tabs = Object.keys(tabData).map((key, currIndex) => {
+        const isActive = currIndex === index ? true : false;
         return h(
             'div',
             {
                 class: currIndex === index ? 'tabcon active' : 'tabcon',
-                id: tabData[key],
+                id: currIndex,
                 onclick: navigate.bind(this)
             },
-            h('img', {
-                src: `../icons/${key}.svg`,
-                class: 'injectable'
-            })
+            h(
+                'div',
+                { class: 'icon-wrapper', id: currIndex },
+                h('svg', {
+                    type: 'image/svg+xml',
+                    style: `background: url('../icons/${key}.svg');`
+                })
+            )
         );
     });
     return h('div', { class: 'navcon' }, tabs);
@@ -593,12 +615,23 @@ class Contacts extends Component {
 
     renderContacts() {
         const contacts = this.state.contacts.map(contact => {
+            const isOn = contact.isOnline;
+
             return h(
                 'div',
                 { class: 'contact' },
                 h('div', { class: 'id' }, contact.id),
                 h('div', { class: 'name' }, contact.name),
-                h('div', { class: 'isOnline' }, `Online? ${contact.isOnline}`),
+                isOn &&
+                    h('svg', {
+                        type: 'image/svg+xml',
+                        style: `background: url('../icons/globe.svg');`
+                    }),
+                !isOn &&
+                    h('svg', {
+                        type: 'image/svg+xml',
+                        style: `background: url('../icons/globe.svg'); opacity: 0.2;`
+                    }),
                 h(
                     'button',
                     {
@@ -617,15 +650,10 @@ class Contacts extends Component {
                 { class: 'input' },
                 h('input', {
                     type: 'number',
-                    value: this.state.contact,
                     onchange: this.contactNumber.bind(this),
-                    onkeydown: this.addContactEnter.bind(this)
-                }),
-                h(
-                    'button',
-                    { class: 'addcontact', onmousedown: this.addContact.bind(this) },
-                    'Add Contact'
-                )
+                    onkeydown: this.addContactEnter.bind(this),
+                    placeholder: `Add a contact's number from '/phonenumber'`
+                })
             )
         );
 
@@ -784,7 +812,7 @@ class Inventory extends Component {
         this.setState({ inventory: items });
     }
 
-    renderItem({ item, index }) {
+    renderItem({ item, index, itemCount }) {
         if (!item) return;
         if (this.state.search.length >= 2) {
             if (!item.name.includes(this.state.search)) return;
@@ -834,12 +862,23 @@ class Inventory extends Component {
                     'Destroy'
                 ),
                 item.quantity >= 2 &&
+                    itemCount <= 27 &&
                     h(
                         'button',
                         {
                             class: 'item-button',
                             id: index,
                             onclick: this.splitItem.bind(this)
+                        },
+                        'Split'
+                    ),
+                item.quantity >= 2 &&
+                    itemCount >= 28 &&
+                    h(
+                        'button',
+                        {
+                            class: 'item-button disabled',
+                            id: index
                         },
                         'Split'
                     ),
@@ -859,17 +898,10 @@ class Inventory extends Component {
             if (index >= 28) return;
             return h(this.renderItem.bind(this), {
                 item,
-                index
+                index,
+                itemCount: validItems.length
             });
         });
-
-        items.unshift(
-            h(
-                'div',
-                { class: 'item-stats-wrapper' },
-                h('div', { class: 'total-items' }, `${validItems.length}/28`)
-            )
-        );
 
         items.unshift(
             h(
@@ -883,6 +915,14 @@ class Inventory extends Component {
                     onchange: this.onInputEvent.bind(this),
                     value: this.state.search
                 })
+            )
+        );
+
+        items.unshift(
+            h(
+                'div',
+                { class: 'item-stats-wrapper' },
+                h('div', { class: 'total-items' }, `${validItems.length}/28`)
             )
         );
 
@@ -911,18 +951,18 @@ class Stats extends Component {
             alt.on('inventory:AddStat', this.addStatBind);
             alt.emit('inventory:FetchStats');
         } else {
-            this.addStat('agility', 1, 55);
+            this.addStat('agility', 1, 1);
             this.addStat('cooking', 25, 859215);
-            this.addStat('crafting', 25, 859215);
-            this.addStat('mechanic', 25, 859215);
+            this.addStat('crafting', 25, 459215);
+            this.addStat('mechanic', 25, 555215);
             this.addStat('notoriety', 25, 859215);
-            this.addStat('nobility', 25, 859215);
+            this.addStat('nobility', 25, 852215);
             this.addStat('fishing', 25, 859215);
-            this.addStat('smithing', 25, 859215);
+            this.addStat('smithing', 25, 651215);
             this.addStat('woodcutting', 25, 859215);
-            this.addStat('medicine', 25, 859215);
+            this.addStat('medicine', 25, 849215);
             this.addStat('gathering', 25, 859215);
-            this.addStat('mining', 25, 859215);
+            this.addStat('mining', 25, 739215);
         }
     }
 
@@ -955,12 +995,25 @@ class Stats extends Component {
             const currentXP = parseInt(stat.xp);
             const xpForNextLvl = getXP(getLevel(currentXP) + 1);
             const xpDifference = xpForNextLvl - currentXP;
+            const progress = currentXP / xpForNextLvl;
+            const color = {
+                r: Math.floor(Math.random() * 155) + 100,
+                g: Math.floor(Math.random() * 155) + 100,
+                b: Math.floor(Math.random() * 155) + 100
+            };
 
             return h(
                 'div',
                 { class: 'stat' },
                 h('div', { class: 'statlvl' }, stat.lvl),
                 h('div', { class: 'statname' }, stat.name),
+                h('div', {
+                    class: 'progressbar',
+                    style: `width: ${progress * 100}% !important; background: rgba(${
+                        color.r
+                    }, ${color.g}, ${color.b});`
+                }),
+                h('div', { class: 'description' }, skillDescriptions[stat.name]),
                 h('svg', {
                     type: 'image/svg+xml',
                     style: `background: url('../icons/${icon}.svg');`

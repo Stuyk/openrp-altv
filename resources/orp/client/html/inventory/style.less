@@ -81,9 +81,9 @@ html {
         width: 100%;
 
         .search {
-            background: @dark;
+            background: rgba(255, 255, 255, 0.05);
             color: white;
-            border: 2px solid transparent;
+            border: 2px solid @dark;
             text-align: center;
             width: 100%;
             height: 25px;
@@ -117,6 +117,8 @@ html {
         justify-content: space-around;
         align-items: center;
         justify-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        transform: skew(-5deg);
 
         .item-name {
             width: 25%;
@@ -177,241 +179,100 @@ html {
         }
     }
 
-    /*
-    .item {
-        cursor: grab;
-        display: flex;
-        position: relative;
-        justify-content: center;
-        align-items: center;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        height: 100%;
-        width: 100%;
-        color: white;
-
-        svg {
-            opacity: 0.5;
-            width: 65%;
-            height: 65%;
-            top: 8px;
-            position: absolute;
-            pointer-events: none;
-            object-fit: contain;
-            user-select: none;
-        }
-
-        .itemname {
-            text-align: center;
-            width: 90%;
-            position: absolute;
-            top: 60px;
-            color: white;
-            text-transform: uppercase;
-            font-size: 9px;
-            text-shadow: 1px 1px black;
-            background: @dark;
-            padding: 2px 5%;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .itemnameheld {
-            text-align: center;
-            width: 90%;
-            position: absolute;
-            top: 60px;
-            color: white;
-            text-transform: uppercase;
-            font-size: 9px;
-            text-shadow: 1px 1px black;
-            background: @dark;
-            padding: 2px 5%;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .tooltip {
-            height: auto;
-            width: 130px;
-            background: @dark;
-            color: white;
-            left: -150px;
-            top: -2px;
-            padding: 5px 5px;
-            pointer-events: none;
-            position: absolute;
-            text-align: center;
-            visibility: hidden;
-            border: 2px solid @contrast2;
-            box-shadow: 0px 1px 5px 0px black;
-            z-index: 5;
-        }
-
-        name {
-            width: 50px;
-            top: 35px;
-            position: absolute;
-            pointer-events: none;
-            text-align: center;
-            text-shadow: 1px 1px black;
-            text-transform: uppercase;
-            word-wrap: break-word;
-            pointer-events: none;
-        }
-
-        .itemquantity {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            color: white;
-            text-transform: uppercase;
-            font-size: 9px;
-            pointer-events: none;
-            text-align: right;
-        }
-
-        .itemquantityheld {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            color: white;
-            text-transform: uppercase;
-            font-size: 9px;
-            pointer-events: none;
-            text-align: right;
-        }
-    }
-
-    .item-place {
-        border: 2px dashed rgba(0, 0, 0, 0.5) !important;
-        height: 100%;
-        width: 100%;
-        color: rgba(0, 0, 0, 0.5);
-        cursor: default;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-
-    .item-hovered {
-        border: 2px dashed @contrast2 !important;
-        width: 100%;
-        height: 100%;
-    }
-
     .item:hover {
-        border: 2px solid @contrast2;
-        visibility: visible;
+        background: rgba(0, 0, 0, 0.75);
 
-        .tooltip {
-            visibility: visible !important;
-            pointer-events: none;
-        }
-
-        .itemname,
-        .itemquantity {
-            color: @contrast2;
+        .item-name {
+            color: @contrast1;
         }
     }
-    */
 }
 
 .stats {
     width: 100%;
-    height: 100%;
     display: grid;
     justify-content: center;
     align-items: center;
-    grid-template-columns: repeat(auto-fill, minmax(75px, 75px));
+    grid-template-columns: 100%;
     grid-column-gap: 10px;
-    grid-auto-rows: 75px;
-    grid-row-gap: 10px;
+    grid-auto-rows: auto;
+    grid-row-gap: 15px;
 
     .stat {
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        border: 2px solid @whitecontrast;
-        text-align: center;
-        text-shadow: 1px 1px black;
-        background-size: contain;
-        height: 100%;
         width: 100%;
-        z-index: 1;
-        cursor: pointer;
-
-        .statname {
-            width: 100%;
-            position: absolute;
-            top: 60px;
-            color: white;
-            text-transform: uppercase;
-            font-size: 9px;
-            text-shadow: 1px 1px black;
-            background: @dark;
-            padding: 2px 0px;
-            z-index: 2;
-            pointer-events: none;
-        }
+        height: 75px;
+        display: flex;
+        justify-content: left;
+        color: white;
+        background: rgba(0, 0, 0, 0.2);
+        transform: skew(-5deg);
 
         svg {
-            opacity: 0.5;
-            top: 8px;
-            width: 65%;
-            height: 65%;
             position: absolute;
+            opacity: 0.5;
+            width: 50px;
+            height: 50px;
+            top: 5px;
+            left: 13px;
             pointer-events: none;
-            object-fit: contain;
+            object-fit: scale-down;
             user-select: none;
         }
 
-        .stattip {
-            height: auto;
-            width: 130px;
-            background: @dark;
-            color: white;
-            left: -150px;
-            top: -2px;
-            padding: 5px 5px;
-            pointer-events: none;
+        .statname {
+            text-align: left;
             position: absolute;
-            text-align: center;
-            visibility: hidden;
-            border: 2px solid @contrast2;
-            box-shadow: 0px 1px 5px 0px black;
-            font-size: 10px;
+            color: white;
+            text-shadow: 1px 1px black;
+            left: 5px;
+            top: 61px;
+            text-transform: uppercase;
+            font-size: 9px;
+            padding: 2px 0px;
+            z-index: 2;
+            pointer-events: none;
+            transform: skew(5deg);
+        }
+
+        .progressbar {
+            width: 25px;
+            height: 12px;
+            position: absolute;
+            z-index: 1;
+            top: 62px;
+            opacity: 0.5;
+        }
+
+        .stattip {
+            display: flex;
+            text-align: left;
+            position: absolute;
+            width: 150px;
+            right: 0px;
+            top: 2px;
+            justify-content: left;
+            align-items: center;
+            justify-items: left;
         }
 
         .statlvl {
             position: absolute;
             top: 2px;
-            right: 2px;
-            color: white;
-            text-transform: uppercase;
-            font-size: 9px;
-            pointer-events: none;
+            left: 2px;
+            color: @contrast1;
+        }
+
+        .description {
+            width: 100px;
+            position: absolute;
+            font-size: 11px;
+            top: 5px;
+            right: 50%;
         }
     }
 
     .stat:hover {
-        border: 2px solid @contrast2;
-
-        .stattip {
-            visibility: visible !important;
-            pointer-events: none;
-        }
-
-        .statname,
-        .statlvl {
-            color: @contrast2;
-        }
+        background: rgba(0, 0, 0, 0.8);
     }
 }
 
@@ -481,30 +342,6 @@ html {
     }
 }
 
-.item-held {
-    display: flex;
-    position: fixed;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    width: 75px;
-    height: 75px;
-    color: white;
-    background: rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-    z-index: 55;
-
-    svg {
-        width: 75%;
-        height: 75%;
-        position: absolute;
-        pointer-events: none;
-        object-fit: contain;
-        user-select: none;
-        opacity: 0.5;
-    }
-}
-
 .navcon {
     display: grid;
     grid-template-columns: @tab-spacing;
@@ -520,7 +357,6 @@ html {
         justify-content: center;
         align-content: center;
         align-items: center;
-        transition: 0.35s;
 
         svg {
             width: 25px !important;
@@ -529,25 +365,43 @@ html {
         }
 
         svg g path {
-            transition: 0.35s;
             fill: rgba(255, 255, 255, 0.2);
         }
     }
 
     .tabcon:hover {
         cursor: pointer;
-        box-shadow: inset 0px -3px 0px 0px @contrast1;
+        box-shadow: inset 0px -3px 0px 0px white;
 
-        svg g path {
-            fill: @contrast1 !important;
+        svg {
+            opacity: 1;
         }
     }
 
     .active {
-        box-shadow: inset 0px -3px 0px 0px @contrast2;
+        box-shadow: inset 0px -3px 0px 0px white;
 
-        svg g path {
-            fill: @contrast2 !important;
+        svg {
+            background: white;
+            opacity: 1 !important;
+        }
+    }
+
+    .icon-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        width: 100%;
+        height: 100%;
+        user-select: none;
+
+        svg {
+            opacity: 0.3;
+            height: 25px;
+            width: 25px;
+            object-fit: scale-down;
+            pointer-events: none;
         }
     }
 }
@@ -592,10 +446,14 @@ html {
 }
 
 .contactlist {
-    display: flex;
-    flex-direction: column;
-    color: white;
     width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 100%;
+    grid-column-gap: 10px;
+    grid-auto-rows: auto;
+    grid-row-gap: 15px;
 
     .input {
         height: 100%;
@@ -604,18 +462,21 @@ html {
         justify-content: space-between;
         align-content: center;
         align-items: center;
+        color: white;
 
         input {
-            height: 30px;
-            width: 300px;
+            background: rgba(255, 255, 255, 0.05);
             color: white;
-            border: none;
-            background: @darkaccent;
-            padding-left: 25px;
+            border: 2px solid @dark;
+            text-align: center;
+            width: 100%;
+            height: 25px;
         }
 
         input:focus {
             outline: none;
+            border: 2px solid @contrast1;
+            color: @contrast1;
         }
 
         .addcontact {
@@ -644,41 +505,58 @@ html {
 
     .contact {
         width: 100%;
-        height: 100%;
+        height: 45px;
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-content: center;
         align-items: center;
         flex-direction: row;
+        color: white;
         font-family: @fontface;
+        background: rgba(0, 0, 0, 0.2);
+        transform: skew(-5deg);
+
+        svg {
+            width: 35px;
+            height: 35px;
+            transform: skew(5deg);
+        }
 
         button {
             width: 100px;
-            height: 30px;
-            border: 2px solid white;
+            height: 100%;
+            border: 2px solid transparent;
             background: none;
-            padding: 5px;
-            margin: 5px;
-            color: white;
-            font-size: 9px;
+            color: @contrast1;
+            font-size: 11px;
         }
 
         button:hover {
             color: @contrast2;
             border: 2px solid @contrast2;
+            cursor: pointer;
         }
 
         button:focus {
             outline: none;
         }
     }
+
+    .contact:hover {
+        background: rgba(0, 0, 0, 0.75);
+    }
 }
 
 .vehiclelist {
-    display: flex;
-    flex-direction: column;
-    color: white;
     width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 100%;
+    grid-column-gap: 10px;
+    grid-auto-rows: auto;
+    grid-row-gap: 10px;
+    color: white;
 
     .vehiclerow {
         width: 100%;
@@ -688,8 +566,9 @@ html {
         align-content: center;
         align-items: center;
         flex-direction: row;
-        margin: 10px;
         font-family: @fontface;
+        background: rgba(0, 0, 0, 0.2);
+        transform: skew(-5deg);
 
         .id {
             padding-right: 25px;
@@ -701,10 +580,11 @@ html {
 
         .btn {
             background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: white;
+            border: 2px solid transparent;
+            color: @contrast1;
             padding: 5px;
             margin: 2px;
+            height: 100%;
         }
 
         .btn:hover {
@@ -716,6 +596,11 @@ html {
         .btn:focus {
             outline: none;
         }
+    }
+
+    .vehiclerow:hover {
+        color: @contrast1;
+        background: rgba(0, 0, 0, 0.75);
     }
 }
 

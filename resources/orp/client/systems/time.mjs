@@ -6,6 +6,5 @@ let currentHour = 8;
 
 alt.on('syncedMetaChange', (entity, key, value) => {
     if (key !== 'time') return;
-
     currentHour = value;
 });

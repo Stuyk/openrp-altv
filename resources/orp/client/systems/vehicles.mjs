@@ -84,6 +84,16 @@ alt.on('vehicle:Fuel', () => {
     alt.Player.local.fuelLocation = alt.Player.local.pos;
 });
 
+alt.onServer('vehicle:Rotate', (vehicle, rot) => {
+    alt.nextTick(() => {
+        native.setEntityCollision(vehicle.scriptID, false, true);
+        alt.setTimeout(() => {
+            native.setEntityHeading(vehicle.scriptID, rot);
+            native.setEntityCollision(vehicle.scriptID, true, true);
+        }, 100);
+    });
+});
+
 function startInterval(key, value) {
     if (key !== 'pedflags') return;
     // Disable Vehicle Engine Startup

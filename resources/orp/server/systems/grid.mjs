@@ -60,6 +60,7 @@ pairs.forEach((row, sector) => {
             },
             width: width,
             length: length,
+            name: `${String.fromCharCode(65 + index)}${sector}`,
             doors: []
         };
         colshape.sector.seed = new RandomNumberGenerator(

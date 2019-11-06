@@ -4,7 +4,16 @@ let time = {
     hour: 8
 };
 
-let lastUpdate = Date.now() + 1800000; // 30 Minutes = 1 Hour
+// 30 Minutes = 1 Hour
+let lastUpdate = Date.now() + 10000;
+
+alt.on('parse:Player', (player, now) => {
+    if (now < lastUpdate) return;
+
+
+
+    
+});
 
 export function setTimeForNewPlayer(player) {
     let day = new Date();

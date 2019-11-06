@@ -18,11 +18,30 @@ function handlePlayerInterval() {
     handling = true;
 
     const activePlayers = alt.Player.all.filter(p => p && p.data);
+    const now = Date.now();
     for (let i = 0; i < activePlayers.length; i++) {
         const player = activePlayers[i];
-        const now = Date.now();
         if (!player) continue;
         alt.emit('parse:Player', player, now);
+    }
+
+    if (nextSavePlayerTime < now) {
+        alt.log('Saving Players');
+        nextSavePlayerTime = now + Config.timePlayerSaveTime;
+    }
+
+    if (nextTimePlayingTime < now) {
+        alt.log('Saving Playing Time');
+        nextTimePlayingTime = now + Config.timePlayingTime;
+    }
+
+    if (nextPaycheckTime < now) {
+        alt.log('Adding Paychecks');
+        nextPaycheckTime = now + Config.timePaycheckTime;
+    }
+
+    if (nextRefreshContactsTime < now) {
+        nextRefreshContactsTime = now + Config.timeRefreshContactsTime;
     }
 
     handling = false;
@@ -31,7 +50,6 @@ function handlePlayerInterval() {
 alt.on('parse:Player', (player, now) => {
     // Save Player Data
     if (nextSavePlayerTime < now) {
-        nextSavePlayerTime = now + Config.timePlayerSaveTime;
         if (player.saveData) {
             try {
                 player.saveData();
@@ -44,7 +62,6 @@ alt.on('parse:Player', (player, now) => {
 
     // Save Playing Time
     if (nextTimePlayingTime < now) {
-        nextTimePlayingTime = now + Config.timePlayingTime;
         if (player.updatePlayingTime) {
             try {
                 player.updatePlayingTime();
@@ -56,7 +73,6 @@ alt.on('parse:Player', (player, now) => {
     }
 
     if (nextPaycheckTime < now) {
-        nextPaycheckTime = now + Config.timePaycheckTime;
         if (player.addCash(Config.defaultPlayerPaycheck)) {
             try {
                 const msg = `+$${Config.defaultPlayerPaycheck} from Paycheck`;
@@ -69,7 +85,6 @@ alt.on('parse:Player', (player, now) => {
     }
 
     if (nextRefreshContactsTime < now) {
-        nextRefreshContactsTime = now + Config.timeRefreshContactsTime;
         player.syncContacts();
     }
 
@@ -94,72 +109,6 @@ alt.on('parse:Player', (player, now) => {
             } catch (err) {
                 alt.log(err);
                 alt.error(`Could not revive player.`);
-            }
-        }
-    }
-
-    if (player.cooking && player.cooking.list.length >= 1) {
-        if (Date.now() > player.cooking.time + Config.timeCookingTime) {
-            player.cooking.time = Date.now();
-            const cookableCount = player.cooking.cookable;
-            let count = 0;
-
-            if (player.cooking.list <= cookableCount) {
-                player.cooking.list.forEach(item => {
-                    const result = player.subItemByHash(item.hash);
-                    if (!result) return;
-                    addXP(player, 'cooking', item.props.xp);
-                    count += 1;
-                    player.notify(`You cooked ${count}x ${item.name}.`);
-
-                    const healthRestore = Math.floor(item.props.lvl / 3);
-                    const validRestore = healthRestore <= 0 ? 1 : healthRestore;
-                    player.addItem(
-                        'cookedfood',
-                        1,
-                        { health: validRestore },
-                        false,
-                        false,
-                        item.name.replace('Raw', 'Cooked')
-                    );
-                });
-                player.cooking.list = [];
-                delete player.cooking;
-            } else {
-                const itemsToCook = [];
-                while (itemsToCook.length < cookableCount) {
-                    itemsToCook.push(player.cooking.list.pop());
-                }
-
-                let finished = false;
-                itemsToCook.forEach(item => {
-                    if (finished) return;
-                    if (item === undefined) {
-                        finished = true;
-                        return;
-                    }
-
-                    const result = player.subItemByHash(item.hash);
-                    if (!result) return;
-                    addXP(player, 'cooking', item.props.xp);
-                    count += 1;
-                    player.notify(`You cooked ${count}x ${item.name}.`);
-
-                    const healthRestore = Math.floor(item.props.lvl / 3);
-                    const validRestore = healthRestore <= 0 ? 1 : healthRestore;
-                    player.addItem(
-                        'cookedfood',
-                        1,
-                        { health: validRestore },
-                        false,
-                        false,
-                        item.name.replace('Raw', 'Cooked')
-                    );
-                });
-
-                if (finished) {
-                    delete player.cooking;
-                }
             }
         }
     }

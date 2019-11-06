@@ -32,6 +32,9 @@ for (let row = 0; row <= rows; row++) {
     }
 }
 
+// Generates from left to right; from the bottom to the top.
+// South to North
+// West to East
 pairs.forEach((row, sector) => {
     sectors.set(sector, row);
     row.forEach((column, index) => {

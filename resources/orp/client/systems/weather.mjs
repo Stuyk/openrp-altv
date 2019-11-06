@@ -1,28 +1,30 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 
 alt.log('Loaded: client->systems->weather.mjs');
 
-/*
-const weatherRotation = [
-    0, // extra sunny
-    1, // clear
-    2, // clouds
-    5, // overcast
-    8, // light rain
-    6, // rain
-    7, // thunder
-    8, // light rain
-    5, // overcast
-    2, // clouds
-    0, // extra sunny
-    0, // sunny
-    0,
-    0,
-    0
-];
+const weather = {
+    0: 'EXTRASUNNY', // icon
+    1: 'CLEAR', // icon
+    2: 'CLOUDS', // icon
+    3: 'SMOG',
+    4: 'FOGGY', // icon
+    5: 'OVERCAST', // icon
+    6: 'RAIN', // icon
+    7: 'THUNDER', // icon
+    8: 'CLEARING',
+    9: 'NEUTRAL',
+    10: 'SNOW',
+    11: 'BLIZZARD',
+    12: 'SNOWLIGHT',
+    13: 'XMAS',
+    14: 'HALLOWEEN'
+};
 
-const weatherMultiplier = [8, 6, 4, 2, 1, 1, 1, 1, 1, 2, 4, 6, 6, 6, 6];
-
-alt.setWeatherSyncActive(true);
-alt.setWeatherCycle(weatherRotation, weatherMultiplier);
-*/
+alt.onServer('transition:Weather', weatherID => {
+    if (!weather[weatherID]) {
+        return;
+    }
+    native.setWeatherTypeOvertimePersist(weather[weatherID], 50);
+    alt.emit('hud:UpdateWeather', weather[weatherID].toLowerCase());
+});

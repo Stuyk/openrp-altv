@@ -1,35 +1,13 @@
 import * as alt from 'alt';
+import { Config } from '../configuration/config.mjs';
 import { colshapes } from './grid.mjs';
+
+const weatherGroups = [];
+const weatherCycle = Config.weatherCycle;
+const weatherCycleTime = Config.weatherCycleTime;
 
 let lastUpdate = Date.now();
 
-const weatherCycle = [
-    0, // Extra sunny
-    0, // Extra sunny
-    0, // Extra sunny
-    0, // Extra sunny
-    0, // Extra sunny
-    0, // Extra sunny
-    0, // Extra sunny
-    1, // Clear
-    2, // Clouds
-    2, // Clouds
-    4, // Foggy
-    5, // Overcast
-    8, // Light Rain
-    6, // Rain
-    6, // Rain
-    7, // Thunder
-    7, // Thunder
-    6, // Rain
-    8, // Light Rain
-    5, // Overcast
-    2, // Clouds
-    1, // Clear
-    1 // Clear
-];
-
-const weatherGroups = [];
 colshapes.forEach((shape, index) => {
     // Get Even Numbers Only
     if (shape.sector.x % 4 === 0 && shape.sector.y % 4 === 0) {
@@ -49,7 +27,7 @@ colshapes.forEach((shape, index) => {
 alt.on('interval:Player', () => {
     const now = Date.now();
     if (now < lastUpdate) return;
-    lastUpdate = now + 60000 * 10;
+    lastUpdate = now + weatherCycleTime;
 
     weatherGroups.forEach((group, index) => {
         const newWeatherIndex = Math.floor(Math.random() * weatherCycle.length);
@@ -79,6 +57,6 @@ alt.on('interval:Player', () => {
         if (!player.colshape) return;
         const weather = player.colshape.getMeta('weather');
         if (weather === null) return;
-        player.setWeather(weather.weatherType);
+        alt.emitClient(player, 'transition:Weather', weather.weatherType);
     });
 });

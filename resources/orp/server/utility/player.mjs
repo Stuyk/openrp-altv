@@ -135,7 +135,7 @@ export function setupPlayerFunctions(player) {
     // ====================================
     // Weather & Time
     player.updateTime = () => {
-        systemsTime.setTimeForNewPlayer(player);
+        systemsTime.updatePlayerTime(player);
     };
 
     /**

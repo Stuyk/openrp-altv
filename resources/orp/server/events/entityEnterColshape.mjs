@@ -16,8 +16,7 @@ alt.on('entityEnterColshape', (colshape, entity) => {
             alt.emitClient(entity, 'door:RenderDoors', colshape.sector.doors);
             const weather = colshape.getMeta('weather');
             if (weather !== null) {
-                entity.setWeather(weather.weatherType);
-                entity.send(`Weather: ${weather.weatherType}`);
+                alt.emitClient(entity, 'transition:Weather', weather.weatherType);
             }
         }
 

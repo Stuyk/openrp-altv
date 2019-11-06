@@ -41,6 +41,11 @@ class App extends Component {
             alt.on('hud:SetHudNotice', this.setHudNotice.bind(this));
             alt.on('hud:QueueNotification', this.queueNotification.bind(this));
             alt.on('hud:isInVehicle', this.isInVehicle.bind(this));
+            alt.on('hud:SetWeather', this.setWeather.bind(this));
+
+            setTimeout(() => {
+                alt.emit('hud:Ready');
+            }, 500);
         } else {
             this.setContextPosition(0, 0);
             for (let i = 0; i < 5; i++) {
@@ -57,7 +62,12 @@ class App extends Component {
             );
             this.queueNotification('Hello World B');
             this.queueNotification('Hello World C');
+            this.setWeather('thunder');
         }
+    }
+
+    setWeather(name) {
+        this.setState({ weather: name });
     }
 
     adjustHud(shouldAdjust) {
@@ -232,6 +242,19 @@ class App extends Component {
                     },
                     'SPRINT'
                 ),
+            this.state.weather &&
+                h(
+                    'div',
+                    {
+                        class: 'weather',
+                        style: `right: ${this.state.xOffset + 25}px !important`
+                    },
+                    h('svg', {
+                        type: 'image/svg+xml',
+                        style: `background: url('../icons/${this.state.weather}.svg');`
+                    })
+                ),
+
             // Vehicle Speed Data
             this.state.data.speed !== '' &&
                 h(

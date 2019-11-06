@@ -9,6 +9,7 @@ let contextData = new Map();
 let isContextOpen = false;
 let lastX;
 let lastY;
+let weather;
 
 /*
 Warning; this is meant to be a seperate webview.
@@ -28,8 +29,13 @@ function showDialogue() {
     if (webview === undefined) {
         webview = new alt.WebView(url);
         webview.on('context:Click', contextClick);
+        webview.on('hud:Ready', ready);
         webview.unfocus();
     }
+}
+
+function ready() {
+    webview.emit('hud:SetWeather', weather);
 }
 
 function contextClick(isServer, eventName, hash) {
@@ -110,4 +116,9 @@ alt.on('meta:Changed', (key, value) => {
 
 alt.on('hud:QueueNotification', msg => {
     webview.emit('hud:QueueNotification', msg);
+});
+
+alt.on('hud:UpdateWeather', weatherName => {
+    weather = weatherName;
+    webview.emit('hud:SetWeather', weatherName);
 });

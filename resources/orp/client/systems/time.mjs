@@ -1,10 +1,9 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 
 alt.log('Loaded: client->systems->time.mjs');
 
-let currentHour = 8;
-
-alt.on('syncedMetaChange', (entity, key, value) => {
-    if (key !== 'time') return;
-    currentHour = value;
+alt.onServer('time:SetTime', (hour, minute) => {
+    native.pauseClock(true);
+    alt.log(`Time: Hour: ${hour} || Minute: ${minute}`);
 });

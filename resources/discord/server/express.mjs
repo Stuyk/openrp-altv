@@ -42,6 +42,11 @@ function setupEndpoints() {
             return;
         }
 
+        if (!req.query.code) {
+            res.redirect('/');
+            return;
+        }
+
         const userAuthorizationCode = req.query.code;
         const postRequest = request.post('https://discordapp.com/api/oauth2/token', {
             headers: {

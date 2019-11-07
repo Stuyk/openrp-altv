@@ -1,32 +1,26 @@
 import * as alt from 'alt';
-import { getEndPoint } from './express.mjs';
-import { fetchPlayerByIP } from './utility.mjs';
+import { getEndpoint } from './express.mjs';
 
-alt.on('playerConnect', player => {
+alt.on('playerConnect', (player) => {
     player.loginTimeout = Date.now() + 60000 * 2;
-    alt.emitClient(player, 'discord:Request', `${getEndPoint()}`);
+    alt.emitClient(player, 'discord:Connect', `${getEndpoint()}`);
 });
 
-alt.on('discord:ParseLogin', (ip, data) => {
-    const target = fetchPlayerByIP(ip);
-
-    if (!target) {
-        console.log('A user was not able to login.');
-        return;
-    }
-
-    alt.emit('discord:Login', target, data);
+alt.onClient('discord:ParseLogin', (client, data) => {
+    alt.emit('discord:Login', client, data);
 });
 
 alt.on('discord:Login', (player, data) => {
     delete player.loginTimeout;
     player.authenticated = true;
+
     alt.emitClient(player, 'discord:LoggedIn');
     alt.emit('discord:FinishLogin', player, data);
-});
+})
 
 alt.on('discord:CheckLoginTimeout', player => {
     if (!player) return;
+    
     if (Date.now() > player.loginTimeout) {
         player.kick();
         alt.log(`${player.name} was kicked for not logging in.`);

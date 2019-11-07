@@ -51,7 +51,7 @@ chat.registerCmd('t', (player, args) => {
         return;
     }
 
-    user.send(`{FFFF00}SMS: ${msg} | Sender: ${user.data.name} (${player.data.id})`);
+    user.send(`{FFFF00}SMS: ${msg} | Sender: ${player.data.name} (${player.data.id})`);
     player.send(`{d4d400}SENT: ${msg} | To: ${user.data.name} (${number})`);
 });
 

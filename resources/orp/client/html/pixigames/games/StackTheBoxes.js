@@ -41,6 +41,8 @@ on(eventNames.ON_MOUSE_UP, ([event, object]) => {
     }
 
     if (complete) {
+        if (startTime + 5000 > Date.now()) return;
+
         console.log('Done!');
         if ('alt' in window) {
             alt.emit('minigame:Complete', currentGameState.hash);

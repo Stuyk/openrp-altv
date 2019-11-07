@@ -23,6 +23,7 @@ const style = new PIXI.TextStyle({
 });
 const text = new PIXI.Text('Loading...', style);
 const textMetrics = PIXI.TextMetrics.measureText('Loading...', style);
+const startTime = Date.now();
 let ready = false;
 
 document.querySelector('#game').appendChild(Game.view);

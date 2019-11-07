@@ -1,13 +1,12 @@
 import * as alt from 'alt';
+import externalIP from 'external-ip';
 import express from 'express';
-import fs from 'fs';
 import request from 'request';
 import path from 'path';
-import externalIP from 'external-ip';
-import { fetchPlayerByIP } from './utility.mjs';
+import fs from 'fs';
 
-const getIp = externalIP();
 const app = express();
+const getIp = externalIP();
 const port = 17888;
 const data = JSON.parse(
     fs.readFileSync(
@@ -16,43 +15,27 @@ const data = JSON.parse(
 );
 
 let remoteIP = '0.0.0.0';
-
-getIp((err, ip) => {
-    if (err) {
-        throw err;
-    }
-
-    remoteIP = ip;
+if (config.local) {
+    remoteIP = '127.0.0.1';
     setupEndpoints();
-});
+} else {
+    getIp((err, ip) => {
+        if (err) {
+            throw err;
+        }
 
-export function getEndPoint() {
-    return `http://${remoteIP}:${port}/`;
+        remoteIP = ip;
+        setupEndpoints();
+    });
 }
 
-export function getRemoteIP() {
-    return remoteIP;
+export function getEndpoint() {
+    return `http://${remoteIP}:${port}/`;
 }
 
 function setupEndpoints() {
     app.get('/', (req, res) => {
-        let address = res.connection.remoteAddress;
-
-        if (address.includes(remoteIP)) {
-            address = '::ffff:127.0.0.1';
-        }
-
-        /*
-        const player = fetchPlayerByIP(address);
-        if (!player) {
-            res.send('You seem lost.');
-            return;
-        }
-        */
-
-        res.redirect(
-            `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify%20email&redirect_uri=http://${remoteIP}:${port}/login`
-        );
+        res.redirect(`https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify%20email&redirect_uri=http://localhost:${port}/login`);
     });
 
     app.get('/login', async (req, res) => {
@@ -69,7 +52,7 @@ function setupEndpoints() {
             formData: {
                 client_id: data.client_id,
                 client_secret: data.client_secret,
-                redirect_uri: `http://${remoteIP}:${port}/login`,
+                redirect_uri: `http://localhost:${port}/callback`,
                 grant_type: 'authorization_code',
                 code: userAuthorizationCode
             }
@@ -77,50 +60,8 @@ function setupEndpoints() {
 
         postRequest.on('data', d => {
             const userData = JSON.parse(d.toString());
-            const getData = request.get('https://discordapp.com/api/users/@me', {
-                headers: {
-                    Authorization: `Bearer ${userData.access_token}`
-                }
-            });
-
-            getData.on('data', newData => {
-                try {
-                    let address = res.connection.remoteAddress;
-                    if (address.includes(remoteIP)) {
-                        address = '::ffff:127.0.0.1';
-                    }
-
-                    alt.emit('discord:ParseLogin', address, newData.toString());
-                } catch (err) {
-                    console.log('Failed to authorization user.');
-                }
-
-                /*
-                const revokeRequest = request.post(
-                    'https://discordapp.com/api/oauth2/token/revoke',
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            Authorization: `Bearer ${userData.access_token}`
-                        },
-                        formData: {
-                            client_id: data.client_id,
-                            client_secret: data.client_secret,
-                            token: userData.access_token,
-                            token_type_hint: 'access_token'
-                        }
-                    }
-                );
-
-                revokeRequest.on('data', (req, res) => {
-                    console.log(req.toString());
-                });
-
-                revokeRequest.on('error', res => {
-                    console.log(res);
-                });
-                */
-            });
+            
+            res.send(`<script>let token = '${userData.access_token}'; if (window.alt) { alt.emit('discord:token', token); }</script>`);
         });
 
         postRequest.on('error', () => {

@@ -42,11 +42,13 @@ function setupEndpoints() {
             address = '::ffff:127.0.0.1';
         }
 
+        /*
         const player = fetchPlayerByIP(address);
         if (!player) {
             res.send('You seem lost.');
             return;
         }
+        */
 
         res.redirect(
             `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify%20email&redirect_uri=http://${remoteIP}:${port}/login`

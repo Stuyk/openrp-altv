@@ -36,6 +36,7 @@ alt.on('interval:Player', () => {
             if (!weather) {
                 const weatherType = weatherCycle[newWeatherIndex];
                 colshape.setMeta('weather', {
+                    lastWeather: newWeatherIndex,
                     weatherIndex: newWeatherIndex,
                     weatherType
                 });
@@ -45,6 +46,7 @@ alt.on('interval:Player', () => {
                     weatherIndex = 0;
                 }
                 colshape.setMeta('weather', {
+                    lastWeather: colshape.getMeta('weather'),
                     weatherIndex,
                     weatherType: weatherCycle[weatherIndex]
                 });
@@ -57,6 +59,11 @@ alt.on('interval:Player', () => {
         if (!player.colshape) return;
         const weather = player.colshape.getMeta('weather');
         if (weather === null) return;
-        alt.emitClient(player, 'transition:Weather', weather.weatherType);
+        alt.emitClient(
+            player,
+            'transition:Weather',
+            weather.weatherType,
+            weather.lastWeather
+        );
     });
 });

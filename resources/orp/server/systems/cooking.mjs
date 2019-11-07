@@ -1,10 +1,25 @@
 import * as alt from 'alt';
 import { Config } from '../configuration/config.mjs';
+import { addXP } from '../systems/skills.mjs';
+import { distance } from '../utility/vector.mjs';
 
 alt.on('parse:Player', (player, now) => {
     if (!player.cooking || player.cooking.list.length <= 0) return;
     if (now < player.cooking.time + Config.timeCookingTime) return;
 
+    if (player.cooking && !player.cooking.position) {
+        player.cooking = undefined;
+        player.notify('You stopped cooking.');
+        return;
+    }
+
+    if (distance(player.pos, player.cooking.position) > 3.5) {
+        player.cooking = undefined;
+        player.notify('You stopped cooking.');
+        return;
+    }
+
+    // Has Cooking Items
     player.cooking.time = now;
     const cookableCount = player.cooking.cookable;
     let count = 0;

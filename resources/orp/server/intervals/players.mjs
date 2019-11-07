@@ -1,10 +1,9 @@
 import * as alt from 'alt';
 import { getCharacterName } from '../cache/cache.mjs';
 import { Config } from '../configuration/config.mjs';
-import { addXP } from '../systems/skills.mjs';
 
 let nextTimePlayingTime = Date.now() + Config.timePlayingTime;
-let nextSavePlayerTime = Date.now() + Config.timePlayerTime;
+let nextSavePlayerTime = Date.now() + Config.timePlayerSaveTime;
 let nextPaycheckTime = Date.now() + Config.timePaycheckTime;
 let nextRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
 let handling = false;
@@ -52,6 +51,7 @@ alt.on('parse:Player', (player, now) => {
     if (nextSavePlayerTime < now) {
         if (player.saveData) {
             try {
+                console.log('Saving player...');
                 player.saveData();
             } catch (err) {
                 alt.log(err);

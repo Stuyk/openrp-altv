@@ -326,7 +326,8 @@ export function cookFood(player, data) {
     player.cooking = {
         list: rawfood,
         time: Date.now(),
-        cookable: totalCookable <= 0 ? 1 : totalCookable
+        cookable: totalCookable <= 0 ? 1 : totalCookable,
+        position: data.position
     };
 
     player.notify('You begin cooking...');

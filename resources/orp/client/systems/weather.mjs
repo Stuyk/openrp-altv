@@ -21,10 +21,13 @@ const weather = {
     14: 'HALLOWEEN'
 };
 
-alt.onServer('transition:Weather', weatherID => {
-    if (!weather[weatherID]) {
+alt.onServer('transition:Weather', (currentWeatherID, lastWeatherID) => {
+    if (currentWeatherID === lastWeatherID) {
+        native.setWeatherTypeNow(weather[currentWeatherID]);
+        alt.emit('hud:UpdateWeather', weather[currentWeatherID].toLowerCase());
         return;
     }
-    native.setWeatherTypeOvertimePersist(weather[weatherID], 50);
-    alt.emit('hud:UpdateWeather', weather[weatherID].toLowerCase());
+
+    native.setWeatherTypeOvertimePersist(weather[currentWeatherID], 50);
+    alt.emit('hud:UpdateWeather', weather[currentWeatherID].toLowerCase());
 });

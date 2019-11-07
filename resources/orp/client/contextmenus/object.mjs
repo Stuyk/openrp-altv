@@ -466,7 +466,8 @@ function cookingSource(ent) {
 
     items.forEach(item => {
         appendContextItem(`Cook All ${item.name}`, true, 'use:CookFood', {
-            hashes: item.hashes
+            hashes: item.hashes,
+            position: native.getEntityCoords(ent, false)
         });
     });
 

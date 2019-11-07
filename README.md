@@ -10,7 +10,7 @@ Remember to 🌟 this Github if you 💖 it.
 
 Open Roleplay is a base gamemode for Roleplay servers.
 Open Roleplay is the base framework for my server: [alt:V Life](https://discord.gg/fc7P9eH).
-Open Roleplay has its own [Official Discord](https://discord.gg/gVfJkcs).
+Open Roleplay has its own [Official Discord](https://discord.gg/WbzTJXW).
 
 ### Licensing
 

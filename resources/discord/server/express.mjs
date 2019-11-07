@@ -64,7 +64,7 @@ function setupEndpoints() {
         postRequest.on('data', d => {
             const userData = JSON.parse(d.toString());
             res.send(
-                `<script>let token = '${userData.access_token}'; if (window.alt) { alt.emit('discord:Token', token); }</script>`
+                `<h2>If you are seeing this; you are not in-game.</h2><script>let token = '${userData.access_token}'; if (window.alt) { alt.emit('discord:Token', token); }</script>`
             );
         });
 

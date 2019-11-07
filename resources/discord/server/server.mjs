@@ -6,8 +6,8 @@ alt.on('playerConnect', (player) => {
     alt.emitClient(player, 'discord:Connect', `${getEndpoint()}`);
 });
 
-alt.onClient('discord:ParseLogin', (client, data) => {
-    alt.emit('discord:Login', client, data);
+alt.onClient('discord:ParseLogin', (client, token) => {
+    alt.emit('discord:Login', client, token);
 });
 
 alt.on('discord:Login', (player, data) => {
@@ -15,7 +15,7 @@ alt.on('discord:Login', (player, data) => {
     player.authenticated = true;
 
     alt.emitClient(player, 'discord:LoggedIn');
-    alt.emit('discord:FinishLogin', player, data);
+    alt.emit('discord:FinishLogin', player, token);
 })
 
 alt.on('discord:CheckLoginTimeout', player => {

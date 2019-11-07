@@ -11,8 +11,8 @@ alt.onServer('discord:Connect', (endpoint) => {
     native.doScreenFadeOut(1);
     native.transitionToBlurred(1);
 
-    webview.on('discord:data', (data) => {
-        alt.emitServer('discord:ParseLogin', JSON.stringify(data));
+    webview.on('discord:token', (token) => {
+        alt.emitServer('discord:ParseLogin', token);
     });
 });
 

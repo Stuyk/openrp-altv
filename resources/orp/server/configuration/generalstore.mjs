@@ -10,5 +10,9 @@ export const GeneralStore = {
     rope: {
         key: 'rope',
         price: 250
+    },
+    phone: {
+        key: 'phone',
+        price: 1000
     }
 };

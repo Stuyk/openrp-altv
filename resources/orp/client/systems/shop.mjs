@@ -3,6 +3,7 @@ import * as native from 'natives';
 import * as panelsClothing from '/client/panels/clothing.mjs';
 import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
 import * as panelsBarbershop from '/client/panels/barbershop.mjs';
+import * as panelsGeneralStore from '/client/panels/generalstore.mjs';
 import { createBlip } from '/client/blips/bliphelper.mjs';
 import { syncDoors } from '/client/systems/doors.mjs';
 
@@ -65,6 +66,35 @@ const shops = [
         ],
         func: panelsClothing.showDialogue,
         message: `Press ~INPUT_CONTEXT~ to shop for clothes.`
+    },
+    {
+        type: 'General Store',
+        sprite: 52,
+        color: 69,
+        ids: [
+            139777,
+            178945,
+            176641,
+            177153,
+            204801,
+            200449,
+            199169,
+            184065,
+            154113,
+            170753,
+            168449,
+            175105,
+            203265,
+            200705,
+            196865,
+            198401,
+            155649,
+            167937,
+            175873,
+            183809
+        ],
+        func: panelsGeneralStore.showDialogue,
+        message: `Press ~INPUT_CONTEXT~ to shop for general goods.`
     }
 ];
 
@@ -97,6 +127,7 @@ function startShopInterval(key, value) {
 // Has to have special case for vehicle.
 function shopInterval() {
     if (alt.Player.local.getMeta('arrest')) return;
+    if (alt.Player.local.getMeta('viewOpen')) return;
 
     // Get the current interior of the user.
     const currInterior = native.getInteriorFromEntity(alt.Player.local.scriptID);
@@ -147,6 +178,7 @@ function clearShop() {
 }
 
 function shopKey() {
+    if (alt.Player.local.getMeta('viewOpen')) return;
     if (currentShop === undefined) return;
     native.beginTextCommandDisplayHelp('STRING');
     native.addTextComponentSubstringPlayerName(currentShop.message);

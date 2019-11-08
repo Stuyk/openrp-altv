@@ -871,6 +871,11 @@ export function setupPlayerFunctions(player) {
         player.giveWeapon(hash, 999, true);
     };
 
+    player.getNullSlots = () => {
+        const nullSlots = player.inventory.filter(item => !item);
+        return nullSlots.length;
+    };
+
     player.hasItem = base => {
         // Check for matching base.
         let index = player.inventory.findIndex(item => {

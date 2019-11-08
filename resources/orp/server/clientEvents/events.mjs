@@ -5,6 +5,7 @@ import * as registrationLogin from '../registration/login.mjs';
 import * as characterFace from '../character/face.mjs';
 import * as utilityLocationHelper from '../utility/locationhelper.mjs';
 import * as characterInfo from '../character/info.mjs';
+import * as systemsGeneralStore from '../systems/generalstore.mjs';
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsInventory from '../systems/inventory.mjs';
 import * as systemsVehicles from '../systems/vehicles.mjs';
@@ -92,6 +93,10 @@ alt.onClient('job:Quit', systemsJob.quitJob);
 
 // Skills
 alt.onClient('skill:Agility', systemsSkills.agility);
+
+// GeneralStore
+alt.onClient('general:GetItems', systemsGeneralStore.getItems);
+alt.onClient('general:BuyItem', systemsGeneralStore.buyItem);
 
 // Temporary:
 // teleport to waypoint stuff

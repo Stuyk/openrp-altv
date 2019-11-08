@@ -68,7 +68,6 @@ export function showDialogue() {
     webview.on('inventory:DeleteContact', deleteContact);
     webview.on('option:SetOption', setOption);
     webview.on('option:LoadOptions', loadOptions);
-
     alt.emit('hud:AdjustHud', true);
 }
 

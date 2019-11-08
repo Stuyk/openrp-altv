@@ -5,7 +5,8 @@ import { getLevel } from '../systems/xp.mjs';
 alt.on('itemeffects:UseMedkit', (player, item, hash) => {
     // Do nothing if at full health
     if (player.health >= 200) {
-        player.notify("You are already at full health!");
+        player.notify('You are already at full health!');
+        player.syncInventory();
         return;
     }
 

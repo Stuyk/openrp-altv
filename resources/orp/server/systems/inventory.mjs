@@ -1,7 +1,5 @@
 import * as alt from 'alt';
-import * as configurationItems from '../configuration/items.mjs';
 import * as utilityVector from '../utility/vector.mjs';
-import * as utilityEncryption from '../utility/encryption.mjs';
 import { generateHash } from '../utility/encryption.mjs';
 import { BaseItems, Items } from '../configuration/items.mjs';
 import { Weapons } from '../configuration/weapons.mjs';

@@ -1,11 +1,12 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import * as text from 'client/utility/text.mjs';
-import * as vector from 'client/utility/vector.mjs';
+import { distance } from '/client/utility/vector.mjs';
 
 alt.log('Loaded: events->update.mjs');
-
 alt.on('meta:Changed', loadInterval);
+
+const [_, width, height] = native.getActiveScreenResolution(0, 0);
 
 // Only starts the interval after the player has logged in.
 function loadInterval(key) {
@@ -22,67 +23,34 @@ function drawPlayerNames() {
     native.hideHudComponentThisFrame(8);
     native.hideHudComponentThisFrame(9);
 
-    if (alt.Player.all.length <= 0) return;
+    if (alt.Player.local.getSyncedMeta('dead')) {
+        native.setPedToRagdoll(alt.Player.local.scriptID, -1, -1, 0, 0, 0, 0);
+    }
 
-    let lPos = alt.Player.local.pos;
+    alt.emit('hud:ClearNametags');
+    if (alt.Player.all.length <= 1) return;
 
-    alt.Player.all.forEach(player => {
-        if (player === alt.Player.local) {
-            const isDead = alt.Player.local.getSyncedMeta('dead');
-            if (isDead) {
-                native.setPedToRagdoll(alt.Player.local.scriptID, -1, -1, 0, 0, 0, 0);
-            }
-            return;
-        }
+    const currentPlayers = [...alt.Player.all];
+    let count = 0;
+    currentPlayers.forEach(target => {
+        if (count >= 30) return;
+        const renderData = getPlayerOnScreen(target);
+        if (!renderData) return;
+        count += 1;
 
-        let localPlayerName = player.getSyncedMeta('name');
-        let color = player.getSyncedMeta('namecolor');
-        localPlayerName = color ? color + localPlayerName : localPlayerName;
+        const isChatting = target.getMeta('isChatting');
+        const color = target.getSyncedMeta('namecolor');
+        let name = color
+            ? color + renderData.name.replace('_', ' ')
+            : renderData.name.replace('_', ' ');
+        name = isChatting ? `${name}~n~~o~. . .` : name;
 
-        if (localPlayerName === undefined || localPlayerName === null) return;
-
-        // Check if player is on screen.
-        if (!native.isEntityOnScreen(player.scriptID)) return;
-
-        const dist = native.getDistanceBetweenCoords(
-            lPos.x,
-            lPos.y,
-            lPos.z,
-            player.pos.x,
-            player.pos.y,
-            player.pos.z,
-            true
-        );
-
-        // If they are check how far they are.
-        if (dist >= 25) return;
-
-        // Check if player has line of sight.
-        if (
-            !native.hasEntityClearLosToEntity(
-                alt.Player.local.scriptID,
-                player.scriptID,
-                17
-            )
-        )
-            return;
-
-        // Scale the Text
-        let scale = (1 / dist) * 2;
-        let fov = (1 / native.getGameplayCamFov()) * 100;
-        scale = scale * fov;
-
-        // Scale Limiters
-        if (scale > 0.5) scale = 0.5;
-
-        if (scale < 0.25) scale = 0.25;
-
-        // Draw Text
+        let scale = 0.5 - renderData.dist * 0.01;
         text.drawText3d(
-            localPlayerName,
-            player.pos.x,
-            player.pos.y,
-            player.pos.z + 1.45,
+            name,
+            renderData.pos.x,
+            renderData.pos.y,
+            renderData.pos.z + 1.45,
             scale,
             4,
             255,
@@ -93,23 +61,24 @@ function drawPlayerNames() {
             false,
             99
         );
-
-        if (player.getMeta('isChatting')) {
-            text.drawText3d(
-                '...',
-                player.pos.x,
-                player.pos.y,
-                player.pos.z + 1.25,
-                scale,
-                4,
-                255,
-                255,
-                255,
-                100,
-                true,
-                false,
-                99
-            );
-        }
     });
+}
+
+function getPlayerOnScreen(target) {
+    if (target === alt.Player.local) return undefined;
+
+    const localPlayerName = target.getSyncedMeta('name');
+    if (!localPlayerName) return undefined;
+
+    const onScreen = native.isEntityOnScreen(target.scriptID);
+    if (!onScreen) return undefined;
+
+    const dist = distance(alt.Player.local.pos, target.pos);
+    if (dist > 25) return undefined;
+
+    const id = alt.Player.local.scriptID;
+    const los = native.hasEntityClearLosToEntity(id, target.scriptID, 17);
+    if (!los) return undefined;
+
+    return { name: localPlayerName, dist, pos: target.pos };
 }

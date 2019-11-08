@@ -52,6 +52,8 @@ export function sodaMachine(player) {
         player,
         'Inserts money into the machine; and it spits out a soda.'
     );
+
+    player.playAudio3D(player, 'vending');
 }
 
 export function coffeeMachine(player) {
@@ -66,6 +68,8 @@ export function coffeeMachine(player) {
         player,
         'Inserts money into the machine; and it spits out a canned coffee.'
     );
+
+    player.playAudio3D(player, 'vending');
 }
 
 export function payPhone(player) {

@@ -204,6 +204,9 @@ let objectInteractions = {
     1933174915: {
         func: gasPump
     },
+    4130089803: {
+        func: gasPump
+    },
     3203580969: {
         func: hospitalBed
     },

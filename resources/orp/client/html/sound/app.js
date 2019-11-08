@@ -1,4 +1,6 @@
 function playAudio(name, panValue = 0, volume = 0.35) {
+    console.log(`Playing: ${name} ${panValue} ${volume}`);
+
     var audio = new Audio(`./sounds/${name}.ogg`);
     const ambientContext = new AudioContext();
     const source = ambientContext.createMediaElementSource(audio);

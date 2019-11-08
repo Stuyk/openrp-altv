@@ -4,6 +4,7 @@ import * as panelsClothing from '/client/panels/clothing.mjs';
 import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
 import * as panelsBarbershop from '/client/panels/barbershop.mjs';
 import * as panelsGeneralStore from '/client/panels/generalstore.mjs';
+import * as panelsCrafting from '/client/panels/crafting.mjs';
 import { createBlip } from '/client/blips/bliphelper.mjs';
 import { syncDoors } from '/client/systems/doors.mjs';
 
@@ -95,6 +96,14 @@ const shops = [
         ],
         func: panelsGeneralStore.showDialogue,
         message: `Press ~INPUT_CONTEXT~ to shop for general goods.`
+    },
+    {
+        type: 'Gun Crafting Point',
+        sprite: 119,
+        color: 81,
+        ids: [164609, 168193, 153857, 176385, 137729, 175617, 140289],
+        func: panelsCrafting.weaponryCrafting,
+        message: `Press ~INPUT_CONTEXT~ to access this crafting point.`
     }
 ];
 

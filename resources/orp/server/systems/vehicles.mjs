@@ -250,13 +250,17 @@ export function saveChanges(player, vehicle, jsonData) {
 export function fillFuel(player, data) {
     const vehicle = data.vehicle;
     if (!vehicle) return;
+    if (vehicle.isBeingFilled) {
+        player.notify('Vehicle is already being filled up.');
+        return;
+    }
 
     const fuelUntilFull = 100 - vehicle.fuel;
     const perUnit = 0.5;
     const totalCost = fuelUntilFull * perUnit;
 
-    if (isNan(fuelUntilFull)) return;
-    if (isNan(totalCost)) return;
+    if (isNaN(fuelUntilFull)) return;
+    if (isNaN(totalCost)) return;
 
     let msg = `{FFFF00} Total Cost was: {00FF00} $${totalCost}.`;
     if (!player.subCash(totalCost)) {

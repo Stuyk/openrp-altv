@@ -359,13 +359,26 @@ export function hotdogDispenser(player) {
     if (!Items.hotdog) return;
 
     if (!player.subCash(4)) {
-        player.send(`You don't have enough money for a hotdog. {FFFF00}$2.00`);
+        player.send(`You don't have enough money for a hotdog. {FFFF00}$4.00`);
         return;
     }
 
     player.addItem('hotdog', 1, Items.hotdog.props);
     chat.actionMessage(player, 'Hands over some cash and recieves a hotdog.');
 
+    player.playAudio3D(player, 'cook');
+}
+
+export function burgerDispenser(player) {
+    if (!Items.burger) return;
+
+    if (!player.subCash(4)) {
+        player.send(`You don't have enough money for a burger. {FFFF00}$4.00`);
+        return;
+    }
+
+    player.addItem('burger', 1, Items.burger.props);
+    chat.actionMessage(player, 'Hands over some cash and recieves a burger.');
     player.playAudio3D(player, 'cook');
 }
 

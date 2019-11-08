@@ -56,6 +56,7 @@ alt.on('parse:Vehicle', (vehicle, now) => {
                 }
                 vehicle.isBeingFilled = undefined;
             } catch (err) {
+                vehicle.isBeingFilled = undefined;
                 console.error('Failed to refill tank of vehicle.');
             }
         }

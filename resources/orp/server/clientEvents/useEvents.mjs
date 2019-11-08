@@ -28,7 +28,8 @@ const events = {
     'use:CandyDispenser': systemsUse.candyDispenser,
     'use:HotdogDispenser': systemsUse.hotdogDispenser,
     'use:WaterDispenser': systemsUse.waterDispenser,
-    'use:FruitDispenser': systemsUse.fruitDispenser
+    'use:FruitDispenser': systemsUse.fruitDispenser,
+    'use:BurgerDispenser': systemsUse.burgerDispenser
 };
 
 Object.keys(events).forEach(key => {

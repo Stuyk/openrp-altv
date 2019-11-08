@@ -128,6 +128,9 @@ let objectInteractions = {
     1114264700: {
         func: sodaMachine
     },
+    2977731501: {
+        func: sodaMachine
+    },
     4216340823: {
         func: payPhone
     },
@@ -219,6 +222,9 @@ let objectInteractions = {
     3628385663: {
         func: fireExtinguisher
     },
+    2684801972: {
+        func: fireExtinguisher
+    },
     1693207013: {
         func: dynamicDoor
     },
@@ -246,11 +252,29 @@ let objectInteractions = {
     4022605402: {
         func: hotDogDispenser
     },
+    2713464726: {
+        func: hotDogDispenser
+    },
     1099892058: {
         func: waterDispenser
     },
     858993389: {
         func: fruitDispenser
+    },
+    2913180574: {
+        func: fruitDispenser
+    },
+    3605261854: {
+        func: fruitDispenser
+    },
+    3278751538: {
+        func: fruitDispenser
+    },
+    3492728915: {
+        func: fruitDispenser
+    },
+    1129053052: {
+        func: burgerDispenser
     }
 };
 
@@ -523,6 +547,11 @@ function waterDispenser(ent) {
         position: native.getEntityCoords(ent, false)
     });
     setContextTitle(`Water Dispenser`);
+}
+
+function burgerDispenser(ent) {
+    appendContextItem(`Buy Burger`, true, 'use:BurgerDispenser', {});
+    setContextTitle('Burger Stand');
 }
 
 function fruitDispenser(ent) {

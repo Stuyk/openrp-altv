@@ -956,6 +956,16 @@ export const Items = {
         quantity: 0,
         icon: 'sausage'
     },
+    burger: {
+        name: 'Burger',
+        base: 'food',
+        key: 'burger',
+        props: {
+            health: 2
+        },
+        quantity: 0,
+        icon: 'burger'
+    },
     jug: {
         name: 'Empty Jug',
         base: 'generic',

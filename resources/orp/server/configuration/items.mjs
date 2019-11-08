@@ -1,5 +1,12 @@
 import * as alt from 'alt';
 
+/**
+ * Inventory Information
+ * All items need a BaseItem
+ * BaseItems can have `itemeffects` that do specific things.
+ * Icons can be found in client/html/icons
+ */
+
 export const BaseItems = {
     weapon: {
         eventcall: 'itemeffects:EquipItem',
@@ -34,6 +41,30 @@ export const BaseItems = {
             sell: true,
             rename: false,
             stack: true
+        },
+        slot: -1
+    },
+    generic: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
+        },
+        slot: -1
+    },
+    ingredient: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: true,
+            rename: false,
+            stack: false
         },
         slot: -1
     },
@@ -904,6 +935,50 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: 'phone'
+    },
+    candy: {
+        name: 'Candy Bar',
+        base: 'food',
+        key: 'candy',
+        props: {
+            health: 2
+        },
+        quantity: 0,
+        icon: 'chocolate-bar'
+    },
+    hotdog: {
+        name: 'Hot Dog',
+        base: 'food',
+        key: 'hotdog',
+        props: {
+            health: 2
+        },
+        quantity: 0,
+        icon: 'sausage'
+    },
+    jug: {
+        name: 'Empty Jug',
+        base: 'generic',
+        key: 'jug',
+        props: {},
+        quantity: 0,
+        icon: 'jug'
+    },
+    waterjug: {
+        name: 'Water Jug',
+        base: 'ingredient',
+        key: 'jug',
+        props: {},
+        quantity: 0,
+        icon: 'waterjug'
+    },
+    ingredient: {
+        name: '',
+        base: 'ingredient',
+        key: 'ingredient',
+        props: {},
+        quantity: 0,
+        icon: ''
     }
 };
 

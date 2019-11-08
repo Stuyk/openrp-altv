@@ -534,7 +534,8 @@ export function setupPlayerFunctions(player) {
         props = {},
         skipStackable = false,
         skipSave = false,
-        name = undefined
+        name = undefined,
+        icon = undefined
     ) => {
         const item = Items[key];
         const base = BaseItems[Items[key].base];
@@ -569,6 +570,9 @@ export function setupPlayerFunctions(player) {
         clonedItem.props = props;
         clonedItem.quantity = quantity;
         clonedItem.hash = generateHash(JSON.stringify(clonedItem));
+        if (icon) {
+            clonedItem.icon = icon;
+        }
 
         const nullIndex = player.inventory.findIndex(item => !item);
         if (nullIndex >= 28) {

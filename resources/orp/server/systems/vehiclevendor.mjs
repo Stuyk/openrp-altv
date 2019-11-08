@@ -52,7 +52,7 @@ export function purchaseVehicle(player, name) {
         return;
     }
 
-    player.addVehicle(name, player.vendor.exit, true);
+    player.addVehicle(name, player.vendor.exit, 0);
 }
 
 Vendors.forEach((vendor, index) => {

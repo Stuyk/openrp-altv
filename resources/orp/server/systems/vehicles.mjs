@@ -255,6 +255,9 @@ export function fillFuel(player, data) {
     const perUnit = 0.5;
     const totalCost = fuelUntilFull * perUnit;
 
+    if (isNan(fuelUntilFull)) return;
+    if (isNan(totalCost)) return;
+
     let msg = `{FFFF00} Total Cost was: {00FF00} $${totalCost}.`;
     if (!player.subCash(totalCost)) {
         player.send(msg + `{FF0000}You do not have enough cash.`);

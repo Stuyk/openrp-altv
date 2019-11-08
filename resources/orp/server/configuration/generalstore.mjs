@@ -14,5 +14,9 @@ export const GeneralStore = {
     phone: {
         key: 'phone',
         price: 1000
+    },
+    jug: {
+        key: 'jug',
+        price: 80
     }
 };

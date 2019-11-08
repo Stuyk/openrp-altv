@@ -135,4 +135,37 @@ alt.on('load:Interiors', () => {
     native.requestIpl('cs3_05_water_grp1_lod');
     native.requestIpl('trv1_trail_start');
     native.requestIpl('CanyonRvrShallow');
+
+    // CASINO
+    native.requestIpl('vw_casino_penthouse');
+    native.requestIpl('vw_casino_main');
+    let interiorID = native.getInteriorAtCoords(1100.0, 220.0, -50.0);
+    if (native.isValidInterior(interiorID)) {
+        native.activateInteriorEntitySet(interiorID, '0x30240D11');
+        native.activateInteriorEntitySet(interiorID, '0xA3C89BB2');
+
+        native.refreshInterior(interiorID);
+    }
+    interiorID = native.getInteriorAtCoords(976.6364, 70.29476, 115.1641);
+    if (native.isValidInterior(interiorID)) {
+        native.activateInteriorEntitySet(interiorID, 'teste1');
+        native.activateInteriorEntitySet(interiorID, 'teste2');
+        native.activateInteriorEntitySet(interiorID, 'teste3');
+        native.activateInteriorEntitySet(interiorID, 'teste4');
+        native.activateInteriorEntitySet(interiorID, 'teste11');
+        native.activateInteriorEntitySet(interiorID, 'teste17');
+        native.activateInteriorEntitySet(interiorID, 'teste18');
+        native.activateInteriorEntitySet(interiorID, 'teste19');
+        native.activateInteriorEntitySet(interiorID, 'teste20');
+        native.activateInteriorEntitySet(interiorID, 'teste21');
+        native.activateInteriorEntitySet(interiorID, 'teste29');
+        native.activateInteriorEntitySet(interiorID, 'teste32');
+        native.activateInteriorEntitySet(interiorID, 'teste33');
+        native.activateInteriorEntitySet(interiorID, 'teste34');
+        native.activateInteriorEntitySet(interiorID, 'teste1', 3);
+        native.activateInteriorEntitySet(interiorID, 'teste2', 3);
+        native.activateInteriorEntitySet(interiorID, 'teste4', 3);
+        native.activateInteriorEntitySet(interiorID, 'teste11', 3);
+        native.refreshInterior(interiorID);
+    }
 });

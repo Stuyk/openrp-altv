@@ -12,4 +12,7 @@ alt.on('disconnect', () => {
 
     // Cleanup any spawned peds.
     panelsCharacter.cleanupSpawnedPed();
+
+    // Cleanup Peds
+    alt.emit('peds:Delete');
 });

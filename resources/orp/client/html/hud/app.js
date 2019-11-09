@@ -27,6 +27,7 @@ class App extends Component {
             isInVehicle: false
         };
         this.contextRef = createRef();
+        setInterval(this.notificationInterval.bind(this), 1000);
     }
 
     componentDidMount() {
@@ -57,13 +58,31 @@ class App extends Component {
             data.notice = 'BIG Ol Words';
             this.setState({ data });
 
-            this.queueNotification(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-            );
-            this.queueNotification('Hello World B');
-            this.queueNotification('Hello World C');
+            /*
+            setInterval(() => {
+                this.queueNotification(
+                    `Message Test - ${Math.floor(Math.random() * 50)}`
+                );
+            }, 500);
+            */
+
             this.setWeather('thunder');
+            //this.adjustHud(true);
         }
+    }
+
+    notificationInterval() {
+        if (this.state.notifications.length <= 0) return;
+        let notifications = [...this.state.notifications];
+        notifications.forEach((note, index) => {
+            if (Date.now() > note.endTime) {
+                notifications.splice(index, 1);
+            }
+        });
+
+        if (notifications.length === this.state.notifications.length) return;
+
+        this.setState({ notifications });
     }
 
     setWeather(name) {
@@ -84,42 +103,8 @@ class App extends Component {
 
     queueNotification(msg) {
         const notifications = [...this.state.notifications];
-
-        if (msg.length > 100) {
-            msg = msg.slice(0, 100) + '...';
-        }
-
-        // Start a timeout if it doesn't exist.
-        if (notifications.length === 0 && this.state.notification === '') {
-            setTimeout(() => {
-                this.parseNotification();
-            }, 3500);
-        }
-
-        if (this.state.notification === '') {
-            this.setState({ notifications, notification: msg });
-        } else {
-            notifications.push(msg);
-            this.setState({ notifications });
-        }
-    }
-
-    parseNotification() {
-        const notifications = [...this.state.notifications];
-        if (notifications.length <= 0) {
-            this.setState({ notifications: [], notification: '' });
-            return;
-        }
-
-        this.setState({ notification: '' });
-
-        setTimeout(() => {
-            const notification = notifications.shift();
-            this.setState({ notifications, notification });
-            setTimeout(() => {
-                this.parseNotification();
-            }, 3500);
-        }, 1000);
+        notifications.push({ message: msg, endTime: Date.now() + 5000 });
+        this.setState({ notifications });
     }
 
     setHudNotice(notice) {
@@ -169,6 +154,20 @@ class App extends Component {
         } else {
             console.log(item);
         }
+    }
+
+    displayNotifications() {
+        const notifications = this.state.notifications.map(note => {
+            return h('div', { class: 'notification' }, note.message);
+        });
+        return h(
+            'div',
+            {
+                class: 'notifications',
+                style: `right: ${this.state.xOffset + 25}px !important;`
+            },
+            notifications
+        );
     }
 
     displayItems() {
@@ -270,14 +269,7 @@ class App extends Component {
             this.state.data.minigametext !== '' &&
                 h('div', { class: 'minigametext' }, this.state.data.minigametext),
             // Notifications
-            h(
-                'div',
-                {
-                    class: this.state.notification === '' ? '' : 'notification',
-                    style: `right: ${this.state.xOffset + 25}px !important;`
-                },
-                this.state.notification
-            )
+            h(this.displayNotifications.bind(this))
         );
     }
 }

@@ -169,28 +169,22 @@ body {
     user-select: none;
 }
 
-.notification {
+.notifications {
     position: fixed;
-    display: flex;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 100%;
+    grid-column-gap: 10px;
+    grid-auto-rows: auto;
+    grid-row-gap: 10px;
     top: 100px;
-    background: @dark;
     right: 25px;
-    color: white;
-    width: 300px;
-    padding: 5px;
-    height: auto;
-    animation: end 2s;
-    animation-delay: 2s;
-    user-select: none;
 
-    @keyframes end {
-        from {
-            opacity: 1;
-            visibility: visible;
-        }
-        to {
-            opacity: 0;
-            visibility: hidden;
-        }
+    .notification {
+        background: @dark;
+        color: white;
+        width: 300px;
+        padding: 5px;
     }
 }

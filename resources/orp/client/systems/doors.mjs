@@ -163,7 +163,7 @@ alt.onServer('editingDoor', state => {
         native.deleteEntity(editDoorId);
 
         const doorData = {
-            guid: -1,
+            id: 0,
             enter: {
                 position: alt.Player.local.pos,
                 doorPos: doorPosition,
@@ -178,9 +178,7 @@ alt.onServer('editingDoor', state => {
                 }
             },
             interior: '',
-            lockstate: 0,
             isGarage: 0,
-            salePrice: -1
         };
 
         alt.log(JSON.stringify(doorData, null, '\t'));

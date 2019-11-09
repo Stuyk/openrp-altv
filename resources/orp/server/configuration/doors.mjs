@@ -1,5 +1,6 @@
-// These doors are only established; when you first run the server.
-// The doors must be added manually after you run the server.
+// Dynamic door configuration
+// Dynamic values such as guid, lockstate, sector comes from DB.
+// Those values defined here will be the defaults when the DB is populated.
 // GUID of -1 means that there is NO OWNER.
 // Normal Doors Use -> prop_cntrdoor_ld_l
 
@@ -10,6 +11,7 @@
 
 export const Doors = [
     {
+        id: 1,
         guid: -1,
         enter: {
             position: {
@@ -38,6 +40,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 2,
         guid: -1,
         enter: {
             position: {
@@ -66,6 +69,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 3,
         guid: -1,
         enter: {
             position: {
@@ -94,6 +98,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 4,
         guid: -1,
         enter: {
             position: {
@@ -122,6 +127,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 5,
         guid: -1,
         enter: {
             position: {
@@ -150,6 +156,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 6,
         guid: -1,
         enter: {
             position: {
@@ -178,6 +185,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 7,
         guid: -1,
         enter: {
             position: {
@@ -206,6 +214,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 8,
         guid: -1,
         enter: {
             position: {
@@ -234,6 +243,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 9,
         guid: -1,
         enter: {
             position: {
@@ -262,6 +272,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 10,
         guid: -1,
         enter: {
             position: {
@@ -290,6 +301,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 11,
         guid: -1,
         enter: {
             position: {
@@ -318,6 +330,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 12,
         guid: -1,
         enter: {
             position: {
@@ -346,6 +359,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 13,
         guid: -1,
         enter: {
             position: {
@@ -374,6 +388,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 14,
         guid: -1,
         enter: {
             position: {
@@ -402,6 +417,7 @@ export const Doors = [
         salePrice: 85000
     },
     {
+        id: 15,
         guid: -1,
         enter: {
             position: {

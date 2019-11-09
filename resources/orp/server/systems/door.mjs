@@ -117,8 +117,16 @@ alt.on('door:LockDynamicDoor', (player, data) => {
     }
 });
 
+// Door cache initially comes from Door configuration
+// and we overwrite with dynamic values from the DB.
 alt.on('door:CacheDoor', (id, data) => {
-    if (data.sector === -1) {
+    let door = Doors.find(x => x.id === id);
+
+    door.guid = data.guid;
+    door.lockstate = data.lockstate;
+    alt.log(JSON.stringify(door));
+
+    if (!door.sector) {
         let lastDist;
         let currentIndex = -1;
         colshapes.forEach((colshape, index) => {
@@ -129,8 +137,7 @@ alt.on('door:CacheDoor', (id, data) => {
                 z: (sector.coords.first.z + sector.coords.second.z) / 2
             };
 
-            const enterData = JSON.parse(data.enter);
-            const dist = distance(enterData.position, pos);
+            const dist = distance(door.enter, pos);
             if (!lastDist) {
                 lastDist = dist;
                 currentIndex = index;
@@ -143,43 +150,19 @@ alt.on('door:CacheDoor', (id, data) => {
             }
         });
 
-        alt.emit('updateDoorSector', id, currentIndex);
-        data.sector = currentIndex;
+        door.sector = currentIndex;
     }
 
-    doors[id] = data;
-    alt.emit('parseDoorSector', data);
-});
-
-alt.on('door:SetupDoorConfiguration', () => {
-    let id = 1;
-    Doors.forEach(door => {
-        door.id = id;
-        door.enter = JSON.stringify(door.enter);
-        door.exit = JSON.stringify(door.exit);
-        db.upsertData(door, 'Door', res => {
-            alt.emit('door:CacheDoor', res.id, res);
-        });
-        id += 1;
-    });
-
-    console.log(`Doors Created: ${Doors.length}`);
-});
-
-alt.on('door:CreateDoor', data => {
-    db.upsertData(data, 'Door', res => {
-        alt.emit('door:CacheDoor', res.id, res);
-    });
+    doors[id] = door;
+    alt.emit('parseDoorSector', door);
+    alt.log(`Cached door ${door.id}: ${JSON.stringify(door)}`);
 });
 
 alt.on('updateDoorLockState', (id, state) => {
     db.updatePartialData(id, { lockstate: state }, 'Door', () => {});
 });
 
-alt.on('updateDoorSector', (id, index) => {
-    db.updatePartialData(id, { sector: index }, 'Door', () => {});
-});
-
+// Update sectors with door information
 alt.on('parseDoorSector', data => {
     const index = colshapes[parseInt(data.sector)].sector.doors.findIndex(door => {
         if (door.id === data.id) return door;

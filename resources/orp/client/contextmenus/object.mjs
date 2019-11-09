@@ -6,6 +6,7 @@ import { playAnimation } from '/client/systems/animation.mjs';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 import { findDoor } from '/client/systems/doors.mjs';
 import { getLevel } from '/client/systems/xp.mjs';
+import { getItemByEntity } from '/client/systems/inventory.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -275,6 +276,9 @@ let objectInteractions = {
     },
     1129053052: {
         func: burgerDispenser
+    },
+    1340115820: {
+        func: itemDrop
     }
 };
 
@@ -593,3 +597,13 @@ alt.on('fruitDispenser:2', () => {
     appendContextItem(`Buy Wheat`, true, 'use:FruitDispenser', { type: 'wheat' });
     setContextTitle(`Fruit Stand`, true);
 });
+
+function itemDrop(ent) {
+    const currentItem = getItemByEntity(ent);
+    if (!currentItem) return;
+    appendContextItem(`Pickup`, false, 'item:Pickup', {
+        id: currentItem.id,
+        hash: currentItem.data.item.hash
+    });
+    setContextTitle(`${currentItem.data.item.name} x${currentItem.data.item.quantity}`);
+}

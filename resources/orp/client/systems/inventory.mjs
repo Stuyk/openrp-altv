@@ -1,13 +1,20 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import * as systemsSound from '/client/systems/sound.mjs';
-import * as utilityVector from '/client/utility/vector.mjs';
+import { distance } from '/client/utility/vector.mjs';
 import * as utilityText from '/client/utility/text.mjs';
 import * as utilityMarker from '/client/utility/marker.mjs';
 
 let itemsOnGround = [];
+let objects = [];
 let pickingUpItem = false;
 let interval;
+
+const unknownModel = native.getHashKey('sm_prop_smug_rsply_crate02a');
+let lastUpdate = Date.now();
+
+alt.loadModel(unknownModel);
+native.requestModel(unknownModel);
 
 export function itemDrop(player, item, randomPos) {
     if (alt.Player.local === player) {
@@ -15,8 +22,7 @@ export function itemDrop(player, item, randomPos) {
     }
 
     itemsOnGround.push({ pos: randomPos, item });
-    const intervalID = alt.setInterval(drawItems, 1);
-    alt.log(`inventory.mjs ${intervalID}`);
+    const intervalID = alt.setInterval(drawItems, 0);
 }
 
 export function itemPickup(hash) {
@@ -39,6 +45,87 @@ export function itemPickup(hash) {
     }
 }
 
+function drawItems() {
+    if (itemsOnGround.length <= 0) {
+        if (interval) {
+            alt.clearInterval(interval);
+            interval = undefined;
+        }
+
+        objects.forEach(object => {
+            native.freezeEntityPosition(object.id, false);
+            native.deleteEntity(object.id);
+        });
+        objects = [];
+        pickingUpItem = false;
+        return;
+    }
+
+    const now = Date.now();
+    if (now > lastUpdate) {
+        lastUpdate = Date.now() + 500;
+        objects.forEach(object => {
+            native.freezeEntityPosition(object.id, false);
+            native.deleteEntity(object.id);
+        });
+        objects = [];
+
+        itemsOnGround.forEach(itemData => {
+            const dist = distance(alt.Player.local.pos, itemData.pos);
+            if (dist > 10) return;
+            const id = native.createObject(
+                unknownModel,
+                itemData.pos.x,
+                itemData.pos.y,
+                itemData.pos.z - 1.05,
+                false,
+                false,
+                false
+            );
+            native.freezeEntityPosition(id, true);
+            objects.push({ id, data: itemData });
+        });
+    }
+
+    /*
+    objects.forEach(object => {
+        const dist = distance(alt.Player.local.pos, object.data.pos);
+        if (dist >= 2) return;
+        native.beginTextCommandDisplayHelp('THREESTRINGS');
+        native.addTextComponentSubstringPlayerName(
+            `Press ~INPUT_CONTEXT~ to pickup (${object.data.item.name})`
+        );
+        native.addTextComponentSubstringPlayerName(``);
+        native.addTextComponentSubstringPlayerName(``);
+        native.endTextCommandDisplayHelp(0, false, false, -1);
+
+        if (native.isControlJustPressed(0, 38)) {
+            if (pickingUpItem) return;
+            lastUpdate = Date.now();
+            pickingUpItem = true;
+            alt.emitServer('inventory:Pickup', object.data.item.hash);
+            alt.setTimeout(() => {
+                pickingUpItem = false;
+            }, 500);
+        }
+    });
+    */
+}
+
+alt.on('item:Pickup', data => {
+    alt.emitServer('inventory:Pickup', data.hash);
+    lastUpdate = Date.now();
+});
+
+export function getItemByEntity(ent) {
+    const obj = objects.find(object => {
+        if (object.id === ent) return object;
+    });
+
+    if (!obj) return undefined;
+    return obj;
+}
+
 export function useRepairKit() {
     alt.Player.local.isRepairing = true;
     alt.emit(
@@ -52,75 +139,5 @@ export function useGasCan() {
     alt.emit(
         'chat:Send',
         `{00FF00} Select the vehicle you want to re-fuel with your cursor.`
-    );    
-}
-
-function drawItems() {
-    if (itemsOnGround.length <= 0) {
-        if (interval) {
-            alt.clearInterval(interval);
-            interval = undefined;
-        }
-
-        pickingUpItem = false;
-        return;
-    }
-
-    itemsOnGround.forEach(itemData => {
-        let dist = utilityVector.distance(alt.Player.local.pos, itemData.pos);
-        if (dist > 15) return;
-
-        // Questionable item on the ground seen from a distance
-        if (dist <= 15 && dist >= 5) {
-            utilityMarker.drawMarker(
-                32, // question mark
-                itemData.pos,
-                new alt.Vector3(0, 0, 0),
-                new alt.Vector3(0, 0, 0),
-                new alt.Vector3(0.2, 0.2, 0.2),
-                255,
-                255,
-                255,
-                150
-            );
-        }
-
-        // Closer up, we can recognize the item
-        if (dist <= 5) {
-            utilityText.drawText3d(
-                `${itemData.item.name} x${itemData.item.quantity}`,
-                itemData.pos.x,
-                itemData.pos.y,
-                itemData.pos.z - 1,
-                0.4,
-                4,
-                255,
-                255,
-                255,
-                255,
-                true,
-                false,
-                99
-            );
-
-            // Close enough to pick it up
-            if (dist <= 1) {
-                native.beginTextCommandDisplayHelp('STRING');
-                native.addTextComponentSubstringPlayerName(
-                    `Press ~INPUT_CONTEXT~ to pickup (${itemData.item.name})`
-                );
-                native.endTextCommandDisplayHelp(0, false, true, -1);
-
-                if (native.isControlJustReleased(0, 38)) {
-                    if (pickingUpItem) return;
-                    pickingUpItem = true;
-                    alt.emitServer('inventory:Pickup', itemData.item.hash);
-
-                    alt.setTimeout(() => {
-                        pickingUpItem = false;
-                    }, 500);
-                }
-            }
-        }
-    });
+    );
 }

@@ -62,6 +62,17 @@ body {
     }
 }
 
+.txt {
+    position: fixed;
+    color: white;
+    opacity: 0.15;
+    top: 1px;
+    text-align: center;
+    width: 50%;
+    left: 25%;
+    font-size: 9px;
+}
+
 .hudpanel {
     user-select: none;
     position: fixed;
@@ -180,11 +191,13 @@ body {
     grid-row-gap: 10px;
     top: 100px;
     right: 25px;
+    user-select: none;
 
     .notification {
         background: @dark;
         color: white;
         width: 300px;
         padding: 5px;
+        user-select: none;
     }
 }

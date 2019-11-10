@@ -24,7 +24,8 @@ class App extends Component {
             notification: '',
             noteFade: 0.0,
             xOffset: 0,
-            isInVehicle: false
+            isInVehicle: false,
+            watermark: 'O:RP - Created by Stuyk - www.github.com/stuyk'
         };
         this.contextRef = createRef();
         setInterval(this.notificationInterval.bind(this), 1000);
@@ -81,7 +82,6 @@ class App extends Component {
         });
 
         if (notifications.length === this.state.notifications.length) return;
-
         this.setState({ notifications });
     }
 
@@ -160,6 +160,7 @@ class App extends Component {
         const notifications = this.state.notifications.map(note => {
             return h('div', { class: 'notification' }, note.message);
         });
+        notifications.unshift(h('div', { class: 'txt' }, this.state.watermark));
         return h(
             'div',
             {
@@ -208,6 +209,11 @@ class App extends Component {
             'div',
             { class: 'hud' },
             this.state.showContext && h(this.displayItems.bind(this), null),
+            !this.state.watermark &&
+                h('div', {
+                    style:
+                        'position: fixed !important; width: 100%; height: 100%; display: block !important; background: black !important; z-index: 99'
+                }),
             h(
                 'div',
                 {

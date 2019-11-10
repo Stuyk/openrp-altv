@@ -365,7 +365,6 @@ export function hotdogDispenser(player) {
 
     player.addItem('hotdog', 1, Items.hotdog.props);
     chat.actionMessage(player, 'Hands over some cash and recieves a hotdog.');
-
     player.playAudio3D(player, 'cook');
 }
 

@@ -52,11 +52,10 @@ export function addXP(player, skill, xpToAdd) {
     }
 
     if (newLevel > oldLevel) {
-        player.send(`${skill} is now level: ${newLevel}`);
         player.playAudio('levelup');
-        player.animatedText(`LEVEL ${newLevel} ${skill.toUpperCase()}`, 3000);
+        player.notify(`Level Up! ${newLevel} ${skill.toUpperCase()}`);
     } else {
-        player.animatedText(`+${xpToAdd * 1}XP ${skill.toUpperCase()}`, 3000);
+        player.notify(`+${xpToAdd} XP to ${skill.toUpperCase()}`);
     }
 
     player.data.skills = JSON.stringify(skills);

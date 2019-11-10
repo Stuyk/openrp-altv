@@ -1,9 +1,14 @@
 @fontface: 'Roboto';
+@dark: rgba(20, 20, 20, 0.9);
+@contrast1: rgb(0, 217, 255);
+@contrast2: rgb(255, 153, 0);
+@darkaccent: rgb(8, 8, 8);
 
 html,
 body {
     height: auto;
     margin: 0;
+    font-family: @fontface;
 }
 
 html {
@@ -14,158 +19,54 @@ body::-webkit-scrollbar {
     display: none;
 }
 
-.chatbox {
-    background: transparent;
-    position: relative;
-    overflow-y: scroll;
-    max-height: 45vh;
-    max-width: 35vw;
-    margin-top: 10vh;
-}
-
-.sprintbar {
-    display: block;
+.messages {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-column-gap: 10px;
+    grid-auto-rows: auto;
+    grid-row-gap: 10px;
     position: fixed;
-    background: rgba(255, 255, 255, 0.75);
-    top: 0;
-    left: 0;
-    height: 5px;
-}
-
-.minigameText {
-    display: block;
-    position: fixed;
-    top: 10vh;
-    width: 100vw;
-    text-align: center;
-    color: white;
-    text-shadow: 1px 1px rgba(0, 0, 0);
-    font-family: @fontface;
-}
-
-#messages {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
+    top: 50px;
+    left: 10px;
+    height: 30vh;
+    width: 22vw;
+    display: grid;
     user-select: none;
-}
-
-#chat-input {
-    background: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    color: white;
-    text-shadow: 1px 1px rgba(0, 0, 0);
-    box-shadow: inset 0px 0px 0px 1px black;
-    height: 4vh;
-    font-family: @fontface;
-    font-size: 1.5vh;
-    padding: 0 0.5vw; // Padding
-    margin: 0;
-    bottom: 40.9vh;
-    border: none;
-    width: 25vw;
     overflow: hidden;
-}
 
-#chat-input:focus {
-    outline: none;
-}
-
-.msg {
-    padding: 0.5vw;
-    color: white;
-    text-shadow: 1px 1px rgba(0, 0, 0);
-    font-family: @fontface;
-    max-width: 32vw;
-    font-size: 12px;
-    overflow-wrap: break-word;
-    transition: 0.3s;
-}
-
-.msg:hover {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
-    opacity: 0.75;
-    cursor: pointer;
-}
-
-.hidden {
-    display: none;
-}
-
-.hud {
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    flex-direction: column;
-    padding-top: 1vh;
-    padding-bottom: 1vh;
-    width: 10vw;
-    height: auto;
-    position: fixed;
-    top: 0.5vh;
-    right: 1.5vw;
-    text-align: center;
-
-    .element {
-        display: flex;
-        align-content: center;
-        justify-content: space-between;
-        margin-bottom: 1vh;
-        width: 100%;
-        height: auto;
-        background: rgba(0, 0, 0, 0.2);
-        padding: 1vh;
+    .message {
         color: white;
-        text-shadow: 1px 1px rgba(0, 0, 0, 1);
-        overflow-x: hidden;
+        text-shadow: 1px 1px black;
+        max-width: 22vw;
+        word-wrap: normal;
+        overflow-wrap: break-word;
+        text-align: left;
+        animation: fadeOut 2s forwards;
+        animation-delay: 10s;
     }
 }
 
-.label {
-    font-family: 'Xolonium';
-    font-size: 12px;
-    text-transform: uppercase;
-    line-height: 2.25vh;
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.input {
+    width: 350px;
+    position: fixed;
     user-select: none;
-    width: 100%;
-}
-
-.money {
-    color: rgba(0, 255, 100, 255);
-    font-family: @fontface;
-    text-align: center;
-}
-
-.location {
-    font-family: @fontface;
-    font-size: 11px;
-}
-
-.progress {
+    outline: none;
     border: 1px solid black;
-    height: 100%;
-    width: 50%;
-}
-
-.speed {
-    position: fixed;
-    bottom: 1vh;
-    width: 100%;
-    font-family: @fontface;
+    background: @dark;
+    height: 35px;
     color: white;
-    text-shadow: 1px 1px rgba(0, 0, 0, 1);
-    text-align: center;
-    user-select: none;
-}
-
-.notice {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 32px;
-    font-family: @fontface;
-    font-weight: bold;
-    color: #ffffff;
-    text-shadow: 3px 3px rgba(0, 0, 0, 1);
+    padding: 0px 10px;
+    bottom: 300px;
+    top: 40vh;
+    left: 10px;
+    font-size: 16px;
 }

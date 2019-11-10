@@ -11,7 +11,8 @@ class App extends Component {
         super(props);
         this.state = {
             currentID: 0,
-            characters: []
+            characters: [],
+            watermark: 'O:RP - Created by Stuyk - www.github.com/stuyk'
         };
     }
 
@@ -119,6 +120,7 @@ class App extends Component {
             );
         });
         renderData.push(h('div', { class: 'skills' }, skillData));
+        renderData.push(h('div', { class: 'txt' }, this.state.watermark));
         return h('div', {}, renderData);
     }
 

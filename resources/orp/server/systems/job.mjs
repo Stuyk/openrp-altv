@@ -451,13 +451,8 @@ export class Objective {
         });
 
         tableRewards.forEach(reward => {
-            console.log(reward);
-
             //  type:'table', prop: 'fish', skill: 'fishing', quantity: 1, givexp: true }
             if (!Items[reward.prop]) return;
-
-            console.log('checking...');
-
             const skills = JSON.parse(player.data.skills);
             const baseItem = BaseItems[Items[reward.prop].base];
             if (baseItem.abilities.stack) {
@@ -465,15 +460,18 @@ export class Objective {
                     reward.prop,
                     getLevel(skills[reward.skill].xp)
                 );
-                player.addItem(
-                    Items[reward.prop].key,
-                    reward.quantity,
-                    { xp: itemLoot.xp, lvl: itemLoot.lvl },
-                    false,
-                    false,
-                    itemLoot.name
-                );
-                player.send(`${itemLoot.name} was added to your inventory.`);
+                if (
+                    player.addItem(
+                        Items[reward.prop].key,
+                        reward.quantity,
+                        { xp: itemLoot.xp, lvl: itemLoot.lvl },
+                        false,
+                        false,
+                        itemLoot.name
+                    )
+                ) {
+                    player.notify(`${itemLoot.name} was added to inventory.`);
+                }
 
                 if (itemLoot.givexp) {
                     const totalXP = itemLoot.xp * reward.quantity;
@@ -485,15 +483,19 @@ export class Objective {
                         reward.prop,
                         getLevel(skills[reward.skill].xp)
                     );
-                    player.addItem(
-                        Items[reward.prop].key,
-                        1,
-                        { xp: itemLoot.xp, lvl: itemLoot.lvl },
-                        false,
-                        false,
-                        itemLoot.name
-                    );
-                    player.send(`${itemLoot.name} was added to your inventory.`);
+                    if (
+                        player.addItem(
+                            Items[reward.prop].key,
+                            1,
+                            { xp: itemLoot.xp, lvl: itemLoot.lvl },
+                            false,
+                            false,
+                            itemLoot.name
+                        )
+                    ) {
+                        player.notify(`${itemLoot.name} was added to inventory.`);
+                    }
+
                     if (itemLoot.givexp) {
                         this.rewardXP(player, reward.skill, itemLoot.xp);
                     }
@@ -510,12 +512,14 @@ export class Objective {
         if (!Items[reward.prop]) return;
         const baseItem = BaseItems[Items[reward.prop].base];
         if (baseItem.abilities.stack) {
-            player.addItem(Items[reward.prop].key, reward.quantity);
-            player.send(`${Items[reward.prop].name} was added to your inventory.`);
+            if (player.addItem(Items[reward.prop].key, reward.quantity)) {
+                player.notify(`${Items[reward.prop].name} was added to inventory.`);
+            }
         } else {
             for (let i = 0; i < reward.quantity; i++) {
-                player.addItem(Items[reward.prop].key, 1);
-                player.send(`${Items[reward.prop].name} was added to your inventory.`);
+                if (player.addItem(Items[reward.prop].key, 1)) {
+                    player.notify(`${Items[reward.prop].name} was added to inventory.`);
+                }
             }
         }
     }
@@ -606,7 +610,7 @@ export class Objective {
     checkIfVehicleDamaged(player, vehicle) {
         if (isFlagged(this.flags, modifiers.NO_DAMAGE_VEHICLE)) {
             if (vehicle.engineHealth < player.job.vehicleHealth) {
-                player.send(`You failed to keep your vehicle in good health.`);
+                player.notify(`Failed Job! Vehicle was too damaged.`);
                 quitJob(player, false, true);
                 return false;
             }
@@ -795,8 +799,9 @@ export class Job {
         if (!this.uniform) return;
         if (!Items[this.uniform]) return;
         if (player.hasItem(Items[this.uniform].key)) return;
-        player.addItem(Items[this.uniform].key, 1, Items[this.uniform].props);
-        player.send(`${Items[this.uniform].name} was added to your inventory.`);
+        if (player.addItem(Items[this.uniform].key, 1, Items[this.uniform].props)) {
+            player.notify(`${Items[this.uniform].name} was added to your inventory.`);
+        }
     }
 
     /**
@@ -841,15 +846,13 @@ export class Job {
 
             if (this.items[i].hasItem && !valid) {
                 allValid = false;
-                player.send('You are restricted from doing this job.');
-                player.send(`You don't have {FF0000}${this.items[i].key}{FFFFFF}.`);
+                player.notify(`Issue: You don't have ${this.items[i].key}.`);
                 break;
             }
 
             if (!this.items[i].hasItem && valid) {
                 allValid = false;
-                player.send('You are restricted from doing this job.');
-                player.send(`You already have a {FF0000}${this.items[i].key}{FFFFFF}.`);
+                player.notify(`Issue: You already have a ${this.items[i].key}.`);
                 break;
             }
         }
@@ -866,8 +869,8 @@ export class Job {
             if (skills[restriction.skill.toLowerCase()].xp < restriction.xp) {
                 valid = false;
                 quitJob(player, false, true);
-                player.send(
-                    `You do not have a high enough ${restriction.skill} for this job.`
+                player.notify(
+                    `You don't have a high enough ${restriction.skill.toUpperCase()} level for this job.`
                 );
                 return;
             }
@@ -1070,7 +1073,7 @@ export function checkRestrictions(player) {
     if (player.job.restrictions <= 0) return;
     if (isFlagged(player.job.restrictions, restrictions.NO_VEHICLES)) {
         if (player.vehicle) {
-            player.send('Failed; no vehicles allowed.');
+            player.notify('Failed! No Vehicles Allowed.');
             quitJob(player, false, true);
             return;
         }
@@ -1078,7 +1081,7 @@ export function checkRestrictions(player) {
 
     if (isFlagged(player.job.restrictions, restrictions.TIME_LIMIT)) {
         if (Date.now() > this.end) {
-            player.send('You have exhausted your time limit.');
+            player.notify('Failed! Time limit has been exhausted.');
             quitJob(player, false, true);
             return;
         }
@@ -1087,7 +1090,7 @@ export function checkRestrictions(player) {
     // Dieing Restriction
     if (isFlagged(player.job.restrictions, restrictions.NO_DIEING)) {
         if (player.hasDied) {
-            player.send('This job does not allow dieing; you have failed.');
+            player.notify('Failed! You have died.');
             quitJob(player, false, true);
             return;
         }
@@ -1096,7 +1099,7 @@ export function checkRestrictions(player) {
     // Weapon Restriction
     if (isFlagged(player.job.restrictions, restrictions.NO_WEAPONS)) {
         if (player.equipment[11] && player.equipment[11].base === 'weapon') {
-            player.send('This job does not allow weapons.');
+            player.notify('Failed! This job does not allow any weapons.');
             quitJob(player, false, true);
             return;
         }
@@ -1121,7 +1124,7 @@ export function quitTarget(player) {
     const employee = player.jobber.employee;
     const fare = player.jobber.fare;
     const isObjectiveFare = player.jobber.objectiveFare;
-    player.send('You have cancelled your request.');
+    player.notify('You have cancelled your request.');
 
     // Employee doesn't exist; don't pay.
     if (!employee) {

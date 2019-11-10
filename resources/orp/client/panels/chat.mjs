@@ -27,7 +27,7 @@ function turnOnChat(key, value) {
 export function toggleDialogue() {
     if (webview === undefined) {
         webview = new alt.WebView(url);
-        webview.on('routeMessage', routeMessage);
+        webview.on('chat:RouteMessage', routeMessage);
         webview.on('chat:Ready', ready);
         webview.on('chat:FetchLanguage', fetchLanguage);
         return;

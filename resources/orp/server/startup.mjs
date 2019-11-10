@@ -116,11 +116,12 @@ function cacheInformation() {
             if (res) {
                 alt.emit('door:CacheDoor', res[0].id, res[0]);
             } else {
-                // Create new door with defaults
+                // Create new door with defaults from configuration
                 let door = {
                     id: Doors[i].id,
                     guid: Doors[i].guid,
                     lockstate: Doors[i].lockstate,
+                    salePrice: Doors[i].salePrice
                 }
                 db.insertData(door, 'Door', res => {
                     alt.emit('door:CacheDoor', door.id, door);

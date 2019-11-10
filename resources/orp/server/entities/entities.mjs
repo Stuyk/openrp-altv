@@ -260,6 +260,10 @@ export const Door = new orm.EntitySchema({
         lockstate: {
             type: 'int',
             default: 0
+        },
+        salePrice: {
+            type: 'int',
+            default: 100000
         }
     }
 });

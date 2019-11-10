@@ -49,6 +49,7 @@ export function syncDoors() {
 
 // Dynamic Door Functionality
 alt.onServer('door:RenderDoors', doors => {
+    alt.log(`Rendering doors; ${doors}`);
     if (dynamicDoors.length >= 1) {
         dynamicDoors.forEach(door => {
             native.deleteEntity(door.enter);
@@ -57,21 +58,20 @@ alt.onServer('door:RenderDoors', doors => {
 
     if (doors.length <= 0) return;
     doors.forEach(door => {
-        const enterData = JSON.parse(door.enter);
-        const enterHash = native.getHashKey(enterData.doorModel);
+        const enterHash = native.getHashKey(door.enter.doorModel);
 
         alt.loadModel(enterHash);
         native.requestModel(enterHash);
         const enter = native.createObject(
             enterHash,
-            enterData.doorPos.x,
-            enterData.doorPos.y,
-            enterData.doorPos.z,
+            door.enter.doorPos.x,
+            door.enter.doorPos.y,
+            door.enter.doorPos.z,
             false,
             false,
             false
         );
-        native.setEntityHeading(enter, enterData.doorRot);
+        native.setEntityHeading(enter, door.enter.doorRot);
         native.setEntityAlpha(enter, 0, false);
 
         dynamicDoors.push({
@@ -138,10 +138,8 @@ alt.on('meta:Changed', (key, data) => {
         native.requestIpl(data.interior);
     }
 
-    const exitData = JSON.parse(data.exit);
-
     interval = alt.setInterval(() => {
-        const dist = distance(alt.Player.local.pos, exitData.position);
+        const dist = distance(alt.Player.local.pos, data.exit.position);
         if (dist >= 3) return;
         native.beginTextCommandDisplayHelp('STRING');
         native.addTextComponentSubstringPlayerName(

@@ -89,6 +89,12 @@ class App extends Component {
     async sendInput(e) {
         if (e.key === 'Enter') {
             const messages = [...this.state.messages];
+            if (!e.target.value && 'alt' in window) {
+                this.setState({ inputValue: '', showingInput: false, messages });
+                alt.emit('chat:RouteMessage');
+                return;
+            }
+
             const msg = this.removeHtmlTags(e.target.value);
 
             if (msg.length >= 1 && 'alt' in window) {
@@ -103,6 +109,7 @@ class App extends Component {
 
         if (e.key === 'Escape') {
             this.setState({ inputValue: '', showingInput: false });
+            alt.emit('chat:RouteMessage');
             return;
         }
 

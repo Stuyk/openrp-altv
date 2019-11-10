@@ -7,8 +7,6 @@ const url = 'http://resource/client/html/chat/index.html';
 let isActive = false;
 let webview;
 let isViewHidden = false;
-let yandexKey;
-let language;
 
 /*
 Warning; this is meant to be a seperate webview.
@@ -29,7 +27,6 @@ export function toggleDialogue() {
         webview = new alt.WebView(url);
         webview.on('chat:RouteMessage', routeMessage);
         webview.on('chat:Ready', ready);
-        webview.on('chat:FetchLanguage', fetchLanguage);
         return;
     }
 
@@ -87,32 +84,8 @@ function routeMessage(msg) {
 
 function ready() {
     alt.emitServer('sync:Ready');
-    webview.emit('chat:YandexKey', yandexKey);
-    webview.emit('chat:Language', language);
 }
 
 export function setStatus(player, value) {
     player.setMeta('isChatting', value);
 }
-
-function fetchLanguage() {
-    if (!webview) return;
-    webview.emit('chat:YandexKey', yandexKey);
-    webview.emit('chat:Language', language);
-}
-
-alt.on('option:Changed', (key, value) => {
-    const opt = `option:${key}`;
-    if (opt !== 'option:YandexKey' && opt !== 'option:Language') return;
-    if (opt === 'option:Language') {
-        language = value;
-        if (webview) {
-            webview.emit('chat:Language', language);
-        }
-    } else {
-        yandexKey = value;
-        if (webview) {
-            webview.emit('chat:YandexKey', yandexKey);
-        }
-    }
-});

@@ -25,7 +25,7 @@ class App extends Component {
         } else {
             this.characterAppend(
                 25,
-                'Johnny_Ringo',
+                'Johnny_Ringo the absolute pog fucking champ',
                 '{"agility":{"xp":0},"cooking":{"xp":0},"crafting":{"xp":0},"fishing":{"xp":0},"gathering":{"xp":0},"mechanic":{"xp":0},"medicine":{"xp":0},"mining":{"xp":0},"nobility":{"xp":0},"notoriety":{"xp":0},"smithing":{"xp":0},"woodcutting":{"xp":0}}'
             );
         }
@@ -79,53 +79,58 @@ class App extends Component {
         }
     }
 
-    renderCharacters() {
+    renderCharacter() {
         if (this.state.characters.length <= 0) return;
-        const char = this.state.characters[this.state.currentID];
-        let renderData = [];
+        const currentCharacter = this.state.characters[this.state.currentID];
+        const currentSkills = JSON.parse(currentCharacter.skills);
+        const renderData = [];
 
-        // Character Selection
-        renderData.push(
+        renderData.unshift(
             h(
                 'div',
-                { class: 'character', id: this.state.currentID },
-                h('div', { class: 'title' }, char.name),
+                { class: 'character' },
+                h(
+                    'div',
+                    { class: 'skills' },
+                    Object.keys(currentSkills).map(key => {
+                        return h(
+                            'div',
+                            { class: 'skill' },
+                            h('div', { class: 'skill-title' }, key.toUpperCase()),
+                            h('div', { class: 'level' }, getLevel(currentSkills[key].xp))
+                        );
+                    })
+                ),
                 h(
                     'div',
                     { class: 'controls' },
-                    h('button', { class: 'back', onclick: this.back.bind(this) }, '<'),
+                    h('div', { class: 'control', onclick: this.back.bind(this) }, '<'),
                     h(
-                        'button',
-                        { class: 'select', onclick: this.select.bind(this) },
-                        'Select'
+                        'div',
+                        { class: 'control-select', onclick: this.select.bind(this) },
+                        `${currentCharacter.name}`
                     ),
-                    h('button', { class: 'next', onclick: this.next.bind(this) }, '>')
+                    h('div', { class: 'control', onclick: this.next.bind(this) }, '>')
                 ),
                 h(
                     'button',
-                    { class: 'newcharacter', onclick: this.newcharacter.bind(this) },
+                    { class: 'char-button', onclick: this.newcharacter.bind(this) },
                     'New Character'
                 )
+                /*
+                h(
+                    'button',
+                    { class: 'char-button', onclick: this.newcharacter.bind(this) },
+                    'Delete Character'
+                )
+                */
             )
         );
-
-        // Skill Data
-        const skills = JSON.parse(char.skills);
-        const skillData = Object.keys(skills).map(key => {
-            return h(
-                'div',
-                { class: 'skill' },
-                h('div', { class: 'skill-title' }, key.toUpperCase()),
-                h('div', { class: 'level' }, getLevel(skills[key].xp))
-            );
-        });
-        renderData.push(h('div', { class: 'skills' }, skillData));
-        renderData.push(h('div', { class: 'txt' }, this.state.watermark));
-        return h('div', {}, renderData);
+        return h('div', null, renderData);
     }
 
     render() {
-        return h(this.renderCharacters.bind(this));
+        return h(this.renderCharacter.bind(this));
         // Render HTML / Components and Shit Here
     }
 }

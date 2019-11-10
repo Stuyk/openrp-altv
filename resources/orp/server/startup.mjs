@@ -109,30 +109,25 @@ function cacheInformation() {
         }
     });
 
-    // Create doors that are not found in configuration
-    // Only store the dynamic values, the rest come from configuration
+    // Cache dynamic doors
+    // Only persists the dynamic values
     for (let i = 0; i < Doors.length; i++) {
         db.fetchByIds(Doors[i].id, 'Door', res => {
-            if (!res) {
-                db.insertData({
+            if (res) {
+                alt.emit('door:CacheDoor', res[0].id, res[0]);
+            } else {
+                // Create new door with defaults
+                let door = {
                     id: Doors[i].id,
                     guid: Doors[i].guid,
                     lockstate: Doors[i].lockstate,
-                }, 'Door', res => {
-                    alt.log(`Created new door: ${Doors[i].id}`);
+                }
+                db.insertData(door, 'Door', res => {
+                    alt.emit('door:CacheDoor', door.id, door);
                 });
             }
         });
     }
-
-    // Cache doors from DB
-    db.fetchAllData('Door', res => {
-        if (res) {
-            for (let i = 0; i < res.length; i++) {
-                alt.emit('door:CacheDoor', res[i].id, res[i]);
-            }
-        }
-    });
 
     alt.emit('cache:Complete');
 }

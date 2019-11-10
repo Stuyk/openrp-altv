@@ -117,14 +117,15 @@ alt.on('door:LockDynamicDoor', (player, data) => {
     }
 });
 
-// Door cache initially comes from Door configuration
-// and we overwrite with dynamic values from the DB.
+// Door cache values initially comes from Door configuration
+// that is merged in with dynamic values from the DB.
+// data is door data from DB.
 alt.on('door:CacheDoor', (id, data) => {
     let door = Doors.find(x => x.id === id);
 
+    // Overwrite conf values with DB values
     door.guid = data.guid;
     door.lockstate = data.lockstate;
-    alt.log(JSON.stringify(door));
 
     if (!door.sector) {
         let lastDist;
@@ -137,7 +138,7 @@ alt.on('door:CacheDoor', (id, data) => {
                 z: (sector.coords.first.z + sector.coords.second.z) / 2
             };
 
-            const dist = distance(door.enter, pos);
+            const dist = distance(door.enter.position, pos);
             if (!lastDist) {
                 lastDist = dist;
                 currentIndex = index;

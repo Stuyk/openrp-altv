@@ -46,6 +46,7 @@ pairs.forEach((row, sector) => {
             column.pos2.y,
             10000
         );
+
         colshape.sector = {
             x: index,
             y: sector,
@@ -66,10 +67,18 @@ pairs.forEach((row, sector) => {
             name: `${String.fromCharCode(65 + index)}${sector}`,
             doors: []
         };
+
         colshape.sector.seed = new RandomNumberGenerator(
             JSON.stringify(colshape.sector),
             false
         );
+
+        colshape.gangs = {
+            owner: -1,
+            nextClaim: Date.now()
+        };
+
+        colshape.players = [];
         colshapes.push(colshape);
     });
 });

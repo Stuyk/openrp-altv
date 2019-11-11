@@ -105,12 +105,13 @@ class App extends Component {
                     'div',
                     { class: 'controls' },
                     h('div', { class: 'control', onclick: this.back.bind(this) }, '<'),
-                    h(
-                        'div',
-                        { class: 'control-select', onclick: this.select.bind(this) },
-                        `${currentCharacter.name}`
-                    ),
+                    h('div', { class: 'control-select' }, `${currentCharacter.name}`),
                     h('div', { class: 'control', onclick: this.next.bind(this) }, '>')
+                ),
+                h(
+                    'button',
+                    { class: 'char-button', onclick: this.select.bind(this) },
+                    'Select Character'
                 ),
                 h(
                     'button',

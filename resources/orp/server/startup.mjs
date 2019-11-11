@@ -1,6 +1,13 @@
 import * as alt from 'alt';
 import SQL from '../../postgres-wrapper/database.mjs'; // Database
-import { Account, Character, Vehicle, Details, Door } from './entities/entities.mjs'; // Schemas for Database
+import {
+    Account,
+    Character,
+    Vehicle,
+    Details,
+    Door,
+    Gangs
+} from './entities/entities.mjs'; // Schemas for Database
 import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.mjs';
 import fs from 'fs';
 import path from 'path';
@@ -28,7 +35,7 @@ let db = new SQL(
     dbInfo.password,
     dbInfo.dbname,
     // Specify New Table Schemas Here
-    [Account, Character, Vehicle, Details, Door]
+    [Account, Character, Vehicle, Details, Door, Gangs]
 );
 
 alt.on('ConnectionComplete', () => {

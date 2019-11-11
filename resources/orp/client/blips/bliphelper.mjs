@@ -22,7 +22,6 @@ export function createAreaBlip(pos, width, length, color, alpha = 100) {
     blip.color = color;
     blip.alpha = alpha;
     blip.rotation = 0;
-
     return blip;
 }
 
@@ -33,8 +32,10 @@ export function createSectorBlip(sector) {
     pos.y = (sector.coords.first.y + sector.coords.second.y) / 2;
     pos.z = (sector.coords.first.z + sector.coords.second.z) / 2;
 
-    let blip = createAreaBlip(pos, sector.width, sector.length, sector.x + sector.y);
+    const color = sector.color ? sector.color : 4;
+    const blip = createAreaBlip(pos, sector.width, sector.length, parseInt(color));
     sectorBlips.push(blip);
+    return blip;
 }
 
 // Destroys and removes all sector blips
@@ -44,6 +45,26 @@ export function cleanSectorBlips() {
         sectorBlips.splice(index, 1);
     });
 }
+
+alt.onServer('grid:TempTurfs', sectors => {
+    let turfBlips = [];
+    sectors.forEach(sector => {
+        turfBlips.push(createSectorBlip(sector));
+    });
+
+    alt.setTimeout(() => {
+        turfBlips.forEach(turf => {
+            if (turf && turf.destroy) {
+                try {
+                    turf.destroy();
+                    console.log('Turf was removed.');
+                } catch (err) {
+                    console.log('Turf was removed.');
+                }
+            }
+        });
+    }, 60000);
+});
 
 // Load ATM Blips
 Atms.forEach(atm => {

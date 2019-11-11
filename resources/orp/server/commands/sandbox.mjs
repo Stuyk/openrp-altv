@@ -5,6 +5,7 @@ import fs from 'fs';
 import { addWeapon } from '../systems/inventory.mjs';
 import { addXP, setXP } from '../systems/skills.mjs';
 import { generateHash } from '../utility/encryption.mjs';
+import { createGang, getGang, fetchTurfSectors } from '../systems/gangs.mjs';
 
 // Development sandbox commands
 const sandboxhelp = [
@@ -261,4 +262,29 @@ chat.registerCmd('tempdoor', (player, args) => {
         player.isEditingDoor = false;
         alt.emitClient(player, 'editingDoor', false);
     }
+});
+
+chat.registerCmd('creategang', (player, args) => {
+    const name = args[0];
+    if (!name) return;
+    if (name && name.length <= 3) return;
+    createGang(player, name);
+});
+
+chat.registerCmd('deletegang', player => {
+    player.syncGang();
+    const gang = getGang(player);
+    if (!gang) {
+        player.notify('You are not in a gang.');
+        return;
+    }
+
+    gang.disband(player);
+});
+
+chat.registerCmd('showturfs', player => {
+    if (player.data.gang === -1) return;
+    const sectors = fetchTurfSectors(player);
+    console.log(sectors);
+    alt.emitClient(player, 'grid:TempTurfs', sectors);
 });

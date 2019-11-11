@@ -6,5 +6,9 @@ alt.on('entityLeaveColshape', (colshape, entity) => {
     if (entity.constructor.name === 'Player') {
         systemsInteraction.clearInteraction(entity);
         entity.isInPoliceBooking = false;
+
+        if (colshape.sector) {
+            alt.emit('grid:ExitTurf', entity, colshape);
+        }
     }
 });

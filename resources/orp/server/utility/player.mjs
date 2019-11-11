@@ -13,6 +13,7 @@ import { quitJob } from '../systems/job.mjs';
 import { fetchNextVehicleID, getCharacterName } from '../cache/cache.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
 import { doorStates } from '../systems/use.mjs';
+import { getGang } from '../systems/gangs.mjs';
 
 // Load the database handler.
 const db = new SQL();
@@ -1197,6 +1198,19 @@ export function setupPlayerFunctions(player) {
             'extraBusinessSlots',
             player.data.extraBusinessSlots
         );
+    };
+    // =============================
+    player.syncGang = () => {
+        player.emitMeta('gang:ID', player.data.gang);
+
+        if (player.data.gang !== -1) {
+            const info = getGang(player);
+            if (info === undefined || info === null) {
+                player.saveField(player.data.id, 'gang', -1);
+                return;
+            }
+            player.emitMeta('gang:Info', info);
+        }
     };
 }
 

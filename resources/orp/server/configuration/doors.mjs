@@ -446,63 +446,33 @@ export const Doors = [
         salePrice: 85000
     },
     {
-        // Strip Club
+        // Comedy Club
         id: 16,
         guid: -1,
         enter: {
             position: {
-                x: -379.4474792480469,
-                y: 219.0102996826172,
-                z: 83.65795135498047
+                x: -430.1134948730469,
+                y: 259.8076171875,
+                z: 82.99549102783203
             },
             doorPos: {
-                x: -380.0100402832031,
-                y: 217.66558837890625,
-                z: 83.96115112304688
+                x: -430.72467041015625,
+                y: 262.2591857910156,
+                z: 83.4229736328125
             },
-            doorRot: 0,
-            doorModel: 'prop_cntrdoor_ld_l'
+            doorRot: -6,
+            doorModel: "prop_cntrdoor_ld_l"
         },
         exit: {
             position: {
-                x: 127.9552,
-                y: -1298.503,
-                z: 29.41962
+                x: -458.790,
+                y: 284.750,
+                z: 78.521
             }
         },
-        interior: '',
+        interior: 'v_comedy',
         lockstate: 0,
         isGarage: 0,
         salePrice: -1
     },
-    {
-        // Strip Club (DJ Booth)
-        id: 17,
-        guid: -1,
-        enter: {
-		position: {
-			x: -394.3876037597656,
-			y: 209.46859741210938,
-			z: 83.61905670166016
-		},
-		doorPos: {
-			x: -393.7504577636719,
-			y: 209.10105895996094,
-			z: 83.98570251464844
-		},
-		doorRot: -90,
-		doorModel: 'prop_cntrdoor_ld_l'
-        },
-        exit: {
-            position: {
-                x: 126.135,
-                y: -1278.583,
-                z: 29.270
-            }
-        },
-        interior: '',
-        lockstate: 0,
-        isGarage: 0,
-        salePrice: -1
-    }
 ];

@@ -251,36 +251,19 @@ export const Door = new orm.EntitySchema({
         id: {
             primary: true,
             type: 'int',
-            generated: true
+            generated: false
         },
         guid: {
             type: 'int',
             default: -1
         },
-        enter: {
-            type: 'text'
-        },
-        exit: {
-            type: 'text'
-        },
-        interior: {
-            type: 'text'
-        },
         lockstate: {
-            type: 'int',
-            default: 0
-        },
-        isGarage: {
             type: 'int',
             default: 0
         },
         salePrice: {
             type: 'int',
             default: 100000
-        },
-        sector: {
-            type: 'int',
-            default: -1
         }
     }
 });

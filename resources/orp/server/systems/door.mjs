@@ -27,24 +27,21 @@ function changeDoorOwnership(door) {
 alt.on('door:ExitDynamicDoor', (player, id) => {
     const door = getDoor(id);
     if (!door) return;
-    const exitData = JSON.parse(door.exit);
-    const dist = distance(exitData.position, player.pos);
+    const dist = distance(door.exit.position, player.pos);
     if (dist > 5) return;
 
     player.emitMeta('door:EnteredInterior', undefined);
     player.dimension = 0;
     player.saveDimension(0);
 
-    const enterData = JSON.parse(door.enter);
-
     if (player.vehicle) {
-        player.vehicle.pos = enterData.position;
+        player.vehicle.pos = door.enter.position;
         player.vehicle.dimension = 0;
         if (player.vehicle.saveDimension) {
             player.vehicle.saveDimension(0);
         }
     } else {
-        player.pos = enterData.position;
+        player.pos = door.enter.position;
     }
 
     if (player.preColshape) {
@@ -56,8 +53,7 @@ alt.on('door:UseDynamicDoor', (player, data) => {
     const id = data.id;
     const door = getDoor(id);
     if (!door) return;
-    const enterData = JSON.parse(door.enter);
-    const dist = distance(enterData.position, player.pos);
+    const dist = distance(door.enter.position, player.pos);
     if (dist > 5) return;
 
     if (door.lockstate) {
@@ -70,7 +66,6 @@ alt.on('door:UseDynamicDoor', (player, data) => {
         return;
     }
 
-    const exitData = JSON.parse(door.exit);
     player.preColshape = player.colshape;
 
     if (player.vehicle) {
@@ -82,7 +77,7 @@ alt.on('door:UseDynamicDoor', (player, data) => {
         }
     } else {
         player.dimension = door.id;
-        player.pos = exitData.position;
+        player.pos = door.exit.position;
     }
 
     player.saveDimension(door.id);
@@ -93,8 +88,7 @@ alt.on('door:LockDynamicDoor', (player, data) => {
     const id = data.id;
     const door = getDoor(id);
     if (!door) return;
-    const enterData = JSON.parse(door.enter);
-    const dist = distance(enterData.position, player.pos);
+    const dist = distance(door.enter.position, player.pos);
     if (dist > 5) return;
 
     if (door.guid !== player.data.id) {
@@ -117,8 +111,18 @@ alt.on('door:LockDynamicDoor', (player, data) => {
     }
 });
 
+// Door cache values initially comes from Door configuration
+// that is merged in with dynamic values from the DB.
+// data is door data from DB.
 alt.on('door:CacheDoor', (id, data) => {
-    if (data.sector === -1) {
+    let door = Doors.find(x => x.id === id);
+
+    // Overwrite conf values with DB values
+    door.guid = data.guid;
+    door.lockstate = data.lockstate;
+    door.salePrice = data.salePrice;
+
+    if (!door.sector) {
         let lastDist;
         let currentIndex = -1;
         colshapes.forEach((colshape, index) => {
@@ -129,8 +133,7 @@ alt.on('door:CacheDoor', (id, data) => {
                 z: (sector.coords.first.z + sector.coords.second.z) / 2
             };
 
-            const enterData = JSON.parse(data.enter);
-            const dist = distance(enterData.position, pos);
+            const dist = distance(door.enter.position, pos);
             if (!lastDist) {
                 lastDist = dist;
                 currentIndex = index;
@@ -143,43 +146,19 @@ alt.on('door:CacheDoor', (id, data) => {
             }
         });
 
-        alt.emit('updateDoorSector', id, currentIndex);
-        data.sector = currentIndex;
+        door.sector = currentIndex;
     }
 
-    doors[id] = data;
-    alt.emit('parseDoorSector', data);
-});
-
-alt.on('door:SetupDoorConfiguration', () => {
-    let id = 1;
-    Doors.forEach(door => {
-        door.id = id;
-        door.enter = JSON.stringify(door.enter);
-        door.exit = JSON.stringify(door.exit);
-        db.upsertData(door, 'Door', res => {
-            alt.emit('door:CacheDoor', res.id, res);
-        });
-        id += 1;
-    });
-
-    console.log(`Doors Created: ${Doors.length}`);
-});
-
-alt.on('door:CreateDoor', data => {
-    db.upsertData(data, 'Door', res => {
-        alt.emit('door:CacheDoor', res.id, res);
-    });
+    doors[id] = door;
+    alt.emit('parseDoorSector', door);
+    alt.log(`Cached door ${door.id}: ${JSON.stringify(door)}`);
 });
 
 alt.on('updateDoorLockState', (id, state) => {
     db.updatePartialData(id, { lockstate: state }, 'Door', () => {});
 });
 
-alt.on('updateDoorSector', (id, index) => {
-    db.updatePartialData(id, { sector: index }, 'Door', () => {});
-});
-
+// Update sectors with door information
 alt.on('parseDoorSector', data => {
     const index = colshapes[parseInt(data.sector)].sector.doors.findIndex(door => {
         if (door.id === data.id) return door;
@@ -196,13 +175,13 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
     const id = data.id;
     let door = getDoor(id);
     if (!door) return;
-    const enterData = JSON.parse(door.enter);
-    const dist = distance(enterData.position, player.pos);
+    const dist = distance(door.enter.position, player.pos);
     if (dist > 5) return;
 
     // Server Ownership
     if (door.guid <= -1) {
         if (!player.subCash(door.salePrice)) {
+            player.playAudio('error');
             player.notify('You do not have enough cash.');
             return;
         }
@@ -221,6 +200,7 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
         }
 
         if (!player.subCash(door.salePrice)) {
+            player.playAudio('error');
             player.notify('You do not have enough cash.');
             return;
         }
@@ -234,4 +214,5 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
         });
         changeDoorOwnership(door);
     });
+
 });

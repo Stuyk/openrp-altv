@@ -9,6 +9,7 @@ import {
     Gangs
 } from './entities/entities.mjs'; // Schemas for Database
 import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.mjs';
+import { Doors } from './configuration/doors.mjs';
 import fs from 'fs';
 import path from 'path';
 
@@ -108,18 +109,26 @@ function cacheInformation() {
         }
     });
 
-    db.fetchAllData('Door', res => {
-        if (!res) {
-            alt.emit('door:SetupDoorConfiguration');
-            return;
-        }
-
-        for (let i = 0; i < res.length; i++) {
-            alt.emit('door:CacheDoor', res[i].id, res[i]);
-        }
-
-        alt.log(`=====> Loaded: ${res.length} Doors`);
-    });
+    // Cache dynamic doors
+    // Only persists the dynamic values
+    for (let i = 0; i < Doors.length; i++) {
+        db.fetchByIds(Doors[i].id, 'Door', res => {
+            if (res) {
+                alt.emit('door:CacheDoor', res[0].id, res[0]);
+            } else {
+                // Create new door with defaults from configuration
+                let door = {
+                    id: Doors[i].id,
+                    guid: Doors[i].guid,
+                    lockstate: Doors[i].lockstate,
+                    salePrice: Doors[i].salePrice
+                }
+                db.insertData(door, 'Door', res => {
+                    alt.emit('door:CacheDoor', door.id, door);
+                });
+            }
+        });
+    }
 
     alt.emit('cache:Complete');
 }

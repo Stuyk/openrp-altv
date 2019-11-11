@@ -264,6 +264,11 @@ chat.registerCmd('tempdoor', (player, args) => {
     }
 });
 
+chat.registerCmd('fixdim', player => {
+    player.dimension = 0;
+    player.saveDimension(0);
+});
+
 chat.registerCmd('creategang', (player, args) => {
     const name = args[0];
     if (!name) return;

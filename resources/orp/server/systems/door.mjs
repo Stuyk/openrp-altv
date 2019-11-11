@@ -27,24 +27,21 @@ function changeDoorOwnership(door) {
 alt.on('door:ExitDynamicDoor', (player, id) => {
     const door = getDoor(id);
     if (!door) return;
-    const exitData = JSON.parse(door.exit);
-    const dist = distance(exitData.position, player.pos);
+    const dist = distance(door.exit.position, player.pos);
     if (dist > 5) return;
 
     player.emitMeta('door:EnteredInterior', undefined);
     player.dimension = 0;
     player.saveDimension(0);
 
-    const enterData = JSON.parse(door.enter);
-
     if (player.vehicle) {
-        player.vehicle.pos = enterData.position;
+        player.vehicle.pos = door.enter.position;
         player.vehicle.dimension = 0;
         if (player.vehicle.saveDimension) {
             player.vehicle.saveDimension(0);
         }
     } else {
-        player.pos = enterData.position;
+        player.pos = door.enter.position;
     }
 
     if (player.preColshape) {
@@ -91,8 +88,7 @@ alt.on('door:LockDynamicDoor', (player, data) => {
     const id = data.id;
     const door = getDoor(id);
     if (!door) return;
-    const enterData = JSON.parse(door.enter);
-    const dist = distance(enterData.position, player.pos);
+    const dist = distance(door.enter.position, player.pos);
     if (dist > 5) return;
 
     if (door.guid !== player.data.id) {
@@ -185,6 +181,7 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
     // Server Ownership
     if (door.guid <= -1) {
         if (!player.subCash(door.salePrice)) {
+            player.playAudio('error');
             player.notify('You do not have enough cash.');
             return;
         }
@@ -203,6 +200,7 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
         }
 
         if (!player.subCash(door.salePrice)) {
+            player.playAudio('error');
             player.notify('You do not have enough cash.');
             return;
         }
@@ -217,5 +215,4 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
         changeDoorOwnership(door);
     });
 
-    player.notify('You have purchased this location.');
 });

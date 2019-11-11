@@ -340,6 +340,10 @@ alt.on('parse:Turfs', () => {
         const turfMembers = {};
 
         shape.players.forEach(player => {
+            if (!player) {
+                return;
+            }
+
             if (!player.data) {
                 return;
             }

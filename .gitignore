@@ -1,7 +1,11 @@
 resources/*
 !resources/orp
+!resources/club-bahama
+!resources/comedy-club
+!resources/hospital-pillbox
+!resources/discord
+!resources/postgres-wrapper
 !resources/orp-addon/*
-!resources/discord/
 resources/discord/server/configuration.json
 resources/orp/terms-and-conditions.json
 resources/orp/server/configuration/database.mjs
@@ -21,3 +25,4 @@ package.json
 altv-server
 libnode.so.72
 start.sh
+trackpoints.json

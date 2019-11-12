@@ -151,7 +151,7 @@ alt.on('door:CacheDoor', (id, data) => {
 
     doors[id] = door;
     alt.emit('parseDoorSector', door);
-    alt.log(`Cached door ${door.id}: ${JSON.stringify(door)}`);
+    alt.log(`Cached door ${door.id} - Owner: ${door.guid}`);
 });
 
 alt.on('updateDoorLockState', (id, state) => {
@@ -214,5 +214,4 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
         });
         changeDoorOwnership(door);
     });
-
 });

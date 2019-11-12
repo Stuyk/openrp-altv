@@ -26,5 +26,11 @@
         "eslint-plugin-react": "^7.14.3",
         "jsdoc": "^3.6.3",
         "prettier": "^1.18.2"
+    },
+    "prettier": {
+        "printWidth": 90,
+        "tabWidth": 4,
+        "singleQuote": true,
+        "bracketSpacing": true
     }
 }

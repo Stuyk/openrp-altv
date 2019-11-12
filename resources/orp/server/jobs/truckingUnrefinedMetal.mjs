@@ -112,7 +112,7 @@ alt.on('job:TruckingUnrefinedMetal', player => {
 
     const emptyVector = { x: 0, y: 0, z: 0 };
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
-    job.setItemRestrictions([{ key: 'driverslicense', hasItem: false }]);
+    job.setItemRestrictions([{ key: 'driverslicense', hasItem: true }]);
     let pos;
     let obj;
 
@@ -135,8 +135,8 @@ alt.on('job:TruckingUnrefinedMetal', player => {
     );
     obj.setVehicle(
         'trailers',
-        { x: 2705.643310546875, y: 2781.643310546875, z: 39.79750061035156 },
-        303.5177307128906,
+        { x: 2699.307861328125, y: 2776.710693359375, z: 39.877986907958984 },
+        128,
         false
     );
     job.add(copyObjective(obj));

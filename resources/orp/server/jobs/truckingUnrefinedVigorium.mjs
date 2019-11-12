@@ -155,7 +155,7 @@ alt.on('job:TruckingUnrefinedVigorium', player => {
 
     const emptyVector = { x: 0, y: 0, z: 0 };
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
-    job.setItemRestrictions([{ key: 'driverslicense', hasItem: false }]);
+    job.setItemRestrictions([{ key: 'driverslicense', hasItem: true }]);
     let pos;
     let obj;
 

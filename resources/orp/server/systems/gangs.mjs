@@ -107,7 +107,7 @@ export class Gang {
 
         const turfs = JSON.parse(this.turfs);
         turfs.forEach(turf => {
-            colhapes[turf].gangs = {
+            colshapes[turf].gangs = {
                 owner: -1
             };
             colshapes[turf].sector.color = 4;

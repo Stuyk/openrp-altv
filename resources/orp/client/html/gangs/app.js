@@ -177,8 +177,8 @@ class App extends Component {
             name: newData.name,
             members,
             ranks: JSON.parse(newData.ranks),
-            turfs: JSON.parse(newData.turfs)
-            // page: 0
+            turfs: JSON.parse(newData.turfs),
+            page: 0
         };
         this.setState(refinedData);
     }

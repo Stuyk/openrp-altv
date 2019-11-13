@@ -269,24 +269,6 @@ chat.registerCmd('fixdim', player => {
     player.saveDimension(0);
 });
 
-chat.registerCmd('creategang', (player, args) => {
-    const name = args[0];
-    if (!name) return;
-    if (name && name.length <= 3) return;
-    createGang(player, name);
-});
-
-chat.registerCmd('deletegang', player => {
-    player.syncGang();
-    const gang = getGang(player);
-    if (!gang) {
-        player.notify('You are not in a gang.');
-        return;
-    }
-
-    gang.disband(player);
-});
-
 chat.registerCmd('showturfs', player => {
     if (player.data.gang === -1) return;
     const sectors = fetchTurfSectors(player);

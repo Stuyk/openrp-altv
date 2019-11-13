@@ -244,14 +244,17 @@ export class Gang {
     }
 
     disband(player) {
+        player.isDisbandingGang = true;
         if (player.data.id !== this.id) {
             player.notify('You do not own this gang.');
+            player.isDisbandingGang = false;
             return false;
         }
 
         const index = gangs.findIndex(gang => parseInt(gang.id) === parseInt(this.id));
         if (index <= -1) {
             player.notify('Could not find the gang.');
+            player.isDisbandingGang = false;
             return false;
         }
 
@@ -278,9 +281,9 @@ export class Gang {
         });
 
         db.deleteByIds(player.data.id, 'Gangs', res => {
-            console.log(res);
             player.emitMeta('readyForNewGang', true);
             player.notify('The gang has now been deleted.');
+            player.isDisbandingGang = false;
         });
         return true;
     }
@@ -409,6 +412,11 @@ export function fetchTurfSectors(player) {
  * @param gangName
  */
 export function createGang(player, gangName) {
+    if (player.isDisbandingGang) {
+        player.notify('Please wait until gang is doing being disbanded.');
+        return;
+    }
+
     if (player.data.gang !== -1) {
         player.notify('You are already in a gang.');
         return;
@@ -562,6 +570,7 @@ alt.on('parse:Turfs', () => {
         });
 
         const nextTime = Date.now() + shape.sector.seed.getNumber(30) * 60000;
+        console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
         if (parseInt(shape.gangs.owner) === parseInt(selectedGang)) {
             shape.gangs.nextClaim = nextTime;
             return;

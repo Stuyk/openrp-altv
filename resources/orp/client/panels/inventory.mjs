@@ -79,8 +79,6 @@ export function fetchEquipment(value) {
 
     const equipmentArray = JSON.parse(value);
 
-    alt.log('Fetched Equipment');
-
     equipmentArray.forEach((item, index) => {
         if (!item) {
             webview.emit('inventory:EquipItem', null, index, null);
@@ -97,9 +95,6 @@ export function fetchStats(value) {
         value = alt.Player.local.getMeta('skills');
     }
     const statArray = JSON.parse(value);
-
-    alt.log('Fetched Stats');
-
     Object.keys(statArray).forEach(key => {
         webview.emit(
             'inventory:AddStat',

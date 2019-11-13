@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import { View } from '/client/utility/view.mjs';
 import { showCursor } from '/client/utility/cursor.mjs';
+import { getLevel } from '/client/systems/xp.mjs';
 
 alt.log('Loaded: client->panels->info.mjs');
 
@@ -17,8 +18,6 @@ export function showDialogue() {
     if (alt.Player.local.getSyncedMeta('dead')) return;
     if (alt.Player.local.getMeta('arrest')) return;
 
-    alt.log('Gang View Open');
-
     // Setup Webview
     webview.open(url, true);
     webview.on('gang:Close', closeDialogue);
@@ -31,6 +30,7 @@ export function showDialogue() {
     webview.on('gang:ChangeGangName', changeGangName);
     webview.on('gang:LeaveAsMember', leaveAsMember);
     webview.on('gang:Create', gangCreate);
+    webview.on('gang:Disband', disbandGang);
 }
 
 alt.on('meta:Changed', (key, value) => {
@@ -46,7 +46,17 @@ function ready() {
     if (!webview) return;
     const gangInfo = alt.Player.local.getMeta('gang:Info');
     if (!gangInfo) {
-        webview.close();
+        const skills = alt.Player.local.getMeta('skills');
+        const skillsArray = JSON.parse(skills);
+        const level = getLevel(skillsArray.notoriety.xp);
+        if (level < 25) {
+            webview.close();
+            alt.emit(
+                'meta:Changed',
+                'queueNotification',
+                'You must have level 25+ Notoriety to run a gang.'
+            );
+        }
         return;
     }
     const parsedInfo = JSON.parse(gangInfo);
@@ -58,7 +68,6 @@ function ready() {
     */
 
     webview.emit('gang:Ready', gangInfo);
-
     const id = alt.Player.local.getSyncedMeta('id');
     const members = JSON.parse(parsedInfo.members);
     const member = members.find(member => member.id === id);
@@ -101,4 +110,10 @@ function leaveAsMember(memberID) {
 
 function gangCreate(name) {
     alt.emitServer('gang:Create', name);
+}
+
+function disbandGang() {
+    if (!webview) return;
+    webview.close();
+    alt.emitServer('gang:Disband');
 }

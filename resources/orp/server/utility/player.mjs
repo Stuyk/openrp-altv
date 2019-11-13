@@ -1207,10 +1207,13 @@ export function setupPlayerFunctions(player) {
             const info = getGang(player);
             if (info === undefined || info === null) {
                 player.saveField(player.data.id, 'gang', -1);
+                player.emitMeta('gang:Info', null);
                 return;
             }
 
             player.emitMeta('gang:Info', JSON.stringify(info));
+        } else {
+            player.emitMeta('gang:Info', null);
         }
     };
 

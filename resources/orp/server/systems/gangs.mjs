@@ -73,18 +73,12 @@ export class Gang {
             return;
         }
 
-        console.log('member?');
-
         if (player.data.id !== id) {
-            console.log('removing...');
-
             const officer = members.find(gangMember => gangMember.id === player.data.id);
             if (!officer) {
                 player.notify('You are not in this gang.');
                 return;
             }
-
-            console.log('rank check...');
 
             if (members[memberIndex].rank >= officer.rank) {
                 player.notify(
@@ -255,7 +249,7 @@ export class Gang {
             return false;
         }
 
-        const index = gangs.findIndex(gang => gang.id === this.id);
+        const index = gangs.findIndex(gang => parseInt(gang.id) === parseInt(this.id));
         if (index <= -1) {
             player.notify('Could not find the gang.');
             return false;
@@ -270,18 +264,23 @@ export class Gang {
         });
 
         gangs.splice(index, 1);
-        db.deleteByIds(player.data.id, 'Gangs', res => {
-            const players = alt.Player.all.filter(
-                target => target.data && target.data.gang === this.id
-            );
 
-            if (players.length >= 1) {
-                players.forEach(target => {
-                    target.data.gang = -1;
-                    target.saveField(target.data.id, 'gang', -1);
-                    target.notify('The gang was disbanded.');
-                });
-            }
+        const targets = [...alt.Player.all].filter(
+            target => target.data && parseInt(target.data.gang) === this.id
+        );
+
+        targets.forEach(target => {
+            target.data.gang = -1;
+            target.saveField(target.data.id, 'gang', target.data.gang);
+            target.syncGang();
+            target.send('Your gang was disbanded.');
+            target.notify('Your gang was disbanded.');
+        });
+
+        db.deleteByIds(player.data.id, 'Gangs', res => {
+            console.log(res);
+            player.emitMeta('readyForNewGang', true);
+            player.notify('The gang has now been deleted.');
         });
         return true;
     }
@@ -439,11 +438,11 @@ export function createGang(player, gangName) {
 
     player.data.gang = player.data.id;
     db.upsertData(newGang, 'Gangs', newGangData => {
-        player.saveField(player.data.id, 'gang', player.data.id);
-        gangs[parseInt(player.data.id)] = newGang;
         setupGangData(newGangData);
-        player.notify('Gang was created.');
-        player.syncGang();
+        player.saveField(player.data.id, 'gang', player.data.id);
+        player.notify('Gang Created');
+        player.emitMeta('gang:ID', player.data.id);
+        player.emitMeta('gang:Info', JSON.stringify(newGang));
     });
 }
 
@@ -630,8 +629,6 @@ alt.onClient('gang:Remove', (player, memberID) => {
         return;
     }
 
-    console.log(memberID);
-
     gang.removeMember(player, memberID);
 });
 
@@ -705,4 +702,20 @@ alt.onClient('gang:LeaveAsMember', (player, memberID) => {
 alt.onClient('gang:Create', (player, name) => {
     if (player.data.gang !== -1) return;
     createGang(player, name);
+});
+
+alt.onClient('gang:Disband', player => {
+    const gang = getGang(player);
+    if (!gang) {
+        player.syncGang();
+        player.notify('Could not disband at this time; try again.');
+        return;
+    }
+
+    if (player.data.id !== gang.id) {
+        player.notify('This is not your gang.');
+        return;
+    }
+
+    gang.disband(player);
 });

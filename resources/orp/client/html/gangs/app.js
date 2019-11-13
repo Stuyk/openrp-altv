@@ -197,7 +197,6 @@ class App extends Component {
     }
 
     setRank(rank, id) {
-        console.log(`${rank} | ${id}`);
         this.setState({ myrank: rank, myid: id });
     }
 
@@ -207,6 +206,8 @@ class App extends Component {
     }
 
     changeGangName(e) {
+        if (e.key !== 'Enter') return;
+
         const value = e.target.value;
         if (value.length <= 3) return;
 
@@ -220,6 +221,8 @@ class App extends Component {
     }
 
     changeRankName(e) {
+        if (e.key !== 'Enter') return;
+
         const name = e.target.value;
         const id = parseInt(e.target.id);
 
@@ -237,6 +240,8 @@ class App extends Component {
     }
 
     changeOwnership(e) {
+        if (e.key !== 'Enter') return;
+
         const memberID = parseInt(e.target.value);
         if (memberID <= 0) return;
         if (this.state.members.findIndex(member => member.id === memberID) <= -1) return;
@@ -315,6 +320,8 @@ class App extends Component {
     }
 
     createGang(e) {
+        if (e.key !== 'Enter') return;
+
         const name = e.target.value;
         if (!name) return;
         if (name.length <= 3) return;
@@ -322,6 +329,19 @@ class App extends Component {
 
         if ('alt' in window) {
             alt.emit('gang:Create', name);
+        }
+    }
+
+    disband(e) {
+        if (e.key !== 'Enter') return;
+
+        const name = e.target.value.replace(' ', '');
+        if (this.state.name.replace(' ', '') !== name) return;
+
+        if ('alt' in window) {
+            alt.emit('gang:Disband');
+        } else {
+            console.log('disbanded');
         }
     }
 
@@ -400,7 +420,8 @@ class App extends Component {
                             unmarkAsTyping: this.unmarkAsTyping.bind(this),
                             changeGangName: this.changeGangName.bind(this),
                             changeRankName: this.changeRankName.bind(this),
-                            changeOwnership: this.changeOwnership.bind(this)
+                            changeOwnership: this.changeOwnership.bind(this),
+                            disband: this.disband.bind(this)
                         }
                     })
                 ),
@@ -626,7 +647,7 @@ class Settings extends Component {
                 h('input', {
                     type: 'text',
                     placeholder: `Type here and hit enter to change name.`,
-                    onchange: functions.changeGangName.bind(this),
+                    onkeydown: functions.changeGangName.bind(this),
                     onfocusin: functions.markAsTyping,
                     onfocusout: functions.unmarkAsTyping
                 })
@@ -662,7 +683,7 @@ class Settings extends Component {
                         type: 'text',
                         placeholder: `${data.ranks[i]} - Type here and hit enter to change name.`,
                         id: i,
-                        onchange: functions.changeRankName.bind(this),
+                        onkeydown: functions.changeRankName.bind(this),
                         onfocusin: functions.markAsTyping,
                         onfocusout: functions.unmarkAsTyping
                     })
@@ -681,7 +702,22 @@ class Settings extends Component {
                         min: 0,
                         type: 'number',
                         placeholder: `Type here and hit enter to change ownership of gang.`,
-                        onchange: functions.changeOwnership.bind(this),
+                        onkeydown: functions.changeOwnership.bind(this),
+                        onfocusin: functions.markAsTyping,
+                        onfocusout: functions.unmarkAsTyping
+                    })
+                )
+            );
+
+            renderData.push(
+                h(
+                    'div',
+                    { class: 'option' },
+                    h('div', { class: 'label' }, 'Disband Gang'),
+                    h('input', {
+                        type: 'text',
+                        placeholder: `Type the exact gang name here; and press enter. Delete text if change your mind.`,
+                        onkeydown: functions.disband.bind(this),
                         onfocusin: functions.markAsTyping,
                         onfocusout: functions.unmarkAsTyping
                     })

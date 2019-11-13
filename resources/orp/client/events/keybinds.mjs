@@ -3,6 +3,7 @@ import * as native from 'natives';
 import * as panelsInventory from '/client/panels/inventory.mjs';
 import * as panelsChat from '/client/panels/chat.mjs';
 import * as panelsHelp from '/client/panels/help.mjs';
+import * as panelsGangs from '/client/panels/gangs.mjs';
 import * as systemsVehicles from '/client/systems/vehicles.mjs';
 import * as systemsContext from '/client/systems/context.mjs';
 import * as utilityGameInfo from '/client/utility/gameinfo.mjs';
@@ -40,6 +41,12 @@ let keybinds = {
         altModifier: false,
         shiftModifier: false,
         onKeyUp: panelsChat.toggleDialogue
+    },
+    // U - Gang Panel
+    85: {
+        altModifier: false,
+        shiftModifier: false,
+        onKeyUp: panelsGangs.showDialogue
     },
     // Shift + F2 - Get Location Info
     113: {

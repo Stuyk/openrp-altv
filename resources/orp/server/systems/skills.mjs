@@ -17,6 +17,11 @@ const currentSkills = {
 };
 
 export function addXP(player, skill, xpToAdd) {
+    // Gang members cannot gain nobility.
+    if (skill === 'nobility' && parseInt(player.data.gang) !== -1) {
+        return;
+    }
+
     if (parseInt(xpToAdd) > 13034431) return;
 
     skill = skill.toLowerCase();

@@ -96,13 +96,13 @@ export function sync(player) {
     const lastPos = JSON.parse(player.data.lastposition);
     player.needsRoleplayInfo = true;
     player.spawn(lastPos.x, lastPos.y, lastPos.z, 1);
+    player.setSyncedMeta('id', player.data.id);
 
     // Set player name.
     if (player.data.name !== null && player.data.dob !== null) {
         player.needsRoleplayInfo = false;
         player.setSyncedMeta('name', player.data.name);
         player.setSyncedMeta('dob', player.data.dob);
-        player.setSyncedMeta('id', player.data.id);
         alt.log(`${player.data.name} has spawned.`);
     }
 
@@ -143,6 +143,7 @@ export function sync(player) {
     player.syncInteractionBlips();
     player.syncXP();
     player.syncContacts();
+    player.syncGang();
 
     // Setup Health / Armor
     let timeout = setTimeout(() => {
@@ -151,7 +152,6 @@ export function sync(player) {
         player.syncMoney();
         player.syncDoorStates();
         player.syncArrest();
-        player.syncGang();
         if (player.data.dead) {
             player.health = 0;
             player.armour = 0;

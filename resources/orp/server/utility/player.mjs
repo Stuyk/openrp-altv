@@ -1209,8 +1209,13 @@ export function setupPlayerFunctions(player) {
                 player.saveField(player.data.id, 'gang', -1);
                 return;
             }
-            player.emitMeta('gang:Info', info);
+
+            player.emitMeta('gang:Info', JSON.stringify(info));
         }
+    };
+
+    player.saveGangID = () => {
+        player.saveField(player.data.id, 'gang', player.data.gang);
     };
 }
 

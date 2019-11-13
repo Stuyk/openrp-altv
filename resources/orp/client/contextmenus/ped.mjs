@@ -10,18 +10,34 @@ alt.on('menu:Ped', ent => {
     if (!player) return;
 
     const name = player.getSyncedMeta('name');
-    let options = [
-        {
-            label: name
-        }
-    ];
-
-    options = options.concat(arrestAddons(player));
+    arrestAddons(player);
+    gangAddons(player);
     setContextTitle(name);
 });
 
-function arrestAddons(player) {
+function gangAddons(player) {
     const options = [];
+    const gangInfo = alt.Player.local.getMeta('gang:Info');
+    if (!gangInfo) {
+        return options;
+    }
+
+    const parsedInfo = JSON.parse(gangInfo);
+    const members = JSON.parse(parsedInfo.members);
+    const member = members.find(
+        member => member.id === alt.Player.local.getSyncedMeta('id')
+    );
+
+    if (!member) {
+        return options;
+    }
+
+    if (member.rank >= 2) {
+        appendContextItem('Invite to Gang', true, 'gang:InviteMember', { player });
+    }
+}
+
+function arrestAddons(player) {
     const isTazed = player.getSyncedMeta('tazed');
     const arrester = player.getSyncedMeta('arrested');
 
@@ -66,6 +82,4 @@ function arrestAddons(player) {
         appendContextItem('Cuff', true, 'use:CuffPlayer', { player });
         appendContextItem('Cuff (Move Freely)', true, 'use:CuffPlayerFreely', { player });
     }
-
-    return options;
 }

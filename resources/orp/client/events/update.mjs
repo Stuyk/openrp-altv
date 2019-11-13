@@ -38,12 +38,14 @@ function drawPlayerNames() {
         if (!renderData) return;
         count += 1;
 
+        const characterID = target.getSyncedMeta('id');
         const isChatting = target.getMeta('isChatting');
         const color = target.getSyncedMeta('namecolor');
         let name = color
             ? color + renderData.name.replace('_', ' ')
             : renderData.name.replace('_', ' ');
         name = isChatting ? `${name}~n~~o~. . .` : name;
+        name = `${characterID} - ` + name;
 
         let scale = 0.5 - renderData.dist * 0.01;
         text.drawText3d(

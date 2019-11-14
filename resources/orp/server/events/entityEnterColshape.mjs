@@ -23,8 +23,6 @@ alt.on('entityEnterColshape', (colshape, entity) => {
                     weather.lastWeather
                 );
             }
-
-            alt.emit('grid:EnterTurf', entity, colshape);
         }
 
         systemsInteraction.forwardEventToPlayer(colshape, entity);

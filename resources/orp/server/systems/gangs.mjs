@@ -498,58 +498,38 @@ alt.on('grid:AddTurf', (id, turfID, nextClaimTime) => {
     foundGang.addTurf(turfID, colshapes[turfID], nextClaimTime);
 });
 
-alt.on('grid:EnterTurf', (player, colshape) => {
-    if (player.dimension !== 0) return;
-    if (!player.data) return;
-    if (player.data.gang === -1) return;
-
-    const ownerID = colshape.gangs.owner.id ? parseInt(colshape.gangs.owner.id) : -1;
-    if (ownerID === parseInt(player.data.gang)) {
-        player.notify(`[${colshape.sector.name}] Entered Your Gang's Turf`);
-    }
-
-    colshape.players.push(player);
-});
-
-alt.on('grid:ExitTurf', (player, colshape) => {
-    const currentPlayers = [...colshape.players];
-    const index = currentPlayers.findIndex(p => p === player);
-    if (index <= -1) return;
-    currentPlayers.splice(index, 1);
-    colshape.players = currentPlayers;
-});
-
 alt.on('parse:Turfs', () => {
+    const currentPlayers = [...alt.Player.all];
+    const players = currentPlayers.filter(
+        player =>
+            player && // is player
+            player.data && // has data
+            player.data.gang !== -1 && // is in a gang
+            !player.data.dead && // is not dead
+            player.dimension === 0 // is in dimension 0
+    );
+
     colshapes.forEach((shape, turfID) => {
-        if (Date.now() < shape.gangs.nextClaim) return;
-        if (shape.players.length <= 0) return;
-        if (alt.Player.all.length <= 0) return;
+        if (Date.now() < shape.gangs.nextClaim) {
+            return;
+        }
+
+        const filteredPlayers = players.filter(player => player.colshape === shape);
+        const nextTime =
+            Date.now() +
+            shape.sector.seed.getNumber(Config.turfHighestWaitTime) * 60000 +
+            60000 * 10;
 
         console.log(`Turf ${shape.sector.name} has initiated claim.`);
+        console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
+
+        if (filteredPlayers.length <= 0) {
+            shape.gangs.nextClaim = nextTime;
+            return;
+        }
 
         const turfMembers = {};
-
-        shape.players.forEach(player => {
-            if (!player) {
-                return;
-            }
-
-            if (!player.data) {
-                return;
-            }
-
-            if (player.data.gang === -1) {
-                return;
-            }
-
-            if (player.data.dead) {
-                return;
-            }
-
-            if (player.dimension !== 0) {
-                return;
-            }
-
+        filteredPlayers.forEach(player => {
             if (!turfMembers[player.data.gang]) {
                 turfMembers[player.data.gang] = 1;
             } else {
@@ -569,8 +549,6 @@ alt.on('parse:Turfs', () => {
             }
         });
 
-        const nextTime = Date.now() + shape.sector.seed.getNumber(30) * 60000;
-        console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
         if (parseInt(shape.gangs.owner) === parseInt(selectedGang)) {
             shape.gangs.nextClaim = nextTime;
             return;
@@ -727,4 +705,29 @@ alt.onClient('gang:Disband', player => {
     }
 
     gang.disband(player);
+});
+
+alt.onClient('gangs:CheckCraftDialogue', (player, type) => {
+    if (player.data.gang === -1) {
+        player.notify('You must be in a gang to access this point.');
+        return;
+    }
+
+    const currentTurf = player.colshape;
+    if (!currentTurf) {
+        player.notify('You are not in a turf.');
+        return;
+    }
+
+    if (currentTurf.gangs.owner === -1) {
+        player.notify('Nobody currently owns this turf.');
+        return;
+    }
+
+    if (currentTurf.gangs.owner.id !== player.data.gang) {
+        player.notify('This is not your crafting point.');
+        return;
+    }
+
+    alt.emitClient(player, 'gangs:ShowCraftingDialogue', type);
 });

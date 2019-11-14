@@ -47,9 +47,17 @@ export function cleanSectorBlips() {
 }
 
 alt.onServer('grid:TempTurfs', sectors => {
-    let turfBlips = [];
+    const turfBlips = [];
     sectors.forEach(sector => {
-        turfBlips.push(createSectorBlip(sector));
+        const pos = {
+            x: (sector.coords.first.x + sector.coords.second.x) / 2,
+            y: (sector.coords.first.y + sector.coords.second.y) / 2,
+            z: (sector.coords.first.z + sector.coords.second.z) / 2
+        };
+
+        const color = sector.color ? sector.color : 4;
+        const blip = createBlip(pos, 79, color, 'YOUR TURF');
+        turfBlips.push(blip);
     });
 
     alt.setTimeout(() => {
@@ -57,9 +65,8 @@ alt.onServer('grid:TempTurfs', sectors => {
             if (turf && turf.destroy) {
                 try {
                     turf.destroy();
-                    console.log('Turf was removed.');
                 } catch (err) {
-                    console.log('Turf was removed.');
+                    alt.log('Turf could not be deleted.');
                 }
             }
         });

@@ -74,7 +74,8 @@ export const Config = {
     minutesPerMinute: 5, // Used to set the Time Scale of the server for the minute. 1 Minute = 30 Minutes.
     hoursPerSixtyMinutes: 1, // Used to set the Time Scale of the server for the hour.
     // Time Before Turf is Claimed Again
-    nextTurfClaimTime: 60000 * 30
+    nextTurfCheckTime: 60000, // 1 Minute
+    turfHighestWaitTime: 35 // 10 Minutes + Random up to This Amount = Next Claim Time
 };
 
 alt.on('orp:SetConfig', jsonString => {

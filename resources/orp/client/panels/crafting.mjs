@@ -7,11 +7,19 @@ const url = 'http://resource/client/html/crafting/index.html';
 let webview;
 
 export function weaponryCrafting() {
-    showDialogue('weaponry');
+    alt.emitServer('gangs:CheckCraftDialogue', 'weaponry');
 }
+
+alt.onServer('gangs:ShowCraftingDialogue', type => {
+    showDialogue(type);
+});
 
 // Show the webview for the player to type in their roleplay info.
 export function showDialogue(type) {
+    alt.log('Got it. This is your point.');
+    alt.log(type);
+
+    /*
     if (!webview) {
         webview = new View();
     }

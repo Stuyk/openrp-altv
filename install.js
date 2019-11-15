@@ -278,10 +278,17 @@ async function startup() {
     }
 
     if (parseInt(res) === 0) {
-        windowsURLS.forEach(res => {
-            res.url = res.url.replace('beta', 'stable');
-        });
-        console.log('You have selected the STABLE branch.');
+        if (platform === 'windows') {
+            windowsURLS.forEach(res => {
+                res.url = res.url.replace('beta', 'stable');
+            });
+            console.log('You have selected the STABLE branch.');
+        } else {
+            linuxURLS.forEach(res => {
+                res.url = res.url.replace('beta', 'stable');
+            });
+            console.log('You have selected the STABLE branch.');
+        }
     }
 
     if (parseInt(res) === 1) {
@@ -289,10 +296,17 @@ async function startup() {
     }
 
     if (parseInt(res) === 2) {
-        windowsURLS.forEach(res => {
-            res.url = res.url.replace('beta', 'alpha');
-        });
-        console.log('You have selected the ALPHA branch.');
+        if (platform === 'windows') {
+            windowsURLS.forEach(res => {
+                res.url = res.url.replace('beta', 'alpha');
+            });
+            console.log('You have selected the STABLE branch.');
+        } else {
+            linuxURLS.forEach(res => {
+                res.url = res.url.replace('beta', 'alpha');
+            });
+            console.log('You have selected the STABLE branch.');
+        }
     }
 
     if (platform === 'windows') {

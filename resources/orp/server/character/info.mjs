@@ -33,7 +33,6 @@ export function setRoleplayInfo(player, info) {
 export function select(player, id) {
     const index = player.characters.findIndex(char => parseInt(char.id) === parseInt(id));
     if (index <= -1) {
-        // Character not found.
         return;
     }
 

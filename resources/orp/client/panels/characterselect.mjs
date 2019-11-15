@@ -39,11 +39,19 @@ function ready() {
 }
 
 function nextCharacter(index) {
-    const sex = JSON.parse(characters[parseInt(index)].face).Sex.value;
-    const modelName = sex === 1 ? 'mp_m_freemode_01' : 'mp_f_freemode_01';
-    const hash = native.getHashKey(modelName);
-    alt.loadModel(hash);
-    native.setPlayerModel(alt.Player.scriptID, hash);
+    const charData = JSON.parse(characters[parseInt(index)].face);
+    if (charData) {
+        const sex = charData.Sex.value;
+        const modelName = sex === 1 ? 'mp_m_freemode_01' : 'mp_f_freemode_01';
+        const hash = native.getHashKey(modelName);
+        alt.loadModel(hash);
+        native.setPlayerModel(alt.Player.scriptID, hash);
+    } else {
+        const hash = native.getHashKey('mp_m_freemode_01');
+        alt.loadModel(hash);
+        native.setPlayerModel(alt.Player.scriptID, hash);
+    }
+
     alt.emit('meta:Changed', 'face', characters[parseInt(index)].face);
     alt.emit('meta:Changed', 'equipment', characters[parseInt(index)].equipment);
 
@@ -58,8 +66,6 @@ function nextCharacter(index) {
 
 function selectCharacter(id) {
     if (!webview) return;
-    alt.log(id);
-
     webview.close();
     camera.destroy();
     alt.emitServer('character:Select', id);

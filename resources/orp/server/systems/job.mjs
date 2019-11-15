@@ -1159,6 +1159,8 @@ export function quitTarget(player) {
 }
 
 export function quitJob(player, loggingOut = false, playFailSound = false) {
+    if (!player.data) return;
+    if (!player.vehicles) return;
     if (player.vehicles.length >= 1) {
         let nonJobVehicles = player.vehicles.filter(x => x.job === undefined);
         let jobVehicles = player.vehicles.filter(x => x.job !== undefined);

@@ -53,7 +53,6 @@ export function finishPlayerLogin(player, databaseID) {
         const data = {
             guid: databaseID,
             lastposition: JSON.stringify(Config.defaultSpawnPoint),
-            model: 'mp_m_freemode_01',
             health: 200,
             cash: Config.defaultPlayerCash,
             bank: Config.defaultPlayerBank,
@@ -71,6 +70,7 @@ export function finishPlayerLogin(player, databaseID) {
 // Called for any existing characters.
 export function existingCharacter(player, data) {
     player.data = data;
+    player.model = 'mp_m_freemode_01';
     player.emitMeta('loggedin', true);
     player.dimension = 0;
 }

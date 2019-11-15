@@ -66,6 +66,7 @@ export function syncClothing(jsonData) {
 // Apply all of the facial data to the player.
 export function syncFace(jsonData) {
     const parsedData = JSON.parse(jsonData);
+    if (!parsedData) return;
 
     // Set all to zero to prevent bugs.
     native.setPedHeadBlendData(

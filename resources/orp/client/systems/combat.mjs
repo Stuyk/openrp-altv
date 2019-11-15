@@ -28,11 +28,10 @@ function disableCombat() {
         undefined
     );
 
-    if (_hash === -1569615261) {
+    if (_hash === -1569615261 || _hash === 911657153) {
         native.disableControlAction(0, 24, true);
+        native.disableControlAction(0, 140, true);
+        native.disableControlAction(0, 141, true);
+        native.disableControlAction(0, 142, true);
     }
-
-    native.disableControlAction(0, 140, true);
-    native.disableControlAction(0, 141, true);
-    native.disableControlAction(0, 142, true);
 }

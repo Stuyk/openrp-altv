@@ -12,3 +12,4 @@ resources: [ orp, hospital-pillbox, club-bahama, comedy-club, discord ]
 #token:
 debug: true
 streamingDistance: 300
+password: no-password

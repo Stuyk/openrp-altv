@@ -260,7 +260,8 @@ async function startup() {
     }
 
     console.log(`Downloading Latest alt:V Server Files.`);
-    const q6 = '\r\nWhich alt:V Branch? 0: Stable, 1: Beta\r\n';
+    const q6 =
+        '\r\nWhich alt:V Branch? 0: Stable, 1: Beta, 2: Alpha [Default: Stable]\r\n';
     res = await question(q6);
 
     if (!res) {
@@ -271,10 +272,18 @@ async function startup() {
         windowsURLS.forEach(res => {
             res.url = res.url.replace('beta', 'stable');
         });
-
         console.log('You have selected the STABLE branch.');
-    } else {
+    }
+
+    if (parseInt(res) === 1) {
         console.log('You have selected the BETA branch.');
+    }
+
+    if (parseInt(res) === 2) {
+        windowsURLS.forEach(res => {
+            res.url = res.url.replace('beta', 'alpha');
+        });
+        console.log('You have selected the ALPHA branch.');
     }
 
     if (platform === 'windows') {

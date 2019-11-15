@@ -1,0 +1,166 @@
+@dark: rgba(20, 20, 20, 0.9);
+@contrast1: rgb(0, 217, 255);
+@contrast2: rgb(255, 153, 0);
+@darkaccent: rgb(8, 8, 8);
+@whitecontrast: rgba(255, 255, 255, 0.2);
+@fontface: 'Roboto';
+
+body,
+html {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: @fontface;
+    text-transform: uppercase;
+    user-select: none;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#render {
+    position: fixed;
+    left: 29%;
+    top: 15%;
+    width: 42%;
+    min-height: 75%;
+    max-height: 75%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    margin: 0 auto;
+    background: @dark;
+}
+
+.searchbox {
+    top: 10.5%;
+    width: 42%;
+    height: 4.5%;
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    background: @dark;
+    border-bottom: 1px solid @dark;
+
+    input {
+        width: 50%;
+        background: @dark;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        height: 25px;
+        text-align: center;
+        color: white;
+        padding: 0;
+    }
+
+    input:focus {
+        outline: none;
+        border: 2px solid @contrast1;
+    }
+
+    button {
+        grid-column: 3;
+        width: 25%;
+        height: 28px;
+        font-size: 12px;
+        color: white;
+        background: transparent;
+        color: @contrast1;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    button:focus {
+        outline: none;
+    }
+
+    button:hover {
+        cursor: pointer;
+        color: @contrast2;
+        border: 2px solid @contrast2;
+    }
+}
+
+.page {
+    display: flex;
+    color: white;
+    font-size: 12px;
+    padding: 10px;
+
+    .recipes {
+        display: grid;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 100%;
+        grid-column-gap: 10px;
+        grid-auto-rows: auto;
+        grid-row-gap: 10px;
+
+        .recipe {
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: space-between;
+            justify-items: space-between;
+            align-content: center;
+            align-items: center;
+            text-transform: capitalize;
+            background: rgba(0, 0, 0, 0.2);
+            transform: skew(-5deg);
+
+            .title {
+                padding-left: 10px;
+                width: 30%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .requirements {
+                width: 25%;
+                display: flex;
+                flex-direction: column;
+
+                .requirement {
+                    display: flex;
+                    justify-content: space-between;
+                    justify-items: space-between;
+                }
+            }
+
+            button {
+                height: 100%;
+                width: 30%;
+                background: none;
+                color: @contrast1;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+            }
+
+            button:focus {
+                outline: none;
+            }
+
+            button:hover {
+                border: 2px solid @contrast2;
+                color: @contrast1;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: @darkaccent;
+    box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer !important;
+}

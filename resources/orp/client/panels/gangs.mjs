@@ -37,8 +37,6 @@ alt.on('meta:Changed', (key, value) => {
     if (key !== 'gang:Info') return;
     if (!webview) return;
     if (!webview.view) return;
-    webview.view.focus();
-    showCursor(true);
     ready();
 });
 

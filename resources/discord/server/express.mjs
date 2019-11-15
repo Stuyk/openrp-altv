@@ -31,8 +31,10 @@ export function getEndpoint() {
 
 function setupEndpoints() {
     app.get('/', (req, res) => {
+        const uriSafeEncode = encodeURI(`http://${remoteIP}:${port}`);
+
         res.redirect(
-            `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify%20email&redirect_uri=http://${remoteIP}:${port}/login&prompt=none`
+            `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify&redirect_uri=${uriSafeEncode}/login&prompt=none`
         );
     });
 

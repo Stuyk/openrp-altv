@@ -10,8 +10,6 @@ let time = {
     minute: 0
 };
 
-alt.log(`In-Game Time | H:${time.hour} M:${time.minute}`);
-
 // 30 Minutes = 1 Hour
 let lastUpdate = Date.now() + 60000;
 
@@ -30,8 +28,6 @@ alt.on('interval:Player', () => {
     if (time.hour >= 24) {
         time.hour = 0;
     }
-
-    alt.log(`In-Game Time | H:${time.hour} M:${time.minute}`);
 
     alt.emitClient(null, 'time:SetTime', time.hour, time.minute);
     const players = [...alt.Player.all];

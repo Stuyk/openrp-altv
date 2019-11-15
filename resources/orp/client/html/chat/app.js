@@ -55,8 +55,6 @@ class App extends Component {
 
             this.setState({ showingInput: true });
         }
-
-        window.addEventListener('keyup', this.sendInputBind);
     }
 
     componentDidUpdate() {
@@ -87,8 +85,11 @@ class App extends Component {
     }
 
     async sendInput(e) {
+        if (!this.state.showingInput) return;
         if (e.key === 'Enter') {
             const messages = [...this.state.messages];
+            window.removeEventListener('keyup', this.sendInputBind);
+
             if (!e.target.value && 'alt' in window) {
                 this.setState({ inputValue: '', showingInput: false, messages });
                 alt.emit('chat:RouteMessage');
@@ -185,6 +186,7 @@ class App extends Component {
     }
 
     showChatInput() {
+        window.addEventListener('keyup', this.sendInputBind);
         this.setState({ showingInput: true, inputValue: '' });
     }
 

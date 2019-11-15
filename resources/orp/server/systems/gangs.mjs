@@ -520,8 +520,8 @@ alt.on('parse:Turfs', () => {
             shape.sector.seed.getNumber(Config.turfHighestWaitTime) * 60000 +
             60000 * 10;
 
-        console.log(`Turf ${shape.sector.name} has initiated claim.`);
-        console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
+        // console.log(`Turf ${shape.sector.name} has initiated claim.`);
+        // console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
 
         if (filteredPlayers.length <= 0) {
             shape.gangs.nextClaim = nextTime;

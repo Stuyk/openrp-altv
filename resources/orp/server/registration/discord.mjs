@@ -22,7 +22,7 @@ alt.on('discord:FinishLogin', (player, discordData) => {
 
     player.rank = 0;
     db.upsertData({ userid: discordData.id }, 'Account', res => {
-        player.pgid = account.pgid;
+        player.pgid = account.res.id;
         cache.cacheAccount(res.userid, res.id, 0);
         alt.emit('orp:Register', player, res.id, discordData.id);
         alt.emit('orp:Login', player, res.id, discordData.id);

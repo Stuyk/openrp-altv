@@ -232,7 +232,7 @@ export function pickup(player, hash) {
 export function addWeapon(player, weaponName) {
     let weapon;
     Object.keys(Weapons).forEach(key => {
-        if (key !== weaponName) return;
+        if (key.toLowerCase() !== weaponName.toLowerCase()) return;
         weapon = {
             name: key,
             value: Weapons[key]
@@ -252,7 +252,7 @@ export function addWeapon(player, weaponName) {
 export function addBoundWeapon(player, weaponName) {
     let weapon;
     Object.keys(Weapons).forEach(key => {
-        if (key !== weaponName) return;
+        if (key.toLowerCase() !== weaponName.toLowerCase()) return;
         weapon = {
             name: key,
             value: Weapons[key]

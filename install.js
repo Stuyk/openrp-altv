@@ -279,11 +279,13 @@ async function startup() {
 
     if (parseInt(res) === 0) {
         if (platform === 'windows') {
+            console.log('Windows');
             windowsURLS.forEach(res => {
                 res.url = res.url.replace('beta', 'stable');
             });
             console.log('You have selected the STABLE branch.');
         } else {
+            console.log('Linux');
             linuxURLS.forEach(res => {
                 res.url = res.url.replace('beta', 'stable');
             });

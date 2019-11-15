@@ -13,9 +13,8 @@ alt.on('discord:FinishLogin', (player, discordData) => {
         `${player.name} authenticated as ${discordData.username}#${discordData.discriminator}`
     );
 
-    player.pgid = account.pgid;
-
     if (account) {
+        player.pgid = account.pgid;
         player.rank = account.rank;
         alt.emit('orp:Login', player, account.id, discordData.id);
         return;
@@ -23,6 +22,7 @@ alt.on('discord:FinishLogin', (player, discordData) => {
 
     player.rank = 0;
     db.upsertData({ userid: discordData.id }, 'Account', res => {
+        player.pgid = account.pgid;
         cache.cacheAccount(res.userid, res.id, 0);
         alt.emit('orp:Register', player, res.id, discordData.id);
         alt.emit('orp:Login', player, res.id, discordData.id);

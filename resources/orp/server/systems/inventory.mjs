@@ -4,6 +4,7 @@ import { generateHash } from '../utility/encryption.mjs';
 import { BaseItems, Items } from '../configuration/items.mjs';
 import { Weapons } from '../configuration/weapons.mjs';
 import { objectToNull } from '../utility/object.mjs';
+import { actionMessage } from '../chat/chat.mjs';
 
 // hash, itemdata
 let ItemDrops = new Map();
@@ -205,6 +206,7 @@ export function destroy(player, hash) {
     }
 
     const item = player.inventory[index];
+    actionMessage(player, `Destroyed ${item.name}.`);
     player.notify(`Destroyed: ${item.name} ${item.quantity}x`);
     player.removeItem(index);
 }

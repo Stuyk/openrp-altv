@@ -17,6 +17,7 @@ alt.on('orp:Login', (player, id, discordID) => {
 
     player.setMeta('id', id);
     player.setMeta('discord', discordID);
+    player.discord = discordID;
 
     player.username = discordID;
     LoggedInPlayers.push(discordID);

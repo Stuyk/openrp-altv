@@ -10,7 +10,7 @@ import { objectToNull } from '../utility/object.mjs';
 import SQL from '../../../postgres-wrapper/database.mjs';
 import { spawnVehicle } from '../systems/vehicles.mjs';
 import { quitJob } from '../systems/job.mjs';
-import { fetchNextVehicleID, getCharacterName } from '../cache/cache.mjs';
+import { fetchNextVehicleID, getCharacterName, modifyRank } from '../cache/cache.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
 import { doorStates } from '../systems/use.mjs';
 import { getGang } from '../systems/gangs.mjs';
@@ -54,6 +54,13 @@ export function setupPlayerFunctions(player) {
      */
     player.saveField = (id, fieldName, fieldValue) => {
         db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
+    };
+
+    player.setRank = flags => {
+        modifyRank(player.pgid, flags);
+        db.updatePartialData(player.pgid, { rank: flags }, 'Account', () => {
+            alt.log(`Updated ${player.pgid} to rank ${flags}`);
+        });
     };
 
     /**

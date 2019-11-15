@@ -14,10 +14,16 @@ const accounts = {};
 const characters = {};
 let vehicleID;
 
-export function cacheAccount(userid, id) {
+export function cacheAccount(userid, id, rank) {
     accounts[userid] = {
-        id
+        pgid: userid,
+        id,
+        rank
     };
+}
+
+export function modifyRank(pgid, rank) {
+    accounts[pgid].rank = rank;
 }
 
 export function getAccount(userid) {

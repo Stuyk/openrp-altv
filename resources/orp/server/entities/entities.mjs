@@ -12,6 +12,10 @@ export const Account = new orm.EntitySchema({
         },
         userid: {
             type: 'varchar'
+        },
+        rank: {
+            type: 'int',
+            default: 0
         }
     }
 });

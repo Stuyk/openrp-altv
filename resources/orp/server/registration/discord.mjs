@@ -5,23 +5,27 @@ import { setupPlayerFunctions } from '../utility/player.mjs';
 
 const db = new SQL(); // Get DB Reference
 
-alt.on('discord:FinishLogin', (player, result) => {
-    const userData = JSON.parse(result);
-    const account = cache.getAccount(userData.id);
+alt.on('discord:FinishLogin', (player, discordResponse) => {
+    const discordData = JSON.parse(discordResponse);
+    const account = cache.getAccount(discordData.id);
     setupPlayerFunctions(player);
 
     alt.log(
-        `${player.name} authenticated as ${userData.username}#${userData.discriminator}`
+        `${player.name} authenticated as ${discordData.username}#${discordData.discriminator}`
     );
 
+    player.pgid = account.pgid;
+
     if (account) {
-        alt.emit('orp:Login', player, account.id, userData.id);
+        player.rank = account.rank;
+        alt.emit('orp:Login', player, account.id, discordData.id);
         return;
     }
 
-    db.upsertData({ userid: userData.id }, 'Account', res => {
-        cache.cacheAccount(res.userid, res.id);
-        alt.emit('orp:Register', player, res.id, userData.id);
-        alt.emit('orp:Login', player, res.id, userData.id);
+    player.rank = 0;
+    db.upsertData({ userid: discordData.id }, 'Account', res => {
+        cache.cacheAccount(res.userid, res.id, 0);
+        alt.emit('orp:Register', player, res.id, discordData.id);
+        alt.emit('orp:Login', player, res.id, discordData.id);
     });
 });

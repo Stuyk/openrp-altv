@@ -1,15 +1,23 @@
 import * as alt from 'alt';
 import * as vector from '../utility/vector.mjs';
 import { Config } from '../configuration/config.mjs';
+import { hasPermission, AdminFlags } from '../systems/admin.mjs';
 
 let cmds = {};
 let mutedPlayers = [];
 
 export function registerCmd(cmd, callback) {
+    registerRankedCmd(cmd, 0, callback);
+}
+
+export function registerRankedCmd(cmd, rank, callback) {
     if (cmds[cmd] !== undefined) {
         alt.logError(`Failed to register command /${cmd}, already registered`);
     } else {
-        cmds[cmd] = callback;
+        cmds[cmd] = {
+            callback,
+            rank
+        };
     }
 }
 
@@ -29,7 +37,19 @@ export function routeMessage(player, msg) {
             let args = msg.split(' ');
             let cmd = args.shift().toLowerCase();
 
-            const callback = cmds[cmd];
+            if (!cmds[cmd]) {
+                player.send('Not a valid command.');
+                return;
+            }
+
+            const callback = cmds[cmd].callback;
+
+            if (cmds[cmd].rank !== 0) {
+                if (hasPermission(player, cmds[cmd].rank)) {
+                    player.send('You do not have permission for this command.');
+                    return;
+                }
+            }
 
             if (callback) {
                 if (typeof callback === 'function') {

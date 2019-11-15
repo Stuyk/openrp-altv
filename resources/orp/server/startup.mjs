@@ -91,11 +91,11 @@ function cacheInformation() {
     });
 
     // Passwords are encrypted.
-    db.selectData('Account', ['id', 'userid'], data => {
+    db.selectData('Account', ['id', 'userid', 'rank'], data => {
         if (!data) return;
 
         for (let i = 0; i < data.length; i++) {
-            cacheAccount(data[i].userid, data[i].id);
+            cacheAccount(data[i].userid, data[i].id, data[i].rank);
         }
 
         alt.log(`=====> Cached: ${data.length} Accounts`);
@@ -122,7 +122,7 @@ function cacheInformation() {
                     guid: Doors[i].guid,
                     lockstate: Doors[i].lockstate,
                     salePrice: Doors[i].salePrice
-                }
+                };
                 db.insertData(door, 'Door', res => {
                     alt.emit('door:CacheDoor', door.id, door);
                 });

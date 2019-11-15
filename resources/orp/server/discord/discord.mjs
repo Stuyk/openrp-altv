@@ -3,7 +3,7 @@ import { generateHash } from '../utility/encryption.mjs';
 import config from './configuration.json';
 
 alt.on('playerConnect', player => {
-    player.loginTimeout = Date.now() + 60000 * 2;
+    player.loginTimeout = Date.now() + 60000 * 3;
     player.token = generateHash(
         JSON.stringify(
             `${player.name}${player.ip}${Math.floor(Math.random() * 5000000000)}`

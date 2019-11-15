@@ -26,17 +26,14 @@ getIp((err, ip) => {
 });
 
 export function getEndpoint() {
-    return `http://${remoteIP}:${port}/`;
+    return encodeURI(`http://${remoteIP}:${port}/`);
 }
 
 function setupEndpoints() {
     app.get('/', (req, res) => {
-        const uriSafeEncode = encodeURI(`http://${remoteIP}:${port}`);
-
+        const uriSafeEncode = encodeURI(`http://${remoteIP}:${port}/login`);
         res.redirect(
-            encodeURI(
-                `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&response_type=code&scope=identify&redirect_uri=${uriSafeEncode}/login&prompt=none`
-            )
+            `https://discordapp.com/api/oauth2/authorize?client_id=${data.client_id}&redirect_uri=${uriSafeEncode}&prompt=none&response_type=code&scope=identify`
         );
     });
 
@@ -52,18 +49,21 @@ function setupEndpoints() {
         }
 
         const userAuthorizationCode = req.query.code;
-        const postRequest = request.post('https://discordapp.com/api/oauth2/token', {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            formData: {
-                client_id: data.client_id,
-                client_secret: data.client_secret,
-                redirect_uri: `http://${remoteIP}:${port}/login`,
-                grant_type: 'authorization_code',
-                code: userAuthorizationCode
+        const postRequest = request.post(
+            encodeURI('https://discordapp.com/api/oauth2/token'),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                formData: {
+                    client_id: data.client_id,
+                    client_secret: data.client_secret,
+                    redirect_uri: encodeURI(`http://${remoteIP}:${port}/login`),
+                    grant_type: 'authorization_code',
+                    code: userAuthorizationCode
+                }
             }
-        });
+        );
 
         postRequest.on('data', d => {
             const userData = JSON.parse(d.toString());
@@ -83,9 +83,7 @@ function setupEndpoints() {
 }
 
 alt.onClient('discord:Authorize', (player, token) => {
-    console.log('Authorizing...');
-
-    const getData = request.get('https://discordapp.com/api/users/@me', {
+    const getData = request.get(encodeURI('https://discordapp.com/api/users/@me'), {
         headers: {
             Authorization: `Bearer ${token}`
         }

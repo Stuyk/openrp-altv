@@ -101,46 +101,38 @@ After; it should be running automatically in your services on windows. You can a
 
 -   After CLONING, CD into the repo through the same command prompt.
 
--   After this you're going to visit [https://discordapp.com/developers/applications/](https://discordapp.com/developers/applications/).
-
--   Inside of page you need to create a Discord Application.
-
-![](https://i.imgur.com/JpV3NSl.png)
-
 -   Open a command prompt and run `npm run orp`. **FOLLOW THE INSTRUCTIONS CAREFULLY ON PROMPT**.
 
 -   When you get to the Discord Setup; make sure you hit 'yes' if this is a new server.
 
--   Then you're going to copy your `client id` and paste it; as well as your `client secret`.
+### Basic Discord Bot Setup
 
--   The `installation process` will ask for **both**.
+**Please Create a Discord Application for your Login System.**
 
-![](https://i.imgur.com/QrJdfFV.png)
+**Please Visit: https://discordapp.com/developers/applications/**
 
--   **After** finishing the rest of the setup, head over to the **oAuth2** page on the discordapp.
+-   Inside of page you need to create a Discord Application and turn it into a bot and copy the bot secret.
 
-![](https://i.imgur.com/u7J8aSL.png)
+-   You also **MUST** add this bot to your own server.
 
--   Get your external IP address from a place such as [https://www.whatismyip.com/](https://www.whatismyip.com/).
-
--   You will need to add a new `redirect` for your `external ip`.
-
--   The format is `http://<your_external_ip_address>:17888/login`
-
-![](https://i.imgur.com/kEZZSzm.png)
+1. Hit New Application
+2. Set the Name for Your Bot / Application
+3. Click on the `Bot` tab.
+4. Transform your Application into a bot.
+5. Name your bot.
+6. Tick `Administrator` or just `Send/Read Messages`
+7. Copy the bots secret token.
+8. Make sure the bot is not public.
+9. Navigate to oAuth2 tab. Tick `bot` in scopes.
+10. Copy the URL inside of scopes. Paste in browser.
+11. Add the bot to your designated Discord.
 
 -   Make sure to save changes.
 
 -   Run `altv-server.exe` or `./start.sh`. If you're on Linux you may need to set permission for `altv-server`.
 
--   **IF YOU DO NOT SEE A DISCORD AUTHENTICATION SERVICE YOU NEED TO FORWARD PORT 17888**
-
--   In your browser navigate to: `http://<your_external_ip_address>:17888`
-
--   **IF YOU DO NOT SEE A DISCORD AUTHENTICATION SERVICE YOU NEED TO FORWARD PORT 17888**
-
--   **PORT FORWARDING GUIDE PER ROUTER:** [https://portforward.com/router.htm](https://portforward.com/router.htm)
-
--   If you see this page; you are all set.
-
 -   Join your server.
+
+-   Copy the Code
+
+-   PM the Bot you setup with `!login <code>`

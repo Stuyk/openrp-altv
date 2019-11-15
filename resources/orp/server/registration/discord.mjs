@@ -5,8 +5,7 @@ import { setupPlayerFunctions } from '../utility/player.mjs';
 
 const db = new SQL(); // Get DB Reference
 
-alt.on('discord:FinishLogin', (player, discordResponse) => {
-    const discordData = JSON.parse(discordResponse);
+alt.on('discord:FinishLogin', (player, discordData) => {
     const account = cache.getAccount(discordData.id);
     setupPlayerFunctions(player);
 

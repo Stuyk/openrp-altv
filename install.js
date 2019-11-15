@@ -33,8 +33,8 @@ let dbDefault = {
 };
 
 let discordAppInfo = {
-    client_id: '',
-    client_secret: ''
+    discord: '',
+    token: ''
 };
 
 let windowsURLS = [
@@ -219,32 +219,41 @@ async function startup() {
     if (res === 'y') {
         res = undefined;
 
-        console.log('!!! IMPORTANT INFORMATION !!!');
-        console.log('Please Create a Discord Application for your Login System. \r\n');
-        console.log('Please Visit: https://discordapp.com/developers/applications/ \r\n');
-        console.log('PLEASE OPEN PORT: 17888 FOR YOUR DISCORD LOGIN TO WORK. \r\n');
-        console.log('Add a OAuth2 Redirect to your Discord application for: \r\n');
-        console.log('http://<your_external_ip:17888/login \r\n \r\n');
+        console.log('!!! IMPORTANT INFORMATION FOR DISCORD SETUP !!!');
+        console.log('Please Create a Discord Application for your Login System.');
+        console.log('Please Visit: https://discordapp.com/developers/applications/');
+        console.log('1. Hit New Application');
+        console.log('2. Set the Name for Your Bot / Application');
+        console.log('3. Click on the `Bot` tab.');
+        console.log('4. Transform your Application into a bot.');
+        console.log('5. Name your bot.');
+        console.log('6. Tick `Administrator` or just `Send/Read Messages`');
+        console.log('7. Copy the bots secret token.');
+        console.log('8. Make sure the bot is not public.');
+        console.log('9. Navigate to oAuth2 tab. Tick `bot` in scopes.');
+        console.log('10. Copy the URL inside of scopes. Paste in browser.');
+        console.log('11. Add the bot to your designated Discord.');
 
-        const discordClient = '\r\nPlease enter your Client ID...\r\n';
-        res = await question(discordClient);
+        const discordBotTokenQ = '\r\nPlease enter your BOT SECRET TOKEN... \r\n';
+        res = await question(discordBotTokenQ);
 
         if (res) {
-            discordAppInfo.client_id = res;
+            discordAppInfo.token = res;
             res = undefined;
         }
 
-        const discordSecret = '\r\nPlease enter your Discord Secret...\r\n';
-        res = await question(discordSecret);
+        const discordPublicURLQ =
+            '\r\nPlease enter a public discord url to display to users so they can join. \r\n';
+        res = await question(discordPublicURLQ);
 
         if (res) {
-            discordAppInfo.client_secret = res;
+            discordAppInfo.discord = res;
             res = undefined;
         }
 
         const discordConfigPath = path.join(
             __dirname,
-            '/resources/discord/server/configuration.json'
+            '/resources/orp/server/discord/configuration.json'
         );
 
         await new Promise(resolve => {

@@ -3,10 +3,9 @@ resources/*
 !resources/club-bahama
 !resources/comedy-club
 !resources/hospital-pillbox
-!resources/discord
 !resources/postgres-wrapper
 !resources/orp-addon/*
-resources/discord/server/configuration.json
+resources/orp/server/discord/configuration.json
 resources/orp/terms-and-conditions.json
 resources/orp/server/configuration/database.mjs
 resources/orp/server/configuration/database.json

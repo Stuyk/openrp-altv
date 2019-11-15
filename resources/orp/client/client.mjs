@@ -21,7 +21,6 @@ import * as systemsCallbacks from '/client/systems/callbacks.mjs';
 import * as systemsContext from '/client/systems/context.mjs';
 import * as systemsCombat from '/client/systems/combat.mjs';
 import * as systemsDoors from '/client/systems/doors.mjs';
-import * as systemsDiscord from '/client/systems/discord.mjs';
 import * as systemsInteriors from '/client/systems/interiors.mjs';
 import * as systemsJob from '/client/systems/job.mjs';
 import * as systemsShop from '/client/systems/shop.mjs';
@@ -30,6 +29,7 @@ import * as systemsTime from '/client/systems/time.mjs';
 import * as systemsProps from '/client/systems/props.mjs';
 import * as utilitySandbox from '/client/utility/sandbox.mjs';
 import * as hud from '/client/hud/hud.mjs';
+import * as discord from '/client/panels/discord.mjs';
 
 // Context
 import * as contextmenuObject from '/client/contextmenus/object.mjs';

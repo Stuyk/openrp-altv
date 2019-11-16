@@ -45,7 +45,7 @@ export function routeMessage(player, msg) {
             const callback = cmds[cmd].callback;
 
             if (cmds[cmd].rank !== 0) {
-                if (hasPermission(player, cmds[cmd].rank)) {
+                if (!hasPermission(player, cmds[cmd].rank)) {
                     player.send('You do not have permission for this command.');
                     return;
                 }

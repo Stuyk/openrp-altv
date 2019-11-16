@@ -40,7 +40,6 @@ client.on('message', async msg => {
                 console.log(err);
                 return;
             });
-            msg.delete();
             return;
         }
 

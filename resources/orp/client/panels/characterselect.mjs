@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import { View } from '/client/utility/view.mjs';
 import { Camera } from '/client/utility/camera.mjs';
+import { playAnimation } from '/client/systems/animation.mjs';
 
 const url = 'http://resource/client/html/characterselect/index.html';
 let webview;
@@ -9,6 +10,25 @@ let currentCharacter;
 let characters;
 let camera;
 let camPoint;
+
+const randomAnims = [
+    {
+        dict: 'anim@amb@nightclub@dancers@crowddance_groups@hi_intensity',
+        anim: 'hi_dance_crowd_13_v2_male^6'
+    },
+    {
+        dict: 'anim@amb@nightclub@dancers@crowddance_facedj@hi_intensity',
+        anim: 'hi_dance_facedj_09_v2_male^6'
+    },
+    {
+        dict: 'anim@amb@nightclub@dancers@crowddance_facedj@',
+        anim: 'hi_dance_facedj_09_v1_female^6'
+    },
+    {
+        dict: 'anim@amb@nightclub@dancers@crowddance_groups@hi_intensity',
+        anim: 'hi_dance_crowd_09_v1_female^6'
+    }
+];
 
 export function showDialogue(passedCharacters, characterPoint, characterCamPoint) {
     if (!webview) {
@@ -62,6 +82,16 @@ function nextCharacter(index) {
         camPoint.z,
         -1
     );
+
+    alt.setTimeout(() => {
+        const heading = native.getEntityHeading(alt.Player.local.scriptID);
+        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+        native.setEntityHeading(alt.Player.local.scriptID, heading);
+
+        const randomAnim = randomAnims[Math.floor(Math.random() * randomAnims.length)];
+        alt.log(JSON.stringify(randomAnim));
+        playAnimation(alt.Player.local, randomAnim.dict, randomAnim.anim, -1, 1);
+    }, 1000);
 }
 
 function selectCharacter(id) {
@@ -69,7 +99,6 @@ function selectCharacter(id) {
     webview.close();
     camera.destroy();
     alt.emitServer('character:Select', id);
-    native.freezeEntityPosition(alt.Player.local.scriptID, false);
 }
 
 function newCharacter() {
@@ -77,5 +106,4 @@ function newCharacter() {
     webview.close();
     camera.destroy();
     alt.emitServer('character:New');
-    native.freezeEntityPosition(alt.Player.local.scriptID, false);
 }

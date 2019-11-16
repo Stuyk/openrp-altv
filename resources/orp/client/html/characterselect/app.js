@@ -137,3 +137,11 @@ class App extends Component {
 }
 
 render(h(App), document.querySelector('#render'));
+
+const audio = new Audio(
+    'https://elmayorportaldegerencia.com/Musica/Audios/Earth,%20Wind%20and%20Fire/September.mp3'
+);
+
+audio.loop = true;
+audio.volume = 0.1;
+audio.play();

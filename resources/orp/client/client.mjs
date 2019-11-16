@@ -27,6 +27,7 @@ import * as systemsShop from '/client/systems/shop.mjs';
 import * as systemsSkills from '/client/systems/skills.mjs';
 import * as systemsTime from '/client/systems/time.mjs';
 import * as systemsProps from '/client/systems/props.mjs';
+import * as systemsSkyCam from '/client/systems/skycam.mjs';
 import * as utilitySandbox from '/client/utility/sandbox.mjs';
 import * as hud from '/client/hud/hud.mjs';
 import * as discord from '/client/panels/discord.mjs';

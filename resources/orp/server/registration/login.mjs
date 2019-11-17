@@ -9,6 +9,7 @@ alt.on('orp:Login', (player, id, discordID) => {
     const existing = alt.Player.all.find(
         target => target && target.discord === discordID
     );
+
     if (existing) {
         console.log('Player is already logged in. [1]');
         player.kick('Already logged in.');

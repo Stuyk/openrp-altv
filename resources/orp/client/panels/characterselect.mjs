@@ -31,12 +31,16 @@ const randomAnims = [
 ];
 
 export function showDialogue(passedCharacters, characterPoint, characterCamPoint) {
+    alt.log('Showing Character Select Dialogue');
+
     if (!webview) {
         webview = new View();
     }
 
     characters = passedCharacters;
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
+
+    alt.log('Showing Dialogue');
 
     // Setup Webview
     webview.open(url, true);
@@ -45,9 +49,13 @@ export function showDialogue(passedCharacters, characterPoint, characterCamPoint
     webview.on('character:Select', selectCharacter);
     webview.on('character:New', newCharacter);
 
+    alt.log('Dialogue Shown');
+
     camera = new Camera(characterCamPoint, 30);
     camera.pointAtCoord(characterPoint);
     camPoint = characterCamPoint;
+
+    alt.log('Camera Shown');
 }
 
 function ready() {

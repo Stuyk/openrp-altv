@@ -24,6 +24,8 @@ alt.on('orp:Login', (player, id, discordID) => {
 
     db.fetchAllByField('guid', player.guid, 'Character', characters => {
         if (Array.isArray(characters) && characters.length >= 1) {
+            alt.log('Loading existing characters...');
+
             // Existing Characters
             player.characters = characters;
             alt.emitClient(
@@ -34,6 +36,8 @@ alt.on('orp:Login', (player, id, discordID) => {
                 Config.characterCamPoint
             );
         } else {
+            alt.log('Creating new character...');
+
             // New Character
             const currentTime = Date.now();
             const data = {

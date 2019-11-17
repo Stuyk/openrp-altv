@@ -11,8 +11,7 @@ import { Interaction } from '../systems/interaction.mjs';
 
 const jobName = 'Agility Training';
 const trackStart = { x: -2301.309814453125, y: 2558.16259765625, z: 2.134765625 };
-const trackPoints = [
-];
+const trackPoints = [];
 
 let interactionPoint = { ...trackStart };
 interactionPoint.z -= 0.5;
@@ -24,7 +23,7 @@ let interaction = new Interaction(
     3,
     'to begin training agility.'
 );
-interaction.addBlip(126, 6, jobName);
+interaction.addBlip(126, 6, jobName, 'agility');
 
 alt.on('job:MountainThruster', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);

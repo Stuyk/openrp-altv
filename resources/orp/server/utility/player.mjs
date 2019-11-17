@@ -475,8 +475,8 @@ export function setupPlayerFunctions(player) {
 
     // ====================================
     // Load Blip for client.
-    player.createBlip = (pos, blipType, blipColor, labelName) => {
-        alt.emitClient(player, 'blip:CreateBlip', pos, blipType, blipColor, labelName);
+    player.createBlip = (category, pos, sprite, colour, label) => {
+        alt.emitClient(player, 'blip:CreateBlip', category, pos, sprite, colour, label);
     };
 
     // ====================================

@@ -1,19 +1,44 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 import { Atms, FuelStations, Hospitals } from '/client/locations/locations.mjs';
 
 alt.log('Loaded: client->blips->bliphelper.mjs');
 
 let sectorBlips = [];
+let categories = {};
 
 // Used to create blips for the player to see.
-export function createBlip(pos, type, color, label) {
-    // x: number, y: number, z: number);
-    const blip = new alt.PointBlip(pos.x, pos.y, pos.z);
-    blip.shortRange = true;
-    blip.sprite = type;
-    blip.color = color;
-    blip.name = label;
+export function createBlip(category, pos, sprite, color, label, display = 2) {
+    const blip = native.addBlipForCoord(pos.x, pos.y, pos.z);
+    native.setBlipAsShortRange(blip, true);
+    native.setBlipSprite(blip, sprite);
+    native.setBlipColour(blip, color);
+    native.beginTextCommandSetBlipName('STRING');
+    native.addTextComponentSubstringPlayerName(label);
+    native.endTextCommandSetBlipName(blip);
+    native.setBlipDisplay(blip, display);
+
+    if (category === 'temporary') {
+        return blip;
+    }
+
+    const keys = Object.keys(categories);
+    let index = keys.findIndex(key => key === category);
+    if (index <= -1) {
+        categories[category] = [blip];
+    } else {
+        categories[category].push(blip);
+    }
+
     return blip;
+}
+
+export function setBlipCategoryState(name, state) {
+    if (!categories[name]) return;
+    categories[name].forEach(blip => {
+        const toggleState = state ? 2 : 0;
+        native.setBlipDisplay(blip, toggleState);
+    });
 }
 
 // Used to create area blips for the player to see.
@@ -75,13 +100,21 @@ alt.onServer('grid:TempTurfs', sectors => {
 
 // Load ATM Blips
 Atms.forEach(atm => {
-    createBlip(atm, 108, 2, 'ATM');
+    createBlip('atm', atm, 108, 2, 'ATM', 5);
 });
 
 FuelStations.forEach(station => {
-    createBlip(station, 361, 49, 'Fuel Station');
+    createBlip('fuel', station, 361, 49, 'Fuel Station');
 });
 
 Hospitals.forEach(hospital => {
-    createBlip(hospital, 61, 11, 'Hospital');
+    createBlip('hospital', hospital, 61, 11, 'Hospital');
+});
+
+//  alt.emit('option:Changed', option, cache.get(`option:${option}`));
+
+alt.on('option:Changed', (optionName, value) => {
+    const keys = Object.keys(categories);
+    if (!keys.includes(optionName.replace('option:', ''))) return;
+    setBlipCategoryState(optionName.replace('option:', ''), value);
 });

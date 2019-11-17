@@ -26,7 +26,7 @@ let interaction = new Interaction(
     3,
     'to begin refining vigoirum.'
 );
-interaction.addBlip(365, 6, jobName);
+interaction.addBlip(365, 6, jobName, 'crafting');
 
 alt.on('job:RefineVigorium1', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);

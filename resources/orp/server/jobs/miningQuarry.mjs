@@ -34,7 +34,7 @@ let interaction = new Interaction(
     3,
     'to begin mining for ore.'
 );
-interaction.addBlip(78, 6, jobName);
+interaction.addBlip(78, 6, jobName, 'mining');
 
 alt.on('job:MiningQuarry', player => {
     let job = new Job(

@@ -92,6 +92,7 @@ function setupObjective(value) {
             blip.sprite = objective.blip.sprite;
             blip.color = objective.blip.color;
             blip.name = 'Objective';
+            blip.route = true;
         }
     }
 

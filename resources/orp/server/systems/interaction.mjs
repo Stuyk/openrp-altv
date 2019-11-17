@@ -27,12 +27,13 @@ export class Interaction {
     }
 
     // Add a blip
-    addBlip(sprite, color, label) {
+    addBlip(sprite, color, label, category = 'temporary') {
         this.blip = {
             position: this.pos,
-            sprite: sprite,
-            color: color,
-            label: label
+            sprite,
+            color,
+            label,
+            category
         };
     }
 
@@ -52,7 +53,13 @@ export class Interaction {
 export function syncBlips(player) {
     interactions.forEach(i => {
         if (!i.blip) return;
-        player.createBlip(i.blip.position, i.blip.sprite, i.blip.color, i.blip.label);
+        player.createBlip(
+            i.blip.category,
+            i.blip.position,
+            i.blip.sprite,
+            i.blip.color,
+            i.blip.label
+        );
     });
 }
 

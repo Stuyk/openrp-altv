@@ -12,6 +12,7 @@ alt.log('Loaded: client->systems->shop.mjs');
 
 const shops = [
     {
+        category: 'barbershop',
         type: 'Barbershop',
         sprite: 71,
         color: 17,
@@ -29,6 +30,7 @@ const shops = [
         message: `Press ~INPUT_CONTEXT~ to change your hairstyle.`
     },
     {
+        category: 'vehiclecustoms',
         type: 'Vehicle Customs Shop',
         sprite: 402,
         color: 77,
@@ -46,6 +48,7 @@ const shops = [
         message: `Press ~INPUT_CONTEXT~ to edit your vehicle.`
     },
     {
+        category: 'clothingstore',
         type: 'Clothing Store',
         sprite: 73,
         color: 8,
@@ -69,6 +72,7 @@ const shops = [
         message: `Press ~INPUT_CONTEXT~ to shop for clothes.`
     },
     {
+        category: 'generalstore',
         type: 'General Store',
         sprite: 52,
         color: 69,
@@ -98,10 +102,23 @@ const shops = [
         message: `Press ~INPUT_CONTEXT~ to shop for general goods.`
     },
     {
+        category: 'ammunation',
         type: 'Gun Crafting Point',
         sprite: 119,
         color: 81,
-        ids: [164609, 168193, 153857, 176385, 137729, 175617, 140289],
+        ids: [
+            164609,
+            168193,
+            153857,
+            176385,
+            137729,
+            175617,
+            140289,
+            178689,
+            200961,
+            180481,
+            248065
+        ],
         func: panelsCrafting.weaponryCrafting,
         message: `Press ~INPUT_CONTEXT~ to access this crafting point.`
     }
@@ -124,7 +141,7 @@ function startShopInterval(key, value) {
         shops.forEach(shop => {
             shop.ids.forEach(id => {
                 let [_null, _shopPos] = native.getInteriorInfo(id, undefined, undefined);
-                createBlip(_shopPos, shop.sprite, shop.color, shop.type);
+                createBlip(shop.category, _shopPos, shop.sprite, shop.color, shop.type);
             });
         });
     }

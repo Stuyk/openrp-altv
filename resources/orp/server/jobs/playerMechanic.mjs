@@ -25,7 +25,7 @@ let interaction = new Interaction(
     20,
     'to work as a mechanic.'
 );
-interaction.addBlip(566, 26, jobName);
+interaction.addBlip(566, 26, jobName, 'mechanic');
 
 alt.on('job:MechanicJob', player => {
     let pos;

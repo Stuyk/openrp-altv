@@ -277,60 +277,66 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            AirplaneMode: false
+            categories: []
         };
-        this.setOptionBind = this.setOption.bind(this);
+        this.addCategoryBind = this.addCategory.bind(this);
     }
 
     componentDidMount() {
         if ('alt' in window) {
-            alt.on('option:SetOption', this.setOptionBind);
-            alt.emit('option:LoadOptions');
+            alt.on('option:AddCategory', this.addCategoryBind);
+            setTimeout(() => {
+                alt.emit('option:Ready');
+            }, 500);
+        } else {
+            for (let i = 0; i < 50; i++) {
+                this.addCategory('whatever', 'whatever', 'whatever');
+            }
         }
     }
 
     componentWillUnmount() {
         if ('alt' in window) {
-            alt.off('option:SetOption', this.setOptionBind);
+            alt.off('option:AddCategory', this.addCategoryBind);
         }
     }
 
-    setOption(key, value) {
-        this.setState({ [key]: value });
+    addCategory(name, value, description) {
+        const categories = [...this.state.categories];
+        categories.push({ name, description });
+        let toggle = value === null ? true : value;
+        this.setState({ categories, [name]: toggle });
     }
 
-    setAirplaneMode(e) {
-        this.setState({ AirplaneMode: e.target.checked });
+    updateOption(e) {
+        this.setState({ [e.target.id]: e.target.checked });
+        this.pushOptionUpdate(e.target.id, e.target.checked);
+    }
 
+    pushOptionUpdate(id, value) {
         if ('alt' in window) {
-            alt.emit('option:SetOption', 'option:AirplaneMode', e.target.checked);
+            alt.emit('option:SetOption', id, value);
         } else {
-            console.log(e.target.checked);
+            console.log(`Updated: ${id} to ${value}`);
         }
     }
 
     renderOptions() {
-        return h(
-            'div',
-            { class: 'options' },
-            // Put Phone on Airplane Mode
-            h(
+        const categories = this.state.categories.map(info => {
+            return h(
                 'div',
                 { class: 'option' },
-                h('div', { class: 'title' }, 'Put Phone on Airplane Mode'),
-                h(
-                    'div',
-                    { class: 'description' },
-                    'Stops all incoming and outgoing messages.'
-                ),
+                h('div', { class: 'title' }, info.description),
                 h('input', {
                     type: 'checkbox',
                     class: 'input',
-                    checked: this.state.AirplaneMode,
-                    onchange: this.setAirplaneMode.bind(this)
+                    checked: this.state[info.name],
+                    onchange: this.updateOption.bind(this),
+                    id: info.name
                 })
-            )
-        );
+            );
+        });
+        return h('div', { class: 'options' }, categories);
     }
 
     render() {

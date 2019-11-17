@@ -208,7 +208,7 @@ export function setIntoVehicle(vehicle) {
 }
 
 export function trackVehicle(pos) {
-    const blip = createBlip(pos, 1, 61, 'A Vehicle Tracker');
+    const blip = createBlip('temporary', pos, 1, 61, 'A Vehicle Tracker');
     alt.emit(
         'hud:QueueNotification',
         `A pink blip was placed on your map named 'A Vehicle Tracker'`
@@ -216,7 +216,7 @@ export function trackVehicle(pos) {
 
     alt.setTimeout(() => {
         try {
-            blip.destroy();
+            native.removeBlip(blip);
         } catch (err) {
             console.log('Locate vehicle blip could not be destroyed.');
         }

@@ -33,7 +33,7 @@ let interaction = new Interaction(
     3,
     'to begin mining for ore.'
 );
-interaction.addBlip(78, 6, jobName);
+interaction.addBlip(78, 6, jobName, 'mining');
 
 alt.on('job:MiningShaft', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);

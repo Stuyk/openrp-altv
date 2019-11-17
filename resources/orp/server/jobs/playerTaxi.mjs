@@ -25,7 +25,7 @@ let interaction = new Interaction(
     20,
     'to work as a taxi driver.'
 );
-interaction.addBlip(56, 5, jobName);
+interaction.addBlip(56, 5, jobName, 'taxi');
 
 alt.on('job:TaxiJob', player => {
     let pos;

@@ -42,7 +42,7 @@ let interaction = new Interaction(
     3,
     `to begin earning your driver's license.`
 );
-interaction.addBlip(380, 6, jobName);
+interaction.addBlip(380, 6, jobName, 'drivingschool');
 
 alt.on('job:DrivingSchool', player => {
     const emptyVector = { x: 0, y: 0, z: 0 };

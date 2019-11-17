@@ -34,7 +34,7 @@ let interaction = new Interaction(
     3,
     'to begin cutting wood.'
 );
-interaction.addBlip(77, 6, jobName);
+interaction.addBlip(77, 6, jobName, 'woodcutting');
 
 alt.on('job:LumberJack', player => {
     let job = new Job(

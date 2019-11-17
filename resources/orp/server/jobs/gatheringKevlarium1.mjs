@@ -244,7 +244,7 @@ let interaction = new Interaction(
     3,
     'to begin gathering unrefined kevlarium.'
 );
-interaction.addBlip(140, 6, jobName);
+interaction.addBlip(140, 6, jobName, 'gathering');
 
 alt.on('job:GatheringKevlarium1', player => {
     let job = new Job(

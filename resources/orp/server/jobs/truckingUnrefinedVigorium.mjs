@@ -22,7 +22,7 @@ let interaction = new Interaction(
     3,
     `to work as a trucker.`
 );
-interaction.addBlip(85, 6, jobName);
+interaction.addBlip(85, 6, jobName, 'trucking');
 
 const track1 = [
     {

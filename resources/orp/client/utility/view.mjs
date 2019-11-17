@@ -44,13 +44,11 @@ export class View {
         if (!currentView.ready) return;
         currentView.ready = false;
 
-        /*
         currentView.events.forEach(event => {
             currentView.view.off(event.name, event.func);
         });
 
         currentView.view.off('close', currentView.close);
-        */
 
         currentView.view.destroy();
         currentView.view = undefined;

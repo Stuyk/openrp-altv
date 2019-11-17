@@ -22,7 +22,7 @@ let interaction = new Interaction(
     20,
     'to work as a police officer.'
 );
-interaction.addBlip(60, 38, jobName);
+interaction.addBlip(60, 38, jobName, 'police');
 
 alt.on('job:Officer', player => {
     let pos;

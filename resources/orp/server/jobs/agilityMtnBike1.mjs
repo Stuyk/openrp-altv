@@ -63,7 +63,7 @@ let interaction = new Interaction(
     3,
     'to begin training agility.'
 );
-interaction.addBlip(126, 6, jobName);
+interaction.addBlip(126, 6, jobName, 'agility');
 
 let gondolaBottom = { x: -738.5142211914062, y: 5595.1279296875, z: 40.65458297729492 };
 let gondolaTop = { x: 444.1629333496094, y: 5571.96533203125, z: 780.1889038085938 };

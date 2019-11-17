@@ -164,7 +164,7 @@ let interaction = new Interaction(
     3,
     'to begin gathering unrefined vigorium.'
 );
-interaction.addBlip(140, 6, jobName);
+interaction.addBlip(140, 6, jobName, 'gathering');
 
 alt.on('job:GatheringVigorium1', player => {
     let job = new Job(

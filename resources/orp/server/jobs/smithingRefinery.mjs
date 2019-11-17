@@ -27,7 +27,7 @@ let interaction = new Interaction(
     3,
     'to begin the refinery process.'
 );
-interaction.addBlip(648, 6, jobName);
+interaction.addBlip(648, 6, jobName, 'crafting');
 
 alt.on('job:SmithingRefinery', player => {
     let job = new Job(

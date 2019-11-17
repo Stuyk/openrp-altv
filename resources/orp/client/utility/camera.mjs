@@ -73,10 +73,8 @@ export class Camera {
     }
 
     destroy() {
-        for (let i = 0; i < 25; i++) {
-            native.destroyAllCams(true);
-            native.renderScriptCams(false, false, 0, false, false);
-        }
+        native.destroyAllCams(true);
+        native.renderScriptCams(false, false, 0, false, false);
 
         if (this.interval !== undefined) {
             alt.clearInterval(this.interval);

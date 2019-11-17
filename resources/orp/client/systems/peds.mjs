@@ -9,7 +9,9 @@ let peds = [];
 
 export class Ped {
     constructor(model, pos, serverID = undefined, fleeFromPlayer = false) {
-        native.requestModel(native.getHashKey(model));
+        const hash = native.getHashKey(model);
+        alt.loadModel(hash);
+        native.requestModel(hash);
         this.scriptID = native.createPed(
             1,
             native.getHashKey(model),

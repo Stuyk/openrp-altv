@@ -130,7 +130,6 @@ alt.on('sync:Player', player => {
     player.needsRoleplayInfo = true;
     player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 1);
     player.setSyncedMeta('id', player.data.id);
-    alt.emitClient(player, 'camera:SetupSky', lastKnownPos);
 
     // Set player name.
     if (player.data.name !== null && player.data.dob !== null) {
@@ -145,10 +144,12 @@ alt.on('sync:Player', player => {
         player.isNewPlayer = true;
         player.showFaceCustomizerDialogue(lastKnownPos);
     } else {
+        alt.emitClient(player, 'camera:SetupSky', lastKnownPos);
         player.applyFace(player.data.face);
         if (player.needsRoleplayInfo) {
             player.showRoleplayInfoDialogue();
         }
+        alt.emitClient(player, 'camera:FinishSky');
     }
 
     // Fixes any 'string' issue that may arise.
@@ -177,8 +178,6 @@ alt.on('sync:Player', player => {
     player.syncDoorStates();
     player.syncArrest();
     player.screenFadeIn(1500);
-
-    alt.emitClient(player, 'camera:FinishSky');
 
     if (player.data.dead) {
         player.health = 0;

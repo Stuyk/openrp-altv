@@ -9,7 +9,7 @@ alt.log('Loaded: client->panels->character.mjs');
 const cameraPoint = {
     x: -140.7032928466797,
     y: -644.9724975585938,
-    z: 169.413232421875
+    z: 170.413232421875
 };
 
 const offsetPoint = {
@@ -50,38 +50,45 @@ export function showDialogue() {
     alt.emitServer('temporaryTeleport', offsetPoint);
 
     // Request these models if they're not already loaded.
-    native.requestModel(native.getHashKey('mp_m_freemode_01'));
-    native.requestModel(native.getHashKey('mp_f_freemode_01'));
+    const mHash = native.getHashKey('mp_m_freemode_01');
+    const fHash = native.getHashKey('mp_f_freemode_01');
 
-    // Create a pedestrian to customize.
-    ped = new Ped('mp_f_freemode_01', playerPoint);
-    alt.log(ped.scriptID);
+    native.requestModel(mHash);
+    native.requestModel(fHash);
+    alt.loadModel(mHash);
+    alt.loadModel(fHash);
 
-    native.setPedComponentVariation(ped.scriptID, 6, 1, 0, 0);
-
-    // Set the head blend data to 0 to prevent texture issues.
-    native.setPedHeadBlendData(ped.scriptID, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
-
-    // Hide the player's model.
-    native.setEntityAlpha(alt.Player.local.scriptID, 0, false);
-
-    // Setup the ped camera point.
     camera = new Camera(cameraPoint, 28);
-    camera.pointAtBone(ped.scriptID, 31086, 0.05, 0, 0);
-    camera.playerControlsEntity(ped.scriptID, true);
-
-    // Update Hair Color Choices for Buttons
-    updateHairColorChoices();
-
-    native.addPedDecorationFromHashes(
-        ped.scriptID,
-        native.getHashKey('mpbeach_overlays'),
-        native.getHashKey('fm_hair_fuzz')
-    );
-
     alt.setTimeout(() => {
-        webview.emit('sexUpdated', 0);
-    }, 1000);
+        // Create a pedestrian to customize.
+        ped = new Ped('mp_f_freemode_01', playerPoint);
+
+        native.setPedComponentVariation(ped.scriptID, 6, 1, 0, 0);
+
+        // Set the head blend data to 0 to prevent texture issues.
+        native.setPedHeadBlendData(ped.scriptID, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
+
+        // Hide the player's model.
+        native.setEntityAlpha(alt.Player.local.scriptID, 0, false);
+
+        // Setup the ped camera point.
+
+        camera.pointAtBone(ped.scriptID, 31086, 0.05, 0, 0);
+        camera.playerControlsEntity(ped.scriptID, true);
+
+        // Update Hair Color Choices for Buttons
+        updateHairColorChoices();
+
+        native.addPedDecorationFromHashes(
+            ped.scriptID,
+            native.getHashKey('mpbeach_overlays'),
+            native.getHashKey('fm_hair_fuzz')
+        );
+
+        alt.setTimeout(() => {
+            webview.emit('sexUpdated', 0);
+        }, 1000);
+    }, 1500);
 }
 
 export function clearPedBloodDamage() {
@@ -206,6 +213,11 @@ function resetCamera(modelToUse) {
 
     updateHairColorChoices();
 
+    if (camera) {
+        camera.destroy();
+    }
+
+    camera = new Camera(cameraPoint, 28);
     camera.pointAtBone(ped.scriptID, 31086, 0.05, 0, 0);
     camera.playerControlsEntity(ped.scriptID, true);
 }

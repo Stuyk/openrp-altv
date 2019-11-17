@@ -143,7 +143,7 @@ alt.on('sync:Player', player => {
     // Check if the player has a face.
     if (player.data.face === null) {
         player.isNewPlayer = true;
-        player.showFaceCustomizerDialogue(lastPos);
+        player.showFaceCustomizerDialogue(lastKnownPos);
     } else {
         player.applyFace(player.data.face);
         if (player.needsRoleplayInfo) {

@@ -4,10 +4,12 @@ import { Config } from '../configuration/config.mjs';
 import { getDoor } from '../systems/door.mjs';
 
 const db = new SQL(); // Get DB Reference
-const LoggedInPlayers = [];
 
 alt.on('orp:Login', (player, id, discordID) => {
-    if (player.data) {
+    const existing = alt.Player.all.find(
+        target => target && target.discord === discordID
+    );
+    if (existing) {
         console.log('Player is already logged in. [1]');
         player.kick('Already logged in.');
         return;
@@ -15,12 +17,6 @@ alt.on('orp:Login', (player, id, discordID) => {
 
     player.discord = discordID;
     player.guid = id;
-
-    if (LoggedInPlayers.includes(player.discord)) {
-        player.kick('Already logged in.');
-        console.log('Player is already logged in. [2]');
-        return;
-    }
 
     player.setMeta('id', player.guid);
     player.setMeta('discord', player.discord);
@@ -68,11 +64,6 @@ export function existingCharacter(player, data) {
 alt.on('logout:Player', player => {
     if (!player) {
         return;
-    }
-
-    const res = LoggedInPlayers.findIndex(target => target.discord === player.discord);
-    if (res !== -1) {
-        LoggedInPlayers.splice(res, 1);
     }
 
     // UnArrest on Disconnect

@@ -56,10 +56,11 @@ export function setupPlayerFunctions(player) {
         db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
     };
 
-    player.setRank = flags => {
-        modifyRank(player.pgid, flags);
-        db.updatePartialData(player.pgid, { rank: flags }, 'Account', () => {
-            alt.log(`Updated ${player.pgid} to rank ${flags}`);
+    player.setRank = flag => {
+        player.rank = flag;
+        modifyRank(player.pgid, flag);
+        db.updatePartialData(player.pgid, { rank: flag }, 'Account', () => {
+            alt.log(`Updated ${player.pgid} to rank ${flag}`);
         });
     };
 

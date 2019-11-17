@@ -213,3 +213,61 @@ chat.registerRankedCmd('setxp', AdminFlags.MAX, (player, args) => {
 
     setXP(player, _skill, _amount);
 });
+
+chat.registerRankedCmd('forcerevive', AdminFlags.MAX, (player, args) => {
+    if (args.length !== 1) {
+        player.send('The player must be logged into the game to set this.');
+        player.send(`/forcerevive <character_id>`);
+        return;
+    }
+
+    const id = parseInt(_id);
+    const target = alt.Player.all.find(target => target.data.id === id);
+    if (!target) {
+        player.send('That person is not currently logged in.');
+        return;
+    }
+
+    target.revive();
+});
+
+chat.registerRankedCmd('setadmin', AdminFlags.MAX, (player, args) => {
+    if (args.length < 1) {
+        player.send('The player must be logged into the game to set this.');
+        player.send(`/setadmin <character_id> <rank>`);
+        return;
+    }
+
+    const _id = args[0];
+    const _rank = args[1];
+
+    if (_id === undefined || _id === null) {
+        player.send('The player must be logged into the game to set this.');
+        player.send(`/setadmin <character_id> <rank>`);
+        return;
+    }
+
+    if (_rank === undefined || _rank === null) {
+        player.send('The player must be logged into the game to set this.');
+        player.send(`/setadmin <character_id> <rank>`);
+        return;
+    }
+
+    const id = parseInt(_id);
+    const target = alt.Player.all.find(target => target.data.id === id);
+    if (!target) {
+        player.send('That person is not currently logged in.');
+        return;
+    }
+
+    const rank = parseInt(_rank);
+    if (rank < 0) {
+        rank = 0;
+    }
+
+    if (rank > AdminFlags.MAX) {
+        rank = AdminFlags.MAX;
+    }
+
+    target.setRank(rank);
+});

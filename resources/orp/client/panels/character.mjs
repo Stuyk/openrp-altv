@@ -230,6 +230,7 @@ function setPlayerFacialData(facialDataJSON) {
 
     // Hide the player's model.
     native.setEntityAlpha(alt.Player.local.scriptID, 255, false);
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
 
     // Request the last location.
     alt.emitServer('utility:GoToLastLocation');

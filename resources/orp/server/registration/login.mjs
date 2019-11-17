@@ -20,7 +20,6 @@ alt.on('orp:Login', (player, id, discordID) => {
 
     player.setMeta('id', player.guid);
     player.setMeta('discord', player.discord);
-    LoggedInPlayers.push(player.discord);
 
     db.fetchAllByField('guid', player.guid, 'Character', characters => {
         if (Array.isArray(characters) && characters.length >= 1) {

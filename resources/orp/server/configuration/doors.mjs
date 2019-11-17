@@ -461,12 +461,12 @@ export const Doors = [
                 z: 83.4229736328125
             },
             doorRot: -6,
-            doorModel: "prop_cntrdoor_ld_l"
+            doorModel: 'prop_cntrdoor_ld_l'
         },
         exit: {
             position: {
-                x: -458.790,
-                y: 284.750,
+                x: -458.79,
+                y: 284.75,
                 z: 78.521
             }
         },
@@ -475,4 +475,32 @@ export const Doors = [
         isGarage: 0,
         salePrice: -1
     },
+    {
+        id: 17,
+        enter: {
+            position: {
+                x: 111.33739471435547,
+                y: -276.7237243652344,
+                z: 46.333431243896484
+            },
+            doorPos: {
+                x: 113.82781219482422,
+                y: -277.27252197265625,
+                z: 46.3538703918457
+            },
+            doorRot: -108,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.0455322265625,
+                y: -1007.197509765625,
+                z: -101.00851440429688
+            }
+        },
+        interior: '',
+        lockstate: 0,
+        isGarage: 0,
+        salePrice: 85000
+    }
 ];

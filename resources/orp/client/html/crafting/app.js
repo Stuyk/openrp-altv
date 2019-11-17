@@ -8,7 +8,7 @@ class App extends Component {
         this.state = {
             inventory: [],
             recipes: [],
-            craftingLevel: 0,
+            craftingLevel: 5,
             search: ''
         };
 
@@ -26,21 +26,24 @@ class App extends Component {
             this.addRecipe('knife', {
                 key: 'weapon',
                 requirements: [
+                    { key: 'crafting', level: 1 },
                     { key: 'refinedmetal', amount: 25 },
                     { key: 'refinedwood', amount: 5 }
                 ]
             });
 
-            this.addRecipe('bat', {
-                key: 'weapon',
-                requirements: [
-                    { key: 'crafting', level: 5 },
-                    { key: 'refinedmetal', amount: 30 }
-                ]
-            });
+            for (let i = 0; i < 5; i++) {
+                this.addRecipe('bat', {
+                    key: 'weapon',
+                    requirements: [
+                        { key: 'crafting', level: 5 },
+                        { key: 'refinedmetal', amount: 900000 }
+                    ]
+                });
+            }
 
             const json =
-                '[{"name":"Refined Metal","base":"refined","key":"refinedmetal","props":{},"quantity":500,"icon":"metal","hash":"127e8a092afa3b6384b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}, {"name":"Refined Wood","base":"refined","key":"refinedwood","props":{},"quantity":5,"icon":"planks","hash":"127e8a092afa3b5e84b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}]';
+                '[{"name":"Refined Metal","base":"refined","key":"refinedmetal","props":{},"quantity":500,"icon":"metal","hash":"127e8a092afa3b6384b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}, {"name":"Refined Wood","base":"refined","key":"refinedwood","props":{},"quantity":500,"icon":"planks","hash":"127e8a092afa3b5e84b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}]';
 
             this.setInventory(json);
         }
@@ -141,23 +144,33 @@ class App extends Component {
                 return;
             }
 
+            recipeData.disabled = true;
+
             for (let i = 0; i < requirements.length; i++) {
                 if (requirements[i].level) {
                     if (this.state.craftingLevel < requirements[i].level) {
+                        recipes.push(recipeData);
                         return;
                     }
                 } else {
                     if (!totals[requirements[i].key]) {
+                        recipes.push(recipeData);
                         return;
                     }
 
                     if (requirements[i].amount > totals[requirements[i].key]) {
+                        recipes.push(recipeData);
                         return;
                     }
                 }
             }
 
+            recipeData.disabled = false;
             recipes.push(recipeData);
+        });
+
+        recipes.sort((a, b) => {
+            return a.recipe.requirements[0].level - b.recipe.requirements[0].level;
         });
 
         const recipeRender = recipes.map(recipeData => {
@@ -175,13 +188,28 @@ class App extends Component {
             return h(
                 'div',
                 { class: 'recipe' },
-                h('div', { class: 'title' }, recipeData.name),
-                h('div', { class: 'requirements' }, requirements),
                 h(
-                    'button',
-                    { id: recipeData.name, onclick: this.craft.bind(this) },
-                    'Craft'
-                )
+                    'div',
+                    { class: recipeData.disabled ? 'title disabled' : 'title' },
+                    `[${recipeData.recipe.requirements[0].level}] ${recipeData.name}`
+                ),
+                h(
+                    'div',
+                    {
+                        class: recipeData.disabled
+                            ? 'requirements disabled'
+                            : 'requirements'
+                    },
+                    requirements
+                ),
+                !recipeData.disabled &&
+                    h(
+                        'button',
+                        { id: recipeData.name, onclick: this.craft.bind(this) },
+                        'Craft'
+                    ),
+                recipeData.disabled &&
+                    h('button', { class: 'disabled', id: recipeData.name }, 'Craft')
             );
         });
 

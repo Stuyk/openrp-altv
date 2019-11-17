@@ -15,6 +15,7 @@ alt.on('discord:FinishLogin', (player, discord) => {
     setupPlayerFunctions(player);
 
     if (account) {
+        player.accountID = account.id;
         player.pgid = account.pgid;
         player.rank = account.rank;
         alt.emit('orp:Login', player, account.id, discord.id);
@@ -23,7 +24,8 @@ alt.on('discord:FinishLogin', (player, discord) => {
 
     player.rank = 0;
     db.upsertData({ userid: discord.id }, 'Account', res => {
-        player.pgid = res.id;
+        player.accountID = res.id;
+        player.pgid = res.userid;
         cache.cacheAccount(res.userid, res.id, 0);
         alt.emit('orp:Login', player, res.id, discord.id);
     });

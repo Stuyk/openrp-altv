@@ -59,7 +59,7 @@ export function setupPlayerFunctions(player) {
     player.setRank = flag => {
         player.rank = flag;
         modifyRank(player.pgid, flag);
-        db.updatePartialData(player.pgid, { rank: flag }, 'Account', () => {
+        db.updatePartialData(player.accountID, { rank: flag }, 'Account', () => {
             alt.log(`Updated ${player.pgid} to rank ${flag}`);
         });
     };

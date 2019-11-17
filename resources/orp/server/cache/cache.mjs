@@ -14,9 +14,9 @@ const accounts = {};
 const characters = {};
 let vehicleID;
 
-export function cacheAccount(userid, id, rank) {
-    accounts[userid] = {
-        pgid: userid,
+export function cacheAccount(userID, id, rank) {
+    accounts[userID] = {
+        pgid: userID,
         id,
         rank
     };

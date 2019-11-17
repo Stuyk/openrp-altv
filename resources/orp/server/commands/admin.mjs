@@ -48,7 +48,7 @@ chat.registerRankedCmd('kick', AdminFlags.MODERATOR, (player, args) => {
     target.kick();
 });
 
-chat.registerRankedCmd('tpto', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('tpto', AdminFlags.ADMIN, (player, args) => {
     if (args.length <= 0) {
         player.send(`/tpto <user_name>`);
         return;
@@ -69,7 +69,7 @@ chat.registerRankedCmd('tpto', AdminFlags.MAX, (player, args) => {
     player.send('You were teleported.');
 });
 
-chat.registerRankedCmd('tphere', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('tphere', AdminFlags.ADMIN, (player, args) => {
     if (args.length <= 0) {
         player.send(`/tphere <user_name>`);
         return;
@@ -91,7 +91,7 @@ chat.registerRankedCmd('tphere', AdminFlags.MAX, (player, args) => {
     player.send('You teleported the user to you.');
 });
 
-chat.registerRankedCmd('tpall', AdminFlags.MAX, player => {
+chat.registerRankedCmd('tpall', AdminFlags.ADMIN, player => {
     alt.Player.all.forEach(target => {
         target.pos = player.pos;
     });
@@ -99,7 +99,7 @@ chat.registerRankedCmd('tpall', AdminFlags.MAX, player => {
     player.send('You teleported everyone to you.');
 });
 
-chat.registerRankedCmd('addcash', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('addcash', AdminFlags.ADMIN, (player, args) => {
     if (!args[0]) {
         player.send(`/addcash <amount>`);
         return;
@@ -110,7 +110,7 @@ chat.registerRankedCmd('addcash', AdminFlags.MAX, (player, args) => {
     player.addCash(cash);
 });
 
-chat.registerRankedCmd('addwep', AdminFlags.MAX, (player, arg) => {
+chat.registerRankedCmd('addwep', AdminFlags.ADMIN, (player, arg) => {
     if (arg === undefined || arg.length == 0) {
         player.send('/addwep <name>');
         return;
@@ -124,7 +124,7 @@ chat.registerRankedCmd('addwep', AdminFlags.MAX, (player, arg) => {
     player.send('Weapon was added to inventory.');
 });
 
-chat.registerRankedCmd('additem', AdminFlags.MAX, (player, arg) => {
+chat.registerRankedCmd('additem', AdminFlags.ADMIN, (player, arg) => {
     if (arg == undefined || arg.length == 0) {
         player.send('/additem <item_key> <amount>');
         return;
@@ -147,7 +147,7 @@ chat.registerRankedCmd('additem', AdminFlags.MAX, (player, arg) => {
     }
 });
 
-chat.registerRankedCmd('addveh', AdminFlags.MAX, (player, arg) => {
+chat.registerRankedCmd('addveh', AdminFlags.ADMIN, (player, arg) => {
     if (arg == undefined || arg.length == 0) {
         player.send('Usage: /addveh (vehicle)');
         return;
@@ -160,7 +160,7 @@ chat.registerRankedCmd('addveh', AdminFlags.MAX, (player, arg) => {
     }
 });
 
-chat.registerRankedCmd('coord', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('coord', AdminFlags.ADMIN, (player, args) => {
     if (args.length <= 2) {
         player.send('Usage: /coord (x, y, z)');
         return;
@@ -173,7 +173,7 @@ chat.registerRankedCmd('coord', AdminFlags.MAX, (player, args) => {
     };
 });
 
-chat.registerRankedCmd('tpwp', AdminFlags.MAX, player => {
+chat.registerRankedCmd('tpwp', AdminFlags.ADMIN, player => {
     const callbackName = `${player.name}tpwp`;
     alt.onClient(callbackName, teleportToWaypoint);
     alt.emitClient(player, 'teleportToWaypoint', callbackName);
@@ -190,7 +190,7 @@ function teleportToWaypoint(player, callbackName, coords) {
     player.pos = coords;
 }
 
-chat.registerRankedCmd('addxp', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('addxp', AdminFlags.ADMIN, (player, args) => {
     const _skill = args[0];
     const _amount = parseInt(args[1]);
 
@@ -202,7 +202,7 @@ chat.registerRankedCmd('addxp', AdminFlags.MAX, (player, args) => {
     addXP(player, _skill, _amount);
 });
 
-chat.registerRankedCmd('setxp', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('setxp', AdminFlags.ADMIN, (player, args) => {
     const _skill = args[0];
     const _amount = parseInt(args[1]);
 
@@ -214,7 +214,7 @@ chat.registerRankedCmd('setxp', AdminFlags.MAX, (player, args) => {
     setXP(player, _skill, _amount);
 });
 
-chat.registerRankedCmd('forcerevive', AdminFlags.MAX, (player, args) => {
+chat.registerRankedCmd('forcerevive', AdminFlags.ADMIN, (player, args) => {
     if (args.length !== 1) {
         player.send('The player must be logged into the game to set this.');
         player.send(`/forcerevive <character_id>`);

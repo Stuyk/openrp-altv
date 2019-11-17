@@ -9,7 +9,7 @@ alt.log('Loaded: client->panels->character.mjs');
 const cameraPoint = {
     x: -140.7032928466797,
     y: -644.9724975585938,
-    z: 170.413232421875
+    z: 169.413232421875
 };
 
 const offsetPoint = {

@@ -8,6 +8,7 @@ const LoggedInPlayers = [];
 
 alt.on('orp:Login', (player, id, discordID) => {
     if (player.data) {
+        console.log('Player is already logged in. [1]');
         player.kick('Already logged in.');
         return;
     }
@@ -17,6 +18,7 @@ alt.on('orp:Login', (player, id, discordID) => {
 
     if (LoggedInPlayers.includes(player.discord)) {
         player.kick('Already logged in.');
+        console.log('Player is already logged in. [2]');
         return;
     }
 

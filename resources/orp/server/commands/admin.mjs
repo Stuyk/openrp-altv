@@ -221,6 +221,7 @@ chat.registerRankedCmd('forcerevive', AdminFlags.MAX, (player, args) => {
         return;
     }
 
+    const _id = args[0];
     const id = parseInt(_id);
     const target = alt.Player.all.find(target => target.data.id === id);
     if (!target) {

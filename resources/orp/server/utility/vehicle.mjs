@@ -84,12 +84,17 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
                     vehicle.modKit = 1;
                     let index = parseInt(key);
                     let value = parseInt(mods[key]) + 1;
-                    try {
-                        vehicle.setMod(index, value);
-                    } catch (e) {
-                        console.log(
-                            `Mod: ${index} could not be applied with value ${value}`
-                        );
+
+                    if (index !== 23) {
+                        try {
+                            vehicle.setMod(index, value);
+                        } catch (e) {
+                            console.log(
+                                `Mod: ${index} could not be applied with value ${value}`
+                            );
+                        }
+                    } else {
+                        vehicle.setSyncedMeta('vehicleWheels', value);
                     }
                     return;
                 }

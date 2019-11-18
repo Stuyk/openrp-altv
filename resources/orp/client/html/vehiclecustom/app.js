@@ -29,18 +29,30 @@ class App extends Component {
     }
 
     parseColors(colors) {
+        const primaryRGB = [
+            colors.primary.color.r,
+            colors.primary.color.g,
+            colors.primary.color.b
+        ];
+
+        const secondaryRGB = [
+            colors.secondary.color.r,
+            colors.secondary.color.g,
+            colors.secondary.color.b
+        ];
+
         this.setState({
-            primary: colors.primary.color,
-            secondary: colors.secondary.color,
+            primary: primaryRGB,
+            secondary: secondaryRGB,
             primaryPaintType: colors.primary.type,
             secondaryPaintType: colors.secondary.type
         });
     }
 
     parseMod(mod) {
-        this.setState({
-            mods: [...this.state.mods, JSON.parse(mod)]
-        });
+        const mods = [...this.state.mods];
+        mods.push(JSON.parse(mod));
+        this.setState({ mods });
     }
 
     saveVehicle() {
@@ -78,8 +90,6 @@ class App extends Component {
     }
 
     showColorPopup(e, boolValue, isPrimary) {
-        //console.log(`Values : ${boolValue}, ${isPrimary}`);
-
         if (boolValue) {
             window.addEventListener('mousedown', this.mouseDownBind);
         } else {
@@ -104,14 +114,27 @@ class App extends Component {
                 colorPopout: boolValue
             });
         }
+
         if (isPrimary !== undefined) {
             if ('alt' in window) {
+                const primaryRGB = {
+                    r: this.state.primary[0],
+                    g: this.state.primary[1],
+                    b: this.state.primary[2]
+                };
+
+                const secondaryRGB = {
+                    r: this.state.secondary[0],
+                    g: this.state.secondary[1],
+                    b: this.state.secondary[2]
+                };
+
                 alt.emit(
                     'vehicle:UpdateColor',
                     this.state.primaryPaintType,
                     this.state.secondaryPaintType,
-                    this.state.primary,
-                    this.state.secondary
+                    primaryRGB,
+                    secondaryRGB
                 );
             } else {
                 console.log('Update Color');
@@ -143,12 +166,24 @@ class App extends Component {
         }
 
         if ('alt' in window) {
+            const primaryRGB = {
+                r: this.state.primary[0],
+                g: this.state.primary[1],
+                b: this.state.primary[2]
+            };
+
+            const secondaryRGB = {
+                r: this.state.secondary[0],
+                g: this.state.secondary[1],
+                b: this.state.secondary[2]
+            };
+
             alt.emit(
                 'vehicle:UpdateColor',
                 this.state.primaryPaintType,
                 this.state.secondaryPaintType,
-                this.state.primary,
-                this.state.secondary
+                primaryRGB,
+                secondaryRGB
             );
         } else {
             console.log(`Primary: ${this.state.primary}`);

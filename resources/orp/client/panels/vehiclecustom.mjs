@@ -131,11 +131,19 @@ function getPreviousVehicleColors(vehID) {
     previousColors = {
         primary: {
             type: primaryPaintType,
-            color: [pr, pg, pb]
+            color: {
+                r: pr,
+                g: pg,
+                b: pb
+            }
         },
         secondary: {
             type: secondaryPaintType,
-            color: [sr, sg, sb]
+            color: {
+                r: sr,
+                g: sg,
+                b: sb
+            }
         }
     };
 }
@@ -159,9 +167,6 @@ function buildModList() {
         mod.numMods = isToggleMod(i) ? 1 : native.getNumVehicleMods(vehID, i); // 18 = Turbo
 
         if (mod.numMods >= 1) {
-            //alt.log(`Active: ${native.getVehicleMod(vehID, i)}`);
-            //alt.log(`Mod: ${i} - ${mod.numMods}`);
-
             for (let modIndex = -1; modIndex < mod.numMods; modIndex++) {
                 let displayName = native.getLabelText(
                     native.getModTextLabel(vehID, i, modIndex)
@@ -242,17 +247,17 @@ function updateVehicleColor(
     native.setVehicleModColor1(veh, primaryPaintType, 0, 0);
     native.setVehicleCustomPrimaryColour(
         veh,
-        primaryColor[0],
-        primaryColor[1],
-        primaryColor[2]
+        primaryColor.r,
+        primaryColor.g,
+        primaryColor.b
     );
 
     native.setVehicleModColor2(veh, secondaryPaintType, 0, 0);
     native.setVehicleCustomSecondaryColour(
         veh,
-        secondaryColor[0],
-        secondaryColor[1],
-        secondaryColor[2]
+        secondaryColor.r,
+        secondaryColor.g,
+        secondaryColor.b
     );
 
     // This is stored at the top of the file.
@@ -309,16 +314,16 @@ function exit() {
     native.setVehicleModColor1(scriptID, previousColors.primary.type, 0, 0);
     native.setVehicleCustomPrimaryColour(
         scriptID,
-        previousColors.primary.color[0],
-        previousColors.primary.color[1],
-        previousColors.primary.color[2]
+        previousColors.primary.r,
+        previousColors.primary.g,
+        previousColors.primary.b
     );
 
     native.setVehicleModColor2(scriptID, previousColors.secondary.type, 0, 0);
     native.setVehicleCustomSecondaryColour(
         scriptID,
-        previousColors.secondary.color[0],
-        previousColors.secondary.color[1],
-        previousColors.secondary.color[2]
+        previousColors.secondary.r,
+        previousColors.secondary.g,
+        previousColors.secondary.b
     );
 }

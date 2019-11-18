@@ -18,8 +18,6 @@ export function showCursor(value) {
     }
 
     try {
-        for (let i = 0; i < 25; i++) {
-            alt.showCursor(false);
-        }
+        alt.showCursor(false);
     } catch (e) {}
 }

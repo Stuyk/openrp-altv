@@ -12,6 +12,7 @@ alt.on('gameEntityCreate', entity => {
         const secondaryPaint = entity.getSyncedMeta('secondaryPaint');
         const primaryColor = entity.getSyncedMeta('primaryColor');
         const secondaryColor = entity.getSyncedMeta('secondaryColor');
+        const wheels = entity.getSyncedMeta('vehicleWheels');
 
         alt.setTimeout(() => {
             if (primaryPaint) {
@@ -25,19 +26,24 @@ alt.on('gameEntityCreate', entity => {
             if (primaryColor) {
                 native.setVehicleCustomPrimaryColour(
                     entity.scriptID,
-                    primaryColor[0],
-                    primaryColor[1],
-                    primaryColor[2]
+                    primaryColor.r,
+                    primaryColor.g,
+                    primaryColor.b
                 );
             }
 
             if (secondaryColor) {
                 native.setVehicleCustomSecondaryColour(
                     entity.scriptID,
-                    secondaryColor[0],
-                    secondaryColor[1],
-                    secondaryColor[2]
+                    secondaryColor.r,
+                    secondaryColor.g,
+                    secondaryColor.b
                 );
+            }
+
+            if (wheels) {
+                native.setVehicleMod(entity.scriptID, 23, wheels, true);
+                native.setVehicleMod(entity.scriptID, 24, wheels, true);
             }
         }, 1000);
     }
@@ -58,19 +64,24 @@ alt.on('syncedMetaChange', (entity, key, value) => {
         if (key === 'primaryColor') {
             native.setVehicleCustomPrimaryColour(
                 entity.scriptID,
-                value[0],
-                value[1],
-                value[2]
+                value.r,
+                value.g,
+                value.b
             );
         }
 
         if (key === 'secondaryColor') {
             native.setVehicleCustomSecondaryColour(
                 entity.scriptID,
-                value[0],
-                value[1],
-                value[2]
+                value.r,
+                value.g,
+                value.b
             );
+        }
+
+        if (key === 'vehicleWheels') {
+            native.setVehicleMod(entity.scriptID, 23, value, true);
+            native.setVehicleMod(entity.scriptID, 24, value, true);
         }
     }, 1000);
 });

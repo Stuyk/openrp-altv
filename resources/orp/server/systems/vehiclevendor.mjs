@@ -73,11 +73,3 @@ Vendors.forEach((vendor, index) => {
         registerVehicleVendor(vendor, index);
     }
 });
-
-alt.onClient('vendor:ChangeModel', (player, model, pos) => {
-    if (!player.vendorVehicle) {
-        player.vendorVehicle = new alt.Vehicle(model, pos.x, pos.y, pos.z, 0, 0, 0);
-    } else {
-        player.vendorVehicle.model = model;
-    }
-});

@@ -27,6 +27,13 @@ function drawPlayerNames() {
         native.setPedToRagdoll(alt.Player.local.scriptID, -1, -1, 0, 0, 0, 0);
     }
 
+    if (alt.Player.local.vehicle) {
+        const ped = native.getPedInVehicleSeat(alt.Player.local.vehicle.scriptID, 0, 0);
+        if (ped === alt.Player.local.scriptID && native.getIsTaskActive(ped, 165)) {
+            native.setPedIntoVehicle(ped, alt.Player.local.vehicle.scriptID, 0);
+        }
+    }
+
     alt.emit('hud:ClearNametags');
     if (alt.Player.all.length <= 1) return;
 

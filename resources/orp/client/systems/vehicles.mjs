@@ -4,8 +4,6 @@ import { createBlip } from '/client/blips/bliphelper.mjs';
 
 alt.log('Loaded: client->systems->vehicles.mjs');
 
-alt.on('meta:Changed', startInterval);
-
 alt.on('gameEntityCreate', entity => {
     if (entity.constructor.name === 'Vehicle') {
         const primaryPaint = entity.getSyncedMeta('primaryPaint');
@@ -104,16 +102,6 @@ alt.onServer('vehicle:Rotate', (vehicle, rot) => {
         }, 100);
     });
 });
-
-function startInterval(key, value) {
-    if (key !== 'pedflags') return;
-    // Disable Vehicle Engine Startup
-    // Disable Shuffling to Driver Seat - Doesn't work?
-    // Disable Motorcylce Helmet
-    native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
-    native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
-    native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
-}
 
 export function toggleDoor(vehicle, id, state) {
     if (state) {

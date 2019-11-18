@@ -38,17 +38,10 @@ class App extends Component {
         this.parseIndex(0);
     }
 
-    setVehicleData(data) {
-        const vehicles = JSON.parse(data);
-        const vehiclesByType = vehicles.filter(x => {
-            if (x.sell && x.class.toLowerCase() === this.state.classType.toLowerCase())
-                return x;
-        });
-
-        this.setState({ vehicles: vehiclesByType });
-        if ('alt' in window) {
-            alt.emit('vehvendor:CurrentVehicles', vehiclesByType);
-        }
+    setVehicleData(vehicle) {
+        const vehicles = [...this.state.vehicles];
+        vehicles.push(vehicle);
+        this.setState({ vehicles });
         this.parseIndex(0);
     }
 

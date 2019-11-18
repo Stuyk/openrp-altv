@@ -232,7 +232,9 @@ function setOption(key, value) {
 function loadOptions() {
     const cache = alt.LocalStorage.get();
     options.forEach(option => {
-        alt.emit('option:Changed', option, cache.get(option));
+        const res = cache.get(option);
+        const value = res === null ? true : res;
+        alt.emit('option:Changed', value);
     });
 }
 
@@ -248,3 +250,5 @@ function optionReady() {
         );
     });
 }
+
+loadOptions();

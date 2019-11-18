@@ -1131,7 +1131,7 @@ export const Vehicles = [
     },
     {
         display: 'Bati',
-        name: 'bata',
+        name: 'bati',
         type: 'vehicle',
         class: 'motorcycle',
         sell: true

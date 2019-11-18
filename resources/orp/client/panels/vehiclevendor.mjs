@@ -35,7 +35,6 @@ export function showDialogue(vehPos, cPos, vehicleClassType = 'Sedans') {
     webview.on('vehvendor:ChangeIndex', changeIndex);
     webview.on('vehvendor:Purchase', purchase);
     webview.on('vehvendor:Exit', exit);
-    webview.on('vehvendor:CurrentVehicles', setCurrentVehicles);
     webview.on('vehvendor:ChangeRotation', rotate);
     type = vehicleClassType;
     camera = new Camera(camPos, 70);
@@ -44,10 +43,16 @@ export function showDialogue(vehPos, cPos, vehicleClassType = 'Sedans') {
 function ready() {
     if (!webview) return;
     webview.emit('vehiclevendor:SetVehicleClassType', type);
-    webview.emit('vehiclevendor:SetVehicleData', JSON.stringify(Vehicles));
-
     alt.emitServer('fetch:VehiclePrices');
-    changeIndex(0);
+
+    const filteredVehicles = Vehicles.filter(x => {
+        if (x.sell && x.class.toLowerCase() === type.toLowerCase()) return x;
+    });
+
+    currentVehicles = filteredVehicles;
+    currentVehicles.forEach(vehicle => {
+        webview.emit('vehiclevendor:SetVehicleData', vehicle);
+    });
 }
 
 function rotate(value) {
@@ -119,16 +124,6 @@ function exit() {
 
     webview.close();
 }
-
-function setCurrentVehicles(vehs) {
-    currentVehicles = vehs;
-}
-
-alt.on('consoleCommand', (cmd, ...args) => {
-    if (cmd === 'test') {
-        showDialogue(args[0]);
-    }
-});
 
 alt.onServer('return:VehiclePrices', prices => {
     if (!webview) return;

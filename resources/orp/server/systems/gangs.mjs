@@ -708,26 +708,35 @@ alt.onClient('gang:Disband', player => {
 });
 
 alt.onClient('gangs:CheckCraftDialogue', (player, type) => {
-    if (player.data.gang === -1) {
-        player.notify('You must be in a gang to access this point.');
-        return;
-    }
-
-    const currentTurf = player.colshape;
-    if (!currentTurf) {
-        player.notify('You are not in a turf.');
-        return;
-    }
-
-    if (currentTurf.gangs.owner === -1) {
-        player.notify('Nobody currently owns this turf.');
-        return;
-    }
-
-    if (currentTurf.gangs.owner.id !== player.data.gang) {
-        player.notify('This is not your crafting point.');
+    if (!doesUserHaveTurfAccess(player)) {
+        player.notify('You must ownt his turf to access this crafting point.');
         return;
     }
 
     alt.emitClient(player, 'gangs:ShowCraftingDialogue', type);
 });
+
+export function doesUserHaveTurfAccess(player) {
+    if (player.data.gang === -1) {
+        player.notify('You must be in a gang to access this point.');
+        return false;
+    }
+
+    const currentTurf = player.colshape;
+    if (!currentTurf) {
+        player.notify('You are not in a turf.');
+        return false;
+    }
+
+    if (currentTurf.gangs.owner === -1) {
+        player.notify('Nobody currently owns this turf.');
+        return false;
+    }
+
+    if (currentTurf.gangs.owner.id !== player.data.gang) {
+        player.notify('You do not own this turf.');
+        return false;
+    }
+
+    return true;
+}

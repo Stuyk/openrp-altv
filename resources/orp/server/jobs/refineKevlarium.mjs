@@ -8,6 +8,7 @@ import {
     restrictions
 } from '../systems/job.mjs';
 import { Interaction } from '../systems/interaction.mjs';
+import { doesUserHaveTurfAccess } from '../systems/gangs.mjs';
 
 const jobName = 'Kevlarium Refinery';
 const trackStart = {
@@ -29,6 +30,11 @@ let interaction = new Interaction(
 interaction.addBlip(365, 6, jobName, 'crafting');
 
 alt.on('job:RefineKevlarium1', player => {
+    if (!doesUserHaveTurfAccess(player)) {
+        player.notify('You must own this turf to access this point.');
+        return;
+    }
+
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
     job.setItemRestrictions([{ key: 'unrefinedkevlarium', hasItem: true }]);
     let obj;

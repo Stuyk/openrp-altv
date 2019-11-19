@@ -7,6 +7,10 @@ alt.on('entityEnterColshape', (colshape, entity) => {
 
     // Forward any interaction events to the player.
     if (entity.constructor.name === 'Player') {
+        if (colshape.isSafetyNet) {
+            console.log('Hit the safety net.');
+        }
+
         if (entity.dimension !== 0) return;
         if (colshape.sector) {
             entity.colshape = colshape;

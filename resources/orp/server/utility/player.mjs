@@ -136,9 +136,10 @@ export function setupPlayerFunctions(player) {
         player.emitMeta('queueNotification', msg);
     };
 
-    player.saveDimension = number => {
-        player.data.dimension = number;
-        player.saveField(player.data.id, 'dimension', number);
+    player.saveDimension = doorID => {
+        player.dimension = doorID;
+        player.data.dimension = doorID;
+        player.saveField(player.data.id, 'dimension', doorID);
     };
 
     // ====================================

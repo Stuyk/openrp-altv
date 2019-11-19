@@ -98,6 +98,11 @@ alt.onClient('skill:Agility', systemsSkills.agility);
 alt.onClient('general:GetItems', systemsGeneralStore.getItems);
 alt.onClient('general:BuyItem', systemsGeneralStore.buyItem);
 
+//
+alt.onClient('reset:Dimension', player => {
+    player.saveDimension(0);
+});
+
 // Temporary:
 // teleport to waypoint stuff
 alt.onClient('temporaryTeleport', (player, coords) => {

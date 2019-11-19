@@ -125,7 +125,7 @@ alt.on('sync:Player', player => {
     // Setup Position
     const lastKnownPos = JSON.parse(player.data.lastposition);
     player.needsRoleplayInfo = true;
-    player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 1);
+    player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 0);
     player.setSyncedMeta('id', player.data.id);
 
     // Set player name.
@@ -159,6 +159,7 @@ alt.on('sync:Player', player => {
         if (!door) {
             player.pos = Config.defaultSpawnPoint;
         } else {
+            player.pos = door.exit.position;
             player.emitMeta('door:EnteredInterior', door);
         }
     }

@@ -57,6 +57,10 @@ function startInterval() {
         vehicleHudData();
         vehicleFuel();
     }
+
+    if (alt.Player.pos.z <= -180) {
+        alt.emitServer('reset:Dimension');
+    }
 }
 
 function vehicleFuel() {

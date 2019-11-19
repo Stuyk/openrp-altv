@@ -41,7 +41,7 @@ pairs.forEach((row, sector) => {
         let colshape = new alt.ColshapeCuboid(
             column.pos1.x,
             column.pos1.y,
-            -500,
+            -20,
             column.pos2.x,
             column.pos2.y,
             10000
@@ -54,7 +54,7 @@ pairs.forEach((row, sector) => {
                 first: {
                     x: column.pos1.x,
                     y: column.pos1.y,
-                    z: -500
+                    z: -20
                 },
                 second: {
                     x: column.pos2.x,

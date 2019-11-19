@@ -115,10 +115,12 @@ alt.on('meta:Changed', (key, value) => {
 });
 
 alt.on('hud:QueueNotification', msg => {
+    if (!webview) return;
     webview.emit('hud:QueueNotification', msg);
 });
 
 alt.on('hud:UpdateWeather', weatherName => {
+    if (!webview) return;
     weather = weatherName;
     webview.emit('hud:SetWeather', weatherName);
 });

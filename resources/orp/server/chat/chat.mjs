@@ -84,7 +84,12 @@ function handleMessage(player, msg) {
         return;
     }
 
-    var playersInRange = vector.getPlayersInRange(player.pos, Config.maxChatRange);
+    var playersInRange = vector.getPlayersInRange(
+        player.pos,
+        Config.maxChatRange,
+        player.dimension
+    );
+
     const sender = player.data.name.replace('_', ' ');
     const message = `${sender} says: ${msg}`;
     alt.log(message);
@@ -106,7 +111,12 @@ export function actionMessage(player, msg) {
         return;
     }
 
-    let inRange = vector.getPlayersInRange(player.pos, Config.maxDoRange);
+    let inRange = vector.getPlayersInRange(
+        player.pos,
+        Config.maxDoRange,
+        player.dimension
+    );
+
     inRange.forEach(target => {
         target.send(`{c5a5de}* (( ${player.data.name.replace('_', ' ')} )) ${msg}`);
     });

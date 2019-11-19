@@ -1,7 +1,7 @@
 import * as alt from 'alt';
 
 // Get all of the players in range of a position.
-export function getPlayersInRange(pos, range) {
+export function getPlayersInRange(pos, range, dimension = 0) {
     if (pos === undefined || range === undefined) {
         throw new Error('GetPlayersInRange => pos or range is undefined');
     }
@@ -9,6 +9,7 @@ export function getPlayersInRange(pos, range) {
     var inRange = [];
 
     alt.Player.all.forEach(value => {
+        if (value.dimension !== dimension) return;
         if (distance(pos, value.pos) > range) return;
         if (!value.data) return;
         inRange.push(value);

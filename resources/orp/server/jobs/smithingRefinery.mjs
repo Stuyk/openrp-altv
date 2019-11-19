@@ -30,12 +30,27 @@ let interaction = new Interaction(
 interaction.addBlip(648, 6, jobName, 'crafting');
 
 alt.on('job:SmithingRefinery', player => {
+    if (!player.equipment[11]) {
+        player.notify('Must have a hammer equipped.');
+        player.playAudio('error');
+        return;
+    }
+
+    if (player.equipment[11].base !== 'hammer') {
+        player.notify('Must have a hammer equipped.');
+        player.playAudio('error');
+        return;
+    }
+
     let job = new Job(
         player,
         jobName,
         restrictions.NO_VEHICLES | restrictions.NO_DIEING | restrictions.NO_WEAPONS
     );
-    job.setItemRestrictions([{ key: 'unrefinedmetal', hasItem: true }]);
+    job.setItemRestrictions([
+        { key: 'unrefinedmetal', hasItem: true },
+        { key: 'hammer', hasItem: true }
+    ]);
 
     // Set First Objective
     const emptyVector = { x: 0, y: 0, z: 0 };

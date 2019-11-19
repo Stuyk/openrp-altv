@@ -36,6 +36,18 @@ let interaction = new Interaction(
 interaction.addBlip(78, 6, jobName, 'mining');
 
 alt.on('job:MiningShaft', player => {
+    if (!player.equipment[11]) {
+        player.notify('Must have a pickaxe equipped.');
+        player.playAudio('error');
+        return;
+    }
+
+    if (player.equipment[11].base !== 'pickaxe') {
+        player.notify('Must have a pickaxe equipped.');
+        player.playAudio('error');
+        return;
+    }
+
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);
     job.setItemRestrictions([{ key: 'pickaxe', hasItem: true }]);
 

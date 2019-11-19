@@ -37,6 +37,18 @@ let interaction = new Interaction(
 interaction.addBlip(77, 6, jobName, 'woodcutting');
 
 alt.on('job:LumberJack', player => {
+    if (!player.equipment[11]) {
+        player.notify('Must have a axe equipped.');
+        player.playAudio('error');
+        return;
+    }
+
+    if (player.equipment[11].base !== 'axe') {
+        player.notify('Must have a axe equipped.');
+        player.playAudio('error');
+        return;
+    }
+
     let job = new Job(
         player,
         jobName,

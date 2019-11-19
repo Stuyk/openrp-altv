@@ -37,6 +37,18 @@ let interaction = new Interaction(
 interaction.addBlip(78, 6, jobName, 'mining');
 
 alt.on('job:MiningQuarry', player => {
+    if (!player.equipment[11]) {
+        player.notify('Must have a pickaxe equipped.');
+        player.playAudio('error');
+        return;
+    }
+
+    if (player.equipment[11].base !== 'pickaxe') {
+        player.notify('Must have a pickaxe equipped.');
+        player.playAudio('error');
+        return;
+    }
+
     let job = new Job(
         player,
         jobName,

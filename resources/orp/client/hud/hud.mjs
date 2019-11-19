@@ -58,7 +58,7 @@ function startInterval() {
         vehicleFuel();
     }
 
-    if (alt.Player.pos.z <= -180) {
+    if (alt.Player.local.pos.z <= -180) {
         alt.emitServer('reset:Dimension');
     }
 }

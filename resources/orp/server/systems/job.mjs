@@ -512,12 +512,18 @@ export class Objective {
         if (!Items[reward.prop]) return;
         const baseItem = BaseItems[Items[reward.prop].base];
         if (baseItem.abilities.stack) {
-            if (player.addItem(Items[reward.prop].key, reward.quantity)) {
+            if (
+                player.addItem(
+                    Items[reward.prop].key,
+                    reward.quantity,
+                    Items[reward.prop].props
+                )
+            ) {
                 player.notify(`${Items[reward.prop].name} was added to inventory.`);
             }
         } else {
             for (let i = 0; i < reward.quantity; i++) {
-                if (player.addItem(Items[reward.prop].key, 1)) {
+                if (player.addItem(Items[reward.prop].key, 1, Items[reward.prop].props)) {
                     player.notify(`${Items[reward.prop].name} was added to inventory.`);
                 }
             }

@@ -22,6 +22,9 @@ function drawPlayerNames() {
     native.hideHudComponentThisFrame(7);
     native.hideHudComponentThisFrame(8);
     native.hideHudComponentThisFrame(9);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
+    native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
 
     if (alt.Player.local.getSyncedMeta('dead')) {
         native.setPedToRagdoll(alt.Player.local.scriptID, -1, -1, 0, 0, 0, 0);

@@ -30,12 +30,6 @@ const faceFeatureNames = [
 alt.on('meta:Changed', (key, value) => {
     if (key !== 'face') return;
     syncFace(value);
-
-    // Ped Config Flags
-    native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
-    native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
-    native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
-    native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
 });
 
 // Synchronize the clothing sent down from the server.

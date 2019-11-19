@@ -210,6 +210,7 @@ export function toggleEngine(player, data) {
 
     if (vehicle.fuel <= 0) {
         vehicle.isEngineOn = false;
+        vehicle.setSyncedMeta('fuel', 0);
         player.send(`{FFFF00} You are out of fuel.`);
     }
 

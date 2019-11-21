@@ -34,7 +34,7 @@ let interaction = new Interaction(
     3,
     'to begin mining for ore.'
 );
-interaction.addBlip(78, 6, jobName, 'mining');
+interaction.addBlip(642, 4, jobName, 'mining');
 
 alt.on('job:MiningQuarry', player => {
     if (!player.equipment[11]) {

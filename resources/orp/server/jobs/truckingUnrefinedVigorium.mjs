@@ -22,7 +22,7 @@ let interaction = new Interaction(
     3,
     `to work as a trucker.`
 );
-interaction.addBlip(85, 6, jobName, 'trucking');
+interaction.addBlip(642, 6, jobName, 'trucking');
 
 const track1 = [
     {
@@ -228,6 +228,8 @@ alt.on('job:TruckingUnrefinedVigorium', player => {
         );
         if (index === trackPoints[course].length - 1) {
             obj.setRewards([
+                { type: 'xp', prop: 'nobility', quantity: -500 },
+                { type: 'xp', prop: 'notoriety', quantity: 125 },
                 { type: 'xp', prop: 'gathering', quantity: 160 },
                 { type: 'item', prop: 'unrefinedvigorium', quantity: 14 }
             ]);

@@ -15,7 +15,7 @@ const shops = [
         category: 'barbershop',
         type: 'Barbershop',
         sprite: 71,
-        color: 17,
+        color: 53,
         ids: [
             //
             165377,
@@ -33,7 +33,7 @@ const shops = [
         category: 'vehiclecustoms',
         type: 'Vehicle Customs Shop',
         sprite: 402,
-        color: 77,
+        color: 53,
         ids: [
             //
             196609,
@@ -51,7 +51,7 @@ const shops = [
         category: 'clothingstore',
         type: 'Clothing Store',
         sprite: 73,
-        color: 8,
+        color: 53,
         ids: [
             198145,
             165633,
@@ -75,7 +75,7 @@ const shops = [
         category: 'generalstore',
         type: 'General Store',
         sprite: 52,
-        color: 69,
+        color: 53,
         ids: [
             139777,
             178945,
@@ -105,7 +105,7 @@ const shops = [
         category: 'ammunation',
         type: 'Gun Crafting Point',
         sprite: 119,
-        color: 81,
+        color: 6,
         ids: [
             164609,
             168193,

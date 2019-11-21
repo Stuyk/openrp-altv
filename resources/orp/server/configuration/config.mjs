@@ -37,7 +37,7 @@ export const Config = {
     timeCookingTime: 10000,
     // - Vehicle
     vehicleSaveTime: 60000 * 5, // 5 Minutes
-    vehicleBaseFuel: 100, // Increase this to visit the pump less often.
+    vehicleBaseFuel: 200, // Increase this to visit the pump less often.
     vehicleFuelTime: 1000 * 10,
     vehicleRepairTime: 1000 * 10,
     // Hospital

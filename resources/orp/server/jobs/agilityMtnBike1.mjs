@@ -63,7 +63,7 @@ let interaction = new Interaction(
     3,
     'to begin training agility.'
 );
-interaction.addBlip(126, 6, jobName, 'agility');
+interaction.addBlip(480, 4, jobName, 'agility');
 
 let gondolaBottom = { x: -738.5142211914062, y: 5595.1279296875, z: 40.65458297729492 };
 let gondolaTop = { x: 444.1629333496094, y: 5571.96533203125, z: 780.1889038085938 };
@@ -76,7 +76,7 @@ interaction = new Interaction(
     3,
     'To take the gondola to the top.'
 );
-interaction.addBlip(36, 60, 'Gondola');
+interaction.addBlip(36, 53, 'Gondola');
 
 alt.on('teleport:GondolaTop', player => {
     player.pos = gondolaTop;
@@ -90,7 +90,7 @@ interaction = new Interaction(
     3,
     'To take the gondola to the bottom.'
 );
-interaction.addBlip(36, 60, 'Gondola');
+interaction.addBlip(36, 53, 'Gondola');
 
 alt.on('teleport:GondolaBottom', player => {
     player.pos = gondolaBottom;

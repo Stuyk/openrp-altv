@@ -65,7 +65,7 @@ function startFishing(player, callbackEventName, isNearWater, castLocation) {
     obj = new Objective(objectives.WAIT, modifiers.ON_FOOT);
     obj.setPosition(player.pos);
     obj.setRange(5);
-    obj.useSectorForWaitTime(10000);
+    obj.useSectorForWaitTime(60000);
     obj.setHelpText('Wait for a fish to bite...');
     obj.setMarker(
         28,

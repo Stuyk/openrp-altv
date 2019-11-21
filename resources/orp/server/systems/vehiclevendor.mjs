@@ -66,7 +66,7 @@ Vendors.forEach((vendor, index) => {
             'vehicle:Vendor',
             3,
             3,
-            'to browse the vehicle lot.',
+            `to browse for ${vendor.type} vehicles.`,
             index
         );
         interaction.addBlip(vendor.blip.sprite, vendor.blip.color, vendor.blip.name);

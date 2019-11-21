@@ -1,7 +1,7 @@
 export const GeneralStore = {
     gascan: {
         key: 'gascan',
-        price: 800
+        price: 950
     },
     medkit: {
         key: 'medkit',
@@ -18,5 +18,21 @@ export const GeneralStore = {
     jug: {
         key: 'jug',
         price: 80
+    },
+    pickaxe1: {
+        key: 'pickaxe1',
+        price: 125
+    },
+    axe1: {
+        key: 'axe1',
+        price: 125
+    },
+    hammer1: {
+        key: 'hammer1',
+        price: 125
+    },
+    fishingrod1: {
+        key: 'fishingrod1',
+        price: 125
     }
 };

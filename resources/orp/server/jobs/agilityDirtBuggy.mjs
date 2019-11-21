@@ -55,7 +55,7 @@ let interaction = new Interaction(
     3,
     'to begin training agility.'
 );
-interaction.addBlip(126, 6, jobName, 'agility');
+interaction.addBlip(480, 4, jobName, 'agility');
 
 alt.on('job:DirtBuggy', player => {
     let job = new Job(player, jobName, restrictions.NO_DIEING | restrictions.NO_WEAPONS);

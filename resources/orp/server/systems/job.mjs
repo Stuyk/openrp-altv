@@ -111,8 +111,9 @@ export class Objective {
      * ]
      * @param arrayOfRewards
      */
-    setRewards(arrayOfRewards) {
+    setRewards(arrayOfRewards, skipXP = false) {
         this.rewards = arrayOfRewards;
+        this.skipXP = skipXP;
     }
 
     setSoundEveryProgressTick(soundName) {
@@ -946,11 +947,15 @@ export class Job {
 
             if (this.objectives[0].type === objectives.WAIT) {
                 if (this.objectives[0].useSectorWaitTime !== -1) {
-                    this.objectives[0].modifiedWaitTime =
-                        Date.now() +
-                        player.sector.seed.getNumber(
-                            this.objectives[0].useSectorWaitTime
-                        );
+                    let randomValue = player.sector.seed.getNumber(
+                        this.objectives[0].useSectorWaitTime
+                    );
+
+                    if (randomValue < 5000) {
+                        randomValue = 5000;
+                    }
+
+                    this.objectives[0].modifiedWaitTime = Date.now() + randomValue;
                 } else {
                     this.objectives[0].modifiedWaitTime =
                         Date.now() + this.objectives[0].waitTime;

@@ -22,7 +22,7 @@ let interaction = new Interaction(
     3,
     `to work as a trucker.`
 );
-interaction.addBlip(85, 6, jobName, 'trucking');
+interaction.addBlip(642, 5, jobName, 'trucking');
 
 const trackPoints = [
     {
@@ -218,6 +218,8 @@ alt.on('job:TruckingUnrefinedMetal', player => {
         100
     );
     obj.setRewards([
+        { type: 'xp', prop: 'nobility', quantity: 125 },
+        { type: 'xp', prop: 'notoriety', quantity: -500 },
         { type: 'xp', prop: 'mining', quantity: 160 },
         { type: 'item', prop: 'refinedmetal', quantity: 21 }
     ]);

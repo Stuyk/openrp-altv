@@ -100,15 +100,15 @@ alt.onServer('grid:TempTurfs', sectors => {
 
 // Load ATM Blips
 Atms.forEach(atm => {
-    createBlip('atm', atm, 108, 2, 'ATM', 5);
+    createBlip('atm', atm, 108, 53, 'ATM', 5);
 });
 
 FuelStations.forEach(station => {
-    createBlip('fuel', station, 361, 49, 'Fuel Station');
+    createBlip('fuel', station, 361, 53, 'Fuel Station');
 });
 
 Hospitals.forEach(hospital => {
-    createBlip('hospital', hospital, 61, 11, 'Hospital');
+    createBlip('hospital', hospital, 153, 43, 'Hospital');
 });
 
 //  alt.emit('option:Changed', option, cache.get(`option:${option}`));

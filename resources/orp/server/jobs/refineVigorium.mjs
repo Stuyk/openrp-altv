@@ -170,8 +170,8 @@ alt.on('job:RefineVigorium1', player => {
     obj.setRewards([
         { type: 'xp', prop: 'crafting', quantity: 20 },
         { type: 'item', prop: 'refinedvigorium', quantity: 1 },
-        { type: 'xp', prop: 'notoriety', quantity: 25 },
-        { type: 'xp', prop: 'nobility', quantity: -75 }
+        { type: 'xp', prop: 'notoriety', quantity: 35 },
+        { type: 'xp', prop: 'nobility', quantity: -140 }
     ]);
     job.add(copyObjective(obj));
 

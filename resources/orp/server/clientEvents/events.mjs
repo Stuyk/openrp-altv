@@ -102,10 +102,3 @@ alt.onClient('general:BuyItem', systemsGeneralStore.buyItem);
 alt.onClient('reset:Dimension', player => {
     player.saveDimension(0);
 });
-
-// Temporary:
-// teleport to waypoint stuff
-alt.onClient('temporaryTeleport', (player, coords) => {
-    player.tempPos = player.pos;
-    player.pos = coords;
-});

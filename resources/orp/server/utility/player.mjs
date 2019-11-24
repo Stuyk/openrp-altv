@@ -268,6 +268,7 @@ export function setupPlayerFunctions(player) {
         player.clearBlood();
         player.setHealth(200);
         player.setArmour(0);
+        player.hasDied = false;
         player.revivePos = undefined;
         player.reviveTime = undefined;
         player.reviving = false;
@@ -314,33 +315,19 @@ export function setupPlayerFunctions(player) {
         alt.emitClient(player, 'face:ShowDialogue');
     };
 
-    player.applyFace = valueJSON => {
-        const data = JSON.parse(valueJSON);
-
-        if (data.Sex.value === 0) {
+    player.applyFace = () => {
+        if (!player.data.sexgroup) return;
+        const sexGroup = JSON.parse(player.data.sexgroup);
+        if (sexGroup[0].value === 0) {
             player.model = 'mp_f_freemode_01';
         } else {
             player.model = 'mp_m_freemode_01';
         }
 
-        player.emitMeta('face', valueJSON);
-    };
-
-    player.saveFace = (valueJSON, isBarbershop) => {
-        const data = JSON.parse(valueJSON);
-
-        if (!isBarbershop) {
-            player.model = data.Sex.value === 0 ? 'mp_f_freemode_01' : 'mp_m_freemode_01';
-            if (player.isNewPlayer) {
-                player.addStarterItems();
-                player.isNewPlayer = false;
-            }
-        }
-
-        player.data.face = valueJSON;
-        player.saveField(player.data.id, 'face', valueJSON);
-        player.emitMeta('face', valueJSON);
-        player.syncInventory(true);
+        Object.keys(player.data).forEach(key => {
+            if (!key.includes('group')) return;
+            player.emitMeta(key, player.data[key]);
+        });
     };
 
     // ====================================

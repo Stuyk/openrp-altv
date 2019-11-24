@@ -40,13 +40,13 @@ alt.onServer('camera:FinishSky', () => {
         );
 
         native.pointCamAtEntity(endCam, alt.Player.local.scriptID, 0, 0, 0, false);
-        native.setCamActiveWithInterp(endCam, camera, 5000, 5000, 5000);
+        native.setCamActiveWithInterp(endCam, camera, 2000, 5000, 5000);
         native.renderScriptCams(true, true, 2000, false, false, 0);
         native.freezeEntityPosition(alt.Player.local.scriptID, false);
         native.clearPedTasks(alt.Player.local.scriptID);
         alt.setTimeout(() => {
             native.destroyAllCams(true);
             native.renderScriptCams(false, 0, 0, false, false, 0);
-        }, 5000);
-    }, 2500);
+        }, 2000);
+    }, 1000);
 });

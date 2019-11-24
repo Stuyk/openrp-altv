@@ -3,9 +3,19 @@ import config from './configuration.json';
 import Discord from 'discord.js';
 
 const client = new Discord.Client();
+alt.log('!!! => Loading Discord Bot');
 
 client.on('ready', () => {
-    alt.log('Discord bot has authenticated successfully...');
+    alt.log('!!! => Discord bot has authenticated successfully...');
+});
+
+client.on('error', err => {
+    alt.log(err);
+});
+
+client.on('rateLimit', rateLimit => {
+    alt.log('Rate Limit Exceeded...');
+    alt.log(rateLimit);
 });
 
 client.on('message', async msg => {

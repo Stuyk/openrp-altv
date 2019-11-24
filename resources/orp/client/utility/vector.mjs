@@ -16,6 +16,23 @@ export function distance(vector1, vector2) {
     );
 }
 
+export function getDirection(vector1, vector2) {
+    const newCoords = {
+        x: vector2.x - vector1.x,
+        y: vector2.y - vector1.y,
+        z: vector2.z - vector1.z
+    };
+
+    const dist = Math.sqrt(
+        vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+    );
+
+    const x = newCoords.x * (1.0 / dist);
+    const y = newCoords.y * (1.0 / dist);
+    const z = newCoords.z * (1.0 / dist);
+    return { x, y, z };
+}
+
 // Get a random position based around.
 export function randPosAround(pos, range) {
     return {

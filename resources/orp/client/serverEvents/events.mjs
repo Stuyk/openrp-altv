@@ -42,7 +42,9 @@ alt.log('Loaded: client->serverEvents->events.mjs');
 // =======================================================
 // PLAYER RESPAWN
 // Reset the characters blood
-alt.onServer('respawn:ClearPedBloodDamage', panelsCharacter.clearPedBloodDamage);
+alt.onServer('respawn:ClearPedBloodDamage', () => {
+    native.clearPedBloodDamage(alt.Player.local.scriptID);
+});
 
 // =======================================================
 // CHARACTER FACE CUSTOMIZER

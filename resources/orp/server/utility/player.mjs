@@ -312,6 +312,7 @@ export function setupPlayerFunctions(player) {
             player.lastLocation = player.pos;
         }
 
+        player.dimension = parseInt(player.data.id);
         alt.emitClient(player, 'face:ShowDialogue');
     };
 

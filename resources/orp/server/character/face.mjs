@@ -16,6 +16,7 @@ export function setFacialData(player, faceJSON) {
         });
     }
 
+    player.dimension = 0;
     player.applyFace();
     player.syncInventory();
     goToLastLocation(player);

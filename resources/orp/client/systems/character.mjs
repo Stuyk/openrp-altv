@@ -128,6 +128,7 @@ export function syncFace(jsonData) {
         parsedData['FacialHair'].value,
         parsedData['FacialHairOpacity'].value
     );
+    
     native.setPedHeadOverlayColor(
         alt.Player.local.scriptID,
         1,

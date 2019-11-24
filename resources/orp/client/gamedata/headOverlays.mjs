@@ -1,4 +1,4 @@
-export const MaleHairOverlays = {
+export const HairOverlaysMale = {
     0: { collection: 'mpbeach_overlays', overlay: 'FM_Hair_Fuzz' },
     1: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_001' },
     2: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_002' },
@@ -45,7 +45,7 @@ export const MaleHairOverlays = {
     }
 };
 
-export const FemaleHairOverlays = {
+export const HairOverlaysFemale = {
     0: { collection: 'mpbeach_overlays', overlay: 'FM_Hair_Fuzz' },
     1: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_001' },
     2: { collection: 'multiplayer_overlays', overlay: 'NG_F_Hair_002' },

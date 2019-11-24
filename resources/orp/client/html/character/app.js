@@ -1,24 +1,3 @@
-/* eslint-disable no-undef */
-const faceGroups = {
-    Freckles: ['Freckles', 'FrecklesOpacity'],
-    Lipstick: ['Lipstick', 'LipstickOpacity', 'LipstickColor', 'LipstickColor2'],
-    SunDamage: ['SunDamage', 'SunDamageOpacity'],
-    Complexion: ['Complexion', 'ComplexionOpacity'],
-    Blush: ['Blush', 'BlushOpacity', 'BlushColor'],
-    Makeup: ['Makeup', 'MakeupOpacity', 'MakeupColor', 'MakeupColor2'],
-    Age: ['Age', 'AgeOpacity'],
-    Eyebrows: ['Eyebrows', 'EyebrowsOpacity', 'EyebrowsColor', 'EyebrowsColor2'],
-    FacialHair: [
-        'FacialHair',
-        'FacialHairOpacity',
-        'FacialHairColor',
-        'FacialHairColor2'
-    ],
-    Blemishes: ['Blemish', 'BlemishOpacity'],
-    Hair: ['Hair', 'HairColor', 'HairHighlights', 'HairTexture'],
-    Face: ['FatherFace', 'MotherFace', 'FatherSkin', 'MotherSkin', 'FaceMix', 'SkinMix']
-};
-
 const hairOverlaysMale = {
     0: { collection: 'mpbeach_overlays', overlay: 'FM_Hair_Fuzz' },
     1: { collection: 'multiplayer_overlays', overlay: 'NG_M_Hair_001' },
@@ -168,7 +147,7 @@ const facialFeatures = {
         increment: 0.1,
         func: updatePlayerFace,
         group: faceGroups['Face']
-    }, // 7
+    },
     SkinMix: {
         label: 'Skin Mix',
         value: 0,
@@ -180,36 +159,34 @@ const facialFeatures = {
     },
     Hair: {
         label: 'Hair',
-        value: 0,
+        value: 37, // 38 is Minimum
         min: 0,
-        max: 78,
+        max: 23,
         increment: 1,
         id: 2,
         func: updateHair,
-        group: faceGroups['Hair'],
-        femaleBlacklist: [24],
-        maleBlacklist: [23]
-    }, // 10
+        group: faceGroups['Hair']
+    },
     HairColor: {
         label: 'Hair Color',
         value: 0,
         min: 0,
-        max: 78,
+        max: 64,
         id: 2,
         increment: 1,
         func: updateHair,
         group: faceGroups['Hair']
-    }, // 11
+    },
     HairHighlights: {
         label: 'Hair Highlights',
         value: 0,
         min: 0,
-        max: 78,
+        max: 64,
         id: 2,
         increment: 1,
         func: updateHair,
         group: faceGroups['Hair']
-    }, // 12
+    },
     HairTexture: {
         label: 'Hair Texture',
         value: 0,
@@ -219,7 +196,7 @@ const facialFeatures = {
         increment: 1,
         func: updateHair,
         group: faceGroups['Hair']
-    }, // 13
+    },
     EyesColor: {
         label: 'Eyes Color',
         value: 0,
@@ -228,7 +205,7 @@ const facialFeatures = {
         id: 7,
         func: updateEyes,
         increment: 1
-    }, // 14
+    },
     NoseWidth: {
         label: 'Nose Width',
         value: 0,
@@ -238,7 +215,7 @@ const facialFeatures = {
         id: 0,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 15
+    },
     NoseHeight: {
         label: 'Nose Height',
         value: 0,
@@ -248,7 +225,7 @@ const facialFeatures = {
         id: 1,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 16
+    },
     NoseLength: {
         label: 'Nose Length',
         value: 0,
@@ -258,7 +235,7 @@ const facialFeatures = {
         id: 2,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 17
+    },
     NoseBridge: {
         label: 'Nose Bridge',
         value: 0,
@@ -268,7 +245,7 @@ const facialFeatures = {
         id: 3,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 18
+    },
     NoseTip: {
         label: 'Nose Tip',
         value: 0,
@@ -278,7 +255,7 @@ const facialFeatures = {
         id: 4,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 19
+    },
     NoseBridgeShaft: {
         label: 'Nose Bridge Shaft',
         value: 0,
@@ -288,7 +265,7 @@ const facialFeatures = {
         id: 5,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, //20
+    },
     BrowHeight: {
         label: 'Brow Height',
         value: 0,
@@ -298,7 +275,7 @@ const facialFeatures = {
         id: 6,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 21
+    },
     BrowWidth: {
         label: 'Brow Width',
         value: 0,
@@ -308,7 +285,7 @@ const facialFeatures = {
         id: 7,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 22
+    },
     CheekboneHeight: {
         label: 'Cheekbone Height',
         value: 0,
@@ -318,7 +295,7 @@ const facialFeatures = {
         id: 8,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 23
+    },
     CheekboneWidth: {
         label: 'Cheekbone Width',
         value: 0,
@@ -328,7 +305,7 @@ const facialFeatures = {
         id: 9,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 24
+    },
     CheekWidth: {
         label: 'Cheek Width',
         value: 0,
@@ -338,7 +315,7 @@ const facialFeatures = {
         id: 10,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 25
+    },
     Eyelids: {
         label: 'Eyelids',
         value: 0,
@@ -348,7 +325,7 @@ const facialFeatures = {
         id: 11,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 26
+    },
     Lips: {
         label: 'Lips',
         value: 0,
@@ -358,7 +335,7 @@ const facialFeatures = {
         id: 12,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 27
+    },
     JawWidth: {
         label: 'Jaw Width',
         value: 0,
@@ -368,7 +345,7 @@ const facialFeatures = {
         id: 13,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 28
+    },
     JawHeight: {
         label: 'Jaw Height',
         value: 0,
@@ -378,7 +355,7 @@ const facialFeatures = {
         id: 14,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 29
+    },
     ChinLength: {
         label: 'Chin Length',
         value: 0,
@@ -388,7 +365,7 @@ const facialFeatures = {
         id: 15,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 30
+    },
     ChinPosition: {
         label: 'Chin Position',
         value: 0,
@@ -398,7 +375,7 @@ const facialFeatures = {
         id: 16,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 31
+    },
     ChinWidth: {
         label: 'Chin Width',
         value: 0,
@@ -408,7 +385,7 @@ const facialFeatures = {
         id: 17,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 32
+    },
     ChinShape: {
         label: 'Chin Shape',
         value: 0,
@@ -418,7 +395,7 @@ const facialFeatures = {
         id: 18,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 33
+    },
     NeckWidth: {
         label: 'Neck Width',
         value: 0,
@@ -428,7 +405,7 @@ const facialFeatures = {
         id: 19,
         func: updateFaceFeature,
         isFaceFeature: true
-    }, // 34
+    },
     Blemish: {
         label: 'Blemish',
         value: 0,
@@ -769,6 +746,20 @@ const facialFeatures = {
     }
 };
 
+let last = 37;
+const interval = alt.setInterval(() => {
+    last += 1;
+    native.setPedComponentVariation(alt.Player.local.scriptID, 2, 38, 0, 0);
+    const val = native.getNumHairColors();
+    alt.log(val);
+    native.setPedHairColor(alt.Player.local.scriptID, 75, 75);
+    native.setPedEyeColor(alt.Player.local.scriptID, 35);
+
+    if (last >= 80) {
+        alt.clearInterval(interval);
+    }
+}, 1000);
+
 const faceNames = [
     'Benjamin',
     'Daniel',
@@ -844,8 +835,6 @@ class App extends Component {
             alt.on('setHairTextureVariations', this.setHairTextureVariations.bind(this));
             alt.on('sexUpdated', this.sexUpdated.bind(this));
         }
-
-        this.setState({ message: 'Done! ' });
     }
 
     sexUpdated(id) {
@@ -1094,7 +1083,9 @@ function updateSex(faceData, index) {
 
 function updatePlayerFace(faceData, index) {
     let items = getByGroup(faceData, faceData[index].group);
-    alt.emit('updatePlayerFace', JSON.stringify(items));
+    if ('alt' in window) {
+        alt.emit('updatePlayerFace', JSON.stringify(items));
+    }
 }
 
 function updateHair(faceData, index) {

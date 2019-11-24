@@ -211,6 +211,20 @@ function resetCamera(modelToUse) {
     // Set the head blend data to 0 to prevent weird hair texture glitches. Thanks Matspyder
     native.setPedHeadBlendData(ped.scriptID, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
 
+    if (modelToUse === 'mp_f_freemode_01') {
+        native.setPedComponentVariation(ped.scriptID, 3, 15, 0, 0); // arms
+        native.setPedComponentVariation(ped.scriptID, 4, 14, 0, 0); // pants
+        native.setPedComponentVariation(ped.scriptID, 6, 35, 0, 0); // shoes
+        native.setPedComponentVariation(ped.scriptID, 8, 15, 0, 0); // shirt
+        native.setPedComponentVariation(ped.scriptID, 11, 15, 0, 0); // torso
+    } else {
+        native.setPedComponentVariation(ped.scriptID, 3, 14, 0, 0); // arms
+        native.setPedComponentVariation(ped.scriptID, 4, 14, 0, 0); // pants
+        native.setPedComponentVariation(ped.scriptID, 6, 34, 0, 0); // shoes
+        native.setPedComponentVariation(ped.scriptID, 8, 15, 0, 0); // shirt
+        native.setPedComponentVariation(ped.scriptID, 11, 91, 0, 0); // torso
+    }
+
     updateHairColorChoices();
 
     if (camera) {

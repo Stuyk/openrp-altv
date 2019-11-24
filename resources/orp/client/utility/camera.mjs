@@ -28,6 +28,7 @@ export class Camera {
 
     fov(value) {
         native.setCamFov(this.cam, value);
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 
@@ -41,26 +42,31 @@ export class Camera {
             zOffset,
             false
         );
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 
     pointAtEntity(entity, xOffset, yOffset, zOffset) {
         native.pointCamAtEntity(this.cam, entity, xOffset, yOffset, zOffset, false);
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 
     pointAtCoord(pos) {
         native.pointCamAtCoord(this.cam, pos.x, pos.y, pos.z);
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 
     position(x, y, z) {
         native.setCamCoord(this.cam, x, y, z);
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 
     rotate(pitch, roll, yaw) {
         native.setCamRot(this.cam, pitch, roll, yaw, 0);
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 
@@ -69,6 +75,7 @@ export class Camera {
     }
 
     render() {
+        native.setCamActive(this.cam, true);
         native.renderScriptCams(true, false, 0, true, false);
     }
 

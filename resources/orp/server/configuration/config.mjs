@@ -23,10 +23,10 @@ export const Config = {
         z: 36.959503173828125
     },
     // Player Data
-    defaultPlayerCash: 100.0, // Starting Cash
-    defaultPlayerBank: 1000.0, // Starting Bank
+    defaultPlayerCash: 500.0, // Starting Cash
+    defaultPlayerBank: 500.0, // Starting Bank
     defaultPlayerReviveTime: 1000 * 20, // 20 Seconds
-    defaultPlayerMaxVehicles: 2, // Max Vehicles Per Player
+    defaultPlayerMaxVehicles: 3, // Max Vehicles Per Player
     defaultPlayerPaycheck: 40.0, // Every 'timePaycheckTime' minutes they recieve $40.00. $480/h.
     // Timers
     // - Player

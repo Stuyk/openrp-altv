@@ -47,7 +47,24 @@ export const Vendors = [
         cPos: { x: -1111.57763671875, y: -1685.13916015625, z: 4.358005523681641 },
         exit: { x: -1110.1614990234375, y: -1682.3306884765625, z: 4.297565460205078 },
         blip: {
-            name: `Dealership`,
+            name: `Bike Shop`,
+            sprite: 225,
+            color: 53
+        }
+    },
+    {
+        base: 'vehicle',
+        type: 'cycle',
+        interaction: {
+            x: -611.5973510742188,
+            y: -276.5471496582031,
+            z: 38.768062591552734
+        },
+        pos: { x: -605.1317138671875, y: -281.3689880371094, z: 38.769142150878906 },
+        cPos: { x: -607.5381469726562, y: -283.3824157714844, z: 38.729549407958984 },
+        exit: { x: -596.4031982421875, y: -302.9998474121094, z: 34.97161102294922 },
+        blip: {
+            name: `Bike Shop`,
             sprite: 225,
             color: 53
         }
@@ -158,7 +175,7 @@ export const Vendors = [
         cPos: { x: -724.9974365234375, y: -1334.135498046875, z: 1.5962917804718018 },
         exit: { x: -723.8484497070312, y: -1351.585205078125, z: -0.4749705493450165 },
         blip: {
-            name: `Dealership`,
+            name: `Boat Dealership`,
             sprite: 225,
             color: 53
         }
@@ -175,7 +192,7 @@ export const Vendors = [
         cPos: { x: -906.0074462890625, y: -1464.50341796875, z: 1.6341688632965088 },
         exit: { x: -892.0516357421875, y: -1444.6002197265625, z: -0.47474759817123413 },
         blip: {
-            name: `Dealership`,
+            name: `Boat Dealership`,
             sprite: 225,
             color: 53
         }
@@ -188,7 +205,7 @@ export const Vendors = [
         cPos: { x: -993.2159423828125, y: -3005.637939453125, z: 13.945075988769531 },
         exit: { x: -1020.192626953125, y: -2977.846923828125, z: 13.947741508483887 },
         blip: {
-            name: `Dealership`,
+            name: `Aircraft Dealership`,
             sprite: 225,
             color: 53
         }
@@ -205,7 +222,7 @@ export const Vendors = [
         cPos: { x: -1297.5157470703125, y: -1308.5504150390625, z: 4.679189205169678 },
         exit: { x: -1301.8232421875, y: -1303.0283203125, z: 4.711495399475098 },
         blip: {
-            name: `Dealership`,
+            name: `Motorcycle Dealership`,
             sprite: 225,
             color: 53
         }
@@ -235,7 +252,7 @@ export const Vendors = [
         cPos: { x: 1248.0540771484375, y: -3142.36279296875, z: 5.760153293609619 },
         exit: { x: 1245.4488525390625, y: -3153.01513671875, z: 5.577729225158691 },
         blip: {
-            name: `Dealership`,
+            name: `Commercial Dealership`,
             sprite: 225,
             color: 53
         }

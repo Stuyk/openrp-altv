@@ -5,6 +5,7 @@ import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
 import * as panelsBarbershop from '/client/panels/barbershop.mjs';
 import * as panelsGeneralStore from '/client/panels/generalstore.mjs';
 import * as panelsCrafting from '/client/panels/crafting.mjs';
+import * as panelsCharacter from '/client/panels/character.mjs';
 import { createBlip } from '/client/blips/bliphelper.mjs';
 import { syncDoors } from '/client/systems/doors.mjs';
 
@@ -26,8 +27,8 @@ const shops = [
             140545,
             180225
         ],
-        func: panelsBarbershop.showDialogue,
-        message: `Press ~INPUT_CONTEXT~ to change your hairstyle.`
+        func: panelsCharacter.showAsBarbershop,
+        message: `Press ~INPUT_CONTEXT~ to change your eyes, hair, or makeup.`
     },
     {
         category: 'vehiclecustoms',

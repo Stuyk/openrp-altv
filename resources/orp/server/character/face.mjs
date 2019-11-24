@@ -26,13 +26,3 @@ export function setFacialData(player, faceJSON) {
 
     player.showRoleplayInfoDialogue();
 }
-
-alt.onClient('character:UpdateModel', (player, model) => {
-    if (model !== '')
-    
-    try {
-
-    } catch(err) {
-
-    }
-});

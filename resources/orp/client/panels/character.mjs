@@ -7,25 +7,13 @@ import { FaceProperties } from '/client/gamedata/faceProperties.mjs';
 
 alt.log('Loaded: client->panels->character.mjs');
 
-const cameraPoint = {
-    x: -130.614990234375,
-    y: -633.6951904296875,
-    z: 168.82057189941406
-};
-
-const offsetPoint = {
-    x: -130.7032928466797,
-    y: -644.9724975585938,
-    z: 169.413232421875
-};
-
 const playerPoint = {
     x: -131.62091064453125,
     y: -633.7816772460938,
     z: 168.82057189941406
 };
 
-const url = 'http://resource/client/html/character-new/index.html';
+const url = 'http://resource/client/html/character/index.html';
 let webview; // Used for the HTML View.
 let camera; // Used for the Camera Manipulation
 let lastHair = 0; // Get the last hair the player set.
@@ -35,14 +23,33 @@ let tattoos = [];
 let zPos = 0.6;
 let zoom = 35;
 let rotation = 279;
+let playerStandPoint;
+let playerCamPoint;
+let groupFlags;
+let removeClothes = true;
+
+export function showAsBarbershop() {
+    const pos = alt.Player.local.pos;
+    const flags = 88; // Hair, Eyes, and Makeup
+    showDialogue(pos, flags, false);
+}
 
 // Load the character customizer, freeze controls, create camera, and ped.
-export function showDialogue() {
+export function showDialogue(playerPos, flags = 255, removeAllClothes = true) {
     if (!webview) {
         webview = new View();
     }
 
-    alt.log('New Character');
+    if (playerPos) {
+        playerStandPoint = playerPos;
+    } else {
+        playerStandPoint = playerPoint;
+    }
+
+    groupFlags = flags;
+    removeClothes = removeAllClothes;
+
+    alt.emitServer('utility:SetLastLocation', playerStandPoint);
 
     // Setup Webview
     webview.open(url, true);
@@ -56,7 +63,6 @@ export function showDialogue() {
     webview.on('character:SaveChanges', saveChanges);
 
     // Setup a temporary teleport.
-    alt.emitServer('temporaryTeleport', offsetPoint);
     alt.emit('chat:Toggle');
 
     // Request these models if they're not already loaded.
@@ -71,8 +77,49 @@ export function showDialogue() {
 
 function ready() {
     if (!webview) return;
-    webview.emit('character:SetFaceProperties', JSON.stringify(FaceProperties));
-    updateSex(0);
+    webview.emit('character:SetGroupFlags', groupFlags);
+    if (groupFlags === 255) {
+        webview.emit('character:SetFaceProperties', JSON.stringify(FaceProperties));
+        updateSex(0);
+    } else {
+        const facePropsClone = { ...FaceProperties };
+        const playerFaceData = {
+            SexGroup: JSON.parse(alt.Player.local.getMeta('sexgroup')),
+            FaceGroup: JSON.parse(alt.Player.local.getMeta('facegroup')),
+            StructureGroup: JSON.parse(alt.Player.local.getMeta('structuregroup')),
+            HairGroup: JSON.parse(alt.Player.local.getMeta('hairgroup')),
+            EyesGroup: JSON.parse(alt.Player.local.getMeta('eyesgroup')),
+            DetailGroup: JSON.parse(alt.Player.local.getMeta('detailgroup')),
+            MakeupGroup: JSON.parse(alt.Player.local.getMeta('makeupgroup'))
+        };
+
+        playerModel = playerFaceData.SexGroup[0].value;
+
+        Object.keys(playerFaceData).forEach(key => {
+            playerFaceData[key].forEach((row, index) => {
+                facePropsClone[key][index].value = row.value;
+            });
+        });
+
+        const Tattoos = JSON.parse(alt.Player.local.getMeta('tattoogroup'));
+        Tattoos.forEach(currentTattoo => {
+            const index = facePropsClone.TattooGroup.findIndex(
+                tat => tat.tattoo === currentTattoo.tattoo
+            );
+
+            if (index <= -1) {
+                alt.log('Tat not found.');
+                return;
+            }
+
+            facePropsClone.TattooGroup[index].value = 1;
+        });
+
+        alt.log(JSON.stringify(facePropsClone));
+
+        webview.emit('character:SetFaceProperties', JSON.stringify(facePropsClone));
+        resetCamera();
+    }
 }
 
 function changeZoom(value) {
@@ -89,16 +136,16 @@ function changeZPos(value) {
 
 function adjustCamera() {
     const modifiedCam = {
-        x: cameraPoint.x,
-        y: cameraPoint.y,
-        z: cameraPoint.z + zPos
+        x: playerCamPoint.x,
+        y: playerCamPoint.y,
+        z: playerCamPoint.z + zPos
     };
-
     camera.position(modifiedCam.x, modifiedCam.y, modifiedCam.z);
+
     const modifiedPos = {
-        x: playerPoint.x,
-        y: playerPoint.y,
-        z: playerPoint.z + zPos
+        x: playerStandPoint.x,
+        y: playerStandPoint.y,
+        z: playerStandPoint.z + zPos
     };
     camera.pointAtCoord(modifiedPos);
     camera.fov(zoom);
@@ -335,66 +382,76 @@ function updateSex(value) {
 
 function resetCamera(modelToUse) {
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
-    native.setPlayerModel(alt.Player.local.scriptID, native.getHashKey(modelToUse));
-    native.setEntityCoords(
-        alt.Player.local.scriptID,
-        playerPoint.x,
-        playerPoint.y,
-        playerPoint.z,
-        false,
-        false,
-        false,
-        false
-    );
+
+    if (modelToUse) {
+        native.setPlayerModel(alt.Player.local.scriptID, native.getHashKey(modelToUse));
+        native.setEntityCoords(
+            alt.Player.local.scriptID,
+            playerStandPoint.x,
+            playerStandPoint.y,
+            playerStandPoint.z,
+            false,
+            false,
+            false,
+            false
+        );
+
+        // Set Hair Fuzz
+        native.addPedDecorationFromHashes(
+            alt.Player.local.scriptID,
+            native.getHashKey('mpbeach_overlays'),
+            native.getHashKey('fm_hair_fuzz')
+        );
+
+        // Set the head blend data to 0 to prevent weird hair texture glitches. Thanks Matspyder
+        native.setPedHeadBlendData(
+            alt.Player.local.scriptID,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            false
+        );
+    }
+
+    if (removeClothes) {
+        if (modelToUse === 'mp_f_freemode_01') {
+            native.setPedComponentVariation(alt.Player.local.scriptID, 3, 15, 0, 0); // arms
+            native.setPedComponentVariation(alt.Player.local.scriptID, 4, 14, 0, 0); // pants
+            native.setPedComponentVariation(alt.Player.local.scriptID, 6, 35, 0, 0); // shoes
+            native.setPedComponentVariation(alt.Player.local.scriptID, 8, 15, 0, 0); // shirt
+            native.setPedComponentVariation(alt.Player.local.scriptID, 11, 15, 0, 0); // torso
+        } else {
+            native.setPedComponentVariation(alt.Player.local.scriptID, 3, 15, 0, 0); // arms
+            native.setPedComponentVariation(alt.Player.local.scriptID, 4, 14, 0, 0); // pants
+            native.setPedComponentVariation(alt.Player.local.scriptID, 6, 34, 0, 0); // shoes
+            native.setPedComponentVariation(alt.Player.local.scriptID, 8, 15, 0, 0); // shirt
+            native.setPedComponentVariation(alt.Player.local.scriptID, 11, 91, 0, 0); // torso
+        }
+    }
 
     alt.nextTick(() => {
+        rotation = 279;
         native.setEntityHeading(alt.Player.local.scriptID, rotation);
+        const forwardVector = native.getEntityForwardVector(alt.Player.local.scriptID);
+        playerCamPoint = {
+            x: playerStandPoint.x + forwardVector.x * 1,
+            y: playerStandPoint.y + forwardVector.y * 1,
+            z: playerStandPoint.z
+        };
+
+        if (!camera) {
+            camera = new Camera(playerCamPoint, zoom);
+        }
+
+        adjustCamera();
+        webview.emit('character:SexUpdate');
     });
-
-    // Set Hair Fuzz
-    native.addPedDecorationFromHashes(
-        alt.Player.local.scriptID,
-        native.getHashKey('mpbeach_overlays'),
-        native.getHashKey('fm_hair_fuzz')
-    );
-
-    // Set the head blend data to 0 to prevent weird hair texture glitches. Thanks Matspyder
-    native.setPedHeadBlendData(
-        alt.Player.local.scriptID,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        false
-    );
-
-    if (modelToUse === 'mp_f_freemode_01') {
-        native.setPedComponentVariation(alt.Player.local.scriptID, 3, 15, 0, 0); // arms
-        native.setPedComponentVariation(alt.Player.local.scriptID, 4, 14, 0, 0); // pants
-        native.setPedComponentVariation(alt.Player.local.scriptID, 6, 35, 0, 0); // shoes
-        native.setPedComponentVariation(alt.Player.local.scriptID, 8, 15, 0, 0); // shirt
-        native.setPedComponentVariation(alt.Player.local.scriptID, 11, 15, 0, 0); // torso
-    } else {
-        native.setPedComponentVariation(alt.Player.local.scriptID, 3, 15, 0, 0); // arms
-        native.setPedComponentVariation(alt.Player.local.scriptID, 4, 14, 0, 0); // pants
-        native.setPedComponentVariation(alt.Player.local.scriptID, 6, 34, 0, 0); // shoes
-        native.setPedComponentVariation(alt.Player.local.scriptID, 8, 15, 0, 0); // shirt
-        native.setPedComponentVariation(alt.Player.local.scriptID, 11, 91, 0, 0); // torso
-    }
-
-    if (!camera) {
-        camera = new Camera(cameraPoint, zoom);
-    }
-
-    adjustCamera();
-
-    // camera.pointAtBone(alt.Player.local.scriptID, 31086, 0.05, 0, 0);
-    webview.emit('character:SexUpdate');
 }
 
 function saveChanges(data) {

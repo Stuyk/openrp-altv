@@ -32,8 +32,6 @@ import * as utilitySandbox from '/client/utility/sandbox.mjs';
 import * as hud from '/client/hud/hud.mjs';
 import * as discord from '/client/panels/discord.mjs';
 
-import * as characterNew from '/client/panels/character-new.mjs';
-
 // Context
 import * as contextmenuObject from '/client/contextmenus/object.mjs';
 import * as contextmenuPed from '/client/contextmenus/ped.mjs';

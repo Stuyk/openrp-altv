@@ -45,13 +45,9 @@ export function showDialogue(passedCharacters, characterPoint, characterCamPoint
     webview.on('character:Select', selectCharacter);
     webview.on('character:New', newCharacter);
 
-    alt.log('Dialogue Shown');
-
     camera = new Camera(characterCamPoint, 30);
     camera.pointAtCoord(characterPoint);
     camPoint = characterCamPoint;
-
-    alt.log('Camera Shown');
 }
 
 function ready() {
@@ -63,21 +59,38 @@ function ready() {
 }
 
 function nextCharacter(index) {
-    const charData = JSON.parse(characters[parseInt(index)].face);
-    if (charData) {
-        const sex = charData.Sex.value;
-        const modelName = sex === 1 ? 'mp_m_freemode_01' : 'mp_f_freemode_01';
+    const character = characters[parseInt(index)];
+    const sexGroup = character.sexgroup === null ? null : JSON.parse(character.sexgroup);
+
+    if (sexGroup) {
+        const modelName =
+            parseInt(sexGroup[0].value) === 1 ? 'mp_m_freemode_01' : 'mp_f_freemode_01';
         const hash = native.getHashKey(modelName);
         alt.loadModel(hash);
-        native.setPlayerModel(alt.Player.scriptID, hash);
+        native.requestModel(hash);
+        native.setPlayerModel(alt.Player.local.scriptID, hash);
+        alt.emit(
+            'meta:Changed',
+            'sexgroup',
+            JSON.stringify([{ value: parseInt(sexGroup[0].value) }])
+        );
     } else {
-        const hash = native.getHashKey('mp_m_freemode_01');
+        alt.log('No Model Found');
+        const hash = native.getHashKey('mp_f_freemode_01');
         alt.loadModel(hash);
-        native.setPlayerModel(alt.Player.scriptID, hash);
+        native.requestModel(hash);
+        native.setPlayerModel(alt.Player.local.scriptID, hash);
+        alt.emit('meta:Changed', 'sexgroup', JSON.stringify([{ value: 0 }]));
     }
 
-    alt.emit('meta:Changed', 'face', characters[parseInt(index)].face);
-    alt.emit('meta:Changed', 'equipment', characters[parseInt(index)].equipment);
+    Object.keys(character).forEach(key => {
+        if (character[key] === null) return;
+        if (key.includes('group')) {
+            alt.emit('meta:Changed', key, character[key]);
+        }
+    });
+
+    alt.emit('meta:Changed', 'equipment', character.equipment);
 
     native.taskTurnPedToFaceCoord(
         alt.Player.local.scriptID,

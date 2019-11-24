@@ -120,6 +120,12 @@ export function sync(player) {
 }
 
 alt.on('sync:Player', player => {
+    if (!player.data) {
+        player.kick();
+        alt.log('Player has unknown data.');
+        return;
+    }
+
     player.startTime = Date.now();
 
     // Setup Position
@@ -137,12 +143,12 @@ alt.on('sync:Player', player => {
     }
 
     // Check if the player has a face.
-    if (player.data.face === null) {
+    if (!player.data.sexgroup) {
         player.isNewPlayer = true;
         player.showFaceCustomizerDialogue(lastKnownPos);
     } else {
         alt.emitClient(player, 'camera:SetupSky', lastKnownPos);
-        player.applyFace(player.data.face);
+        player.applyFace();
         if (player.needsRoleplayInfo) {
             player.showRoleplayInfoDialogue();
         }

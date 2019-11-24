@@ -47,6 +47,26 @@ const FaceNames = [
     'Misty'
 ];
 
+const GroupFlag = {
+    MIN: 0,
+    SexGroup: 1,
+    FaceGroup: 2,
+    StructureGroup: 4,
+    HairGroup: 8,
+    EyesGroup: 16,
+    DetailGroup: 32,
+    MakeupGroup: 64,
+    TattooGroup: 128,
+    MAX: 255
+};
+
+function isFlagged(flags, flagValue) {
+    if ((flags & flagValue) === flagValue) {
+        return true;
+    }
+    return false;
+}
+
 // Create Element, Render, Component, etc.
 const { createElement, render, Component } = preact;
 const h = createElement;
@@ -56,12 +76,12 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            props: []
+            props: [],
+            groupFlags: GroupFlag.MAX
         };
-
         this.zpos = 0.6;
         this.zoom = 35;
-        this.rotate = 275;
+        this.rotate = 279;
     }
 
     componentDidMount() {
@@ -69,10 +89,15 @@ class App extends Component {
             alt.on('character:SetFaceProperties', this.setFaceProperties.bind(this));
             alt.on('character:UpdateHairTextures', this.updateHairTextures.bind(this));
             alt.on('character:SexUpdate', this.sexUpdate.bind(this));
+            alt.on('character:SetGroupFlags', this.setGroupFlags.bind(this));
             setTimeout(() => {
                 alt.emit('character:Ready');
             }, 500);
         }
+    }
+
+    setGroupFlags(flags) {
+        this.setState({ groupFlags: flags });
     }
 
     setFaceProperties(propertiesJSON) {
@@ -119,13 +144,17 @@ class App extends Component {
         if ('alt' in window) {
             if (props[groupIndex].key === 'TattooGroup') {
                 alt.emit('character:CleanTattoos');
+                const flaggedTattoos = [];
                 props[groupIndex].values.forEach(tattoo => {
                     if (tattoo.value === 0) {
-                        alt.emit('character:HandleTattoo', tattoo.tattoo, false);
                         return;
                     }
-                    alt.emit('character:HandleTattoo', tattoo.tattoo, true);
+
+                    flaggedTattoos.push(tattoo.tattoo);
                 });
+
+                alt.emit('character:SetTattoos', flaggedTattoos);
+                this.setState({ tattoos: flaggedTattoos });
             } else {
                 alt.emit(
                     'character:HandleGroupChange',
@@ -160,11 +189,49 @@ class App extends Component {
         this.zpos = parseFloat(value);
     }
 
+    saveChanges() {
+        const groupData = {};
+        this.state.props.forEach(group => {
+            if (!groupData[group.key]) {
+                groupData[group.key] = [];
+            }
+
+            group.values.forEach(row => {
+                if (row.tattoo) {
+                    if (row.value !== 1) {
+                        return;
+                    }
+
+                    groupData[group.key].push({
+                        tattoo: row.tattoo,
+                        value: 1
+                    });
+                    return;
+                }
+
+                groupData[group.key].push({
+                    key: row.key,
+                    value: parseFloat(row.value),
+                    id: row.id
+                });
+            });
+        });
+
+        if ('alt' in window) {
+            alt.emit('character:SaveChanges', JSON.stringify(groupData));
+        }
+    }
+
+    discardChanges() {
+        alt.emit('character:SaveChanges', null);
+    }
+
     render() {
         return h(
             'div',
             { id: 'app' },
             h(Categories, {
+                groupFlags: this.state.groupFlags,
                 state: this.state.props,
                 changeInput: this.changeInput.bind(this)
             }),
@@ -192,7 +259,15 @@ class App extends Component {
                 max: 1,
                 step: 0.01,
                 oninput: this.changeZPos.bind(this)
-            })
+            }),
+            h(
+                'button',
+                {
+                    class: 'savechanges',
+                    onclick: this.saveChanges.bind(this)
+                },
+                'Save Changes'
+            )
         );
     }
 }
@@ -238,7 +313,14 @@ class Categories extends App {
     }
 
     render(props) {
-        const categoryData = props.state.map((group, groupIndex) => {
+        console.log(`CurrentFlags ${props.groupFlags}`);
+        const filteredCategories = props.state.filter(category => {
+            if (isFlagged(props.groupFlags, GroupFlag[category.key])) return category;
+        });
+
+        console.log(filteredCategories.length);
+
+        const categoryData = filteredCategories.map((group, groupIndex) => {
             const groupData = group.values.map((row, index) => {
                 if (row.tattoo) {
                     return h(

@@ -62,7 +62,42 @@ export const Character = new orm.EntitySchema({
             type: 'int',
             default: 0
         },
-        face: {
+        sexgroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        facegroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        structuregroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        hairgroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        eyesgroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        detailgroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        makeupgroup: {
+            type: 'text',
+            nullable: true,
+            default: null
+        },
+        tattoogroup: {
             type: 'text',
             nullable: true,
             default: null

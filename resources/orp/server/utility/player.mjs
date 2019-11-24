@@ -268,6 +268,7 @@ export function setupPlayerFunctions(player) {
         player.clearBlood();
         player.setHealth(200);
         player.setArmour(0);
+        player.hasDied = false;
         player.revivePos = undefined;
         player.reviveTime = undefined;
         player.reviving = false;

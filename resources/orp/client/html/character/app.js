@@ -107,8 +107,9 @@ class App extends Component {
             groupings.push({ key, values: properties[key] });
         });
 
-        const hairIndex = groupings.findIndex(prop => prop.key === 'hairgroup');
-        if (parseInt(value) === 0) {
+        const sexIndex = groupings.findIndex(prop => prop.key === 'SexGroup');
+        const hairIndex = groupings.findIndex(prop => prop.key === 'HairGroup');
+        if (parseInt(groupings[sexIndex].values[0].value) === 0) {
             groupings[hairIndex].values[0].max = 78;
         } else {
             groupings[hairIndex].values[0].max = 74;
@@ -153,8 +154,8 @@ class App extends Component {
         }
 
         // Adjust Maximum Hairs Based on Genders
-        if (groupKey === 'sexgroup') {
-            const hairIndex = props.findIndex(prop => prop.key === 'hairgroup');
+        if (groupKey === 'SexGroup') {
+            const hairIndex = props.findIndex(prop => prop.key === 'HairGroup');
             if (parseInt(value) === 0) {
                 props[hairIndex].values[0].max = 78;
             } else {
@@ -163,8 +164,8 @@ class App extends Component {
         }
 
         // Hair Blacklist Check
-        if (groupKey === 'hairgroup' && index === 0) {
-            const sexIndex = props.findIndex(prop => prop.key === 'sexgroup');
+        if (groupKey === 'HairGroup' && index === 0) {
+            const sexIndex = props.findIndex(prop => prop.key === 'SexGroup');
             const sex = props[sexIndex].values[0].value;
 
             if (parseInt(sex) === 0 && parseInt(value) === 24) {

@@ -2,7 +2,6 @@ import * as alt from 'alt';
 import * as native from 'natives';
 import * as panelsClothing from '/client/panels/clothing.mjs';
 import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
-import * as panelsBarbershop from '/client/panels/barbershop.mjs';
 import * as panelsGeneralStore from '/client/panels/generalstore.mjs';
 import * as panelsCrafting from '/client/panels/crafting.mjs';
 import * as panelsCharacter from '/client/panels/character.mjs';

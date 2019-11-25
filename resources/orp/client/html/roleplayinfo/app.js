@@ -10,141 +10,320 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: false,
-            roleplayname: '',
-            currentYear: new Date().getFullYear(),
-            errors: {
-                name: false,
-                dob: false
-            }
+            firstNames: [],
+            lastNames: [],
+            firstFilter: '',
+            lastFilter: '',
+            firstName: '',
+            lastName: ''
         };
     }
 
-    nameChange(e) {
-        const result = regex.test(e.target.value);
+    componentDidMount() {
+        if ('alt' in window) {
+            alt.on('roleplay:SetFirstNames', this.setFirstNames.bind(this));
+            alt.on('roleplay:SetLastNames', this.setLastNames.bind(this));
+            alt.emit('roleplay:Ready');
+        } else {
+            this.setFirstNames([
+                'Aaren',
+                'Aarika',
+                'Abagael',
+                'Abagail',
+                'Abbe',
+                'Abbey',
+                'Abbi',
+                'Abbie',
+                'Abby',
+                'Abbye',
+                'Abigael',
+                'Abigail',
+                'Abigale',
+                'Abra',
+                'Ada',
+                'Adah',
+                'Adaline',
+                'Adan',
+                'Adara',
+                'Adda',
+                'Addi',
+                'Addia',
+                'Addie',
+                'Addy',
+                'Adel',
+                'Adela',
+                'Adelaida',
+                'Adelaide',
+                'Adele',
+                'Adelheid',
+                'Adelice',
+                'Adelina',
+                'Adelind',
+                'Adeline',
+                'Adella',
+                'Adelle',
+                'Adena',
+                'Adey',
+                'Adi',
+                'Adiana',
+                'Adina',
+                'Adora',
+                'Adore',
+                'Adoree',
+                'Adorne',
+                'Adrea',
+                'Adria',
+                'Adriaens',
+                'Adrian',
+                'Adriana',
+                'Adriane',
+                'Adrianna',
+                'Adrianne',
+                'Adriena',
+                'Adrienne',
+                'Aeriel',
+                'Aeriela',
+                'Aeriell',
+                'Afton',
+                'Ag',
+                'Agace',
+                'Agata',
+                'Agatha',
+                'Agathe',
+                'Aggi',
+                'Aggie',
+                'Aggy',
+                'Agna',
+                'Agnella',
+                'Agnes',
+                'Agnese',
+                'Agnesse',
+                'Agneta',
+                'Agnola',
+                'Agretha',
+                'Aida',
+                'Aidan',
+                'Aigneis',
+                'Aila',
+                'Aile',
+                'Ailee',
+                'Aileen',
+                'Ailene',
+                'Ailey',
+                'Aili',
+                'Ailina',
+                'Ailis',
+                'Ailsun',
+                'Ailyn',
+                'Aime',
+                'Aimee',
+                'Aimil',
+                'Aindrea',
+                'Ainslee',
+                'Ainsley',
+                'Ainslie',
+                'Ajay',
+                'Alaine',
+                'Alameda',
+                'Alana',
+                'Alanah',
+                'Alane',
+                'Alanna',
+                'Alayne'
+            ]);
 
-        if (!result) {
-            this.state.errors.name = true;
-            this.setState();
-            return;
+            this.setLastNames([
+                'Aaronsburg',
+                'Abbeville',
+                'Abbotsford',
+                'Abbottstown',
+                'Abbyville',
+                'Abell',
+                'Abercrombie',
+                'Abernant',
+                'Abilene',
+                'Abingdon',
+                'Abington',
+                'Abiquiu',
+                'Abrams',
+                'Absaraka',
+                'Absarokee',
+                'Absecon',
+                'Acampo',
+                'Accokeek',
+                'Accomac',
+                'Accoville',
+                'Achille',
+                'Ackerly',
+                'Ackermanville',
+                'Ackworth',
+                'Acosta',
+                'Acra',
+                'Acushnet',
+                'Acworth',
+                'Adah',
+                'Adairsville',
+                'Adairville',
+                'Adamsbasin',
+                'Adamsburg',
+                'Adamstown',
+                'Adamsville',
+                'Addieville',
+                'Addington',
+                'Addy',
+                'Addyston',
+                'Adel',
+                'Adelanto',
+                'Adell',
+                'Adelphi',
+                'Adelphia',
+                'Adena',
+                'Adger',
+                'Adin',
+                'Adjuntas',
+                'Adna',
+                'Adona',
+                'Aflex',
+                'Afton',
+                'Agana',
+                'Agar',
+                'Agawam',
+                'Agness',
+                'Agra',
+                'Aguada',
+                'Aguadilla',
+                'Aguadulce',
+                'Aguanga'
+            ]);
         }
-
-        this.state.errors.name = false;
-        this.setState({ roleplayname: e.target.value });
     }
 
-    dateChange(e) {
-        if (!this.dateValid(e.target.value)) {
-            this.state.errors.dob = true;
-            this.setState();
-            return;
-        }
-
-        this.state.errors.dob = false;
-        this.setState({ date: e.target.value });
+    setFirstNames(firstNames) {
+        this.setState({ firstNames: JSON.parse(firstNames) });
     }
 
-    dateValid(date) {
-        date = new Date(date);
+    setLastNames(lastNames) {
+        this.setState({ lastNames: JSON.parse(lastNames) });
+    }
 
-        if (!date || isNaN(date.getTime())) return false;
+    setFirstName(e) {
+        const firstName = e.target.id;
+        this.setState({ firstName });
+    }
 
-        if (date.getFullYear() <= 1920) return false;
+    setLastName(e) {
+        const lastName = e.target.id;
+        this.setState({ lastName });
+    }
 
-        if (date.getFullYear() > this.state.currentYear) return false;
+    filterFirstNames(e) {
+        const value = e.target.value;
+        this.setState({ firstFilter: value });
+    }
 
-        return true;
+    filterLastNames(e) {
+        const value = e.target.value;
+        this.setState({ lastFilter: value });
     }
 
     submit() {
-        const result = regex.test(this.state.roleplayname);
-        if (!result) {
-            this.state.errors.name = true;
-            this.setState();
-            return;
-        }
+        const name = `${this.state.firstName}_${this.state.lastName}`;
 
         if ('alt' in window) {
-            alt.emit('roleplay:SetInfo', {
-                name: this.state.roleplayname,
-                dob: this.state.date
-            });
+            alt.emit('roleplay:SetInfo', name);
         } else {
-            console.log([this.state.roleplayname, this.state.date]);
+            console.log(name);
         }
     }
 
+    filterNames() {
+        const filteredFirst = this.state.firstNames.filter(name =>
+            name.includes(this.state.firstFilter)
+        );
+
+        const filteredLast = this.state.lastNames.filter(name =>
+            name.includes(this.state.lastFilter)
+        );
+
+        const firstNames = filteredFirst.map(name => {
+            const isChecked = this.state.firstName === name ? true : false;
+            return h(
+                'li',
+                { class: 'name-box' },
+                h('div', { class: 'current' }, name),
+                h('input', {
+                    id: name,
+                    onchange: this.setFirstName.bind(this),
+                    type: 'checkbox',
+                    checked: isChecked
+                })
+            );
+        });
+
+        const lastNames = filteredLast.map(name => {
+            const isChecked = this.state.lastName === name ? true : false;
+            return h(
+                'li',
+                { class: 'name-box' },
+                h('div', { class: 'current' }, name),
+                h('input', {
+                    id: name,
+                    onchange: this.setLastName.bind(this),
+                    type: 'checkbox',
+                    checked: isChecked
+                })
+            );
+        });
+
+        return { firstNames, lastNames };
+    }
+
     render() {
+        const filteredNames = this.filterNames();
+        const firstName = this.state.firstName === '' ? 'Select' : this.state.firstName;
+        const lastName = this.state.lastName === '' ? 'Name' : this.state.lastName;
+        const allValid = firstName !== 'Select' && lastName !== 'Name' ? true : false;
         return h(
             'div',
             { id: 'app' },
             h(
                 'div',
-                { class: 'header' },
-                h('div', { class: 'logo' }, 'Set Roleplay Info')
-            ),
-            h('div', { class: 'animated flash container' }, ''), // @FIXME - Personally like it as a placeholder, lol
-            h(
-                'div',
-                {
-                    ref: this.wrapper,
-                    class: 'innerwrapper'
-                },
+                { class: 'wrapper' },
                 h(
                     'div',
-                    { class: 'container' },
+                    { class: 'current-name' },
+                    h('p', {}, `${firstName}_${lastName}`)
+                ),
+                h(
+                    'div',
+                    { class: 'search-boxes' },
                     h(
                         'div',
-                        {
-                            class: this.state.errors.name ? 'content error' : 'content',
-                            id: 'name'
-                        },
-                        h('p', {}, 'Roleplay Name'),
+                        { class: 'first' },
                         h('input', {
                             type: 'text',
-                            name: 'value',
-                            placerholder: 'value',
-                            oninput: this.nameChange.bind(this)
+                            placeholder: 'Search for First Name',
+                            onchange: this.filterFirstNames.bind(this)
                         }),
-                        h('span', {}, 'Username is not roleplay format. ie. Joe_Don')
-                    )
-                ),
-                h(
-                    'div',
-                    { class: 'container' },
+                        h('ul', { class: 'name-list' }, filteredNames.firstNames)
+                    ),
                     h(
                         'div',
-                        {
-                            class: this.state.errors.dob ? 'content error' : 'content',
-                            id: 'dob'
-                        },
-                        h('p', {}, 'Date of Birth'),
+                        { class: 'last' },
                         h('input', {
-                            type: 'date',
-                            name: 'value',
-                            placerholder: 'value',
-                            oninput: this.dateChange.bind(this)
+                            type: 'text',
+                            placeholder: 'Search for Last Name',
+                            onchange: this.filterLastNames.bind(this)
                         }),
-                        h(
-                            'span',
-                            {},
-                            `Date is invalid. Date must be between 1920 and ${this.state.currentYear}`
-                        )
+                        h('ul', { class: 'name-list' }, filteredNames.lastNames)
                     )
                 ),
-                h(
-                    'div',
-                    { class: 'container' },
-                    !this.state.errors.name &&
-                        !this.state.errors.dob &&
-                        this.state.date &&
-                        h(
-                            'div',
-                            { class: 'center' },
-                            h('button', { onclick: this.submit.bind(this) }, 'Submit')
-                        )
-                ),
-                h('div', { class: 'container' })
+                allValid &&
+                    h(
+                        'button',
+                        { class: 'submit', onclick: this.submit.bind(this) },
+                        'Set Roleplay Name'
+                    )
             )
         );
     }

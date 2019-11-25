@@ -13,20 +13,16 @@ const playerPoint = {
     z: 168.813232421875
 };
 
-export function setRoleplayInfo(player, info) {
+export function setRoleplayInfo(player, name) {
     player.needsRoleplayInfo = false;
 
-    // Saves Name, DOB, and a ID HASH.
-    player.saveRoleplayInfo({
-        name: info.name,
-        dob: info.dob
-    });
+    player.saveRoleplayInfo(name);
 
     if (distance(player.pos, playerPoint) <= 20) {
         player.pos = Config.defaultSpawnPoint;
     }
 
-    cacheCharacter(player.data.id, info.name);
+    cacheCharacter(player.data.id, name);
     player.closeRoleplayInfoDialogue();
 }
 

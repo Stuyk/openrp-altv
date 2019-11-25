@@ -89,10 +89,8 @@ export function purchase(player, jsonData) {
         return;
     }
 
-    delete props.label;
-    delete props.description;
-
-    if (!player.addItem(itemClone.key, 1, props)) {
+    //  key, quantity, props, skipStackable = false, skipSave = false, name = undefined,
+    if (!player.addItem(itemClone.key, 1, props, true, false, props.label)) {
         player.playAudio('error');
         return;
     }

@@ -10,9 +10,6 @@ let discordURL;
 native.freezeEntityPosition(alt.Player.local.scriptID, true);
 
 alt.onServer('discord:Connect', (token, communityDiscord) => {
-    alt.log(token);
-    alt.log(url);
-
     if (!webview) {
         webview = new View();
     }

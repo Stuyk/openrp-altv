@@ -30,6 +30,23 @@ const shops = [
         message: `Press ~INPUT_CONTEXT~ to change your eyes, hair, or makeup.`
     },
     {
+        category: 'tattooshop',
+        type: 'Tattooshop',
+        sprite: 75,
+        color: 53,
+        ids: [
+            //
+            171521,
+            176897,
+            180737,
+            199425,
+            140033,
+            251137
+        ],
+        func: panelsCharacter.showAsTattooShop,
+        message: `Press ~INPUT_CONTEXT~ to browse tattoo options.`
+    },
+    {
         category: 'vehiclecustoms',
         type: 'Vehicle Customs Shop',
         sprite: 402,

@@ -34,6 +34,12 @@ export function showAsBarbershop() {
     showDialogue(pos, flags, false);
 }
 
+export function showAsTattooShop() {
+    const pos = alt.Player.local.pos;
+    const flags = 128; // Hair, Eyes, and Makeup
+    showDialogue(pos, flags, true);
+}
+
 // Load the character customizer, freeze controls, create camera, and ped.
 export function showDialogue(playerPos, flags = 255, removeAllClothes = true) {
     if (!webview) {
@@ -372,11 +378,11 @@ function handleGroupChange(groupName, values) {
 
 function updateSex(value) {
     if (value === 0) {
-        resetCamera('mp_f_freemode_01');
         playerModel = 0;
+        resetCamera('mp_f_freemode_01');
     } else {
-        resetCamera('mp_m_freemode_01');
         playerModel = 1;
+        resetCamera('mp_m_freemode_01');
     }
 }
 
@@ -420,7 +426,7 @@ function resetCamera(modelToUse) {
     }
 
     if (removeClothes) {
-        if (modelToUse === 'mp_f_freemode_01') {
+        if (playerModel === 0) {
             native.setPedComponentVariation(alt.Player.local.scriptID, 3, 15, 0, 0); // arms
             native.setPedComponentVariation(alt.Player.local.scriptID, 4, 14, 0, 0); // pants
             native.setPedComponentVariation(alt.Player.local.scriptID, 6, 35, 0, 0); // shoes

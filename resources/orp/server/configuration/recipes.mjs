@@ -294,14 +294,54 @@ export const Recipes = {
         }
     },
     cooking: {
+        bread: {
+            key: 'bread',
+            requirements: [
+                { key: 'cooking', level: 1 },
+                { key: 'wheat', amount: 3 },
+                { key: 'salt', amount: 1 },
+                { key: 'sugar', amount: 1 }
+            ],
+            xp: 8
+        },
+        garlicbread: {
+            key: 'garlicbread',
+            requirements: [
+                { key: 'cooking', level: 2 },
+                { key: 'bread', amount: 1 },
+                { key: 'garlic', amount: 3 }
+            ],
+            xp: 10
+        },
+        carrotjuice: {
+            key: 'carrotjuice',
+            requirements: [
+                { key: 'cooking', level: 3 },
+                { key: 'apple', amount: 1 },
+                { key: 'carrot', amount: 5 }
+            ],
+            xp: 15
+        },
+        summersalad: {
+            key: 'summersalad',
+            requirements: [
+                { key: 'cooking', level: 5 },
+                { key: 'tomato', amount: 2 },
+                { key: 'corn', amount: 2 },
+                { key: 'garlic', amount: 1 },
+                { key: 'potato', amount: 1 },
+                { key: 'salt', amount: 1 }
+            ],
+            xp: 20
+        },
         fishandchips: {
             key: 'fishandchips',
             requirements: [
-                { key: 'cooking', level: 1 },
+                { key: 'cooking', level: 35 },
                 { key: 'potato', amount: 3 },
                 { key: 'rawfish', amount: 1 }
             ],
-            xp: 5
+            xp: 100
         }
     }
 };

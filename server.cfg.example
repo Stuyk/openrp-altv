@@ -8,7 +8,7 @@ website: twitch.tv/stuyksoft
 language: lang-here
 description: ''
 modules: [ node-module ]
-resources: [ orp, hospital-pillbox, club-bahama, comedy-club, discord ]
+resources: [ orp, hospital-pillbox, club-bahama, comedy-club ]
 #token:
 debug: true
 streamingDistance: 300

@@ -395,14 +395,21 @@ export function getGang(player) {
 
 export function fetchTurfSectors(player) {
     const gang = getGang(player);
-    if (!gang) return [];
-    if (!gang.turfs) return [];
+    if (!gang) {
+        return [];
+    }
+
     const turfs = JSON.parse(gang.turfs);
+    if (turfs.length <= 0) {
+        return [];
+    }
+
     const sectors = [];
     turfs.forEach(turf => {
         if (player.colshape && player.colshape === colshapes[turf]) return;
         sectors.push(colshapes[turf].sector);
     });
+
     return sectors;
 }
 

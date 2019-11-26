@@ -74,6 +74,8 @@ export function cleanSectorBlips() {
 alt.onServer('grid:TempTurfs', sectors => {
     const turfBlips = [];
     sectors.forEach(sector => {
+        alt.log('turf');
+
         const pos = {
             x: (sector.coords.first.x + sector.coords.second.x) / 2,
             y: (sector.coords.first.y + sector.coords.second.y) / 2,
@@ -81,19 +83,24 @@ alt.onServer('grid:TempTurfs', sectors => {
         };
 
         const color = sector.color ? sector.color : 4;
-        const blip = createBlip(pos, 79, color, 'YOUR TURF');
+        // category, pos, sprite, color, label, display = 2
+
+        const blip = native.addBlipForArea(
+            pos.x,
+            pos.y,
+            pos.z,
+            sector.width,
+            sector.length
+        );
+        native.setBlipColour(blip, color);
+        native.setBlipAlpha(blip, 100);
+        native.setBlipRotation(blip, 0);
         turfBlips.push(blip);
     });
 
     alt.setTimeout(() => {
         turfBlips.forEach(turf => {
-            if (turf && turf.destroy) {
-                try {
-                    turf.destroy();
-                } catch (err) {
-                    alt.log('Turf could not be deleted.');
-                }
-            }
+            native.removeBlip(turf);
         });
     }, 60000);
 });

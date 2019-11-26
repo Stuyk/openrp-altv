@@ -137,5 +137,6 @@ chat.registerCmd('tempdoor', (player, args) => {
 chat.registerCmd('showturfs', player => {
     if (player.data.gang === -1) return;
     const sectors = fetchTurfSectors(player);
+    console.log(sectors);
     alt.emitClient(player, 'grid:TempTurfs', sectors);
 });

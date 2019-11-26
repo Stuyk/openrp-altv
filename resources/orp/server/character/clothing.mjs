@@ -19,6 +19,7 @@ import { Items } from '../configuration/items.mjs';
 */
 
 const items = {
+    1: Items.mask,
     4: Items.pants,
     5: Items.backpack,
     6: Items.shoes,

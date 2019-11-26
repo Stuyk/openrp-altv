@@ -126,7 +126,7 @@ export const BaseItems = {
             rename: true,
             stack: false
         },
-        slot: 4
+        slot: 1
     },
     watch: {
         eventcall: 'itemeffects:EquipItem',
@@ -163,6 +163,18 @@ export const BaseItems = {
             stack: false
         },
         slot: 7
+    },
+    mask: {
+        eventcall: 'itemeffects:EquipItem',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: true,
+            sell: true,
+            rename: true,
+            stack: false
+        },
+        slot: 4
     },
     bodyarmour: {
         eventcall: 'itemeffects:EquipItem',
@@ -542,6 +554,14 @@ export const Items = {
         name: 'Helmet',
         base: 'helmet',
         key: 'helmet',
+        props: {},
+        quantity: 0,
+        icon: 'hat'
+    },
+    mask: {
+        name: 'Mask',
+        base: 'mask',
+        key: 'mask',
         props: {},
         quantity: 0,
         icon: 'bandana'

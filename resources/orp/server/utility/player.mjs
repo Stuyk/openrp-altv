@@ -796,7 +796,7 @@ export function setupPlayerFunctions(player) {
         if (
             player.addItem(
                 equippedItem.key,
-                1,
+                equippedItem.quantity,
                 equippedItem.props,
                 false,
                 false,

@@ -8,7 +8,8 @@ class App extends Component {
         this.state = {
             inventory: [],
             recipes: [],
-            craftingLevel: 5,
+            craftingLevel: 1,
+            cookingLevel: 1,
             search: ''
         };
 
@@ -21,8 +22,18 @@ class App extends Component {
             alt.on('craft:AddRecipe', this.addRecipe.bind(this));
             alt.on('craft:CraftingLevel', this.setCraftingLevel.bind(this));
             alt.on('craft:SetInventory', this.setInventory.bind(this));
+            alt.on('craft:CookingLevel', this.setCookingLevel.bind(this));
             alt.emit('craft:Ready');
         } else {
+            this.addRecipe('fishandchips', {
+                key: 'fishandchips',
+                requirements: [
+                    { key: 'cooking', level: 1 },
+                    { key: 'potato', amount: 3 },
+                    { key: 'rawfish', amount: 1 }
+                ]
+            });
+
             this.addRecipe('knife', {
                 key: 'weapon',
                 requirements: [
@@ -43,7 +54,7 @@ class App extends Component {
             }
 
             const json =
-                '[{"name":"Refined Metal","base":"refined","key":"refinedmetal","props":{},"quantity":500,"icon":"metal","hash":"127e8a092afa3b6384b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}, {"name":"Refined Wood","base":"refined","key":"refinedwood","props":{},"quantity":500,"icon":"planks","hash":"127e8a092afa3b5e84b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}]';
+                '[{"name":"Refined Metal","base":"refined","key":"refinedmetal","props":{},"quantity":500,"icon":"metal","hash":"127e8a092afa3b6384b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"},{"name":"Refined Wood","base":"refined","key":"refinedwood","props":{},"quantity":500,"icon":"planks","hash":"127e8a092afa3b5e84b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"},{"name":"Raw Shrimp","base":"rawfish","key":"rawfish","props":{},"quantity":1,"icon":"planks","hash":"127e8a092afa3b5e84b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"},{"name":"Potato","base":"ingredient","key":"potato","props":{},"quantity":3,"icon":"planks","hash":"127e8a092afa3b5e84b74ab998e0ac7bc9ff99d5fad459b444526be8b0079662"}]';
 
             this.setInventory(json);
         }
@@ -71,6 +82,10 @@ class App extends Component {
 
     setCraftingLevel(level) {
         this.setState({ craftingLevel: level });
+    }
+
+    setCookingLevel(level) {
+        this.setState({ cookingLevel: level });
     }
 
     close(e) {
@@ -147,21 +162,32 @@ class App extends Component {
             recipeData.disabled = true;
 
             for (let i = 0; i < requirements.length; i++) {
-                if (requirements[i].level) {
+                if (requirements[i].key === 'crafting') {
                     if (this.state.craftingLevel < requirements[i].level) {
                         recipes.push(recipeData);
                         return;
+                    } else {
+                        continue;
                     }
-                } else {
-                    if (!totals[requirements[i].key]) {
-                        recipes.push(recipeData);
-                        return;
-                    }
+                }
 
-                    if (requirements[i].amount > totals[requirements[i].key]) {
+                if (requirements[i].key === 'cooking') {
+                    if (this.state.cookingLevel < requirements[i].level) {
                         recipes.push(recipeData);
                         return;
+                    } else {
+                        continue;
                     }
+                }
+
+                if (!totals[requirements[i].key]) {
+                    recipes.push(recipeData);
+                    return;
+                }
+
+                if (requirements[i].amount > totals[requirements[i].key]) {
+                    recipes.push(recipeData);
+                    return;
                 }
             }
 

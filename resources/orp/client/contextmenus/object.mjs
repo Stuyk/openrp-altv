@@ -510,6 +510,8 @@ function cookingSource(ent) {
         items[index].hashes.push(item.hash);
     });
 
+    appendContextItem('Cooking Menu', false, 'crafting:CookingMenu');
+
     items.forEach(item => {
         appendContextItem(`Cook All ${item.name}`, true, 'use:CookFood', {
             hashes: item.hashes,

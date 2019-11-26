@@ -530,7 +530,8 @@ export function setupPlayerFunctions(player) {
         skipStackable = false,
         skipSave = false,
         name = undefined,
-        icon = undefined
+        icon = undefined,
+        keyOverride = undefined
     ) => {
         const item = Items[key];
         const base = BaseItems[Items[key].base];
@@ -546,6 +547,10 @@ export function setupPlayerFunctions(player) {
         }
 
         const clonedItem = { ...item };
+        if (keyOverride) {
+            clonedItem.key = keyOverride;
+        }
+
         if (name) {
             clonedItem.name = name;
         }

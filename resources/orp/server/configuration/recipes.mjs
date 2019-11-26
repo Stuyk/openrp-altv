@@ -292,5 +292,16 @@ export const Recipes = {
             ],
             xp: 400
         }
+    },
+    cooking: {
+        fishandchips: {
+            key: 'fishandchips',
+            requirements: [
+                { key: 'cooking', level: 1 },
+                { key: 'potato', amount: 3 },
+                { key: 'rawfish', amount: 1 }
+            ],
+            xp: 5
+        }
     }
 };

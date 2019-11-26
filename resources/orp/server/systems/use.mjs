@@ -407,6 +407,15 @@ export function fruitDispenser(player, data) {
     }
 
     const properName = choice.charAt(0).toUpperCase() + choice.slice(1);
-    player.addItem('ingredient', 1, {}, false, false, properName, choice);
+    player.addItem(
+        'ingredient',
+        1,
+        {},
+        false,
+        false,
+        properName,
+        choice,
+        properName.toLowerCase()
+    );
     player.playAudio('buy');
 }

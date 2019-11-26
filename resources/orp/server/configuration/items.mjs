@@ -448,6 +448,17 @@ export const BaseItems = {
             stack: false
         }
     },
+    rawfish: {
+        eventcall: 'itemeffects:RawFood',
+        abilities: {
+            drop: true,
+            use: true,
+            destroy: false,
+            sell: true,
+            rename: false,
+            stack: false
+        }
+    },
     burntfood: {
         eventcall: '',
         abilities: {
@@ -528,7 +539,7 @@ export const Items = {
     },
     rawfish: {
         name: '',
-        base: 'rawfood',
+        base: 'rawfish',
         key: 'rawfish',
         props: { xp: 0 },
         quantity: 0,

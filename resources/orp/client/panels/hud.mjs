@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import * as native from 'natives';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->chat.mjs');
 
@@ -41,6 +42,7 @@ function ready() {
 function contextClick(isServer, eventName, hash) {
     const data = contextData.get(hash);
     alt.log(JSON.stringify(data));
+    showCursor(false);
 
     if (isServer) {
         alt.emitServer(eventName, data);

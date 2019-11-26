@@ -18,6 +18,11 @@ alt.onServer('gangs:ShowCraftingDialogue', type => {
     showDialogue(type);
 });
 
+alt.on('crafting:CookingMenu', () => {
+    craftType = 'cooking';
+    showDialogue('cooking');
+});
+
 // Show the webview for the player to type in their roleplay info.
 export function showDialogue(type) {
     if (!webview) {
@@ -58,9 +63,11 @@ alt.onServer('craft:ParseRecipes', recipes => {
         });
 
         const skills = JSON.parse(alt.Player.local.getMeta('skills'));
-        const level = getLevel(skills.crafting.xp);
+        const craftingLevel = getLevel(skills.crafting.xp);
+        const cookingLevel = getLevel(skills.cooking.xp);
 
-        webview.emit('craft:CraftingLevel', level);
+        webview.emit('craft:CookingLevel', cookingLevel);
+        webview.emit('craft:CraftingLevel', craftingLevel);
         webview.emit('craft:SetInventory', alt.Player.local.getMeta('inventory'));
     }, 1000);
 });

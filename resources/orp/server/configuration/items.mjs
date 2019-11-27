@@ -1007,7 +1007,7 @@ export const Items = {
     },
     waterjug: {
         name: 'Water Jug',
-        base: 'ingredient',
+        base: 'waterjug',
         key: 'jug',
         props: {},
         quantity: 0,

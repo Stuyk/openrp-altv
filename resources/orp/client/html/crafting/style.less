@@ -106,33 +106,89 @@ body:focus {
 
             .recipe {
                 width: 100%;
-                height: 50px;
                 display: flex;
                 justify-content: space-between;
                 justify-items: space-between;
                 align-content: center;
                 align-items: center;
+                flex-direction: column;
                 text-transform: capitalize;
                 background: rgba(0, 0, 0, 0.2);
-                transform: skew(-5deg);
+                border: 2px solid rgba(0, 0, 0, 0.1);
 
-                .title {
-                    padding-left: 10px;
-                    width: 30%;
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    white-space: nowrap;
+                .header {
+                    height: 35px;
+                    width: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    justify-items: space-between;
+                    align-content: center;
+                    align-items: center;
+
+                    .level {
+                        display: flex;
+                        justify-content: center;
+                        justify-items: center;
+                        align-items: center;
+                        height: 20px;
+                        padding: 0px 10px;
+                        border: 2px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 5px;
+                    }
+
+                    .disabled {
+                        color: rgba(255, 255, 255, 0.1) !important;
+                    }
+
+                    .toggle {
+                        height: 100%;
+                        width: 40px;
+                        background: none;
+                        color: @contrast1;
+                        border: 2px solid rgba(255, 255, 255, 0.1);
+                        margin-right: 10px;
+
+                        &:focus {
+                            outline: none;
+                        }
+
+                        &:hover {
+                            border: 2px solid @contrast2;
+                            color: @contrast2;
+                        }
+                    }
+
+                    .title {
+                        width: 100%;
+                        padding-left: 10px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
                 }
 
                 .requirements {
-                    width: 25%;
+                    width: 100%;
                     display: flex;
                     flex-direction: column;
+                    text-align: left;
+                    padding: 10px 0px;
 
                     .requirement {
+                        padding: 5px 10px;
                         display: flex;
                         justify-content: space-between;
                         justify-items: space-between;
+                        text-align: right;
+
+                        .amount {
+                            text-transform: none;
+                        }
+                    }
+
+                    .offbeat {
+                        background: rgba(255, 255, 255, 0.04);
                     }
                 }
 
@@ -142,16 +198,16 @@ body:focus {
                     background: none;
                     color: @contrast1;
                     border: 2px solid rgba(255, 255, 255, 0.1);
-                }
 
-                button:focus {
-                    outline: none;
-                }
+                    &:focus {
+                        outline: none;
+                    }
 
-                button:hover {
-                    border: 2px solid @contrast2;
-                    color: @contrast2;
-                    cursor: pointer;
+                    &:hover {
+                        border: 2px solid @contrast2;
+                        color: @contrast2;
+                        cursor: pointer;
+                    }
                 }
 
                 .disabled {

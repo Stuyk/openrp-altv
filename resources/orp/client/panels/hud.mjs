@@ -42,7 +42,6 @@ function ready() {
 function contextClick(isServer, eventName, hash) {
     const data = contextData.get(hash);
     alt.log(JSON.stringify(data));
-    showCursor(false);
 
     if (isServer) {
         alt.emitServer(eventName, data);

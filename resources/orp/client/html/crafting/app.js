@@ -30,6 +30,11 @@ class App extends Component {
                 requirements: [
                     { key: 'cooking', level: 1 },
                     { key: 'potato', amount: 3 },
+                    { key: 'rawfish', amount: 1 },
+                    { key: 'rawfish', amount: 1 },
+                    { key: 'rawfish', amount: 1 },
+                    { key: 'rawfish', amount: 1 },
+                    { key: 'rawfish', amount: 1 },
                     { key: 'rawfish', amount: 1 }
                 ]
             });
@@ -140,6 +145,12 @@ class App extends Component {
         );
     }
 
+    toggleCategory(e) {
+        const category = e.target.id;
+        const toggle = this.state[category] ? false : true;
+        this.setState({ [category]: toggle });
+    }
+
     renderRecipes() {
         const renderData = [];
         const totals = {};
@@ -200,42 +211,75 @@ class App extends Component {
         });
 
         const recipeRender = recipes.map(recipeData => {
-            const requirements = recipeData.recipe.requirements.map(requirement => {
-                if (requirement.key !== 'crafting') {
-                    return h(
-                        'div',
-                        { class: 'requirement' },
-                        h('div', { class: 'key' }, requirement.key),
-                        h('div', { class: 'amount' }, requirement.amount)
-                    );
+            const requirements = recipeData.recipe.requirements.map(
+                (requirement, index) => {
+                    const isEven = index === 0 || index % 2 === 0 ? true : false;
+                    if (requirement.key !== 'crafting' && requirement.key !== 'cooking') {
+                        return h(
+                            'div',
+                            { class: isEven ? 'requirement offbeat' : 'requirement' },
+                            h('div', { class: 'key' }, requirement.key),
+                            h('div', { class: 'amount' }, `x${requirement.amount}`)
+                        );
+                    }
                 }
-            });
+            );
 
             return h(
                 'div',
                 { class: 'recipe' },
                 h(
                     'div',
-                    { class: recipeData.disabled ? 'title disabled' : 'title' },
-                    `[${recipeData.recipe.requirements[0].level}] ${recipeData.name}`
-                ),
-                h(
-                    'div',
-                    {
-                        class: recipeData.disabled
-                            ? 'requirements disabled'
-                            : 'requirements'
-                    },
-                    requirements
-                ),
-                !recipeData.disabled &&
+                    { class: 'header' },
+                    this.state[recipeData.name] &&
+                        h(
+                            'button',
+                            {
+                                class: 'toggle',
+                                id: recipeData.name,
+                                onclick: this.toggleCategory.bind(this)
+                            },
+                            '-'
+                        ),
+                    !this.state[recipeData.name] &&
+                        h(
+                            'button',
+                            {
+                                class: 'toggle',
+                                id: recipeData.name,
+                                onclick: this.toggleCategory.bind(this)
+                            },
+                            '+'
+                        ),
                     h(
-                        'button',
-                        { id: recipeData.name, onclick: this.craft.bind(this) },
-                        'Craft'
+                        'div',
+                        { class: recipeData.disabled ? 'level disabled' : 'level' },
+                        `${recipeData.recipe.requirements[0].level}`
                     ),
-                recipeData.disabled &&
-                    h('button', { class: 'disabled', id: recipeData.name }, 'Craft')
+                    h(
+                        'div',
+                        { class: recipeData.disabled ? 'title disabled' : 'title' },
+                        `${recipeData.name}`
+                    ),
+                    !recipeData.disabled &&
+                        h(
+                            'button',
+                            { id: recipeData.name, onclick: this.craft.bind(this) },
+                            'Craft'
+                        ),
+                    recipeData.disabled &&
+                        h('button', { class: 'disabled', id: recipeData.name }, 'Craft')
+                ),
+                this.state[recipeData.name] &&
+                    h(
+                        'div',
+                        {
+                            class: recipeData.disabled
+                                ? 'requirements disabled'
+                                : 'requirements'
+                        },
+                        requirements
+                    )
             );
         });
 

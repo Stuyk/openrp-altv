@@ -491,34 +491,7 @@ function dynamicDoor(ent) {
 }
 
 function cookingSource(ent) {
-    const inventory = JSON.parse(alt.Player.local.getMeta('inventory'));
-    const foodItems = inventory.filter(item => {
-        if (item && item.base === 'rawfood') return item;
-    });
-
-    const skills = JSON.parse(alt.Player.local.getMeta('skills'));
-    const cookingLVL = getLevel(skills.cooking.xp);
-
-    const items = [];
-    foodItems.forEach(item => {
-        if (item && cookingLVL < item.props.lvl) return;
-        const index = items.findIndex(x => x && x.name === item.name);
-        if (index <= -1) {
-            items.push({ name: item.name, hashes: [item.hash] });
-            return;
-        }
-        items[index].hashes.push(item.hash);
-    });
-
     appendContextItem('Cooking Menu', false, 'crafting:CookingMenu');
-
-    items.forEach(item => {
-        appendContextItem(`Cook All ${item.name}`, true, 'use:CookFood', {
-            hashes: item.hashes,
-            position: native.getEntityCoords(ent, false)
-        });
-    });
-
     setContextTitle(`Cooking Source`);
 }
 
@@ -571,6 +544,8 @@ alt.on('fruitDispenser:1', () => {
     appendContextItem(`Buy Banana`, true, 'use:FruitDispenser', { type: 'banana' });
     appendContextItem(`Buy Avocado`, true, 'use:FruitDispenser', { type: 'avocado' });
     appendContextItem(`Buy Beet`, true, 'use:FruitDispenser', { type: 'beet' });
+    appendContextItem(`Buy Butter`, true, 'use:FruitDispenser', { type: 'butter' });
+    appendContextItem(`Buy Cheese`, true, 'use:FruitDispenser', { type: 'cheese' });
     appendContextItem(`Buy Carrot`, true, 'use:FruitDispenser', { type: 'carrot' });
     appendContextItem(`Buy Cherry`, true, 'use:FruitDispenser', { type: 'cherry' });
     appendContextItem(`Buy Corn`, true, 'use:FruitDispenser', { type: 'corn' });
@@ -586,6 +561,7 @@ alt.on('fruitDispenser:2', () => {
     appendContextItem(`Buy Herbs`, true, 'use:FruitDispenser', { type: 'herbs' });
     appendContextItem(`Buy Jalapeno`, true, 'use:FruitDispenser', { type: 'jalapeno' });
     appendContextItem(`Buy Grapes`, true, 'use:FruitDispenser', { type: 'grapes' });
+    appendContextItem(`Buy Lemon`, true, 'use:FruitDispenser', { type: 'lemon' });
     appendContextItem(`Buy Mushroom`, true, 'use:FruitDispenser', { type: 'mushroom' });
     appendContextItem(`Buy Peach`, true, 'use:FruitDispenser', { type: 'peach' });
     appendContextItem(`Buy Potato`, true, 'use:FruitDispenser', { type: 'potato' });
@@ -597,6 +573,7 @@ alt.on('fruitDispenser:2', () => {
         type: 'watermelon'
     });
     appendContextItem(`Buy Wheat`, true, 'use:FruitDispenser', { type: 'wheat' });
+    appendContextItem(`Buy Yeast`, true, 'use:FruitDispenser', { type: 'yeast' });
     setContextTitle(`Fruit Stand`, true);
 });
 

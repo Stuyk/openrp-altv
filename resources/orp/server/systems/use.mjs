@@ -304,40 +304,6 @@ export function purchaseDynamicDoor(player, data) {
     alt.emit('door:PurchaseDynamicDoor', player, data);
 }
 
-export function cookFood(player, data) {
-    const hashes = data.hashes;
-    if (hashes.length <= 0) return;
-
-    const skills = JSON.parse(player.data.skills);
-    const cookingLVL = getLevel(skills.cooking.xp);
-
-    const rawfood = player.inventory.filter(item => {
-        if (item && hashes.includes(item.hash)) return item;
-    });
-
-    let allValid = true;
-    rawfood.forEach(rawfood => {
-        if (rawfood.props.lvl <= cookingLVL) return;
-        allValid = false;
-    });
-
-    if (!allValid) {
-        player.notify('An invalid cooking item was in your list.');
-        return;
-    }
-
-    const totalCookable = Math.floor(cookingLVL / 7);
-
-    player.cooking = {
-        list: rawfood,
-        time: Date.now(),
-        cookable: totalCookable <= 0 ? 1 : totalCookable,
-        position: data.position
-    };
-
-    player.notify('You begin cooking...');
-}
-
 export function candyDispenser(player) {
     if (!Items.candy) return;
 

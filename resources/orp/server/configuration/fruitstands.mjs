@@ -5,14 +5,17 @@ export const FruitStand = [
     'avocado',
     'banana',
     'beet',
+    'butter',
     'carrot',
     'cherry',
+    'cheese',
     'corn',
     'garlic',
     'grain',
     'grapes',
     'herbs',
     'jalapeno',
+    'lemon',
     'mushroom',
     'peach',
     'potato',
@@ -20,5 +23,6 @@ export const FruitStand = [
     'spice',
     'sugar',
     'tomato',
-    'wheat'
+    'wheat',
+    'yeast'
 ];

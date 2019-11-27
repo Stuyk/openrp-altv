@@ -298,9 +298,10 @@ export const Recipes = {
             key: 'bread',
             requirements: [
                 { key: 'cooking', level: 1 },
-                { key: 'wheat', amount: 3 },
+                { key: 'wheat', amount: 1 },
                 { key: 'salt', amount: 1 },
-                { key: 'sugar', amount: 1 }
+                { key: 'sugar', amount: 1 },
+                { key: 'yeast', amount: 1 }
             ],
             xp: 8
         },
@@ -309,7 +310,8 @@ export const Recipes = {
             requirements: [
                 { key: 'cooking', level: 2 },
                 { key: 'bread', amount: 1 },
-                { key: 'garlic', amount: 3 }
+                { key: 'garlic', amount: 1 },
+                { key: 'butter', amount: 1 }
             ],
             xp: 10
         },
@@ -318,28 +320,307 @@ export const Recipes = {
             requirements: [
                 { key: 'cooking', level: 3 },
                 { key: 'apple', amount: 1 },
-                { key: 'carrot', amount: 5 }
+                { key: 'carrot', amount: 2 }
             ],
             xp: 15
+        },
+        salsa: {
+            key: 'salsa',
+            requirements: [
+                { key: 'cooking', level: 4 },
+                { key: 'jalapeno', amount: 1 },
+                { key: 'tomato', amount: 2 }
+            ],
+            xp: 18
+        },
+        beetjuice: {
+            key: 'beetjuice',
+            requirements: [
+                { key: 'cooking', level: 4 },
+                { key: 'carrot', amount: 1 },
+                { key: 'tomato', amount: 1 },
+                { key: 'beet', amount: 1 }
+            ],
+            xp: 18
+        },
+        stuffedavocado: {
+            key: 'stuffedavocado',
+            requirements: [
+                { key: 'cooking', level: 5 },
+                { key: 'rawfish', amount: 1 },
+                { key: 'avocado', amount: 2 }
+            ],
+            xp: 20
         },
         summersalad: {
             key: 'summersalad',
             requirements: [
                 { key: 'cooking', level: 5 },
-                { key: 'tomato', amount: 2 },
-                { key: 'corn', amount: 2 },
+                { key: 'tomato', amount: 1 },
+                { key: 'corn', amount: 1 },
                 { key: 'garlic', amount: 1 },
                 { key: 'potato', amount: 1 },
                 { key: 'salt', amount: 1 }
             ],
             xp: 20
         },
+        garlicfish: {
+            key: 'garlicfish',
+            requirements: [
+                { key: 'cooking', level: 6 },
+                { key: 'rawfish', amount: 1 },
+                { key: 'garlic', amount: 1 }
+            ],
+            xp: 25
+        },
+        roastedcorn: {
+            key: 'fishtacos',
+            requirements: [{ key: 'cooking', level: 6 }, { key: 'corn', amount: 2 }],
+            xp: 25
+        },
+        lemonfish: {
+            key: 'lemonfish',
+            requirements: [
+                { key: 'cooking', level: 7 },
+                { key: 'rawfish', amount: 1 },
+                { key: 'lemon', amount: 1 }
+            ],
+            xp: 29
+        },
+        candiedalmonds: {
+            key: 'candiedalmonds',
+            requirements: [
+                { key: 'cooking', level: 7 },
+                { key: 'almond', amount: 2 },
+                { key: 'sugar', amount: 1 }
+            ],
+            xp: 29
+        },
+        mushroomburger: {
+            key: 'mushroomburger',
+            requirements: [
+                { key: 'cooking', level: 8 },
+                { key: 'wheat', amount: 1 },
+                { key: 'waterjug', amount: 1 },
+                { key: 'mushroom', amount: 1 },
+                { key: 'spice', amount: 1 }
+            ],
+            xp: 35
+        },
+        pizzadough: {
+            key: 'pizzadough',
+            requirements: [
+                { key: 'cooking', level: 9 },
+                { key: 'wheat', amount: 1 },
+                { key: 'waterjug', amount: 1 },
+                { key: 'sugar', amount: 1 },
+                { key: 'yeast', amount: 1 }
+            ],
+            xp: 40
+        },
+        fishpizza: {
+            key: 'fishpizza',
+            requirements: [
+                { key: 'cooking', level: 9 },
+                { key: 'tomato', amount: 2 },
+                { key: 'pizzadough', amount: 1 },
+                { key: 'rawfish', amount: 1 },
+                { key: 'cheese', amount: 1 }
+            ],
+            xp: 40
+        },
+        mushroompizza: {
+            key: 'mushroompizza',
+            requirements: [
+                { key: 'cooking', level: 10 },
+                { key: 'tomato', amount: 2 },
+                { key: 'pizzadough', amount: 1 },
+                { key: 'mushroom', amount: 1 },
+                { key: 'cheese', amount: 1 }
+            ],
+            xp: 45
+        },
+        shrimpscampi: {
+            key: 'shrimpscampi',
+            requirements: [
+                { key: 'cooking', level: 11 },
+                { key: 'rawfish', amount: 2 },
+                { key: 'garlic', amount: 1 },
+                { key: 'butter', amount: 1 }
+            ],
+            xp: 50
+        },
+        fishsandwich: {
+            key: 'fishsandwich',
+            requirements: [
+                { key: 'cooking', level: 12 },
+                { key: 'bread', amount: 2 },
+                { key: 'butter', amount: 1 },
+                { key: 'rawfish', amount: 1 },
+                { key: 'lemon', amount: 1 }
+            ],
+            xp: 55
+        },
+        mushroomsandwich: {
+            key: 'mushroomsandwich',
+            requirements: [
+                { key: 'cooking', level: 13 },
+                { key: 'bread', amount: 2 },
+                { key: 'butter', amount: 1 },
+                { key: 'mushroom', amount: 1 },
+                { key: 'spice', amount: 1 }
+            ],
+            xp: 58
+        },
+        roastedmushrooms: {
+            key: 'roastedmushrooms',
+            requirements: [
+                { key: 'cooking', level: 14 },
+                { key: 'butter', amount: 1 },
+                { key: 'mushroom', amount: 2 },
+                { key: 'spice', amount: 1 },
+                { key: 'cheese', amount: 1 }
+            ],
+            xp: 60
+        },
+        roastedmushrooms: {
+            key: 'roastedmushrooms',
+            requirements: [
+                { key: 'cooking', level: 15 },
+                { key: 'butter', amount: 1 },
+                { key: 'mushroom', amount: 2 },
+                { key: 'spice', amount: 1 },
+                { key: 'cheese', amount: 1 }
+            ],
+            xp: 63
+        },
+        summerlemonfish: {
+            key: 'summerlemonfish',
+            requirements: [
+                { key: 'cooking', level: 16 },
+                { key: 'summersalad', amount: 1 },
+                { key: 'lemonfish', amount: 1 }
+            ],
+            xp: 65
+        },
+        mushroomcalzone: {
+            key: 'mushroomcalzone',
+            requirements: [
+                { key: 'cooking', level: 17 },
+                { key: 'pizzadough', amount: 1 },
+                { key: 'tomato', amount: 1 },
+                { key: 'mushroom', amount: 1 },
+                { key: 'butter', amount: 1 },
+                { key: 'cheese', amount: 1 }
+            ],
+            xp: 68
+        },
+        garlicmushroomsandwich: {
+            key: 'garlicmushroomsandwich',
+            requirements: [
+                { key: 'cooking', level: 17 },
+                { key: 'garlicfish', amount: 1 },
+                { key: 'garlicbread', amount: 1 },
+                { key: 'mushroom', amount: 1 }
+            ],
+            xp: 70
+        },
+        salsafish: {
+            key: 'salsafish',
+            requirements: [
+                { key: 'cooking', level: 18 },
+                { key: 'salsa', amount: 1 },
+                { key: 'rawfish', amount: 1 },
+                { key: 'jalapeno', amount: 1 }
+            ],
+            xp: 72
+        },
+        fishtacos: {
+            key: 'fishtacos',
+            requirements: [
+                { key: 'cooking', level: 18 },
+                { key: 'salsafish', amount: 1 },
+                { key: 'lemon', amount: 1 },
+                { key: 'corn', amount: 1 },
+                { key: 'waterjug', amount: 1 }
+            ],
+            xp: 72
+        },
+        friedfish: {
+            key: 'friedfish',
+            requirements: [
+                { key: 'cooking', level: 19 },
+                { key: 'wheat', amount: 1 },
+                { key: 'spices', amount: 1 },
+                { key: 'rawfish', amount: 1 }
+            ],
+            xp: 75
+        },
+        fishdinner: {
+            key: 'fishdinner',
+            requirements: [
+                { key: 'cooking', level: 20 },
+                { key: 'friedfish', amount: 1 },
+                { key: 'asparagus', amount: 1 },
+                { key: 'potato', amount: 1 }
+            ],
+            xp: 75
+        },
+        peachsmoothie: {
+            key: 'peachsmoothie',
+            requirements: [
+                { key: 'cooking', level: 21 },
+                { key: 'banana', amount: 1 },
+                { key: 'peach', amount: 2 },
+                { key: 'cherry', amount: 1 }
+            ],
+            xp: 77
+        },
+        candiedpeaches: {
+            key: 'candiedpeaches',
+            requirements: [
+                { key: 'cooking', level: 22 },
+                { key: 'peach', amount: 3 },
+                { key: 'sugar', amount: 2 }
+            ],
+            xp: 79
+        },
+        fishburger: {
+            key: 'fishburger',
+            requirements: [
+                { key: 'cooking', level: 23 },
+                { key: 'friedfish', amount: 1 },
+                { key: 'lemon', amount: 1 },
+                { key: 'bread', amount: 1 }
+            ],
+            xp: 82
+        },
+        cornsalsa: {
+            key: 'cornsalsa',
+            requirements: [
+                { key: 'cooking', level: 24 },
+                { key: 'salsa', amount: 1 },
+                { key: 'roastedcorn', amount: 2 }
+            ]
+        },
+        friedfishtacos: {
+            key: 'friedfishtacos',
+            requirements: [
+                { key: 'cooking', level: 25 },
+                { key: 'friedfish', amount: 1 },
+                { key: 'lemon', amount: 1 },
+                { key: 'corn', amount: 1 },
+                { key: 'waterjug', amount: 1 }
+            ],
+            xp: 85
+        },
         fishandchips: {
             key: 'fishandchips',
             requirements: [
                 { key: 'cooking', level: 35 },
                 { key: 'potato', amount: 3 },
-                { key: 'rawfish', amount: 1 }
+                { key: 'rawfish', amount: 1 },
+                { key: 'lemon', amount: 1 }
             ],
             xp: 100
         }

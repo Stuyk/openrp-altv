@@ -502,5 +502,569 @@ export const Doors = [
         lockstate: 0,
         isGarage: 0,
         salePrice: 85000
+    },
+
+    //
+    // Hawick Ave Apartments (Low End Apartments)
+    //
+    {
+        id: 18,
+        enter: {
+            position: {
+                x: 313.1232604980469,
+                y: -218.157958984375,
+                z: 54.2217903137207
+            },
+            doorPos: {
+                x: 312.16839599609375,
+                y: -218.85133361816406,
+                z: 54.01226806640625
+            },
+            doorRot: -24,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 19,
+        enter: {
+            position: {
+                x: 311.0751647949219,
+                y: -217.54652404785156,
+                z: 54.22179412841797
+            },
+            doorPos: {
+                x: 310.1692810058594,
+                y: -218.18214416503906,
+                z: 54.4622802734375
+            },
+            doorRot: -21,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 20,
+        enter: {
+            position: {
+                x: 307.4081115722656,
+                y: -216.26251220703125,
+                z: 54.22179412841797
+            },
+            doorPos: {
+                x: 306.5873107910156,
+                y: -216.78302001953125,
+                z: 54.48728561401367
+            },
+            doorRot: -21,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 21,
+        enter: {
+            position: {
+                x: 307.79541015625,
+                y: -213.41021728515625,
+                z: 54.22179412841797
+            },
+            doorPos: {
+                x: 307.4300537109375,
+                y: -212.67950439453125,
+                z: 54.48228454589844
+            },
+            doorRot: -114,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 22,
+        enter: {
+            position: {
+                x: 309.9438781738281,
+                y: -208.1563262939453,
+                z: 54.22179412841797
+            },
+            doorPos: {
+                x: 309.4233703613281,
+                y: -207.3455352783203,
+                z: 54.49728775024414
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 23,
+        enter: {
+            position: {
+                x: 311.7808532714844,
+                y: -203.64230346679688,
+                z: 54.22179412841797
+            },
+            doorPos: {
+                x: 311.2353210449219,
+                y: -202.72640991210938,
+                z: 54.47228240966797
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 24,
+        enter: {
+            position: {
+                x: 313.6836242675781,
+                y: -198.2506103515625,
+                z: 54.22178268432617
+            },
+            doorPos: {
+                x: 313.2882385253906,
+                y: -197.4197998046875,
+                z: 54.54728698730469
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 25,
+        enter: {
+            position: {
+                x: 315.6473083496094,
+                y: -195.2762451171875,
+                z: 54.226444244384766
+            },
+            doorPos: {
+                x: 316.4180603027344,
+                y: -194.7557373046875,
+                z: 54.451927185058594
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 26,
+        enter: {
+            position: {
+                x: 319.23468017578125,
+                y: -196.60479736328125,
+                z: 54.22644805908203
+            },
+            doorPos: {
+                x: 320.07550048828125,
+                y: -196.13433837890625,
+                z: 54.46693420410156
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 27,
+        enter: {
+            position: {
+                x: 321.3134460449219,
+                y: -197.28488159179688,
+                z: 54.22645568847656
+            },
+            doorPos: {
+                x: 322.0942077636719,
+                y: -196.92953491210938,
+                z: 54.48694610595703
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 28,
+        enter: {
+            position: {
+                x: 312.88726806640625,
+                y: -218.75950622558594,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 313.40777587890625,
+                y: -219.36009216308594,
+                z: 58.254737854003906
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 29,
+        enter: {
+            position: {
+                x: 310.8944396972656,
+                y: -217.9589080810547,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 311.4199523925781,
+                y: -218.5845184326172,
+                z: 58.28974533081055
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 30,
+        enter: {
+            position: {
+                x: 307.3899841308594,
+                y: -216.4812469482422,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 307.8254089355469,
+                y: -217.2019500732422,
+                z: 58.26974105834961
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 31,
+        enter: {
+            position: {
+                x: 307.60882568359375,
+                y: -213.39422607421875,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 307.43365478515625,
+                y: -212.61346435546875,
+                z: 58.254737854003906
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 32,
+        enter: {
+            position: {
+                x: 309.7956848144531,
+                y: -208.0826873779297,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 309.4553527832031,
+                y: -207.3519744873047,
+                z: 58.274742126464844
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 33,
+        enter: {
+            position: {
+                x: 311.69757080078125,
+                y: -203.6899871826172,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 311.20208740234375,
+                y: -202.7690887451172,
+                z: 58.254737854003906
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 34,
+        enter: {
+            position: {
+                x: 313.54058837890625,
+                y: -198.2108917236328,
+                z: 58.01925277709961
+            },
+            doorPos: {
+                x: 313.27532958984375,
+                y: -197.4301300048828,
+                z: 58.30474853515625
+            },
+            doorRot: -111,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 35,
+        enter: {
+            position: {
+                x: 315.67437744140625,
+                y: -194.8122100830078,
+                z: 58.01924514770508
+            },
+            doorPos: {
+                x: 316.43011474609375,
+                y: -194.7521514892578,
+                z: 58.2297248840332
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 36,
+        enter: {
+            position: {
+                x: 319.3501892089844,
+                y: -196.21360778808594,
+                z: 58.01924133300781
+            },
+            doorPos: {
+                x: 320.0658874511719,
+                y: -196.15855407714844,
+                z: 58.27973175048828
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
+    },
+    {
+        id: 37,
+        enter: {
+            position: {
+                x: 321.2400207519531,
+                y: -197.2359161376953,
+                z: 58.01924133300781
+            },
+            doorPos: {
+                x: 322.0357971191406,
+                y: -196.8855743408203,
+                z: 58.284732818603516
+            },
+            doorRot: 159,
+            doorModel: 'prop_cntrdoor_ld_l'
+        },
+        exit: {
+            position: {
+                x: 266.13385009765625,
+                y: -1007.0663452148438,
+                z: -100.94729614257812
+            }
+        },
+        interior: '',
+        isGarage: 0,
+        lockstate: 1,
+        salePrice: 75000
     }
 ];

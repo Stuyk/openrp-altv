@@ -876,8 +876,15 @@ export function setupPlayerFunctions(player) {
     };
 
     player.getNullSlots = () => {
-        const nullSlots = player.inventory.filter(item => !item);
-        return nullSlots.length;
+        let count = 0;
+        player.inventory.forEach((item, index) => {
+            if (index >= 28) return;
+            if (!item) {
+                count += 1;
+                return;
+            }
+        });
+        return count;
     };
 
     player.hasItem = base => {

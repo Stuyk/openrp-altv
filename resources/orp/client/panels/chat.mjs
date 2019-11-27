@@ -20,6 +20,7 @@ function turnOnChat(key, value) {
     if (key !== 'loggedin') return;
     alt.off('meta:Changed', turnOnChat);
     toggleDialogue();
+    native.displayRadar(true);
 }
 
 export function toggleDialogue() {
@@ -34,6 +35,7 @@ export function toggleDialogue() {
     if (alt.Player.local.getMeta('viewOpen')) return;
 
     if (!isActive) {
+        native.displayRadar(true);
         isActive = true;
         alt.Player.local.setMeta('chat', true);
         webview.focus();

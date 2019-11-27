@@ -26,6 +26,7 @@ class App extends Component {
             alt.emit('craft:Ready');
         } else {
             this.addRecipe('fishandchips', {
+                name: 'Fish and Chips',
                 key: 'fishandchips',
                 requirements: [
                     { key: 'cooking', level: 1 },
@@ -40,6 +41,7 @@ class App extends Component {
             });
 
             this.addRecipe('knife', {
+                name: 'Knife',
                 key: 'weapon',
                 requirements: [
                     { key: 'crafting', level: 1 },
@@ -48,8 +50,9 @@ class App extends Component {
                 ]
             });
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 35; i++) {
                 this.addRecipe('bat', {
+                    name: 'Bat',
                     key: 'weapon',
                     requirements: [
                         { key: 'crafting', level: 5 },
@@ -71,9 +74,9 @@ class App extends Component {
         window.removeEventListener('keyup', this.closeBind);
     }
 
-    addRecipe(name, recipe) {
+    addRecipe(key, recipe) {
         const recipes = [...this.state.recipes];
-        recipes.push({ name, recipe });
+        recipes.push({ key, recipe });
         this.setState({ recipes });
     }
 
@@ -117,7 +120,7 @@ class App extends Component {
 
     search(e) {
         if (e.key !== 'Enter') return;
-        const search = e.target.value ? e.target.value : '';
+        const search = e.target.value ? e.target.value.toLowerCase() : '';
         this.setState({ search });
     }
 
@@ -166,7 +169,7 @@ class App extends Component {
         const recipes = [];
         this.state.recipes.forEach(recipeData => {
             const requirements = recipeData.recipe.requirements;
-            if (!recipeData.name.includes(this.state.search)) {
+            if (!recipeData.recipe.name.toLowerCase().includes(this.state.search)) {
                 return;
             }
 
@@ -236,7 +239,7 @@ class App extends Component {
                             'button',
                             {
                                 class: 'toggle',
-                                id: recipeData.name,
+                                id: recipeData.key,
                                 onclick: this.toggleCategory.bind(this)
                             },
                             '-'
@@ -246,7 +249,7 @@ class App extends Component {
                             'button',
                             {
                                 class: 'toggle',
-                                id: recipeData.name,
+                                id: recipeData.key,
                                 onclick: this.toggleCategory.bind(this)
                             },
                             '+'
@@ -259,18 +262,21 @@ class App extends Component {
                     h(
                         'div',
                         { class: recipeData.disabled ? 'title disabled' : 'title' },
-                        `${recipeData.name}`
+                        `${recipeData.recipe.name}`
                     ),
                     !recipeData.disabled &&
                         h(
                             'button',
-                            { id: recipeData.name, onclick: this.craft.bind(this) },
+                            {
+                                id: recipeData.key,
+                                onclick: this.craft.bind(this)
+                            },
                             'Craft'
                         ),
                     recipeData.disabled &&
-                        h('button', { class: 'disabled', id: recipeData.name }, 'Craft')
+                        h('button', { class: 'disabled', id: recipeData.key }, 'Craft')
                 ),
-                this.state[recipeData.name] &&
+                this.state[recipeData.key] &&
                     h(
                         'div',
                         {

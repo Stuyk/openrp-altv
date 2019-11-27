@@ -31,7 +31,7 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
     for (let i = 0; i < requirements.length; i++) {
         if (requirements[i].key === 'cooking') {
             if (cookingLevel < requirements[i].level) {
-                player.notify(`Not proficient enough to cook ${key}.`);
+                player.notify(`Not proficient enough to cook ${recipe.name}.`);
                 return;
             } else {
                 continue;
@@ -40,7 +40,7 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
 
         if (requirements[i].key === 'crafting') {
             if (craftingLevel < requirements[i].level) {
-                player.notify(`Not proficient enough to craft ${key}.`);
+                player.notify(`Not proficient enough to craft ${recipe.name}.`);
                 return;
             } else {
                 continue;
@@ -48,12 +48,12 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
         }
 
         if (!totals[requirements[i].key]) {
-            player.notify(`Not enough materials to craft a ${key}.`);
+            player.notify(`Not enough materials to craft ${recipe.name}.`);
             return;
         }
 
         if (requirements[i].amount > totals[requirements[i].key]) {
-            player.notify(`Not enough materials to craft a ${key}.`);
+            player.notify(`Not enough materials to craft ${recipe.name}.`);
             return;
         }
     }
@@ -69,12 +69,13 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
         addXP(player, 'nobility', -recipe.xp);
 
         if (recipe.requirements[0].level >= 90) {
-            addBoundWeapon(player, key);
-            player.notify(`You have crafted a ${key}. It is bound to you.`);
+            addBoundWeapon(player, key, recipe.name);
+            player.notify(`You have crafted a ${recipe.name}. It is bound to you.`);
         } else {
-            addWeapon(player, key);
-            player.notify(`You have crafted a ${key}.`);
+            addWeapon(player, key, recipe.name);
+            player.notify(`You have crafted a ${recipe.name}.`);
         }
+        player.playAudio3D(player, 'craftweapon');
         return;
     }
 
@@ -91,9 +92,14 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
             { health: validRestore },
             false,
             false,
+            recipe.name,
+            undefined,
             recipe.key
         );
-        player.notify(`You have cooked ${key}.`);
+
+        player.notify(`You have created ${recipe.name}!`);
+        player.playAudio3D(player, 'cook');
+        return;
     }
 });
 

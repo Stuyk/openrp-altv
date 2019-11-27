@@ -534,48 +534,8 @@ function burgerDispenser(ent) {
 }
 
 function fruitDispenser(ent) {
-    setContextTitle(`Fruit Stand`);
-    alt.emit('fruitDispenser:1');
+    alt.emit('store:Food');
 }
-
-alt.on('fruitDispenser:1', () => {
-    appendContextItem(`Buy Almonds`, true, 'use:FruitDispenser', { type: 'almond' });
-    appendContextItem(`Buy Apple`, true, 'use:FruitDispenser', { type: 'apple' });
-    appendContextItem(`Buy Banana`, true, 'use:FruitDispenser', { type: 'banana' });
-    appendContextItem(`Buy Avocado`, true, 'use:FruitDispenser', { type: 'avocado' });
-    appendContextItem(`Buy Beet`, true, 'use:FruitDispenser', { type: 'beet' });
-    appendContextItem(`Buy Butter`, true, 'use:FruitDispenser', { type: 'butter' });
-    appendContextItem(`Buy Cheese`, true, 'use:FruitDispenser', { type: 'cheese' });
-    appendContextItem(`Buy Carrot`, true, 'use:FruitDispenser', { type: 'carrot' });
-    appendContextItem(`Buy Cherry`, true, 'use:FruitDispenser', { type: 'cherry' });
-    appendContextItem(`Buy Corn`, true, 'use:FruitDispenser', { type: 'corn' });
-    appendContextItem(`Buy Garlic`, true, 'use:FruitDispenser', { type: 'Garlic' });
-    appendContextItem(`Buy Grain`, true, 'use:FruitDispenser', { type: 'grain' });
-    appendContextItem(`Buy Grapes`, true, 'use:FruitDispenser', { type: 'grapes' });
-    appendContextItem(`->`, false, 'fruitDispenser:2', {});
-    setContextTitle(`Fruit Stand`, true);
-});
-
-alt.on('fruitDispenser:2', () => {
-    appendContextItem(`<-`, false, 'fruitDispenser:1', {});
-    appendContextItem(`Buy Herbs`, true, 'use:FruitDispenser', { type: 'herbs' });
-    appendContextItem(`Buy Jalapeno`, true, 'use:FruitDispenser', { type: 'jalapeno' });
-    appendContextItem(`Buy Grapes`, true, 'use:FruitDispenser', { type: 'grapes' });
-    appendContextItem(`Buy Lemon`, true, 'use:FruitDispenser', { type: 'lemon' });
-    appendContextItem(`Buy Mushroom`, true, 'use:FruitDispenser', { type: 'mushroom' });
-    appendContextItem(`Buy Peach`, true, 'use:FruitDispenser', { type: 'peach' });
-    appendContextItem(`Buy Potato`, true, 'use:FruitDispenser', { type: 'potato' });
-    appendContextItem(`Buy Salt`, true, 'use:FruitDispenser', { type: 'salt' });
-    appendContextItem(`Buy Spice`, true, 'use:FruitDispenser', { type: 'spice' });
-    appendContextItem(`Buy Sugar`, true, 'use:FruitDispenser', { type: 'sugar' });
-    appendContextItem(`Buy Tomato`, true, 'use:FruitDispenser', { type: 'tomato' });
-    appendContextItem(`Buy Watermelon`, true, 'use:FruitDispenser', {
-        type: 'watermelon'
-    });
-    appendContextItem(`Buy Wheat`, true, 'use:FruitDispenser', { type: 'wheat' });
-    appendContextItem(`Buy Yeast`, true, 'use:FruitDispenser', { type: 'yeast' });
-    setContextTitle(`Fruit Stand`, true);
-});
 
 function itemDrop(ent) {
     const currentItem = getItemByEntity(ent);

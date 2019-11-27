@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->contextmenus->player.mjs');
 
@@ -24,6 +25,7 @@ alt.on('menu:Player', ent => {
 //data.dict, data.name, data.duration, data.flag
 //animation:Play
 alt.on('submenu:PlayerAnimations', ent => {
+    showCursor(true);
     appendContextItem('Clear', false, 'animation:Clear', { entity: ent });
     appendContextItem('Surrender', false, 'submenu:PlayerAnimSurrender', { entity: ent });
     appendContextItem('Emote', false, 'submenu:Emote', { entity: ent });
@@ -34,6 +36,7 @@ alt.on('submenu:PlayerAnimations', ent => {
 });
 
 alt.on('submenu:PlayerAnimSurrender', ent => {
+    showCursor(true);
     appendContextItem('Handsup', false, 'animation:Play', {
         dict: 'random@mugging3',
         name: 'handsup_standing_base',
@@ -50,6 +53,7 @@ alt.on('submenu:PlayerAnimSurrender', ent => {
 });
 
 alt.on('submenu:Emote', ent => {
+    showCursor(true);
     appendContextItem('Salute', false, 'animation:Play', {
         dict: 'anim@mp_player_intuppersalute',
         name: 'idle_a',
@@ -96,6 +100,7 @@ alt.on('submenu:Emote', ent => {
 });
 
 alt.on('submenu:Emote2', ent => {
+    showCursor(true);
     appendContextItem('No', false, 'animation:Play', {
         dict: 'mp_player_int_upper_nod',
         name: 'mp_player_int_nod_no',
@@ -142,6 +147,7 @@ alt.on('submenu:Emote2', ent => {
 });
 
 alt.on('submenu:Emote3', ent => {
+    showCursor(true);
     appendContextItem('Sit Male', false, 'animation:Play', {
         dict: 'amb@world_human_picnic@male@base',
         name: 'base',
@@ -194,6 +200,7 @@ alt.on('submenu:Emote3', ent => {
 });
 
 alt.on('submenu:Assault', ent => {
+    showCursor(true);
     appendContextItem('Aim Weapon', false, 'animation:Play', {
         dict: 'move_weapon@pistol@copa',
         name: 'idle',

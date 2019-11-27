@@ -61,6 +61,7 @@ function useMenu() {
             rayCastInfo = undefined;
             endPoint = undefined;
             alt.emit('hud:ContextClose');
+            showCursor(false);
         }
         return;
     }

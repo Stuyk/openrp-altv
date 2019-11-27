@@ -231,7 +231,7 @@ export function pickup(player, hash) {
     player.pickingUpItem = false;
 }
 
-export function addWeapon(player, weaponName) {
+export function addWeapon(player, weaponName, name = undefined) {
     let weapon;
     Object.keys(Weapons).forEach(key => {
         if (key.toLowerCase() !== weaponName.toLowerCase()) return;
@@ -242,16 +242,17 @@ export function addWeapon(player, weaponName) {
     });
 
     if (!weapon) return false;
+    const useCustomName = name !== undefined ? name : weapon.name;
 
     const props = {
         hash: weapon.value
     };
 
-    player.addItem('weapon', 1, props, false, false, weapon.name);
+    player.addItem('weapon', 1, props, false, false, useCustomName);
     return true;
 }
 
-export function addBoundWeapon(player, weaponName) {
+export function addBoundWeapon(player, weaponName, name = undefined) {
     let weapon;
     Object.keys(Weapons).forEach(key => {
         if (key.toLowerCase() !== weaponName.toLowerCase()) return;
@@ -262,11 +263,12 @@ export function addBoundWeapon(player, weaponName) {
     });
 
     if (!weapon) return false;
+    const useCustomName = name !== undefined ? name : weapon.name;
 
     const props = {
         hash: weapon.value
     };
 
-    player.addItem('boundweapon', 1, props, false, false, weapon.name);
+    player.addItem('boundweapon', 1, props, false, false, useCustomName);
     return true;
 }

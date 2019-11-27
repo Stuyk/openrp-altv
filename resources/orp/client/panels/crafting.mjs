@@ -55,6 +55,13 @@ function craftItem(itemkey) {
     alt.emitServer('craft:CraftItem', craftType, itemkey);
 }
 
+// When the player updates their inventory.
+alt.on('meta:Changed', (key, value) => {
+    if (key !== 'inventory') return;
+    if (!webview) return;
+    webview.emit('craft:SetInventory', value);
+});
+
 alt.onServer('craft:ParseRecipes', recipes => {
     if (!webview) return;
     alt.setTimeout(() => {

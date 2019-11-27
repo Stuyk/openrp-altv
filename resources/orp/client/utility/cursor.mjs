@@ -12,12 +12,10 @@ export function showCursor(value) {
     }
 
     cursorCount -= 1;
-    if (cursorCount <= -1) {
-        cursorCount = 0;
-        return;
+    while (cursorCount >= 1) {
+        cursorCount -= 1;
+        try {
+            alt.showCursor(false);
+        } catch (e) {}
     }
-
-    try {
-        alt.showCursor(false);
-    } catch (e) {}
 }

@@ -1,6 +1,7 @@
 export const Recipes = {
     weaponry: {
         bat: {
+            name: 'Bat',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 1 },
@@ -10,6 +11,7 @@ export const Recipes = {
             xp: 16
         },
         crowbar: {
+            name: 'Crowbar',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 2 },
@@ -18,6 +20,7 @@ export const Recipes = {
             xp: 20
         },
         hammer: {
+            name: 'Hammer',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 3 },
@@ -27,6 +30,7 @@ export const Recipes = {
             xp: 23
         },
         golfclub: {
+            name: 'Golf Club',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 5 },
@@ -35,6 +39,7 @@ export const Recipes = {
             xp: 25
         },
         poolcue: {
+            name: 'Pool Cue',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 8 },
@@ -43,6 +48,7 @@ export const Recipes = {
             xp: 30
         },
         wrench: {
+            name: 'Wrench',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 10 },
@@ -51,6 +57,7 @@ export const Recipes = {
             xp: 45
         },
         knuckleduster: {
+            name: 'Knuckle Duster',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 14 },
@@ -59,6 +66,7 @@ export const Recipes = {
             xp: 56
         },
         pistol: {
+            name: 'Pistol',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 15 },
@@ -68,6 +76,7 @@ export const Recipes = {
             xp: 70
         },
         combatpistol: {
+            name: 'Combat Pistol',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 20 },
@@ -77,6 +86,7 @@ export const Recipes = {
             xp: 72
         },
         pistol50: {
+            name: 'Pistol .50',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 22 },
@@ -86,6 +96,7 @@ export const Recipes = {
             xp: 75
         },
         snspistol: {
+            name: 'SNS Pistol',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 25 },
@@ -95,6 +106,7 @@ export const Recipes = {
             xp: 81
         },
         heavypistol: {
+            name: 'Heavy Pistol',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 30 },
@@ -104,6 +116,7 @@ export const Recipes = {
             xp: 95
         },
         appistol: {
+            name: 'AP Pistol',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 34 },
@@ -113,6 +126,7 @@ export const Recipes = {
             xp: 100
         },
         pumpshotgun: {
+            name: 'Pump Shotgun',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 37 },
@@ -122,6 +136,7 @@ export const Recipes = {
             xp: 110
         },
         sawnoffshotgun: {
+            name: 'Sawnoff Shotgun',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 40 },
@@ -131,6 +146,7 @@ export const Recipes = {
             xp: 125
         },
         doublebarrelshotgun: {
+            name: 'Double Barrel Shotgun',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 42 },
@@ -140,6 +156,7 @@ export const Recipes = {
             xp: 135
         },
         microsmg: {
+            name: 'Micro SMG',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 45 },
@@ -149,6 +166,7 @@ export const Recipes = {
             xp: 140
         },
         smg: {
+            name: 'SMG',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 48 },
@@ -158,6 +176,7 @@ export const Recipes = {
             xp: 150
         },
         machinepistol: {
+            name: 'Machine Pistol',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 50 },
@@ -167,6 +186,7 @@ export const Recipes = {
             xp: 155
         },
         minismg: {
+            name: 'Mini SMG',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 55 },
@@ -176,6 +196,7 @@ export const Recipes = {
             xp: 165
         },
         assaultrifle: {
+            name: 'Assault Rifle',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 60 },
@@ -185,6 +206,7 @@ export const Recipes = {
             xp: 185
         },
         assaultsmg: {
+            name: 'Assault SMG',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 65 },
@@ -194,6 +216,7 @@ export const Recipes = {
             xp: 200
         },
         carbinerifle: {
+            name: 'Carbine Rifle',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 70 },
@@ -203,6 +226,7 @@ export const Recipes = {
             xp: 225
         },
         specialcarbine: {
+            name: 'Special Carbine',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 75 },
@@ -212,6 +236,7 @@ export const Recipes = {
             xp: 235
         },
         advancedrifle: {
+            name: 'Advanced Rifle',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 80 },
@@ -221,6 +246,7 @@ export const Recipes = {
             xp: 245
         },
         revolver: {
+            name: 'Revolver',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 85 },
@@ -230,6 +256,7 @@ export const Recipes = {
             xp: 200
         },
         sniperrifle: {
+            name: 'Sniper Rifle',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 90 },
@@ -239,6 +266,7 @@ export const Recipes = {
             xp: 300
         },
         marksmanrifle: {
+            name: 'Marksman Rifle',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 93 },
@@ -248,6 +276,7 @@ export const Recipes = {
             xp: 320
         },
         heavysniper: {
+            name: 'Heavy Sniper',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 95 },
@@ -257,6 +286,7 @@ export const Recipes = {
             xp: 350
         },
         knife: {
+            name: 'Knife',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 96 },
@@ -266,6 +296,7 @@ export const Recipes = {
             xp: 25
         },
         machete: {
+            name: 'Machete',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 97 },
@@ -275,6 +306,7 @@ export const Recipes = {
             xp: 25
         },
         hatchet: {
+            name: 'Hatchet',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 98 },
@@ -284,6 +316,7 @@ export const Recipes = {
             xp: 25
         },
         heavysnipermk2: {
+            name: 'Heavy Sniper MK2',
             key: 'weapon',
             requirements: [
                 { key: 'crafting', level: 99 },
@@ -295,6 +328,7 @@ export const Recipes = {
     },
     cooking: {
         bread: {
+            name: 'Bread',
             key: 'bread',
             requirements: [
                 { key: 'cooking', level: 1 },
@@ -306,6 +340,7 @@ export const Recipes = {
             xp: 8
         },
         garlicbread: {
+            name: 'Garlic Bread',
             key: 'garlicbread',
             requirements: [
                 { key: 'cooking', level: 2 },
@@ -316,6 +351,7 @@ export const Recipes = {
             xp: 10
         },
         carrotjuice: {
+            name: 'Carrot Juice',
             key: 'carrotjuice',
             requirements: [
                 { key: 'cooking', level: 3 },
@@ -325,6 +361,7 @@ export const Recipes = {
             xp: 15
         },
         salsa: {
+            name: 'Salsa',
             key: 'salsa',
             requirements: [
                 { key: 'cooking', level: 4 },
@@ -334,6 +371,7 @@ export const Recipes = {
             xp: 18
         },
         beetjuice: {
+            name: 'Beet Juice',
             key: 'beetjuice',
             requirements: [
                 { key: 'cooking', level: 4 },
@@ -344,6 +382,7 @@ export const Recipes = {
             xp: 18
         },
         stuffedavocado: {
+            name: 'Stuffed Avocado',
             key: 'stuffedavocado',
             requirements: [
                 { key: 'cooking', level: 5 },
@@ -353,6 +392,7 @@ export const Recipes = {
             xp: 20
         },
         summersalad: {
+            name: 'Summer Salad',
             key: 'summersalad',
             requirements: [
                 { key: 'cooking', level: 5 },
@@ -365,6 +405,7 @@ export const Recipes = {
             xp: 20
         },
         garlicfish: {
+            name: 'Garlic Fish',
             key: 'garlicfish',
             requirements: [
                 { key: 'cooking', level: 6 },
@@ -374,11 +415,13 @@ export const Recipes = {
             xp: 25
         },
         roastedcorn: {
+            name: 'Fish Tacos',
             key: 'fishtacos',
             requirements: [{ key: 'cooking', level: 6 }, { key: 'corn', amount: 2 }],
             xp: 25
         },
         lemonfish: {
+            name: 'Lemon Fish',
             key: 'lemonfish',
             requirements: [
                 { key: 'cooking', level: 7 },
@@ -388,6 +431,7 @@ export const Recipes = {
             xp: 29
         },
         candiedalmonds: {
+            name: `Candied Almonds`,
             key: 'candiedalmonds',
             requirements: [
                 { key: 'cooking', level: 7 },
@@ -397,6 +441,7 @@ export const Recipes = {
             xp: 29
         },
         mushroomburger: {
+            name: 'Mushroom Burger',
             key: 'mushroomburger',
             requirements: [
                 { key: 'cooking', level: 8 },
@@ -408,6 +453,7 @@ export const Recipes = {
             xp: 35
         },
         pizzadough: {
+            name: 'Pizza Dough',
             key: 'pizzadough',
             requirements: [
                 { key: 'cooking', level: 9 },
@@ -419,6 +465,7 @@ export const Recipes = {
             xp: 40
         },
         fishpizza: {
+            name: 'Fish Pizza',
             key: 'fishpizza',
             requirements: [
                 { key: 'cooking', level: 9 },
@@ -430,6 +477,7 @@ export const Recipes = {
             xp: 40
         },
         mushroompizza: {
+            name: 'Mushroom Pizza',
             key: 'mushroompizza',
             requirements: [
                 { key: 'cooking', level: 10 },
@@ -441,6 +489,7 @@ export const Recipes = {
             xp: 45
         },
         shrimpscampi: {
+            name: 'Shrimp Scampi',
             key: 'shrimpscampi',
             requirements: [
                 { key: 'cooking', level: 11 },
@@ -451,6 +500,7 @@ export const Recipes = {
             xp: 50
         },
         fishsandwich: {
+            name: 'Fish Sandwich',
             key: 'fishsandwich',
             requirements: [
                 { key: 'cooking', level: 12 },
@@ -462,6 +512,7 @@ export const Recipes = {
             xp: 55
         },
         mushroomsandwich: {
+            name: 'Mushroom Sandwich',
             key: 'mushroomsandwich',
             requirements: [
                 { key: 'cooking', level: 13 },
@@ -473,6 +524,7 @@ export const Recipes = {
             xp: 58
         },
         roastedmushrooms: {
+            name: 'Roasted Mushrooms',
             key: 'roastedmushrooms',
             requirements: [
                 { key: 'cooking', level: 14 },
@@ -483,8 +535,9 @@ export const Recipes = {
             ],
             xp: 60
         },
-        roastedmushrooms: {
-            key: 'roastedmushrooms',
+        roastedstuffedmushrooms: {
+            name: 'Roasted Stuffed Mushrooms',
+            key: 'roastedstuffedmushrooms',
             requirements: [
                 { key: 'cooking', level: 15 },
                 { key: 'butter', amount: 1 },
@@ -495,6 +548,7 @@ export const Recipes = {
             xp: 63
         },
         summerlemonfish: {
+            name: 'Summer Lemon Fish',
             key: 'summerlemonfish',
             requirements: [
                 { key: 'cooking', level: 16 },
@@ -504,6 +558,7 @@ export const Recipes = {
             xp: 65
         },
         mushroomcalzone: {
+            name: 'Mushroom Calzone',
             key: 'mushroomcalzone',
             requirements: [
                 { key: 'cooking', level: 17 },
@@ -516,6 +571,7 @@ export const Recipes = {
             xp: 68
         },
         garlicmushroomsandwich: {
+            name: 'Garlic Mushroom Sandwich',
             key: 'garlicmushroomsandwich',
             requirements: [
                 { key: 'cooking', level: 17 },
@@ -526,6 +582,7 @@ export const Recipes = {
             xp: 70
         },
         salsafish: {
+            name: `Salsa'd Fish`,
             key: 'salsafish',
             requirements: [
                 { key: 'cooking', level: 18 },
@@ -536,6 +593,7 @@ export const Recipes = {
             xp: 72
         },
         fishtacos: {
+            name: 'Fish Tacos',
             key: 'fishtacos',
             requirements: [
                 { key: 'cooking', level: 18 },
@@ -547,6 +605,7 @@ export const Recipes = {
             xp: 72
         },
         friedfish: {
+            name: 'Fried Fish',
             key: 'friedfish',
             requirements: [
                 { key: 'cooking', level: 19 },
@@ -557,6 +616,7 @@ export const Recipes = {
             xp: 75
         },
         fishdinner: {
+            name: 'Fish Dinner',
             key: 'fishdinner',
             requirements: [
                 { key: 'cooking', level: 20 },
@@ -567,6 +627,7 @@ export const Recipes = {
             xp: 75
         },
         peachsmoothie: {
+            name: 'Peach Smoothie',
             key: 'peachsmoothie',
             requirements: [
                 { key: 'cooking', level: 21 },
@@ -577,6 +638,7 @@ export const Recipes = {
             xp: 77
         },
         candiedpeaches: {
+            name: 'Candied Peaches',
             key: 'candiedpeaches',
             requirements: [
                 { key: 'cooking', level: 22 },
@@ -586,6 +648,7 @@ export const Recipes = {
             xp: 79
         },
         fishburger: {
+            name: 'Fish Burger',
             key: 'fishburger',
             requirements: [
                 { key: 'cooking', level: 23 },
@@ -596,6 +659,7 @@ export const Recipes = {
             xp: 82
         },
         cornsalsa: {
+            name: 'Corn Salsa',
             key: 'cornsalsa',
             requirements: [
                 { key: 'cooking', level: 24 },
@@ -604,6 +668,7 @@ export const Recipes = {
             ]
         },
         friedfishtacos: {
+            name: 'Fried Fish Tacos',
             key: 'friedfishtacos',
             requirements: [
                 { key: 'cooking', level: 25 },
@@ -615,6 +680,7 @@ export const Recipes = {
             xp: 85
         },
         fishandchips: {
+            name: 'Fish and Chips',
             key: 'fishandchips',
             requirements: [
                 { key: 'cooking', level: 35 },

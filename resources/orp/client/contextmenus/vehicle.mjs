@@ -3,6 +3,7 @@ import * as native from 'natives';
 //import { ContextMenu } from '/client/systems/context.mjs';
 import { distance } from '/client/utility/vector.mjs';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->contextmenus->vehicle.mjs');
 
@@ -53,24 +54,22 @@ alt.on('menu:Vehicle', ent => {
 
     // RepairKit
     if (alt.Player.local.isRepairing) {
-        const dist = distance(
-            alt.Player.local.pos,
-            native.getEntityCoords(ent, false)
-        );
+        const dist = distance(alt.Player.local.pos, native.getEntityCoords(ent, false));
         if (dist <= 4) {
-            appendContextItem('Repair Vehicle', true, 'vehicle:RepairVehicle', { vehicle });
+            appendContextItem('Repair Vehicle', true, 'vehicle:RepairVehicle', {
+                vehicle
+            });
             alt.Player.local.isRepairing = false;
         }
     }
 
     // Gas Can
     if (alt.Player.local.isUsingGasCan) {
-        const dist = distance(
-            alt.Player.local.pos,
-            native.getEntityCoords(ent, false)
-        );
+        const dist = distance(alt.Player.local.pos, native.getEntityCoords(ent, false));
         if (dist <= 4) {
-            appendContextItem('Refuel with Gas Can', true, 'vehicle:RefuelVehicle', { vehicle });
+            appendContextItem('Refuel with Gas Can', true, 'vehicle:RefuelVehicle', {
+                vehicle
+            });
             alt.Player.local.isUsingGasCan = false;
         }
     }
@@ -79,6 +78,7 @@ alt.on('menu:Vehicle', ent => {
 });
 
 alt.on('submenu:VehicleDoors', data => {
+    showCursor(true);
     const doorCount = native.getVehicleMaxNumberOfPassengers(data.vehicle.scriptID) + 1;
     const vehicle = alt.Vehicle.all.find(veh => veh.scriptID === data.vehicle.scriptID);
     if (!vehicle) return;

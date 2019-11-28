@@ -129,8 +129,13 @@ alt.on('sync:Player', player => {
     player.startTime = Date.now();
 
     // Setup Position
-    const lastKnownPos = JSON.parse(player.data.lastposition);
+    let lastKnownPos = JSON.parse(player.data.lastposition);
+    if (lastKnownPos === null) {
+        lastKnownPos = Config.defaultSpawnPoint;
+    }
+
     player.needsRoleplayInfo = true;
+
     player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 0);
     player.setSyncedMeta('id', player.data.id);
 

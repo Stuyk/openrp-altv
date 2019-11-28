@@ -25,7 +25,10 @@ const options = [
     { name: 'option:mechanic', description: 'Toggle Blip Type' },
     { name: 'option:crafting', description: 'Toggle Blip Type' },
     { name: 'option:trucking', description: 'Toggle Blip Type' },
-    { name: 'option:woodcutting', description: 'Toggle Blip Type' }
+    { name: 'option:woodcutting', description: 'Toggle Blip Type' },
+    { name: 'option:toolbench', description: 'Toggle Blip Type' },
+    { name: 'option:cookingsource', description: 'Toggle Blip Type' },
+    { name: 'option:foodstand', description: 'Toggle Blip Type' }
 ];
 
 const url = 'http://resource/client/html/inventory/index.html';

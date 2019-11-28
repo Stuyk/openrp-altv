@@ -9,6 +9,14 @@ alt.on('menu:Ped', ent => {
     const player = alt.Player.all.find(x => x.scriptID === ent);
     if (!player) return;
 
+    if (!alt.Player.local.vehicle) {
+        const running = native.isPedRunning(alt.Player.local.scriptID);
+        const walking = native.isPedWalking(alt.Player.local.scriptID);
+        if (!running && !walking) {
+            native.taskTurnPedToFaceEntity(alt.Player.local.scriptID, ent, 1000);
+        }
+    }
+
     const name = player.getSyncedMeta('name');
     arrestAddons(player);
     gangAddons(player);

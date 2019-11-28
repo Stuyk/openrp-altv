@@ -11,6 +11,12 @@ alt.on('view:ForceClose', () => {
     currentView.close();
 });
 
+alt.on('view:DestroyAll', () => {
+    if (currentView && currentView.view) {
+        currentView.view.destroy();
+    }
+});
+
 export class View {
     constructor() {
         if (alt.Player.local.getMeta('chat')) return;

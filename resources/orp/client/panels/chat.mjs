@@ -8,6 +8,12 @@ let isActive = false;
 let webview;
 let isViewHidden = false;
 
+alt.on('view:DestroyAll', () => {
+    if (webview) {
+        webview.destroy();
+    }
+});
+
 /*
 Warning; this is meant to be a seperate webview.
 Do not use 'View' for this view. Chat needs to be

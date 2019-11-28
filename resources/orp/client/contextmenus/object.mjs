@@ -279,6 +279,15 @@ let objectInteractions = {
     },
     1340115820: {
         func: itemDrop
+    },
+    904554844: {
+        func: toolBench
+    },
+    525797972: {
+        func: treeParser
+    },
+    4146332269: {
+        func: rockParser
     }
 };
 
@@ -290,8 +299,15 @@ chairs.forEach(item => {
 
 alt.on('menu:Object', ent => {
     if (alt.Player.local.getMeta('arrest')) return;
-
     let model = native.getEntityModel(ent);
+
+    if (!alt.Player.local.vehicle) {
+        const running = native.isPedRunning(alt.Player.local.scriptID);
+        const walking = native.isPedWalking(alt.Player.local.scriptID);
+        if (!running && !walking) {
+            native.taskTurnPedToFaceEntity(alt.Player.local.scriptID, ent, 500);
+        }
+    }
 
     // find interaction; and call it if necessary.
     let interaction = objectInteractions[model];
@@ -545,4 +561,26 @@ function itemDrop(ent) {
         hash: currentItem.data.item.hash
     });
     setContextTitle(`${currentItem.data.item.name} x${currentItem.data.item.quantity}`);
+}
+
+function toolBench(ent) {
+    setContextTitle(`Tool Bench -> Soon^tm`);
+}
+
+function treeParser(ent) {
+    const rot = native.getEntityRotation(ent, 0);
+    if (rot.x !== 90) {
+        return;
+    }
+
+    setContextTitle(`Tree`);
+}
+
+function rockParser(ent) {
+    const alpha = native.getEntityAlpha(ent);
+    if (alpha !== 0) {
+        return;
+    }
+
+    setContextTitle(`Rock`);
 }

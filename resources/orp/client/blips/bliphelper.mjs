@@ -1,6 +1,13 @@
 import * as alt from 'alt';
 import * as native from 'natives';
-import { Atms, FuelStations, Hospitals } from '/client/locations/locations.mjs';
+import {
+    Atms,
+    FuelStations,
+    Hospitals,
+    ToolBenches,
+    CookingSources,
+    FruitStands
+} from '/client/locations/locations.mjs';
 
 alt.log('Loaded: client->blips->bliphelper.mjs');
 
@@ -116,6 +123,18 @@ FuelStations.forEach(station => {
 
 Hospitals.forEach(hospital => {
     createBlip('hospital', hospital, 153, 43, 'Hospital');
+});
+
+ToolBenches.forEach(bench => {
+    createBlip('toolbench', bench, 643, 53, 'Tool Bench', 5);
+});
+
+CookingSources.forEach(source => {
+    createBlip('cookingsource', source, 648, 53, 'Cooking Source', 5);
+});
+
+FruitStands.forEach(stand => {
+    createBlip('foodstand', stand, 478, 53, 'Food Stand', 5);
 });
 
 //  alt.emit('option:Changed', option, cache.get(`option:${option}`));

@@ -37,3 +37,6 @@ import * as contextmenuObject from '/client/contextmenus/object.mjs';
 import * as contextmenuPed from '/client/contextmenus/ped.mjs';
 import * as contextmenuVehicle from '/client/contextmenus/vehicle.mjs';
 import * as contextmenuPlayer from '/client/contextmenus/player.mjs';
+
+// Extender
+import * as systemsObjectExtender from '/client/systems/objectextender.mjs';

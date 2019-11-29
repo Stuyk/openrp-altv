@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 
 // Blips
 import * as blipsBlipHelper from '/client/blips/bliphelper.mjs';

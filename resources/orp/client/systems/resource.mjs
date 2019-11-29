@@ -65,6 +65,8 @@ alt.onServer('resource:Update', (type, coords, resourceData) => {
     resources[type][JSON.stringify(coords)] = {
         amount: resourceData.amount
     };
+
+    alt.log(JSON.stringify(resources, null, '\t'));
 });
 
 export function getResource(type, coords) {
@@ -72,12 +74,7 @@ export function getResource(type, coords) {
         return undefined;
     }
 
-    const resource = resources[type][JSON.stringify(coords)];
-    if (resource === null || resource === undefined) {
-        return undefined;
-    }
-
-    return resource.amount;
+    return resources[type][JSON.stringify(coords)];
 }
 
 alt.on('resource:BeginResourceFarming', data => {

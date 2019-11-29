@@ -575,7 +575,7 @@ function treeParser(ent) {
     }
 
     const coords = native.getEntityCoords(ent, false);
-    const amount = getResource('tree', coords);
+    const resourceData = getResource('tree', coords);
     const isDefined = amount === undefined ? false : true;
 
     if (!isDefined) {
@@ -585,15 +585,15 @@ function treeParser(ent) {
         });
     }
 
-    if (isDefined && amount >= 1) {
+    if (resourceData && resourceData.amount && resourceData.amount >= 1) {
         appendContextItem(
-            `Cut Wood | ${amount}`,
+            `Cut Wood | ${resourceData.amount}`,
             false,
             'resource:BeginResourceFarming',
             {
                 coords: JSON.stringify(coords),
                 type: 'tree',
-                amount
+                amount: resourceData.amount
             }
         );
     }
@@ -608,7 +608,7 @@ function rockParser(ent) {
     }
 
     const coords = native.getEntityCoords(ent, false);
-    const amount = getResource('rock', coords);
+    const resourceData = getResource('rock', coords);
     const isDefined = amount === undefined ? false : true;
 
     if (!isDefined) {
@@ -618,15 +618,15 @@ function rockParser(ent) {
         });
     }
 
-    if (isDefined && amount >= 1) {
+    if (resourceData && resourceData.amount && resourceData.amount >= 1) {
         appendContextItem(
-            `Mine Rock | ${amount}`,
+            `Mine Rock | ${resourceData.amount}`,
             false,
             'resource:BeginResourceFarming',
             {
                 coords: JSON.stringify(coords),
                 type: 'rock',
-                amount
+                amount: resourceData.amount
             }
         );
     }

@@ -13,8 +13,10 @@ const terms = {
     terms: [
         'By using this software for your Roleplay mode you agree to the following:',
         'Manipulation of bootscreen logos, and splash marks may not be removed. This data',
-        'must be present and unmodified for each user that enters your server. Setting',
-        'the agreement boolean below to true; means you AGREE to these terms and',
+        'must be present and unmodified for each user that enters your server. Monetization ',
+        'of this game mode is STRICTLY PROHIBITED. You may NOT establish any form of monetization',
+        'features in this gamemode. \r\n',
+        'Setting the agreement boolean below to true; means you AGREE to these terms and',
         'conditions. \r\n',
         'If you have any issues with these conditions; contact Stuyk promptly.',
         'If you agree with these terms. Please type true.',

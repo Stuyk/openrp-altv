@@ -576,9 +576,8 @@ function treeParser(ent) {
 
     const coords = native.getEntityCoords(ent, false);
     const resourceData = getResource('tree', coords);
-    const isDefined = amount === undefined ? false : true;
 
-    if (!isDefined) {
+    if (!resourceData) {
         appendContextItem(`Prospect`, true, 'resource:Prospect', {
             coords: JSON.stringify(coords),
             type: 'tree'
@@ -609,9 +608,8 @@ function rockParser(ent) {
 
     const coords = native.getEntityCoords(ent, false);
     const resourceData = getResource('rock', coords);
-    const isDefined = amount === undefined ? false : true;
 
-    if (!isDefined) {
+    if (!resourceData) {
         appendContextItem(`Prospect`, true, 'resource:Prospect', {
             coords: JSON.stringify(coords),
             type: 'rock'

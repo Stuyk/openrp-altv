@@ -112,4 +112,12 @@ alt.on('parse:Player', (player, now) => {
             }
         }
     }
+
+    if (player.farming) {
+        try {
+            alt.emit('resource:Farm', player);
+        } catch (err) {
+            alt.log('Could not parse farming data.');
+        }
+    }
 });

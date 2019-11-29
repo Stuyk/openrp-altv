@@ -22,12 +22,48 @@ const EquipHelper = {
             x: 90,
             y: 0,
             z: 0
+        },
+        marker: {
+            type: 1,
+            rot: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            scale: {
+                x: 2,
+                y: 2,
+                z: 2.5
+            },
+            offset: {
+                x: 0,
+                y: 0,
+                z: 0
+            }
         }
     },
     pickaxe: {
         array: Rocks,
         model: native.getHashKey('prop_mb_sandblock_01'),
-        addZ: 1.0
+        addZ: 1.0,
+        marker: {
+            type: 1,
+            rot: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            scale: {
+                x: 0.05,
+                y: 0.05,
+                z: 5
+            },
+            offset: {
+                x: 0,
+                y: 0,
+                z: 0
+            }
+        }
     },
     hammer: {
         array: Unk,
@@ -170,12 +206,17 @@ function drawObjects() {
             return;
         }
 
+        pos.x += currentSet.marker.offset.x;
+        pos.y += currentSet.marker.offset.y;
+        pos.z += currentSet.marker.offset.z;
+
+        // type, pos, dir, rot, scale, r, g, b, alpha
         drawMarker(
-            1,
+            currentSet.marker.type,
             pos,
             new alt.Vector3(0, 0, 0),
-            new alt.Vector3(0, 0, 0),
-            new alt.Vector3(0.05, 0.05, 5),
+            currentSet.marker.rot,
+            currentSet.marker.scale,
             0,
             190,
             250,

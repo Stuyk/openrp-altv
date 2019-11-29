@@ -7,6 +7,7 @@ import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 import { findDoor } from '/client/systems/doors.mjs';
 import { getLevel } from '/client/systems/xp.mjs';
 import { getItemByEntity } from '/client/systems/inventory.mjs';
+import { getResource } from '/client/systems/resource.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -568,9 +569,33 @@ function toolBench(ent) {
 }
 
 function treeParser(ent) {
-    const rot = native.getEntityRotation(ent, 0);
-    if (rot.x !== 90) {
+    const alpha = native.getEntityAlpha(ent);
+    if (alpha !== 0) {
         return;
+    }
+
+    const coords = native.getEntityCoords(ent, false);
+    const amount = getResource('tree', coords);
+    const isDefined = amount === undefined ? false : true;
+
+    if (!isDefined) {
+        appendContextItem(`Prospect`, true, 'resource:Prospect', {
+            coords,
+            type: 'tree'
+        });
+    }
+
+    if (isDefined && amount >= 1) {
+        appendContextItem(
+            `Cut Wood | ${amount}`,
+            false,
+            'resource:BeginResourceFarming',
+            {
+                coords,
+                type: 'tree',
+                amount
+            }
+        );
     }
 
     setContextTitle(`Tree`);
@@ -580,6 +605,30 @@ function rockParser(ent) {
     const alpha = native.getEntityAlpha(ent);
     if (alpha !== 0) {
         return;
+    }
+
+    const coords = native.getEntityCoords(ent, false);
+    const amount = getResource('rock', coords);
+    const isDefined = amount === undefined ? false : true;
+
+    if (!isDefined) {
+        appendContextItem(`Prospect`, true, 'resource:Prospect', {
+            coords,
+            type: 'rock'
+        });
+    }
+
+    if (isDefined && amount >= 1) {
+        appendContextItem(
+            `Mine Rock | ${amount}`,
+            false,
+            'resource:BeginResourceFarming',
+            {
+                coords,
+                type: 'rock',
+                amount
+            }
+        );
     }
 
     setContextTitle(`Rock`);

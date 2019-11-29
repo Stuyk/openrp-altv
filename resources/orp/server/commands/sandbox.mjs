@@ -5,20 +5,12 @@ import { fetchTurfSectors } from '../systems/gangs.mjs';
 
 // Development sandbox commands
 const sandboxhelp = [
-    //
     '/b, /me, /do',
     '/anim (dict) (name) (duration) (flag)',
-    '/addveh (model)',
-    '/addcash (amount)',
-    '/addwep (name)',
-    '/face, /addxp, /setxp',
-    '/tpto (rp-name)',
-    '/tpwp',
     '/players, /clearchat',
-    '/taxi, /mechanic',
+    '/taxi',
     '/cancel',
     '/quitjob, /getsector',
-    '/tryparticle',
     '/phonenumber',
     '/t, /call, /addcontact, /removecontact, /hangup',
     '/d20 /flipcoin, /sf'
@@ -137,6 +129,5 @@ chat.registerCmd('tempdoor', (player, args) => {
 chat.registerCmd('showturfs', player => {
     if (player.data.gang === -1) return;
     const sectors = fetchTurfSectors(player);
-    console.log(sectors);
     alt.emitClient(player, 'grid:TempTurfs', sectors);
 });

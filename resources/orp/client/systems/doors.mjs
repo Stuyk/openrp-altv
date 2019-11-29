@@ -176,7 +176,7 @@ alt.onServer('editingDoor', state => {
                 }
             },
             interior: '',
-            isGarage: 0,
+            isGarage: 0
         };
 
         alt.log(JSON.stringify(doorData, null, '\t'));
@@ -184,11 +184,20 @@ alt.onServer('editingDoor', state => {
     }
 
     const hash = native.getHashKey('prop_cntrdoor_ld_l');
-    const pos = alt.Player.local.pos;
+    const playerPosition = alt.Player.local.pos;
     alt.loadModel(hash);
     native.requestModel(hash);
 
-    editDoorId = native.createObject(hash, pos.x, pos.y, pos.z, false, false, false);
+    editDoorId = native.createObject(
+        hash,
+        playerPosition.x,
+        playerPosition.y,
+        playerPosition.z,
+        false,
+        false,
+        false
+    );
+
     editDoorInterval = alt.setInterval(() => {
         native.disableInputGroup(0);
         let pos = native.getEntityCoords(editDoorId, false);

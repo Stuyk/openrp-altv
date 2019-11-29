@@ -580,7 +580,7 @@ function treeParser(ent) {
 
     if (!isDefined) {
         appendContextItem(`Prospect`, true, 'resource:Prospect', {
-            coords,
+            coords: JSON.stringify(coords),
             type: 'tree'
         });
     }
@@ -591,7 +591,7 @@ function treeParser(ent) {
             false,
             'resource:BeginResourceFarming',
             {
-                coords,
+                coords: JSON.stringify(coords),
                 type: 'tree',
                 amount
             }
@@ -613,7 +613,7 @@ function rockParser(ent) {
 
     if (!isDefined) {
         appendContextItem(`Prospect`, true, 'resource:Prospect', {
-            coords,
+            coords: JSON.stringify(coords),
             type: 'rock'
         });
     }
@@ -624,7 +624,7 @@ function rockParser(ent) {
             false,
             'resource:BeginResourceFarming',
             {
-                coords,
+                coords: JSON.stringify(coords),
                 type: 'rock',
                 amount
             }

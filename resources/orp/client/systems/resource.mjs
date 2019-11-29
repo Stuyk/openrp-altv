@@ -55,9 +55,9 @@ const effectData = {
     }
 };
 
-let currentResource;
-
 alt.onServer('resource:Update', (type, coords, resourceData) => {
+    alt.log(`${type} / ${JSON.stringify(coords)} / ${JSON.stringify(resourceData)}`);
+
     if (!resources[type]) {
         return;
     }
@@ -72,17 +72,10 @@ export function getResource(type, coords) {
         return undefined;
     }
 
-    alt.log('Resource exists...');
-
     const resource = resources[type][JSON.stringify(coords)];
-    alt.log(JSON.stringify(resource));
-
     if (resource === null || resource === undefined) {
         return undefined;
     }
-
-    alt.log('Resource defined.');
-    alt.log(JSON.stringify(resource));
 
     return resource.amount;
 }

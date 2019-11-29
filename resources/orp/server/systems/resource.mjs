@@ -26,7 +26,7 @@ const rewards = {
 };
 
 alt.onClient('resource:Prospect', (player, data) => {
-    const coords = JSON.stringify(data.coords);
+    const coords = data.coords;
     const type = data.type;
 
     if (!coords || !type) {
@@ -44,12 +44,18 @@ alt.onClient('resource:Prospect', (player, data) => {
     }
 
     const resourceData = resources[type][coords];
-    alt.emitClient(player, 'resource:Update', type, data.coords, resourceData);
+    alt.emitClient(
+        player,
+        'resource:Update',
+        type,
+        JSON.parse(data.coords),
+        resourceData
+    );
 });
 
 alt.onClient('resource:BeginFarming', (player, coords, type) => {
     player.farming = {
-        coords,
+        coords: JSON.parse(coords),
         type
     };
     player.notify(`You have begun resource harvesting.`);

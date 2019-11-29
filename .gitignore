@@ -7,6 +7,7 @@ resources/*
 !resources/orp-addon/*
 resources/orp/server/discord/configuration.json
 resources/orp/terms-and-conditions.json
+resources/orp/terms-and-conditions.*
 resources/orp/server/configuration/database.mjs
 resources/orp/server/configuration/database.json
 node_modules/

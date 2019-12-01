@@ -5,6 +5,7 @@ import * as panelsVehicleCustom from '/client/panels/vehiclecustom.mjs';
 import * as panelsGeneralStore from '/client/panels/generalstore.mjs';
 import * as panelsCrafting from '/client/panels/crafting.mjs';
 import * as panelsCharacter from '/client/panels/character.mjs';
+import * as panelsAtm from '/client/panels/atm.mjs';
 import { createBlip } from '/client/blips/bliphelper.mjs';
 import { syncDoors } from '/client/systems/doors.mjs';
 
@@ -138,6 +139,15 @@ const shops = [
         ],
         func: panelsCrafting.weaponryCrafting,
         message: `Press ~INPUT_CONTEXT~ to access this crafting point.`
+    },
+    {
+        category: 'bank',
+        type: 'Bank',
+        sprite: 108,
+        color: 53,
+        ids: [141057, 165121, 137985, 174849, 179969, 234241, 139265],
+        func: panelsAtm.showDialogue,
+        message: `Press ~INPUT_CONTEXT~ to access funds.`
     }
 ];
 

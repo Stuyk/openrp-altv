@@ -114,7 +114,7 @@ alt.onServer('grid:TempTurfs', sectors => {
 
 // Load ATM Blips
 Atms.forEach(atm => {
-    createBlip('atm', atm, 108, 53, 'ATM', 5);
+    createBlip('atm', atm, 277, 53, 'ATM', 5);
 });
 
 FuelStations.forEach(station => {

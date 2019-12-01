@@ -38,6 +38,11 @@ export function generateHash(data) {
     return sjcl.codec.hex.fromBits(hashBytes);
 }
 
+export function persistentHash(data) {
+    let hashBytes = sjcl.hash.sha256.hash(data);
+    return sjcl.codec.hex.fromBits(hashBytes);
+}
+
 function xmur3(str) {
     for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
         (h = Math.imul(h ^ str.charCodeAt(i), 3432918353)), (h = (h << 13) | (h >>> 19));

@@ -7,7 +7,8 @@ import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 import { findDoor } from '/client/systems/doors.mjs';
 import { getLevel } from '/client/systems/xp.mjs';
 import { getItemByEntity } from '/client/systems/inventory.mjs';
-import { getResource } from '/client/systems/resource.mjs';
+import { getResourceDataByCoord } from '/client/systems/resource.mjs';
+import { getObjectById } from '/client/systems/objectextender.mjs';
 
 alt.log('Loaded: client->contextmenus->object.mjs');
 
@@ -574,12 +575,18 @@ function treeParser(ent) {
         return;
     }
 
-    const coords = native.getEntityCoords(ent, false);
-    const resourceData = getResource('tree', coords);
+    const coordData = getObjectById(ent);
+    if (!coordData) {
+        alt.log('Object does not seem to exist');
+        return;
+    }
+
+    const coords = coordData.coord;
+    const resourceData = getResourceDataByCoord(coords);
 
     if (!resourceData) {
         appendContextItem(`Prospect`, true, 'resource:Prospect', {
-            coords: JSON.stringify(coords),
+            coords: coords,
             type: 'tree'
         });
     }
@@ -590,7 +597,7 @@ function treeParser(ent) {
             false,
             'resource:BeginResourceFarming',
             {
-                coords: JSON.stringify(coords),
+                coords: coords,
                 type: 'tree',
                 amount: resourceData.amount
             }
@@ -606,12 +613,18 @@ function rockParser(ent) {
         return;
     }
 
-    const coords = native.getEntityCoords(ent, false);
-    const resourceData = getResource('rock', coords);
+    const coordData = getObjectById(ent);
+    if (!coordData) {
+        alt.log('Object does not seem to exist');
+        return;
+    }
+
+    const coords = coordData.coord;
+    const resourceData = getResourceDataByCoord(coords);
 
     if (!resourceData) {
         appendContextItem(`Prospect`, true, 'resource:Prospect', {
-            coords: JSON.stringify(coords),
+            coords,
             type: 'rock'
         });
     }
@@ -622,7 +635,7 @@ function rockParser(ent) {
             false,
             'resource:BeginResourceFarming',
             {
-                coords: JSON.stringify(coords),
+                coords,
                 type: 'rock',
                 amount: resourceData.amount
             }

@@ -120,6 +120,14 @@ alt.on('meta:Changed', (key, value) => {
     }
 });
 
+export function getObjectById(id) {
+    const index = objects.findIndex(currentObject => {
+        if (currentObject.id === id) return currentObject;
+    });
+
+    return index <= -1 ? undefined : objects[index];
+}
+
 function objectParser() {
     const pos = alt.Player.local.pos;
     if (!currentSet) {

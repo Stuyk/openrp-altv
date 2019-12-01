@@ -3,13 +3,10 @@ import * as native from 'natives';
 import { playAudio } from '/client/systems/sound.mjs';
 import { playParticleFX } from '/client/utility/particle.mjs';
 
-const resources = {
-    tree: {},
-    rock: {}
-};
+let cooldownAudio = Date.now();
+let cooldownParticle = Date.now();
 
-let cooldown = Date.now();
-
+const resources = [];
 const effectData = {
     tree: {
         sound: 'chop',
@@ -55,26 +52,29 @@ const effectData = {
     }
 };
 
-alt.onServer('resource:Update', (type, coords, resourceData) => {
-    alt.log(`${type} / ${JSON.stringify(coords)} / ${JSON.stringify(resourceData)}`);
+alt.onServer('resource:Update', (type, hash, coords, resourceData) => {
+    const index = resources.findIndex(data => {
+        if (data.hash === hash) return data;
+    });
 
-    if (!resources[type]) {
-        return;
+    if (index <= -1) {
+        resources.push({
+            hash,
+            coords,
+            type,
+            amount: resourceData.amount
+        });
+    } else {
+        resources[index].amount = resourceData.amount;
     }
-
-    resources[type][JSON.stringify(coords)] = {
-        amount: resourceData.amount
-    };
-
-    alt.log(JSON.stringify(resources, null, '\t'));
 });
 
-export function getResource(type, coords) {
-    if (!resources[type]) {
-        return undefined;
-    }
+export function getResourceDataByCoord(coords) {
+    const index = resources.findIndex(data => {
+        if (data.coords.x === coords.x && data.coords.y === coords.y) return data;
+    });
 
-    return resources[type][JSON.stringify(coords)];
+    return index === -1 ? undefined : resources[index];
 }
 
 alt.on('resource:BeginResourceFarming', data => {
@@ -107,11 +107,6 @@ alt.onServer('resource:FarmTick', (coords, type) => {
         // data.dict, data.name, data.duration, data.flag
         alt.emit('animation:Play', fx.animation);
         const currentInterval = alt.setInterval(() => {
-            if (Date.now() < cooldown) {
-                return;
-            }
-
-            cooldown = Date.now() + 50;
             const animTime =
                 native
                     .getEntityAnimCurrentTime(
@@ -126,14 +121,16 @@ alt.onServer('resource:FarmTick', (coords, type) => {
                     return;
                 }
 
-                if (fx.sound !== '') {
+                if (fx.sound !== '' && Date.now() > cooldownAudio) {
+                    cooldownAudio = Date.now() + 100;
                     // Might have to add cooldown, might not.
                     playAudio(fx.sound);
                     alt.emitServer('audio:Sync3D', fx.sound);
                 }
 
                 const particle = fx.particle;
-                if (particle) {
+                if (particle && Date.now() > cooldownParticle) {
+                    cooldownParticle = Date.now() + 10;
                     playParticleFX(
                         particle.dict,
                         particle.name,
@@ -145,7 +142,7 @@ alt.onServer('resource:FarmTick', (coords, type) => {
                     );
                 }
             });
-        }, 3);
+        }, 1);
 
         alt.setTimeout(() => {
             alt.clearInterval(currentInterval);

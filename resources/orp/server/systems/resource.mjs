@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import { distance } from '../utility/vector.mjs';
 import { Items } from '../configuration/items.mjs';
 import { addXP } from './skills.mjs';
+import { persistentHash } from '../utility/encryption.mjs';
 
 const resources = {
     rock: {},
@@ -37,27 +38,32 @@ alt.onClient('resource:Prospect', (player, data) => {
         return;
     }
 
-    if (!resources[type][coords]) {
-        resources[type][coords] = {
+    const coordsHash = persistentHash(JSON.stringify(coords));
+    if (!resources[type][coordsHash]) {
+        resources[type][coordsHash] = {
             amount: Math.floor(Math.random() * 50)
         };
     }
 
-    const resourceData = resources[type][coords];
+    const resourceData = resources[type][coordsHash];
+    console.log(coordsHash);
+    console.log(resourceData);
     alt.emitClient(
         player,
         'resource:Update',
         type,
-        JSON.parse(data.coords),
+        coordsHash,
+        data.coords,
         resourceData
     );
 });
 
 alt.onClient('resource:BeginFarming', (player, coords, type) => {
     player.farming = {
-        coords: JSON.parse(coords),
+        coords,
         type
     };
+
     player.notify(`You have begun resource harvesting.`);
 });
 
@@ -84,7 +90,8 @@ alt.on('resource:Farm', player => {
         return;
     }
 
-    const resourceData = resources[type][JSON.stringify(coords)];
+    const coordsHash = persistentHash(JSON.stringify(coords));
+    const resourceData = resources[type][coordsHash];
     if (!resourceData || resourceData.amount === 0) {
         player.farming = undefined;
         player.notify('Resources have been exhausted.');
@@ -125,11 +132,25 @@ alt.on('resource:Farm', player => {
 
     resourceData.amount -= quantity;
     alt.emitClient(player, 'resource:FarmTick', coords, type);
-    alt.emitClient(player, 'resource:Update', type, coords, resourceData);
+    alt.emitClient(player, 'resource:Update', type, coordsHash, coords, resourceData);
 
-    if (reward.skill) {
-        addXP(player, reward.skill.name, Math.floor(reward.skill.xp * quantity));
+    setTimeout(() => {
+        alt.emit('resource:FinishFarmTick', player, reward, quantity);
+    }, 250);
+});
+
+alt.on('resource:FinishFarmTick', (player, reward, quantity) => {
+    if (!player) return;
+
+    try {
+        if (reward.skill) {
+            addXP(player, reward.skill.name, Math.floor(reward.skill.xp * quantity));
+        }
+
+        player.notify(`${Items[reward.key].name} x${quantity} was added to inventory.`);
+    } catch (err) {
+        alt.log(
+            'Player was not defined for farm tick. Not an error but they probably left.'
+        );
     }
-
-    player.notify(`${Items[reward.key].name} x${quantity} was added to inventory.`);
 });

@@ -70,6 +70,10 @@ alt.on('logout:Player', player => {
         return;
     }
 
+    if (player.trading) {
+        alt.emit('trade:KillTrade', player);
+    }
+
     // UnArrest on Disconnect
     if (player.cuffedPlayer) {
         player.cuffedPlayer.setSyncedMeta('arrested', undefined);

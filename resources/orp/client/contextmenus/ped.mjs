@@ -18,6 +18,7 @@ alt.on('menu:Ped', ent => {
     }
 
     const name = player.getSyncedMeta('name');
+    tradeAddons(player);
     arrestAddons(player);
     gangAddons(player);
     setContextTitle(name);
@@ -89,5 +90,14 @@ function arrestAddons(player) {
     if (isTazed && !arrester) {
         appendContextItem('Cuff', true, 'use:CuffPlayer', { player });
         appendContextItem('Cuff (Move Freely)', true, 'use:CuffPlayerFreely', { player });
+    }
+}
+
+function tradeAddons(player) {
+    const playerTradeOffer = alt.Player.local.getMeta('trade');
+    if (playerTradeOffer) {
+        appendContextItem('Accept Trade', true, 'trade:Offer', { target: player });
+    } else {
+        appendContextItem('Offer to Trade', true, 'trade:Offer', { target: player });
     }
 }

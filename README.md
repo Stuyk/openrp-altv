@@ -136,3 +136,21 @@ After; it should be running automatically in your services on windows. You can a
 -   Copy the Code
 
 -   PM the Bot you setup with `!login <code>`
+
+### Installation using Docker
+
+OpenRP includes support for building and running the alt:V and PostgreSQL server using Docker.  Included is a docker-compose.yml which contains many variables that you will need to edit.  Any changes you make will require you to rebuild the altv-openrp container.
+
+To build new containers, first edit the docker-compose.yml file and fill in all the details for the altv server and discord information, and then build with docker-compose.  Note: You must agree with OpenRP terms of service by passing TOS_AGREE=true as a build argument.
+
+```
+docker-compose build --build-arg TOS_AGREE=true
+```
+
+To run the containers:
+
+```
+docker-compose up
+```
+
+Please see Docker and Docker-Compose documentation for more options.

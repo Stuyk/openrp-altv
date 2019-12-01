@@ -3,17 +3,20 @@ import * as alt from 'alt';
 import { generateHash } from '../utility/encryption.mjs';
 import { Items, BaseItems } from '../configuration/items.mjs';
 import { Config } from '../configuration/config.mjs';
-import * as systemsInteraction from '../systems/interaction.mjs';
-import * as systemsTime from '../systems/time.mjs';
-import * as utilityTime from '../utility/time.mjs';
 import { objectToNull } from '../utility/object.mjs';
-import SQL from '../../../postgres-wrapper/database.mjs';
 import { spawnVehicle } from '../systems/vehicles.mjs';
 import { quitJob } from '../systems/job.mjs';
 import { fetchNextVehicleID, getCharacterName, modifyRank } from '../cache/cache.mjs';
 import { dropNewItem } from '../systems/inventory.mjs';
 import { doorStates } from '../systems/use.mjs';
 import { getGang } from '../systems/gangs.mjs';
+import { getLevel } from '../systems/xp.mjs';
+
+import * as systemsInteraction from '../systems/interaction.mjs';
+import * as systemsTime from '../systems/time.mjs';
+import * as utilityTime from '../utility/time.mjs';
+
+import SQL from '../../../postgres-wrapper/database.mjs';
 
 // Load the database handler.
 const db = new SQL();
@@ -534,13 +537,12 @@ export function setupPlayerFunctions(player) {
         keyOverride = undefined
     ) => {
         const item = Items[key];
-        const base = BaseItems[Items[key].base];
-
         if (!item) {
             console.log('Item does not exist.');
             return false;
         }
 
+        const base = BaseItems[Items[key].base];
         if (!base) {
             console.log('Base item does not exist.');
             return false;
@@ -784,6 +786,23 @@ export function setupPlayerFunctions(player) {
             inventoryItem = objectToNull(inventoryItem);
         }
 
+        // Going in to hand.
+        if (inventoryItem.props && inventoryItem.props.lvl) {
+            const skills = JSON.parse(player.data.skills);
+            if (inventoryItem.props.lvl.skill) {
+                const skill = inventoryItem.props.lvl.skill;
+                const level = getLevel(skills[skill].xp);
+
+                if (level < inventoryItem.props.lvl.requirement) {
+                    player.notify(
+                        `You do not have level ${inventoryItem.props.lvl.requirement} ${skill}.`
+                    );
+                    player.syncInventory();
+                    return;
+                }
+            }
+        }
+
         player.equipment[equipmentIndex] = inventoryItem;
         player.inventory[itemIndex] = equippedItem;
         player.saveInventory();
@@ -962,10 +981,10 @@ export function setupPlayerFunctions(player) {
         player.equipment[10] = pants;
         player.equipment[13] = shoes;
 
-        player.addItem('pickaxe1', 1, Items.pickaxe1.props);
-        player.addItem('hammer1', 1, Items.hammer1.props);
-        player.addItem('axe1', 1, Items.axe1.props);
-        player.addItem('fishingrod1', 1, Items.fishingrod1.props);
+        player.addItem('pickaxe', 1, Items.pickaxe.props);
+        player.addItem('hammer', 1, Items.hammer.props);
+        player.addItem('axe', 1, Items.axe.props);
+        player.addItem('fishingrod', 1, Items.fishingrod.props);
     };
 
     // =================================

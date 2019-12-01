@@ -690,5 +690,409 @@ export const Recipes = {
             ],
             xp: 100
         }
+    },
+    /*
+    1 - Rusty
+    10 - Oxidized
+    20 - Used
+    30 - Decayed
+    40 - Worn
+    50 - Slightly Worn
+    60 - Nearly New
+    70 - New
+    80 - Master
+    90 - Artisan
+    */
+    tools: {
+        // 10 - Oxidized
+        pickaxe1: {
+            name: 'Oxidized Pickaxe',
+            key: 'pickaxe1',
+            requirements: [
+                { key: 'crafting', level: 10 },
+                { key: 'refinedmetal', amount: 25 },
+                { key: 'refinedwood', amount: 5 }
+            ],
+            xp: 35
+        },
+        axe1: {
+            name: 'Oxidized Axe',
+            key: 'axe1',
+            requirements: [
+                { key: 'crafting', level: 10 },
+                { key: 'refinedmetal', amount: 25 },
+                { key: 'refinedwood', amount: 5 }
+            ],
+            xp: 35
+        },
+        hammer1: {
+            name: 'Oxidized Hammer',
+            key: 'axe1',
+            requirements: [
+                { key: 'crafting', level: 10 },
+                { key: 'refinedmetal', amount: 15 },
+                { key: 'refinedwood', amount: 5 }
+            ],
+            xp: 35
+        },
+        fishingrod1: {
+            name: 'Oxidized Fishing Rod',
+            key: 'fishingrod1',
+            requirements: [
+                { key: 'crafting', level: 10 },
+                { key: 'refinedmetal', amount: 5 },
+                { key: 'refinedwood', amount: 35 }
+            ],
+            xp: 35
+        },
+        // 20 - Used
+        pickaxe2: {
+            name: 'Used Pickaxe',
+            key: 'pickaxe2',
+            requirements: [
+                { key: 'crafting', level: 20 },
+                { key: 'refinedmetal', amount: 50 },
+                { key: 'refinedwood', amount: 10 }
+            ],
+            xp: 60
+        },
+        axe2: {
+            name: 'Used Axe',
+            key: 'axe2',
+            requirements: [
+                { key: 'crafting', level: 20 },
+                { key: 'refinedmetal', amount: 50 },
+                { key: 'refinedwood', amount: 10 }
+            ],
+            xp: 60
+        },
+        hammer2: {
+            name: 'Used Hammer',
+            key: 'axe2',
+            requirements: [
+                { key: 'crafting', level: 20 },
+                { key: 'refinedmetal', amount: 30 },
+                { key: 'refinedwood', amount: 10 }
+            ],
+            xp: 60
+        },
+        fishingrod2: {
+            name: 'Used Fishing Rod',
+            key: 'fishingrod2',
+            requirements: [
+                { key: 'crafting', level: 20 },
+                { key: 'refinedmetal', amount: 10 },
+                { key: 'refinedwood', amount: 70 }
+            ],
+            xp: 60
+        },
+        // Medkit and Repairkit.
+        repairkit: {
+            name: 'Repair Kit',
+            key: 'repairkit',
+            requirements: [
+                { key: 'crafting', level: 25 },
+                { key: 'refinedmetal', amount: 450 },
+                { key: 'refinedwood', amount: 450 }
+            ],
+            xp: 100
+        },
+        medkit: {
+            name: 'Medical Kit',
+            key: 'medkit',
+            requirements: [
+                { key: 'crafting', level: 25 },
+                { key: 'refinedmetal', amount: 450 },
+                { key: 'refinedwood', amount: 450 }
+            ],
+            xp: 100
+        },
+        // 30 - Decayed
+        pickaxe3: {
+            name: 'Decayed Pickaxe',
+            key: 'pickaxe3',
+            requirements: [
+                { key: 'crafting', level: 30 },
+                { key: 'refinedmetal', amount: 75 },
+                { key: 'refinedwood', amount: 20 }
+            ],
+            xp: 95
+        },
+        axe3: {
+            name: 'Decayed Axe',
+            key: 'axe3',
+            requirements: [
+                { key: 'crafting', level: 30 },
+                { key: 'refinedmetal', amount: 75 },
+                { key: 'refinedwood', amount: 20 }
+            ],
+            xp: 95
+        },
+        hammer3: {
+            name: 'Decayed Hammer',
+            key: 'axe3',
+            requirements: [
+                { key: 'crafting', level: 30 },
+                { key: 'refinedmetal', amount: 75 },
+                { key: 'refinedwood', amount: 20 }
+            ],
+            xp: 95
+        },
+        fishingrod3: {
+            name: 'Decayed Fishing Rod',
+            key: 'fishingrod3',
+            requirements: [
+                { key: 'crafting', level: 30 },
+                { key: 'refinedmetal', amount: 75 },
+                { key: 'refinedwood', amount: 20 }
+            ],
+            xp: 95
+        },
+        // 40 - Worn
+        pickaxe4: {
+            name: 'Worn Pickaxe',
+            key: 'pickaxe4',
+            requirements: [
+                { key: 'crafting', level: 40 },
+                { key: 'refinedmetal', amount: 100 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 135
+        },
+        axe4: {
+            name: 'Worn Axe',
+            key: 'axe4',
+            requirements: [
+                { key: 'crafting', level: 40 },
+                { key: 'refinedmetal', amount: 100 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 135
+        },
+        hammer4: {
+            name: 'Worn Hammer',
+            key: 'axe4',
+            requirements: [
+                { key: 'crafting', level: 40 },
+                { key: 'refinedmetal', amount: 100 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 135
+        },
+        fishingrod4: {
+            name: 'Worn Fishing Rod',
+            key: 'fishingrod4',
+            requirements: [
+                { key: 'crafting', level: 40 },
+                { key: 'refinedmetal', amount: 125 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 135
+        },
+        // 50 - Slightly Worn
+        pickaxe5: {
+            name: 'Slightly Worn Pickaxe',
+            key: 'pickaxe5',
+            requirements: [
+                { key: 'crafting', level: 50 },
+                { key: 'refinedmetal', amount: 135 },
+                { key: 'refinedwood', amount: 40 }
+            ],
+            xp: 150
+        },
+        axe5: {
+            name: 'Slightly Worn Axe',
+            key: 'axe5',
+            requirements: [
+                { key: 'crafting', level: 50 },
+                { key: 'refinedmetal', amount: 135 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 150
+        },
+        hammer5: {
+            name: 'Slightly Worn Hammer',
+            key: 'axe5',
+            requirements: [
+                { key: 'crafting', level: 50 },
+                { key: 'refinedmetal', amount: 135 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 150
+        },
+        fishingrod5: {
+            name: 'Slightly Worn Fishing Rod',
+            key: 'fishingrod5',
+            requirements: [
+                { key: 'crafting', level: 50 },
+                { key: 'refinedmetal', amount: 150 },
+                { key: 'refinedwood', amount: 30 }
+            ],
+            xp: 150
+        },
+        // 60 - Nearly New
+        pickaxe6: {
+            name: 'Nearly New Pickaxe',
+            key: 'pickaxe6',
+            requirements: [
+                { key: 'crafting', level: 60 },
+                { key: 'refinedmetal', amount: 150 },
+                { key: 'refinedwood', amount: 50 }
+            ],
+            xp: 175
+        },
+        axe6: {
+            name: 'Nearly New Axe',
+            key: 'axe6',
+            requirements: [
+                { key: 'crafting', level: 60 },
+                { key: 'refinedmetal', amount: 150 },
+                { key: 'refinedwood', amount: 50 }
+            ],
+            xp: 175
+        },
+        hammer6: {
+            name: 'Nearly New Hammer',
+            key: 'axe6',
+            requirements: [
+                { key: 'crafting', level: 60 },
+                { key: 'refinedmetal', amount: 150 },
+                { key: 'refinedwood', amount: 50 }
+            ],
+            xp: 175
+        },
+        fishingrod6: {
+            name: 'Nearly New Fishing Rod',
+            key: 'fishingrod6',
+            requirements: [
+                { key: 'crafting', level: 60 },
+                { key: 'refinedmetal', amount: 155 },
+                { key: 'refinedwood', amount: 50 }
+            ],
+            xp: 175
+        },
+        // 70 - New
+        pickaxe7: {
+            name: 'Nearly New Pickaxe',
+            key: 'pickaxe7',
+            requirements: [
+                { key: 'crafting', level: 70 },
+                { key: 'refinedmetal', amount: 170 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 190
+        },
+        axe7: {
+            name: 'Nearly New Axe',
+            key: 'axe7',
+            requirements: [
+                { key: 'crafting', level: 70 },
+                { key: 'refinedmetal', amount: 170 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 190
+        },
+        hammer7: {
+            name: 'Nearly New Hammer',
+            key: 'axe7',
+            requirements: [
+                { key: 'crafting', level: 70 },
+                { key: 'refinedmetal', amount: 170 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 190
+        },
+        fishingrod7: {
+            name: 'Nearly New Fishing Rod',
+            key: 'fishingrod7',
+            requirements: [
+                { key: 'crafting', level: 70 },
+                { key: 'refinedmetal', amount: 175 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 190
+        },
+        // 80 - Master
+        pickaxe8: {
+            name: 'Master Pickaxe',
+            key: 'pickaxe8',
+            requirements: [
+                { key: 'crafting', level: 80 },
+                { key: 'refinedmetal', amount: 200 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 220
+        },
+        axe8: {
+            name: 'Master Axe',
+            key: 'axe8',
+            requirements: [
+                { key: 'crafting', level: 80 },
+                { key: 'refinedmetal', amount: 200 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 220
+        },
+        hammer8: {
+            name: 'Master Hammer',
+            key: 'axe8',
+            requirements: [
+                { key: 'crafting', level: 80 },
+                { key: 'refinedmetal', amount: 200 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 220
+        },
+        fishingrod8: {
+            name: 'Master Fishing Rod',
+            key: 'fishingrod8',
+            requirements: [
+                { key: 'crafting', level: 80 },
+                { key: 'refinedmetal', amount: 200 },
+                { key: 'refinedwood', amount: 60 }
+            ],
+            xp: 220
+        },
+        // 90 - Artisan
+        pickaxe9: {
+            name: 'Artisan Pickaxe',
+            key: 'pickaxe9',
+            requirements: [
+                { key: 'crafting', level: 90 },
+                { key: 'refinedmetal', amount: 300 },
+                { key: 'refinedwood', amount: 100 }
+            ],
+            xp: 350
+        },
+        axe9: {
+            name: 'Artisan Axe',
+            key: 'axe9',
+            requirements: [
+                { key: 'crafting', level: 90 },
+                { key: 'refinedmetal', amount: 300 },
+                { key: 'refinedwood', amount: 100 }
+            ],
+            xp: 350
+        },
+        hammer9: {
+            name: 'Artisan Hammer',
+            key: 'axe9',
+            requirements: [
+                { key: 'crafting', level: 90 },
+                { key: 'refinedmetal', amount: 300 },
+                { key: 'refinedwood', amount: 100 }
+            ],
+            xp: 350
+        },
+        fishingrod9: {
+            name: 'Artisan Fishing Rod',
+            key: 'fishingrod9',
+            requirements: [
+                { key: 'crafting', level: 90 },
+                { key: 'refinedmetal', amount: 300 },
+                { key: 'refinedwood', amount: 100 }
+            ],
+            xp: 350
+        }
     }
 };

@@ -11,14 +11,14 @@ alt.on('play:Sound', playAudio);
 
 export function playAudio(soundName, pan = 0, volume = 0.35) {
     if (Date.now() < cooldown) return;
-    cooldown = Date.now() + 50;
+    cooldown = Date.now() + 10;
 
     webview.emit('playAudio', soundName, pan, volume);
 }
 
 export function playAudio3D(target, soundName) {
     if (Date.now() < cooldown) return;
-    cooldown = Date.now() + 50;
+    cooldown = Date.now() + 10;
 
     if (!target || !soundName) return;
 

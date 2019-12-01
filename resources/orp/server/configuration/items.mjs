@@ -741,10 +741,10 @@ export const Items = {
         quantity: 0,
         icon: 'syringe'
     },
-    pickaxe1: {
+    pickaxe: {
         name: 'Rusty Pickaxe',
         base: 'pickaxe',
-        key: 'pickaxe1',
+        key: 'pickaxe',
         props: {
             lvl: {
                 skill: 'mining',
@@ -765,10 +765,10 @@ export const Items = {
         quantity: 0,
         icon: 'pickaxe'
     },
-    axe1: {
+    axe: {
         name: 'Rusty Axe',
         base: 'axe',
-        key: 'axe1',
+        key: 'axe',
         props: {
             lvl: {
                 skill: 'woodcutting',
@@ -789,10 +789,10 @@ export const Items = {
         quantity: 0,
         icon: 'axe'
     },
-    hammer1: {
+    hammer: {
         name: 'Rusty Hammer',
         base: 'hammer',
-        key: 'hammer1',
+        key: 'hammer',
         props: {
             lvl: {
                 skill: 'smithing',
@@ -813,10 +813,10 @@ export const Items = {
         quantity: 0,
         icon: 'hammer'
     },
-    fishingrod1: {
+    fishingrod: {
         name: 'Rusty Fishing Rod',
         base: 'fishingrod',
-        key: 'fishingrod1',
+        key: 'fishingrod',
         props: {
             lvl: {
                 skill: 'fishing',

@@ -25,24 +25,24 @@ export const GeneralStore = {
             key: 'jug',
             price: 80
         },
-        pickaxe1: {
+        pickaxe: {
             name: 'Rusty Pickaxe',
-            key: 'pickaxe1',
+            key: 'pickaxe',
             price: 125
         },
-        axe1: {
+        axe: {
             name: 'Rusty Axe',
-            key: 'axe1',
+            key: 'axe',
             price: 125
         },
-        hammer1: {
+        hammer: {
             name: 'Rusty Hammer',
-            key: 'hammer1',
+            key: 'hammer',
             price: 125
         },
-        fishingrod1: {
+        fishingrod: {
             name: 'Rusty Fishing Rod',
-            key: 'fishingrod1',
+            key: 'fishingrod',
             price: 125
         }
     },

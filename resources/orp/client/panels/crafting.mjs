@@ -23,6 +23,11 @@ alt.on('crafting:CookingMenu', () => {
     showDialogue('cooking');
 });
 
+alt.on('crafting:ToolsMenu', () => {
+    craftType = 'tools';
+    showDialogue('tools');
+});
+
 // Show the webview for the player to type in their roleplay info.
 export function showDialogue(type) {
     if (!webview) {

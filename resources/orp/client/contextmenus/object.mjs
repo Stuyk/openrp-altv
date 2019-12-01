@@ -285,6 +285,9 @@ let objectInteractions = {
     904554844: {
         func: toolBench
     },
+    31071109: {
+        func: toolBench
+    },
     525797972: {
         func: treeParser
     },
@@ -566,7 +569,8 @@ function itemDrop(ent) {
 }
 
 function toolBench(ent) {
-    setContextTitle(`Tool Bench -> Soon^tm`);
+    appendContextItem('Crafting Menu', false, 'crafting:ToolsMenu');
+    setContextTitle(`Tool Bench`);
 }
 
 function treeParser(ent) {

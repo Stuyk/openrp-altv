@@ -3,6 +3,7 @@ import { Recipes } from '../configuration/recipes.mjs';
 import { getLevel } from './xp.mjs';
 import { addXP } from './skills.mjs';
 import { addBoundWeapon, addWeapon } from './inventory.mjs';
+import { Items } from '../configuration/items.mjs';
 
 alt.onClient('craft:CraftItem', (player, type, key) => {
     if (!Recipes[type]) {
@@ -67,6 +68,7 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
         addXP(player, 'crafting', recipe.xp);
         addXP(player, 'notoriety', recipe.xp);
         addXP(player, 'nobility', -recipe.xp);
+        addXP(player, 'smithing', Math.floor(recipe.xp / 2));
 
         if (recipe.requirements[0].level >= 90) {
             addBoundWeapon(player, key, recipe.name);
@@ -75,6 +77,7 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
             addWeapon(player, key, recipe.name);
             player.notify(`You have crafted a ${recipe.name}.`);
         }
+
         player.playAudio3D(player, 'craftweapon');
         return;
     }
@@ -100,6 +103,38 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
         player.notify(`You have created ${recipe.name}!`);
         player.playAudio3D(player, 'cook');
         return;
+    }
+
+    if (type === 'tools') {
+        const toolLevel = recipe.requirements[0].level;
+        const itemKey = recipe.key.replace(/[0-9]/g, '');
+        const props = { ...Items[itemKey].props };
+
+        if (props.lvl) {
+            props.lvl.requirement = toolLevel;
+            props.lvl.bonus = Math.floor(toolLevel / 3);
+        }
+
+        if (
+            !player.addItem(
+                itemKey,
+                1,
+                props,
+                false,
+                false,
+                `[${toolLevel}] ${recipe.name}`,
+                undefined,
+                itemKey
+            )
+        ) {
+            player.notify(`Could not craft ${recipe.name}`);
+            return;
+        }
+
+        player.playAudio3D(player, 'craft');
+        addXP(player, 'crafting', recipe.xp);
+        addXP(player, 'smithing', Math.floor(recipe.xp / 2));
+        player.notify(`You have crafted ${recipe.name}!`);
     }
 });
 

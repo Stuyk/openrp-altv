@@ -116,20 +116,47 @@ alt.on('resource:Farm', player => {
     }
 
     let quantity = 1;
+    const equipped = player.equipment[11];
+
+    if (equipped.props && equipped.props.lvl) {
+        const bonus = equipped.props.lvl.bonus;
+
+        if (type === 'tree') {
+            if (equipped.key !== 'axe') {
+                player.notify('You do not have the correct tool equipped.');
+                return;
+            }
+        }
+
+        if (type === 'rock') {
+            if (equipped.key !== 'pickaxe') {
+                player.notify('You do not have the correct tool equipped.');
+                return;
+            }
+        }
+
+        quantity += parseInt(bonus);
+    }
 
     // Maxed out.
     if (resourceData.amount < quantity) {
         quantity = resourceData.amount;
     }
 
-    // All valid. Let's try adding a resource.
-    if (!player.addItem(reward.key, quantity, Items[reward.key].props)) {
-        player.farming = undefined;
-        player.send(`{FF0000} Inventory is full.`);
-        alt.emitClient(player, 'resource:StopFarming');
-        return;
+    if (slots < quantity) {
+        quantity = slots;
     }
 
+    for (let i = 0; i < quantity; i++) {
+        if (!player.addItem(reward.key, 1, Items[reward.key].props)) {
+            player.farming = undefined;
+            player.send(`{FF0000} Inventory is full.`);
+            alt.emitClient(player, 'resource:StopFarming');
+            return;
+        }
+    }
+
+    // All valid. Let's try adding a resource.
     resourceData.amount -= quantity;
     alt.emitClient(player, 'resource:FarmTick', coords, type);
     alt.emitClient(player, 'resource:Update', type, coordsHash, coords, resourceData);

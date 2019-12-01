@@ -283,10 +283,18 @@ export function checkFuel(player, data) {
 }
 
 export function repairVehicle(player, data) {
+    if (!player.subItem('repairkit', 1)) {
+        player.notify('You do not have a repair kit.');
+        return;
+    }
+
     const vehicle = data.vehicle;
-    if (!vehicle) return;
+    if (!vehicle) {
+        return;
+    }
+
     actionMessage(player, 'Begins repairing the vehicle...');
-    player.playAnimation('missmechanic', 'work2_base', Config.vehicleRepairTime, 49);
+    player.playAnimation('missmechanic', 'work2_base', -1, 1);
     vehicle.isBeingRepaired = {
         time: Date.now() + Config.vehicleRepairTime,
         player

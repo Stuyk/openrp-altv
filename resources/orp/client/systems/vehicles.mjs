@@ -229,3 +229,29 @@ export function trackVehicle(pos) {
         }
     }, 15000);
 }
+
+alt.on('vehicle:BeginRepairingVehicle', data => {
+    const ent = data.ent;
+    const coords = data.coords;
+    const vehicle = data.vehicle;
+
+    // Stop Repair Option
+    alt.Player.local.isRepairing = false;
+    native.setVehicleDoorOpen(ent, 4, false, true);
+    native.freezeEntityPosition(alt.Player.local.scriptID, true);
+    native.taskTurnPedToFaceCoord(
+        alt.Player.local.scriptID,
+        coords.x,
+        coords.y,
+        coords.z,
+        10000
+    );
+
+    // Push repair up to server.
+    alt.emitServer('vehicle:RepairVehicle', data);
+});
+
+alt.onServer('vehicle:FinishRepair', () => {
+    native.freezeEntityPosition(alt.Player.local.scriptID, false);
+    native.clearPedTasks(alt.Player.local.scriptID);
+});

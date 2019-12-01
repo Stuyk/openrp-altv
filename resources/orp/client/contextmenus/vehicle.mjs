@@ -63,12 +63,15 @@ alt.on('menu:Vehicle', ent => {
 
     // RepairKit
     if (alt.Player.local.isRepairing) {
-        const dist = distance(alt.Player.local.pos, native.getEntityCoords(ent, false));
-        if (dist <= 4) {
-            appendContextItem('Repair Vehicle', true, 'vehicle:RepairVehicle', {
+        const boneName = native.getEntityBoneIndexByName(ent, 'engine');
+        const coords = native.getWorldPositionOfEntityBone(ent, boneName);
+        const dist = distance(alt.Player.local.pos, coords);
+        if (dist <= 1.5) {
+            appendContextItem('Repair Vehicle', false, 'vehicle:BeginRepairingVehicle', {
+                ent,
+                coords,
                 vehicle
             });
-            alt.Player.local.isRepairing = false;
         }
     }
 

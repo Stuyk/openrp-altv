@@ -64,16 +64,25 @@ alt.on('parse:Vehicle', (vehicle, now) => {
 
     // Check for Repair Update
     if (vehicle.isBeingRepaired) {
+        const player = vehicle.isBeingRepaired.player;
+        if (!player) {
+            vehicle.isBeingRepaired = undefined;
+            return;
+        }
+
+        player.playAudio3D(player, 'ratchet');
         if (now > vehicle.isBeingRepaired.time) {
             try {
-                vehicle.repair();
-                if (vehicle.isBeingRepaired.player) {
-                    addXP(vehicle.isBeingRepaired.player, 'mechanic', 25);
-                    actionMessage(
-                        vehicle.isBeingRepaired.player,
-                        'Successfully repairs the vehicle.'
-                    );
+                if (player.vehicle) {
+                    player.notify('You cannot be inside a vehicle while repairing.');
+                    vehicle.isBeingRepaired = undefined;
+                    return;
                 }
+
+                addXP(player, 'mechanic', 25);
+                actionMessage(player, 'Successfully repairs the vehicle.');
+                alt.emitClient(player, 'vehicle:FinishRepair');
+                vehicle.repair();
                 vehicle.isBeingRepaired = undefined;
             } catch (err) {
                 console.error('Failed to repair the vehicle.');

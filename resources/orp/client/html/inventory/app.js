@@ -845,11 +845,13 @@ class Stats extends Component {
             stats: []
         };
         this.addStatBind = this.addStat.bind(this);
+        this.clearStatsBind = this.clearStats.bind(this);
     }
 
     componentDidMount() {
         if ('alt' in window) {
             alt.on('inventory:AddStat', this.addStatBind);
+            alt.on('inventory:ClearStats', this.clearStatsBind);
             alt.emit('inventory:FetchStats');
         } else {
             this.addStat('agility', 1, 1);
@@ -870,7 +872,12 @@ class Stats extends Component {
     componentWillUnmount() {
         if ('alt' in window) {
             alt.off('inventory:AddStat', this.addStatBind);
+            alt.off('inventory:ClearStats', this.clearStatsBind);
         }
+    }
+
+    clearStats() {
+        this.setState({ stats: [] });
     }
 
     addStat(...args) {

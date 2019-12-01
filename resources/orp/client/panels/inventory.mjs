@@ -116,6 +116,9 @@ export function fetchStats(value) {
     if (!value) {
         value = alt.Player.local.getMeta('skills');
     }
+
+    webview.emit('inventory:ClearStats');
+
     const statArray = JSON.parse(value);
     Object.keys(statArray).forEach(key => {
         webview.emit(

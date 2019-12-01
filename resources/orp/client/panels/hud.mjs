@@ -113,6 +113,7 @@ alt.on('meta:Changed', (key, value) => {
     }
 
     if (key === 'queueNotification') {
+        alt.emit('play:Sound', 'notification', 0.5, 0.1);
         webview.emit('hud:QueueNotification', value);
     }
 
@@ -124,6 +125,7 @@ alt.on('meta:Changed', (key, value) => {
 alt.on('hud:QueueNotification', msg => {
     if (!webview) return;
     webview.emit('hud:QueueNotification', msg);
+    alt.emit('play:Sound', 'notification', 0.5, 0.1);
 });
 
 alt.on('hud:UpdateWeather', weatherName => {

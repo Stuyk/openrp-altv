@@ -5,12 +5,21 @@ import { distance } from '/client/utility/vector.mjs';
 alt.log('Loaded: client->systems->sound.mjs');
 
 let webview = new alt.WebView('http://resource/client/html/sound/index.html');
+let cooldown = Date.now();
+
+alt.on('play:Sound', playAudio);
 
 export function playAudio(soundName, pan = 0, volume = 0.35) {
+    if (Date.now() < cooldown) return;
+    cooldown = Date.now() + 50;
+
     webview.emit('playAudio', soundName, pan, volume);
 }
 
 export function playAudio3D(target, soundName) {
+    if (Date.now() < cooldown) return;
+    cooldown = Date.now() + 50;
+
     if (!target || !soundName) return;
 
     const dist = distance(target.pos, alt.Player.local.pos);

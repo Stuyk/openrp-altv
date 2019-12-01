@@ -27,5 +27,6 @@ export function getLevel(passedXP) {
 }
 
 export function getXP(lvl) {
+    if (lvl >= 99) return 13034431;
     return curve.find(x => x.lvl >= lvl).xp;
 }

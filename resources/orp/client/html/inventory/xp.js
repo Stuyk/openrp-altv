@@ -27,6 +27,6 @@ function getLevel(passedXP) {
 }
 
 function getXP(lvl) {
-    if (lvl >= 99) return 99;
+    if (lvl >= 99) return 13034431;
     return curve.find(x => x.lvl >= lvl).xp;
 }

@@ -155,29 +155,38 @@ function finishTrade(player, target) {
     }
 
     playerItems.forEach(item => {
+        const itemDuplicate = { ...player.inventory.find(i => i.hash === item.hash) };
+        if (itemDuplicate === {}) {
+            return;
+        }
         player.subItemByHash(item.hash);
         target.addItem(
-            item.key,
-            item.quantity,
-            item.props,
+            itemDuplicate.key,
+            itemDuplicate.quantity,
+            itemDuplicate.props,
             false,
             false,
-            item.name,
-            item.icon,
-            item.key
+            itemDuplicate.name,
+            itemDuplicate.icon,
+            itemDuplicate.key
         );
     });
 
     targetItems.forEach(item => {
+        const itemDuplicate = { ...target.inventory.find(i => i.hash === item.hash) };
+        if (itemDuplicate === {}) {
+            return;
+        }
+
         target.subItemByHash(item.hash);
         player.addItem(
-            item.key,
-            item.quantity,
-            item.props,
+            itemDuplicate.key,
+            itemDuplicate.quantity,
+            itemDuplicate.props,
             false,
             false,
-            item.name,
-            item.icon
+            itemDuplicate.name,
+            itemDuplicate.icon
         );
     });
 

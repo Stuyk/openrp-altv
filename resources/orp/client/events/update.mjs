@@ -7,6 +7,7 @@ alt.log('Loaded: events->update.mjs');
 alt.on('meta:Changed', loadInterval);
 
 const [_, width, height] = native.getActiveScreenResolution(0, 0);
+const noAmmoWeapons = [-1569615261, 911657153];
 
 // Only starts the interval after the player has logged in.
 function loadInterval(key) {
@@ -31,38 +32,43 @@ function drawPlayerNames() {
         native.setPedToRagdoll(alt.Player.local.scriptID, -1, -1, 0, 0, 0, 0);
     }
 
-    const [_unk, wepHash] = native.getCurrentPedWeapon(alt.Player.local.scriptID, 0, 1);
-    if (wepHash !== -1569615261) {
-        const [_unk2, clipCount] = native.getAmmoInClip(
-            alt.Player.local.scriptID,
-            wepHash,
-            0
-        );
-        const totalAmmo = native.getAmmoInPedWeapon(alt.Player.local.scriptID, wepHash);
-        if (clipCount !== 0) {
-            const hand = native.getPedBoneCoords(
+    if (native.isPlayerFreeAiming(alt.Player.local)) {
+        const [_unk, wepHash] = native.getCurrentPedWeapon(alt.Player.local.scriptID, 0, 1);
+        if (!noAmmoWeapons.includes(wepHash)) {
+            const [_unk2, clipCount] = native.getAmmoInClip(
                 alt.Player.local.scriptID,
-                6286,
-                0,
-                0,
-                0.15
+                wepHash,
+                0
             );
+            const totalAmmo = native.getAmmoInPedWeapon(
+                alt.Player.local.scriptID,
+                wepHash
+            );
+            if (clipCount !== 0) {
+                const hand = native.getPedBoneCoords(
+                    alt.Player.local.scriptID,
+                    6286,
+                    0,
+                    0,
+                    0.15
+                );
 
-            text.drawText3d(
-                `${totalAmmo} ~o~${clipCount}`,
-                hand.x,
-                hand.y,
-                hand.z,
-                0.5,
-                4,
-                255,
-                255,
-                255,
-                125,
-                true,
-                false,
-                99
-            );
+                text.drawText3d(
+                    `${totalAmmo} ~o~${clipCount}`,
+                    hand.x,
+                    hand.y,
+                    hand.z,
+                    0.5,
+                    4,
+                    255,
+                    255,
+                    255,
+                    125,
+                    true,
+                    false,
+                    99
+                );
+            }
         }
     }
 

@@ -49,7 +49,6 @@ export function syncDoors() {
 
 // Dynamic Door Functionality
 alt.onServer('door:RenderDoors', doors => {
-    alt.log(`Rendering doors; ${doors}`);
     if (dynamicDoors.length >= 1) {
         dynamicDoors.forEach(door => {
             native.deleteEntity(door.enter);
@@ -62,7 +61,7 @@ alt.onServer('door:RenderDoors', doors => {
 
         alt.loadModel(enterHash);
         native.requestModel(enterHash);
-        const enter = native.createObject(
+        const enter = native.createObjectNoOffset(
             enterHash,
             door.enter.doorPos.x,
             door.enter.doorPos.y,

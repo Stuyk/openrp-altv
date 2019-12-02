@@ -14,6 +14,7 @@ import * as eventsUpdate from '/client/events/update.mjs';
 import * as keybinds from '/client/events/keybinds.mjs';
 import * as eventsConnectionComplete from '/client/events/connectionComplete.mjs';
 import * as panelsTrade from '/client/panels/trade.mjs';
+import * as panelsInventory from '/client/panels/vehicleinventory.mjs';
 import * as systemsArrest from '/client/systems/arrest.mjs';
 import * as systemsEquip from '/client/systems/equip.mjs';
 import * as systemsInteraction from '/client/systems/interaction.mjs';

@@ -45,6 +45,44 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
             vehicle.saveField(vehicle.data.id, 'stats', JSON.stringify(vehicleData));
         };
 
+        // Inventory Management
+        vehicle.getInventory = () => {
+            const inventory = JSON.parse(vehicle.data.inventory);
+            return inventory;
+        };
+
+        vehicle.subItemByHash = hash => {
+            const inventory = JSON.parse(vehicle.data.inventory);
+            const index = inventory.findIndex(item => item && item.hash === hash);
+
+            if (index <= -1) {
+                return false;
+            }
+
+            inventory.splice(index, 1);
+            vehicle.data.inventory = JSON.stringify(inventory);
+            vehicle.saveField(vehicle.data.id, 'inventory', vehicle.data.inventory);
+            return true;
+        };
+
+        vehicle.getSlots = () => {
+            const inventory = JSON.parse(vehicle.data.inventory);
+            return inventory.length;
+        };
+
+        vehicle.addItem = itemClone => {
+            const inventory = JSON.parse(vehicle.data.inventory);
+
+            if (inventory.length >= 27) {
+                return false;
+            }
+
+            inventory.push(itemClone);
+            vehicle.data.inventory = JSON.stringify(inventory);
+            vehicle.saveField(vehicle.data.id, 'inventory', vehicle.data.inventory);
+            return true;
+        };
+
         // Save the position of the vehicle.
         vehicle.savePosition = () => {
             vehicle.saveField(vehicle.data.id, 'position', JSON.stringify(vehicle.pos));

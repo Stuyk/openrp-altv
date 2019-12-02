@@ -346,3 +346,91 @@ export function leaveEngineRunning(player) {
     vehicle.isEngineOn = true;
     alt.emitClient(null, 'vehicle:ForceEngineOn', vehicle);
 }
+
+alt.onClient('vehicle:AccessInventory', (player, data) => {
+    if (!player) {
+        return;
+    }
+
+    const vehicle = data.vehicle;
+    if (!vehicle) {
+        return;
+    }
+
+    if (!player.vehicles.includes(vehicle)) {
+        if (vehicle.lockState !== 1) {
+            player.notify('This is not your vehicle. The trunk is locked.');
+            return;
+        }
+    }
+
+    player.accessingInventory = vehicle;
+    const inventory = vehicle.getInventory();
+    alt.emitClient(player, 'vehicle:AccessTrunk', vehicle, inventory);
+});
+
+alt.onClient('vehicle:AddItemToVehicle', (player, hash, vehicle) => {
+    const index = player.inventory.findIndex(item => item && item.hash === hash);
+    if (index <= -1) {
+        player.notify('Could not add item to vehicle inventory.');
+        return;
+    }
+
+    if (vehicle.getSlots() >= 27) {
+        return;
+    }
+
+    const item = { ...player.inventory[index] };
+    if (!player.subItemByHash(hash, item.quantity)) {
+        player.notify('Could not find that item in your inventory.');
+        return;
+    }
+
+    if (!vehicle.addItem(item)) {
+        player.notify('Could not add item to vehicle.');
+        return;
+    }
+
+    const inventory = vehicle.getInventory();
+    alt.emitClient(null, 'vehicle:SyncInventory', vehicle, inventory);
+});
+
+alt.onClient('vehicle:RemoveItemFromVehicle', (player, hash, vehicle) => {
+    const inventory = vehicle.getInventory();
+    const index = inventory.findIndex(item => item && item.hash === hash);
+
+    if (index <= -1) {
+        player.notify('Could not find that item.');
+        alt.emitClient(null, 'vehicle:SyncInventory', vehicle, inventory);
+        return;
+    }
+
+    if (player.getNullSlots() === 0) {
+        player.notify('You have no room in in your inventory.');
+        return;
+    }
+
+    const item = { ...inventory[index] };
+    // key, quantity, props = {}, skipStackable = false, skipSave = false, name = undefined, icon = undefined, keyOverride = undefined
+    if (
+        !player.addItem(
+            item.key,
+            item.quantity,
+            item.props,
+            false,
+            false,
+            item.name,
+            item.icon,
+            item.key
+        )
+    ) {
+        player.notify('Failed to add item to inventory.');
+        return;
+    }
+
+    if (!vehicle.subItemByHash(item.hash)) {
+        return;
+    }
+
+    alt.emitClient(null, 'vehicle:SyncInventory', vehicle, vehicle.getInventory());
+});

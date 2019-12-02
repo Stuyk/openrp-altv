@@ -1,0 +1,166 @@
+@dark: rgba(20, 20, 20, 0.9);
+@contrast1: rgb(0, 217, 255);
+@contrast2: rgb(255, 153, 0);
+@success: rgb(131, 255, 162);
+@error: rgb(255, 123, 123);
+@darkaccent: rgb(8, 8, 8);
+@whitecontrast: rgba(255, 255, 255, 0.2);
+@fontface: 'Roboto';
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: @fontface;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+body:focus {
+    outline: none !important;
+}
+
+#render {
+    display: flex !important;
+    justify-items: center;
+    justify-content: center;
+    width: 800px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    margin: 0 auto;
+    background: @dark;
+}
+
+.panel {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    height: 100%;
+    color: white;
+    text-transform: none;
+
+    .items {
+        width: 100%;
+        padding: 10px;
+
+        .header {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            width: 100%;
+            height: 35px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+
+            .itemName {
+                width: 100%;
+                padding-left: 20px;
+                text-align: left;
+            }
+
+            .addItem {
+                width: 35px;
+                height: 100%;
+                background: transparent;
+                color: @contrast1;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+
+                &:hover {
+                    border: 2px solid @contrast2;
+                    color: @contrast2;
+                }
+
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .vehicle {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-left: 0px;
+        border-top: 0px;
+        border-bottom: 0px;
+
+        .header {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .item {
+            background: @error;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            width: 100%;
+            height: 35px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+
+            .itemName {
+                width: 100%;
+                padding-left: 10px;
+                text-align: left;
+            }
+
+            .removeItem {
+                width: 35px;
+                height: 100%;
+                background: transparent;
+                color: rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+
+                &:hover {
+                    border: 2px solid white;
+                    color: white;
+                }
+
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: @darkaccent;
+    box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer !important;
+}

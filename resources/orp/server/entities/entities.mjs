@@ -265,6 +265,10 @@ export const Vehicle = new orm.EntitySchema({
         dimension: {
             type: 'int',
             default: 0
+        },
+        inventory: {
+            type: 'text',
+            default: '[]'
         }
     }
 });

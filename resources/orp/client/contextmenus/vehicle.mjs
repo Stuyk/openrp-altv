@@ -86,6 +86,16 @@ alt.on('menu:Vehicle', ent => {
         }
     }
 
+    // Trunk
+    const boneName = native.getEntityBoneIndexByName(ent, 'boot');
+    const coords = native.getWorldPositionOfEntityBone(ent, boneName);
+    const dist = distance(alt.Player.local.pos, coords);
+    if (dist <= 1.5) {
+        appendContextItem('Inventory', true, 'vehicle:AccessInventory', {
+            vehicle
+        });
+    }
+
     setContextTitle(name);
 });
 

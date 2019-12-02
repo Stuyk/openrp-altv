@@ -35,6 +35,7 @@ class App extends Component {
             alt.on('trade:SetLockState', this.setLockState.bind(this));
             alt.on('trade:SetTargetSlots', this.setTargetSlots.bind(this));
             alt.on('trade:Unlock', this.unlockTrade.bind(this));
+            alt.on('trade:ResetHash', this.resetHash.bind(this));
             setTimeout(() => {
                 alt.emit('trade:Ready');
             }, 100);
@@ -55,6 +56,20 @@ class App extends Component {
 
     componentDidUnmount() {
         window.removeEventListener('keyup', this.closeBind);
+    }
+
+    resetHash(hash) {
+        const myOfferedItems = [...this.state.myOfferedItems];
+        const index = myOfferedItems.findIndex(item => item.hash === hash);
+        if (index <= -1) {
+            return;
+        }
+
+        const inventory = [...this.state.inventory];
+        const oldItem = { ...myOfferedItems[index] };
+        myOfferedItems.splice(index, 1);
+        inventory.push(oldItem);
+        this.setState({ myOfferedItems, inventory });
     }
 
     close(e) {

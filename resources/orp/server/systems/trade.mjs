@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import { distance } from '../utility/vector.mjs';
+import { Items, BaseItems } from '../configuration/items.mjs';
 
 alt.on('trade:KillTrade', killTrade);
 alt.onClient('trade:Offer', offerTrade);
@@ -56,6 +57,38 @@ function offerItems(player, items) {
     if (!target) {
         killTrade(player);
         return;
+    }
+
+    const removeHashes = [];
+    items.forEach((item, index) => {
+        if (!Items[item.key]) {
+            return;
+        }
+
+        const baseKey = Items[item.key].base;
+
+        if (!BaseItems[baseKey]) {
+            return;
+        }
+
+        if (BaseItems[baseKey].abilities.sell) {
+            return;
+        }
+
+        removeHashes.push(item.hash);
+    });
+
+    if (removeHashes.length >= 1) {
+        removeHashes.forEach(hash => {
+            const index = items.findIndex(item => item.hash === hash);
+            if (index <= -1) {
+                return;
+            }
+
+            items.splice(index, 1);
+        });
+
+        alt.emitClient(player, 'trade:ResetHashes', removeHashes);
     }
 
     player.tradeData.items = items;
@@ -155,7 +188,9 @@ function finishTrade(player, target) {
     }
 
     playerItems.forEach(item => {
-        const itemDuplicate = { ...player.inventory.find(i => i.hash === item.hash) };
+        const itemDuplicate = {
+            ...player.inventory.find(i => i && i.hash === item.hash)
+        };
         if (itemDuplicate === {}) {
             return;
         }
@@ -173,7 +208,9 @@ function finishTrade(player, target) {
     });
 
     targetItems.forEach(item => {
-        const itemDuplicate = { ...target.inventory.find(i => i.hash === item.hash) };
+        const itemDuplicate = {
+            ...target.inventory.find(i => i && i.hash === item.hash)
+        };
         if (itemDuplicate === {}) {
             return;
         }

@@ -26,7 +26,7 @@ export const BaseItems = {
             drop: false,
             use: true,
             destroy: true,
-            sell: true,
+            sell: false,
             rename: false,
             stack: false
         },
@@ -374,7 +374,7 @@ export const BaseItems = {
             drop: true,
             use: true,
             destroy: true,
-            sell: false,
+            sell: true,
             rename: false,
             stack: true
         },
@@ -386,7 +386,7 @@ export const BaseItems = {
             drop: true,
             use: true,
             destroy: true,
-            sell: false,
+            sell: true,
             rename: false,
             stack: true
         },
@@ -398,7 +398,7 @@ export const BaseItems = {
             drop: true,
             use: true,
             destroy: true,
-            sell: false,
+            sell: true,
             rename: false,
             stack: true
         },

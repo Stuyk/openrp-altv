@@ -98,3 +98,10 @@ alt.onServer('trade:SetTargetSlots', slots => {
     if (!webview) return;
     webview.emit('trade:SetTargetSlots', slots);
 });
+
+alt.onServer('trade:ResetHashes', hashes => {
+    if (!webview) return;
+    hashes.forEach(hash => {
+        webview.emit('trade:ResetHash', hash);
+    });
+});

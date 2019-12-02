@@ -3,6 +3,7 @@ import { randPosAround, distance } from '../utility/vector.mjs';
 import * as utilityVehicle from '../utility/vehicle.mjs';
 import { Config } from '../configuration/config.mjs';
 import { actionMessage } from '../chat/chat.mjs';
+import { Items, BaseItems } from '../configuration/items.mjs';
 
 let VehicleMap = new Map();
 
@@ -381,6 +382,21 @@ alt.onClient('vehicle:AddItemToVehicle', (player, hash, vehicle) => {
     }
 
     const item = { ...player.inventory[index] };
+
+    if (Items[item.key]) {
+        const baseKey = Items[item.key].base;
+        if (!BaseItems[baseKey].abilities.sell) {
+            alt.emitClient(
+                null,
+                'vehicle:SyncInventory',
+                vehicle,
+                vehicle.getInventory(),
+                true
+            );
+            return;
+        }
+    }
+
     if (!player.subItemByHash(hash, item.quantity)) {
         player.notify('Could not find that item in your inventory.');
         return;

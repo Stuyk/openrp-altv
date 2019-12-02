@@ -29,6 +29,8 @@ export function showDialogue() {
 function closeDialogue() {
     if (!webview) return;
     webview.close();
+    vehicle = undefined;
+    inventory = undefined;
 }
 
 function ready() {
@@ -55,14 +57,21 @@ alt.onServer('vehicle:AccessTrunk', (currentVehicle, currentInventory) => {
     showDialogue();
 });
 
-alt.onServer('vehicle:SyncInventory', (currentVehicle, currentInventory) => {
-    if (vehicle !== currentVehicle) return;
-    inventory = currentInventory;
+alt.onServer(
+    'vehicle:SyncInventory',
+    (currentVehicle, currentInventory, refreshPlayerInventory = false) => {
+        if (vehicle !== currentVehicle) return;
+        inventory = currentInventory;
 
-    if (webview) {
-        webview.emit('vehinv:SyncInventory', inventory);
+        if (webview) {
+            webview.emit('vehinv:SyncInventory', inventory);
+            if (refreshPlayerInventory) {
+                const playerInventory = JSON.parse(alt.Player.local.getMeta('inventory'));
+                webview.emit('vehinv:SetInventory', playerInventory);
+            }
+        }
     }
-});
+);
 
 alt.on('meta:Changed', (key, value) => {
     if (key !== 'inventory') {

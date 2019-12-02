@@ -75,21 +75,21 @@ RUN cat resources/orp/server/discord/configuration.json
 
 # AltV configuration
 RUN echo '\
-name: "'$SERVER_NAME'"\n\
+name: '$SERVER_NAME'\n\
 host: 0.0.0.0\n\
 port: 7788\n\
-players: "'$SERVER_PLAYERS'"\n\
-announce: "'$SERVER_ANNOUNCE'"\n\
+players: '$SERVER_PLAYERS'\n\
+announce: '$SERVER_ANNOUNCE'\n\
 gamemode: ORP\n\
-website: "'$SERVER_WEBSITE'"\n\
-language: "'$SERVER_LANGUAGE'"\n\
-description: "'$SERVER_DESCRIPTION'"\n\
+website: '$SERVER_WEBSITE'\n\
+language: '$SERVER_LANGUAGE'\n\
+description: '$SERVER_DESCRIPTION'\n\
 modules: [ node-module ]\n\
 resources: [ orp, hospital-pillbox, club-bahama, comedy-club ]\n\
-token: "'$SERVER_TOKEN'"\n\
-debug: "'$SERVER_DEBUG'"\n\
-streamingDistance: "'$SERVER_STREAMINGDISTANCE'"\n\
-password: "'$SERVER_PASSWORD'"\n\
+token: '$SERVER_TOKEN'\n\
+debug: '$SERVER_DEBUG'\n\
+streamingDistance: '$SERVER_STREAMINGDISTANCE'\n\
+password: '$SERVER_PASSWORD'\n\
 ' > server.cfg
 RUN cat server.cfg
 

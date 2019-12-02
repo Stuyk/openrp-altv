@@ -4,16 +4,16 @@ services:
     build: 
       context: .
       args:
-        - SERVER_NAME=Dockerized Open RP
-        - SERVER_DESCRIPTION=Demonstration Purposes Only
+        - SERVER_NAME='Dockerized Open RP'
+        - SERVER_DESCRIPTION='Demonstration Purposes Only'
         - SERVER_PLAYERS=64
         - SERVER_ANNOUNCE=false
-        - SERVER_TOKEN=
-        - SERVER_WEBSITE=twitch.tv/stuykgaming
+        - SERVER_TOKEN=''
+        - SERVER_WEBSITE='twitch.tv/stuykgaming'
         - SERVER_LANGUAGE=en
         - SERVER_DEBUG=true
         - SERVER_STREAMINGDISTANCE=300
-        - SERVER_PASSWORD=
+        - SERVER_PASSWORD=''
         - DISCORD_URL=
         - DISCORD_TOKEN=
         - ALTV_VERSION=beta
@@ -29,6 +29,8 @@ services:
     container_name: db
     environment:
       - POSTGRES_DB=altv
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - db_data:/var/lib/postgresql/data
 volumes:

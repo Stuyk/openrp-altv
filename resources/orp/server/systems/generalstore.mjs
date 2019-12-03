@@ -66,7 +66,7 @@ export function buyItem(player, shopType, itemKey, amount) {
                     props, // Properties
                     false,
                     false,
-                    itemName, // Name Override
+                    generalItem.name, // Name Override
                     itemName.toLowerCase(), // Icon
                     generalItem.key // Key Override
                 )
@@ -80,5 +80,5 @@ export function buyItem(player, shopType, itemKey, amount) {
 
     player.subCash(generalItem.price * amount);
     player.playAudio('buy');
-    player.notify(`Purchased ${amount}x ${itemName}(s)`);
+    player.notify(`Purchased ${amount}x ${generalItem.name}(s)`);
 }

@@ -12,6 +12,8 @@ export function showCursor(value) {
     }
 
     cursorCount -= 1;
+    alt.showCursor(false);
+
     while (cursorCount >= 1) {
         cursorCount -= 1;
         try {

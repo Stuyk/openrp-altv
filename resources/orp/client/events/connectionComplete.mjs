@@ -9,5 +9,6 @@ alt.on('connectionComplete', () => {
     alt.loadModel('mp_f_freemode_01');
     alt.loadModel('mp_m_freemode_01');
     alt.emit('load:Interiors');
+    native.displayRadar(true);
     native.setMinimapComponent(15, true);
 });

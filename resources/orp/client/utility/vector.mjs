@@ -51,3 +51,58 @@ export function getForwardVector(entity, distance) {
         z: pos.z
     };
 }
+
+export function lerp(a, b, t) {
+    return (1 - t) * a + t * b;
+}
+
+export function vectorLerp(vector1, vector2, l, clamp) {
+    if (clamp) {
+        if (l < 0.0) {
+            l = 0.0;
+        }
+
+        if (l > 0.0) {
+            l = 1.0;
+        }
+    }
+
+    let x = lerp(vector1.x, vector2.x, l);
+    let y = lerp(vector1.y, vector2.y, l);
+    let z = lerp(vector1.z, vector2.z, l);
+
+    return { x: x, y: y, z: z };
+}
+
+export function lerpObject(id, to, speed = 0.1) {
+    let runTimer = 0;
+    let dist = 0;
+    native.freezeEntityPosition(id, true);
+
+    return new Promise(resolve => {
+        const objectInterval = alt.setInterval(() => {
+            const pos = native.getEntityCoords(id, false);
+            dist = distance(pos, to);
+
+            const objectSpeed = (1.0 / dist) * 0.01 * speed;
+            runTimer = runTimer + objectSpeed;
+
+            const posTick = vectorLerp(pos, to, runTimer, false);
+            native.setEntityCoords(
+                id,
+                posTick.x,
+                posTick.y,
+                posTick.z,
+                false,
+                false,
+                false,
+                false
+            );
+
+            if (dist <= 0.05) {
+                alt.clearInterval(objectInterval);
+                resolve(true);
+            }
+        }, 1);
+    });
+}

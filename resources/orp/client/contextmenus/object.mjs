@@ -293,6 +293,9 @@ let objectInteractions = {
     },
     4146332269: {
         func: rockParser
+    },
+    730596951: {
+        func: pickupLumber
     }
 };
 
@@ -647,4 +650,9 @@ function rockParser(ent) {
     }
 
     setContextTitle(`Rock`);
+}
+
+function pickupLumber(ent) {
+    appendContextItem('Pickup', false, 'lumber:Pickup', { id: ent });
+    setContextTitle('Refined Wood');
 }

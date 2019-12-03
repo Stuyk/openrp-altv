@@ -168,7 +168,7 @@ alt.on('job:LumberRefinery', player => {
             scale: 1,
             offset: { x: 0, y: 1, z: 0 },
             time: 0.4 // Animation times to play at.
-        },
+        }, 
         {
             dict: 'core',
             name: 'ent_anim_dusty_hands',

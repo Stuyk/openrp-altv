@@ -6,7 +6,8 @@ import {
     Hospitals,
     ToolBenches,
     CookingSources,
-    FruitStands
+    FruitStands,
+    BandSaws
 } from '/client/locations/locations.mjs';
 
 alt.log('Loaded: client->blips->bliphelper.mjs');
@@ -125,6 +126,10 @@ Hospitals.forEach(hospital => {
     createBlip('hospital', hospital, 153, 43, 'Hospital');
 });
 
+FruitStands.forEach(stand => {
+    createBlip('foodstand', stand, 478, 53, 'Food Stand', 5);
+});
+
 ToolBenches.forEach(bench => {
     createBlip('toolbench', bench, 643, 53, 'Tool Bench', 5);
 });
@@ -133,9 +138,10 @@ CookingSources.forEach(source => {
     createBlip('cookingsource', source, 648, 53, 'Cooking Source', 5);
 });
 
-FruitStands.forEach(stand => {
-    createBlip('foodstand', stand, 478, 53, 'Food Stand', 5);
+BandSaws.forEach(saw => {
+    createBlip('bandsaw', saw, 656, 53, 'Bandsaw', 5);
 });
+
 
 //  alt.emit('option:Changed', option, cache.get(`option:${option}`));
 

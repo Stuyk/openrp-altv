@@ -8,6 +8,46 @@ alt.onServer(
     }
 );
 
+alt.on('playParticleAtCoords', (dict, name, duration, scale, x, y, z) => {
+    playParticleFXCoords(dict, name, duration, scale, x, y, z);
+});
+
+export function playParticleFXCoords(dict, name, duration, scale, x, y, z) {
+    const particles = [];
+    if (name.includes('scr')) return; // scr particles break things easily.
+    const interval = alt.setInterval(() => {
+        native.requestPtfxAsset(dict);
+        native.useParticleFxAsset(dict);
+        const particle = native.startParticleFxLoopedAtCoord(
+            name,
+            x,
+            y,
+            z,
+            0,
+            0,
+            0,
+            scale,
+            0,
+            0,
+            0,
+            0
+        );
+        particles.push(particle);
+    }, 0);
+
+    alt.setTimeout(() => {
+        alt.clearInterval(interval);
+        native.stopFireInRange(x, y, z, 10);
+        alt.setTimeout(() => {
+            particles.forEach(particle => {
+                alt.nextTick(() => {
+                    native.stopParticleFxLooped(particle, false);
+                });
+            });
+        }, duration * 2);
+    }, duration);
+}
+
 export function playParticleFX(
     dict,
     name,

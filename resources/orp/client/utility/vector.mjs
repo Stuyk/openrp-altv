@@ -106,3 +106,13 @@ export function lerpObject(id, to, speed = 0.1) {
         }, 1);
     });
 }
+
+
+const hash = native.getHashKey('prop_rub_scrap_02');
+alt.loadModel(hash)
+native.requestModel(hash);
+
+const pos = alt.Player.local.pos;
+native.createObjectNoOffset(hash, pos.x, pos.y, pos.z, false, false, false);
+
+

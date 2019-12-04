@@ -201,4 +201,5 @@ alt.on('sync:Player', player => {
 
     player.health = player.data.health;
     player.armour = player.data.armour;
+    player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 0);
 });

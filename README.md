@@ -9,10 +9,10 @@ Open Roleplay has its own [Official Discord](https://discord.gg/WbzTJXW).
 
 I have put a ton of work into this project. If you do not want to contribute code and you use this project at least buy me some coffee; I could use it.
 
-[Github Sponsorship Program](https://www.github.com/sponsors/stuyk)
-[PayPal Tipping](paypal.me/stuyk)
-[Twitch Subscription](https://www.twitch.tv/stuyksoft/)
-[Brave Browser Referral](https://brave.com/stu514)
+-   [Github Sponsorship Program](https://www.github.com/sponsors/stuyk)
+-   [PayPal Tipping](paypal.me/stuyk)
+-   [Twitch Subscription](https://www.twitch.tv/stuyksoft/)
+-   [Brave Browser Referral](https://brave.com/stu514)
 
 ### Licensing
 

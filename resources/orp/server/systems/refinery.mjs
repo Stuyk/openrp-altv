@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import { addXP } from '../systems/skills.mjs';
 
 alt.onClient('refinery:UseUnrefinedMetal', useUnrefinedMetal);
 alt.onClient('refinery:PickupMetal', pickupMetal);
@@ -36,5 +37,6 @@ function pickupMetal(player) {
         return;
     }
 
+    addXP(player, 'smithing', Math.floor(Math.random() * 25) + 25);
     player.notify('Added x1 Refined Metal');
 }

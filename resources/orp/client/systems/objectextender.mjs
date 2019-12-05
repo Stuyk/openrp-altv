@@ -68,7 +68,7 @@ const EquipHelper = {
     hammer: {
         array: Unk,
         model: native.getHashKey('prop_ld_pipe_single_01')
-    }
+    },
 };
 
 let interval;

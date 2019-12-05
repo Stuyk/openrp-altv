@@ -1,5 +1,5 @@
 import * as alt from 'alt';
-import { getPlayersInRange } from '../utility/vector.mjs';
+import { addXP } from '../systems/skills.mjs';
 
 const planksToSpawn = 3;
 
@@ -22,10 +22,8 @@ alt.onClient('lumber:UseUnrefinedWood', (player, data) => {
         player.pendingLogs += amount * planksToSpawn;
     }
 
-    const players = getPlayersInRange(player.pos, 10);
-    players.forEach(target => {
-        alt.emitClient(target, 'lumber:SpawnLog');
-    });
+    alt.emitClient(player, 'lumber:SpawnLog');
+    player.notify('Lumber has been added to the queue.');
 });
 
 alt.onClient('lumber:FinishLog', player => {
@@ -66,5 +64,6 @@ alt.onClient('lumber:Pickup', player => {
         return;
     }
 
+    addXP(player, 'woodcutting', Math.floor(Math.random() * 25) + 25);
     player.notify('Added x1 Refined Wood');
 });

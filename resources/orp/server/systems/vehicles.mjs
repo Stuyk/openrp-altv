@@ -437,7 +437,7 @@ alt.onClient('vehicle:RemoveItemFromVehicle', (player, hash, vehicle) => {
     // key, quantity, props = {}, skipStackable = false, skipSave = false, name = undefined, icon = undefined, keyOverride = undefined
     if (
         !player.addItem(
-            item.base,
+            item.key,
             item.quantity,
             item.props,
             false,

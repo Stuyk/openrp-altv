@@ -108,4 +108,12 @@ async function parseBearerToken(player, bearerToken) {
         username: data.username,
         discriminator: data.discriminator
     });
+
+    const discordUser = client.users.get(data.id);
+    if (discordUser) {
+        await discordUser.send(`You have logged in.`).catch(err => {
+            alt.log('User could not be sent a PM.');
+            return undefined;
+        });
+    }
 }

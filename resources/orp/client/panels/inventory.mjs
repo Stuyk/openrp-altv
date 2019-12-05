@@ -238,9 +238,9 @@ function setOption(key, value) {
 function loadOptions() {
     const cache = alt.LocalStorage.get();
     options.forEach(option => {
-        const res = cache.get(option);
+        const res = cache.get(option.name);
         const value = res === null ? true : res;
-        alt.emit('option:Changed', value);
+        alt.emit('option:Changed', option.name, value);
     });
 }
 

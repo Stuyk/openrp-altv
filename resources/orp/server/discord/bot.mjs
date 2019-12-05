@@ -31,12 +31,18 @@ client.on('message', async msg => {
         });
 
         if (!author) return;
-
         if (!msg.content.includes('!login')) {
-            await author.send('`!login <token>`').catch(err => {
+            const embed = new Discord.RichEmbed()
+                .setColor('#ff9100')
+                .setTitle('Command Helper')
+                .setDescription('Here is a list of useful commands.')
+                .addField(
+                    '!login <token>',
+                    'Login to the server using the token displayed in-game.'
+                );
+
+            await author.send({ embed }).catch(err => {
                 console.log('Could not send message to user from bot.');
-                console.log(err);
-                return;
             });
             return;
         }
@@ -58,7 +64,13 @@ client.on('message', async msg => {
 
         player.token = undefined;
         delete player.token;
-        await author.send('You are now being logged in.').catch(err => {
+
+        const embed = new Discord.RichEmbed()
+            .setColor('#ff9100')
+            .setTitle('Login')
+            .setDescription(`You have been logged in under the IP of ${player.ip}`);
+
+        await author.send({ embed }).catch(err => {
             console.log('Could not send message to user from bot.');
             console.log(err);
             return;
@@ -111,8 +123,13 @@ async function parseBearerToken(player, bearerToken) {
 
     const discordUser = client.users.get(data.id);
     if (discordUser) {
-        await discordUser.send(`You have logged in.`).catch(err => {
-            alt.log('User could not be sent a PM.');
+        const embed = new Discord.RichEmbed()
+            .setColor('#ff9100')
+            .setTitle('Login')
+            .setDescription(`You have been logged in under the IP of ${player.ip}`);
+
+        await discordUser.send({ embed }).catch(err => {
+            alt.log(`User could not be sent a PM.`);
             return undefined;
         });
     }

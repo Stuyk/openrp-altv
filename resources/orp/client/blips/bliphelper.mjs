@@ -142,10 +142,11 @@ BandSaws.forEach(saw => {
     createBlip('bandsaw', saw, 656, 53, 'Bandsaw', 5);
 });
 
-
 //  alt.emit('option:Changed', option, cache.get(`option:${option}`));
 
 alt.on('option:Changed', (optionName, value) => {
+    alt.log(optionName);
+
     const keys = Object.keys(categories);
     if (!keys.includes(optionName.replace('option:', ''))) return;
     setBlipCategoryState(optionName.replace('option:', ''), value);

@@ -1,9 +1,12 @@
 import * as alt from 'alt';
+import { get } from 'https';
 import config from './configuration.json';
 import Discord from 'discord.js';
 
 const client = new Discord.Client();
 alt.log('!!! => Loading Discord Bot');
+
+alt.onClient('discord:BearerToken', parseBearerToken);
 
 client.on('ready', () => {
     alt.log('!!! => Discord bot has authenticated successfully...');
@@ -70,4 +73,39 @@ client.on('message', async msg => {
     }
 });
 
+// Establish Connection
 client.login(config.token);
+
+async function parseBearerToken(player, bearerToken) {
+    const result = await new Promise(resolve => {
+        get(
+            'https://discordapp.com/api/users/@me',
+            {
+                headers: {
+                    Authorization: `Bearer ${bearerToken}`
+                }
+            },
+            res => {
+                res.on('data', d => {
+                    resolve({ statusCode: res.statusCode, data: d.toString() });
+                });
+            }
+        ).on('error', e => {
+            return resolve({ statusCode: e.statusCode, data: '' });
+        });
+    });
+
+    if (result.statusCode !== 200) {
+        return;
+    }
+
+    const data = JSON.parse(result.data);
+    player.token = undefined;
+    delete player.token;
+    alt.emitClient(player, 'discord:Done');
+    alt.emit('discord:FinishLogin', player, {
+        id: data.id,
+        username: data.username,
+        discriminator: data.discriminator
+    });
+}

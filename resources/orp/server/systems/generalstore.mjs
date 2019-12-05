@@ -40,7 +40,6 @@ export function buyItem(player, shopType, itemKey, amount) {
         return;
     }
 
-    const itemName = generalItem.key.charAt(0).toUpperCase() + generalItem.key.slice(1);
     if (!generalItem.unique) {
         if (!Items[generalItem.key]) {
             player.notify('That item does not exist.');
@@ -67,7 +66,7 @@ export function buyItem(player, shopType, itemKey, amount) {
                     false,
                     false,
                     generalItem.name, // Name Override
-                    itemName.toLowerCase(), // Icon
+                    generalItem.key, // Icon
                     generalItem.key // Key Override
                 )
             ) {

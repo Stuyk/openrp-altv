@@ -11,13 +11,11 @@ export function showCursor(value) {
         return;
     }
 
-    cursorCount -= 1;
-    alt.showCursor(false);
-
-    while (cursorCount > 1) {
-        cursorCount -= 1;
+    for (let i = 0; i < cursorCount; i++) {
         try {
             alt.showCursor(false);
         } catch (e) {}
     }
+
+    cursorCount = 0;
 }

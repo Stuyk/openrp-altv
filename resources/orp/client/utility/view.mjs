@@ -27,7 +27,6 @@ export class View {
     }
 
     open(url, killControls = true) {
-        showCursor(false);
 
         if (!currentView.view) {
             currentView.view = new alt.WebView(url);

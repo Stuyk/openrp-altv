@@ -415,8 +415,8 @@ export const Recipes = {
             xp: 25
         },
         roastedcorn: {
-            name: 'Fish Tacos',
-            key: 'fishtacos',
+            name: 'Roasted Corn',
+            key: 'roastedcorn',
             requirements: [{ key: 'cooking', level: 6 }, { key: 'corn', amount: 2 }],
             xp: 25
         },

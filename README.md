@@ -2,21 +2,23 @@
 
 Remember to 🌟 this Github if you 💖 it.
 
----
-
-### Sponsor this Project to keep it **FREE**
-
-[Github Sponsorship Program](https://www.github.com/sponsors/stuyk)
-
-Open Roleplay is a base gamemode for Roleplay servers.
 Open Roleplay is the base framework for my server: [alt:V Life](https://discord.gg/fc7P9eH).
 Open Roleplay has its own [Official Discord](https://discord.gg/WbzTJXW).
 
+### Sponsor this Project
+
+I have put a ton of work into this project. If you do not want to contribute code and you use this project at least buy me some coffee; I could use it.
+
+[Github Sponsorship Program](https://www.github.com/sponsors/stuyk)
+[PayPal Tipping](paypal.me/stuyk)
+[Twitch Subscription](https://www.twitch.tv/stuyksoft/)
+[Brave Browser Referral](https://brave.com/stu514)
+
 ### Licensing
 
-If you'd like to remove the splash screens at any point; we can negotiate at a price. However, you will be responsible for removing them and not me. Otherwise, just leave the splash screens alone. This is a free framework and the least you can do is give credit. You are also required to put **ORP** in your gamemode for your alt:V server configuration. You did not write this gamemode; and it is not your **custom gamemode**. **Put credit where credit is due.**
-
----
+1. Don't Monetize this Game Mode
+2. Don't Remove Splash Marks
+3. Don't Remove O:RP Links or Twitch Links from gamemode.
 
 ### Feature List and Roadmap
 
@@ -26,20 +28,17 @@ You can find a full list of features and the roadmap [here](https://docs.google.
 
 I **will not** be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page](https://www.twitch.tv/stuyksoft/) and then joining the [Discord Group](https://discord.gg/gVfJkcs)
 
----
-
-### General Information and Hotkeys
+### Hotkeys
 
 ```
-// General
 Tab --------> Press to Toggle Cursor
 Tab + RMB  -> Show Context Menu on User
 Tab + LMB  -> Select Context Option
 T ----------> Open Chat
 F1 ---------> Help Menu
+U ----------> Open Gang Menu (Notoriety 25+)
+Shift + F7 -> Toggle Chat
 ```
-
----
 
 ## Installation
 

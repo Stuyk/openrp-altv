@@ -14,7 +14,6 @@ import { getLevel } from '../systems/xp.mjs';
 
 import * as systemsInteraction from '../systems/interaction.mjs';
 import * as systemsTime from '../systems/time.mjs';
-import * as utilityTime from '../utility/time.mjs';
 
 import SQL from '../../../postgres-wrapper/database.mjs';
 
@@ -72,39 +71,36 @@ export function setupPlayerFunctions(player) {
      * Calculated from start time; until now. Then resets it.
      * @memberof player
      */
-    player.updatePlayingTime = () => {
-        console.log('Updating Playing Time');
-        if (!player.startTime) {
-            player.startTime = Date.now();
-            return;
-        }
+    player.addRewardPoint = () => {
+        let currentPoints = parseInt(player.data.rewardpoints);
+        currentPoints += 1;
 
-        const minutesPlayed = utilityTime.getPlayingTime(player.startTime, Date.now());
-        player.data.playingtime += parseInt(Math.round(minutesPlayed));
-        let isAboveThreshold = minutesPlayed >= 1 ? true : false;
-        player.startTime = Date.now();
+        let currentTotalPoints = parseInt(player.data.totalrewardpoints);
+        currentTotalPoints += 1;
 
-        if (isAboveThreshold) {
-            const points = utilityTime.minutesToUpgradePoints(player.data.playingtime);
-            player.data.upgradestotal = points;
-
-            // db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
-            db.updatePartialData(
-                player.data.id,
-                {
-                    playingtime: player.data.playingtime,
-                    upgradestotal: player.data.upgradestotal
-                },
-                'Character',
-                () => {}
-            );
-        }
+        player.saveField(player.data.id, 'rewardpoints', currentPoints);
+        player.saveField(player.data.id, 'totalrewardpoints', currentTotalPoints);
     };
 
     /**
-     *  Set the last login date of the user to the database.
+     * Returns the total reward points a player has.
      * @memberof player
      */
+    player.getRewardPoints = () => {
+        return parseInt(player.data.rewardpoints);
+    };
+
+    player.getTotalRewardPoints = () => {
+        return parseInt(player.data.totalrewardpoints);
+    };
+
+    player.getTotalPlayTime = () => {
+        const totalPoints = player.getTotalRewardPoints();
+        const timePerPoint = Config.timeRewardTime;
+        const timeInMS = totalPoints * timePerPoint;
+        return timeInMS / 1000 / 60 / 60;
+    };
+
     player.setLastLogin = () => {
         const date = new Date(player.data.lastlogin * 1).toString();
         player.send(`{FFFF00}Last Login: ${date}`);

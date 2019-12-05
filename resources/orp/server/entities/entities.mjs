@@ -38,10 +38,6 @@ export const Character = new orm.EntitySchema({
             nullable: true,
             default: null
         },
-        dob: {
-            type: 'text',
-            default: `${Date.now()}`
-        },
         creation: {
             type: 'bigint',
             default: Date.now()
@@ -54,11 +50,11 @@ export const Character = new orm.EntitySchema({
             type: 'int',
             default: 0
         },
-        upgradestotal: {
+        rewardpoints: {
             type: 'int',
             default: 0
         },
-        upgrades: {
+        totalrewardpoints: {
             type: 'int',
             default: 0
         },

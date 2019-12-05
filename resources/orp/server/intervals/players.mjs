@@ -2,7 +2,7 @@ import * as alt from 'alt';
 import { getCharacterName } from '../cache/cache.mjs';
 import { Config } from '../configuration/config.mjs';
 
-let nextTimePlayingTime = Date.now() + Config.timePlayingTime;
+let nextRewardPointTime = Date.now() + Config.timeRewardTime;
 let nextSavePlayerTime = Date.now() + Config.timePlayerSaveTime;
 let nextPaycheckTime = Date.now() + Config.timePaycheckTime;
 let nextRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
@@ -29,9 +29,9 @@ function handlePlayerInterval() {
         nextSavePlayerTime = now + Config.timePlayerSaveTime;
     }
 
-    if (nextTimePlayingTime < now) {
-        alt.log('Saving Playing Time');
-        nextTimePlayingTime = now + Config.timePlayingTime;
+    if (nextRewardPointTime < now) {
+        alt.log('Saving Reward Points');
+        nextRewardPointTime = now + Config.timeRewardTime;
     }
 
     if (nextPaycheckTime < now) {
@@ -61,13 +61,13 @@ alt.on('parse:Player', (player, now) => {
     }
 
     // Save Playing Time
-    if (nextTimePlayingTime < now) {
-        if (player.updatePlayingTime) {
+    if (nextRewardPointTime < now) {
+        if (player.addRewardPoint) {
             try {
-                player.updatePlayingTime();
+                player.addRewardPoint();
             } catch (err) {
                 alt.log(err);
-                alt.error(`Could not save playing time.`);
+                alt.error(`Could not add a reward point.`);
             }
         }
     }

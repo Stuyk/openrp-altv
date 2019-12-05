@@ -81,7 +81,6 @@ alt.on('logout:Player', player => {
     }
 
     // Standard Player Logout Routine
-    player.updatePlayingTime();
     player.data.health = player.health;
     player.data.armour = player.armour;
 
@@ -144,10 +143,9 @@ alt.on('sync:Player', player => {
     player.setSyncedMeta('id', player.data.id);
 
     // Set player name.
-    if (player.data.name !== null && player.data.dob !== null) {
+    if (player.data.name !== null) {
         player.needsRoleplayInfo = false;
         player.setSyncedMeta('name', player.data.name);
-        player.setSyncedMeta('dob', player.data.dob);
         alt.log(`${player.data.name} has spawned.`);
     }
 

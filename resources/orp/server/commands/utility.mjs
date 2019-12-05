@@ -32,3 +32,7 @@ chat.registerCmd('unstuck', (player, value) => {
         z: player.pos.z + 1
     };
 });
+
+chat.registerCmd('playtime', player => {
+    player.send(`Total Time Played (Estimated): ${player.getTotalPlayTime()} Hours`);
+});

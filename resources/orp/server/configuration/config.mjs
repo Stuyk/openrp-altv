@@ -30,7 +30,7 @@ export const Config = {
     defaultPlayerPaycheck: 40.0, // Every 'timePaycheckTime' minutes they recieve $40.00. $480/h.
     // Timers
     // - Player
-    timePlayingTime: 60000 * 5, // How much time before we save player playing time.
+    timeRewardTime: 60000 * 5, // How much time before a reward point is added.
     timePlayerSaveTime: 60000 * 2, // How many minutes before we save all player data.
     timePaycheckTime: 60000 * 5, // Every 5 Minutes
     timeRefreshContactsTime: 60000, // Every 1 Minute; Refresh Player Contacts

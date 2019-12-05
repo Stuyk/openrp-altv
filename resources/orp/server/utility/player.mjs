@@ -78,6 +78,9 @@ export function setupPlayerFunctions(player) {
         let currentTotalPoints = parseInt(player.data.totalrewardpoints);
         currentTotalPoints += 1;
 
+        player.data.totalrewardpoints = currentTotalPoints;
+        player.data.rewardpoints = currentPoints;
+
         player.saveField(player.data.id, 'rewardpoints', currentPoints);
         player.saveField(player.data.id, 'totalrewardpoints', currentTotalPoints);
     };

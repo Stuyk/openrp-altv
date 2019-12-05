@@ -378,6 +378,13 @@ alt.onClient('vehicle:AddItemToVehicle', (player, hash, vehicle) => {
     }
 
     if (vehicle.getSlots() >= 27) {
+        alt.emitClient(
+            null,
+            'vehicle:SyncInventory',
+            vehicle,
+            vehicle.getInventory(),
+            true
+        );
         return;
     }
 

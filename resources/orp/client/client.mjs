@@ -25,6 +25,8 @@ import * as systemsCombat from '/client/systems/combat.mjs';
 import * as systemsDoors from '/client/systems/doors.mjs';
 import * as systemsInteriors from '/client/systems/interiors.mjs';
 import * as systemsJob from '/client/systems/job.mjs';
+import * as systemsRefinery from '/client/systems/refinery.mjs';
+import * as systemsLumber from '/client/systems/lumber.mjs';
 import * as systemsShop from '/client/systems/shop.mjs';
 import * as systemsSkills from '/client/systems/skills.mjs';
 import * as systemsTime from '/client/systems/time.mjs';

@@ -4,10 +4,18 @@ import { appendContextItem, setContextTitle } from '/client/panels/hud.mjs';
 
 alt.log('Loaded: client->contextmenus->ped.mjs');
 
+const objectInteractions = {
+    2627665880: {
+        func: player
+    },
+    1885233650: {
+        func: player
+    }
+};
+
 alt.on('menu:Ped', ent => {
     if (alt.Player.local.getMeta('arrest')) return;
-    const player = alt.Player.all.find(x => x.scriptID === ent);
-    if (!player) return;
+    const model = native.getEntityModel(ent);
 
     if (!alt.Player.local.vehicle) {
         const running = native.isPedRunning(alt.Player.local.scriptID);
@@ -17,12 +25,25 @@ alt.on('menu:Ped', ent => {
         }
     }
 
+    let interaction = objectInteractions[model];
+    if (interaction === undefined || interaction.func === undefined) {
+        alt.emit('pedStream:Interact', ent);
+        return;
+    }
+
+    interaction.func(ent);
+});
+
+function player(ent) {
+    const player = alt.Player.all.find(x => x.scriptID === ent);
+    if (!player) return;
+
     const name = player.getSyncedMeta('name');
     tradeAddons(player);
     arrestAddons(player);
     gangAddons(player);
     setContextTitle(name);
-});
+}
 
 function gangAddons(player) {
     const options = [];

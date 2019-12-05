@@ -4,6 +4,7 @@ import * as native from 'natives';
 //import { WebView } from 'client/utility/webview.mjs';
 import { View } from '/client/utility/view.mjs';
 import { getLevel } from '/client/systems/xp.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log(`Loaded: client->panels->inventory.mjs`);
 
@@ -87,10 +88,16 @@ export function showDialogue() {
     webview.on('inventory:FetchContacts', fetchContacts);
     webview.on('inventory:AddContact', addContact);
     webview.on('inventory:DeleteContact', deleteContact);
+    webview.on('inventory:Ready', ready);
     webview.on('option:SetOption', setOption);
     webview.on('option:LoadOptions', loadOptions);
     webview.on('option:Ready', optionReady);
     alt.emit('hud:AdjustHud', true);
+}
+
+function ready() {
+    if (!webview) return;
+    showCursor(true);
 }
 
 export function fetchEquipment(value) {

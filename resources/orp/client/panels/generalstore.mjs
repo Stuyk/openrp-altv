@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import { View } from '/client/utility/view.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->info.mjs');
 
@@ -37,6 +38,7 @@ function closeDialogue() {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     alt.emitServer('general:GetItems', storeType);
 }
 

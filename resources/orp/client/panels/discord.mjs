@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { View } from '/client/utility/view.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 const url = 'http://resource/client/html/discord-token/index.html';
 let webview;
@@ -29,5 +30,6 @@ alt.onServer('discord:Done', () => {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     webview.emit('ready', discordToken, discordURL);
 }

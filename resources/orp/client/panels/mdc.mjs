@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import { View } from '/client/utility/view.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->info.mjs');
 
@@ -38,6 +39,7 @@ export function data(data) {
 }
 
 function ready() {
+    showCursor(true);
     alt.emitServer('mdc:GetData');
 }
 

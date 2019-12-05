@@ -3,6 +3,7 @@ import * as native from 'natives';
 import { View } from '/client/utility/view.mjs';
 import { Vehicles } from '/client/gamedata/vehicles.mjs';
 import { Camera } from '/client/utility/camera.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 const url = 'http://resource/client/html/vehiclevendor/index.html';
 let webview;
@@ -42,6 +43,7 @@ export function showDialogue(vehPos, cPos, vehicleClassType = 'Sedans') {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     webview.emit('vehiclevendor:SetVehicleClassType', type);
     alt.emitServer('fetch:VehiclePrices');
 

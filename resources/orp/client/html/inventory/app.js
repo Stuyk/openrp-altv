@@ -177,8 +177,8 @@ class App extends Component {
 
     componentDidMount() {
         window.addEventListener('keyup', this.close.bind(this));
-
         if ('alt' in window) {
+            alt.emit('inventory:Ready');
             alt.emit('inventory:FetchItems');
         }
     }

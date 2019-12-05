@@ -3,6 +3,7 @@ import * as native from 'natives';
 import { View } from '/client/utility/view.mjs';
 import { Camera } from '/client/utility/camera.mjs';
 import { playAnimation } from '/client/systems/animation.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 const url = 'http://resource/client/html/characterselect/index.html';
 let webview;
@@ -52,6 +53,7 @@ export function showDialogue(passedCharacters, characterPoint, characterCamPoint
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     characters.forEach(char => {
         webview.emit('character:Append', char.id, char.name, char.skills);
     });

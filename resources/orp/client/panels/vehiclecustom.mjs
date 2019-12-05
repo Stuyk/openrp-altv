@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { View } from '/client/utility/view.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 const url = 'http://resource/client/html/vehiclecustom/index.html';
 let webview;
@@ -149,6 +150,8 @@ function getPreviousVehicleColors(vehID) {
 }
 
 function buildModList() {
+    if (!webview) return;
+    showCursor(true);
     const vehID = alt.Player.local.vehicle.scriptID;
 
     native.setVehicleModKit(vehID, 0);

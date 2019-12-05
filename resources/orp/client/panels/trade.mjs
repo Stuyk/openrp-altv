@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import { View } from '/client/utility/view.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->info.mjs');
 
@@ -54,6 +55,8 @@ function closeDialogue() {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
+
     const inventory = JSON.parse(alt.Player.local.getMeta('inventory'));
     webview.emit('trade:SetInventory', inventory);
 

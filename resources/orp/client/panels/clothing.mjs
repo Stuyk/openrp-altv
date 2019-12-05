@@ -3,6 +3,7 @@ import * as native from 'natives';
 import { View } from '/client/utility/view.mjs';
 import { Camera } from '/client/utility/camera.mjs';
 import { ClothingProperties } from '/client/gamedata/clothingProperties.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->clothing.mjs');
 
@@ -81,6 +82,7 @@ function adjustCamera() {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     const sexGroup = JSON.parse(alt.Player.local.getMeta('sexgroup'));
     if (!sexGroup) {
         sexGroup = [{ value: 0 }];

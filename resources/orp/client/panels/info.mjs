@@ -2,6 +2,7 @@ import * as alt from 'alt';
 import { View } from '/client/utility/view.mjs';
 import { FirstNames } from '/client/gamedata/firstNames.mjs';
 import { LastNames } from '/client/gamedata/lastNames.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->info.mjs');
 
@@ -29,6 +30,7 @@ export function closeDialogue() {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     webview.emit('roleplay:SetFirstNames', JSON.stringify(FirstNames));
     webview.emit('roleplay:SetLastNames', JSON.stringify(LastNames));
 }

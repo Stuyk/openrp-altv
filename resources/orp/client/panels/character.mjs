@@ -4,6 +4,7 @@ import { View } from '/client/utility/view.mjs';
 import { Camera } from '/client/utility/camera.mjs';
 import { HairOverlaysMale, HairOverlaysFemale } from '/client/gamedata/headOverlays.mjs';
 import { FaceProperties } from '/client/gamedata/faceProperties.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log('Loaded: client->panels->character.mjs');
 
@@ -83,6 +84,7 @@ export function showDialogue(playerPos, flags = 255, removeAllClothes = true) {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     webview.emit('character:SetGroupFlags', groupFlags);
     if (groupFlags === 255) {
         webview.emit('character:SetFaceProperties', JSON.stringify(FaceProperties));

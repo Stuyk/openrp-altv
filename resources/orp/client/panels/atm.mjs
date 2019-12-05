@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 //import { WebView } from 'client/utility/webview.mjs';
 import { View } from '/client/utility/view.mjs';
+import { showCursor } from '/client/utility/cursor.mjs';
 
 alt.log(`Loaded: client->panels->atm.mjs`);
 
@@ -36,6 +37,7 @@ export function updateBank(value) {
 
 function atmReady() {
     alt.emitServer('atm:Ready');
+    showCursor(true);
 }
 
 // Called when the user is withdrawing balance from the Bank.

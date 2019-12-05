@@ -54,6 +54,7 @@ function closeDialogue() {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
 }
 
 function craftItem(itemkey) {

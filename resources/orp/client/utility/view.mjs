@@ -27,7 +27,6 @@ export class View {
     }
 
     open(url, killControls = true) {
-
         if (!currentView.view) {
             currentView.view = new alt.WebView(url);
             currentView.events = [];
@@ -41,7 +40,6 @@ export class View {
         currentView.view.isVisible = true;
         currentView.view.focus();
         currentView.ready = true;
-        showCursor(true);
         native.displayRadar(false);
         if (killControls) {
             currentView.gameControls = this.toggleGameControls.bind(this);

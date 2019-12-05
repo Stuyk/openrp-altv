@@ -42,6 +42,7 @@ alt.on('meta:Changed', (key, value) => {
 
 function ready() {
     if (!webview) return;
+    showCursor(true);
     const gangInfo = alt.Player.local.getMeta('gang:Info');
     if (!gangInfo) {
         const skills = alt.Player.local.getMeta('skills');

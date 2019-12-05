@@ -5,7 +5,7 @@ Remember to 🌟 this Github if you 💖 it.
 Open Roleplay is the base framework for my server: [alt:V Life](https://discord.gg/fc7P9eH).
 Open Roleplay has its own [Official Discord](https://discord.gg/WbzTJXW).
 
-### Sponsor this Project
+### 👉 Sponsor this Project
 
 I have put a ton of work into this project. If you do not want to contribute code and you use this project at least buy me some coffee; I could use it.
 
@@ -14,13 +14,13 @@ I have put a ton of work into this project. If you do not want to contribute cod
 -   [Twitch Subscription](https://www.twitch.tv/stuyksoft/)
 -   [Brave Browser Referral](https://brave.com/stu514)
 
-### Licensing
+### 📝 Licensing
 
 1. Don't Monetize this Game Mode
 2. Don't Remove Splash Marks
 3. Don't Remove O:RP Links or Twitch Links from gamemode.
 
-### Feature List and Roadmap
+### 🚧 Feature List and Roadmap
 
 You can find a full list of features and the roadmap [here](https://docs.google.com/document/d/19f9xTn6m3qVfUZYV6cQ8dMstLLdfYC2BavTV7YpzfLc/).
 
@@ -28,7 +28,7 @@ You can find a full list of features and the roadmap [here](https://docs.google.
 
 I **will not** be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page](https://www.twitch.tv/stuyksoft/) and then joining the [Discord Group](https://discord.gg/gVfJkcs)
 
-### Hotkeys
+### ⌨️ Hotkeys
 
 ```
 Tab --------> Press to Toggle Cursor
@@ -40,7 +40,7 @@ U ----------> Open Gang Menu (Notoriety 25+)
 Shift + F7 -> Toggle Chat
 ```
 
-## Installation
+## 💻 Installation
 
 #### If you don't have NodeJS v12+; please go install it.
 

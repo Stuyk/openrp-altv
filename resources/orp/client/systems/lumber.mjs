@@ -33,6 +33,12 @@ const logHash = native.getHashKey('prop_log_01');
 const pedHash = native.getHashKey('a_m_m_hillbilly_01');
 const pedLoc = { x: -471.25677490234375, y: 5304.762890625, z: 85.98503875732422 };
 const pedHeading = 163;
+const plankThreshold = 6;
+let plankQueue = 0;
+let plankCount = 0;
+let planks = [];
+let processing = false;
+let hasComeIntoView = false;
 
 function setup() {
     createBlip('lumberworker', pedLoc, 657, 53, 'Lumber Worker');
@@ -51,14 +57,6 @@ function setup() {
                 eventName: 'lumber:UseUnrefinedWood',
                 data: { amount: 1 }
             }
-            /*
-            {
-                name: 'x5 - Use Unrefined Wood',
-                isServer: true,
-                eventName: 'lumber:UseUnrefinedWood',
-                data: { amount: 5 }
-            }
-            */
         ],
         'Lumber Worker'
     );
@@ -66,18 +64,22 @@ function setup() {
 }
 setup();
 
-/*
-1. Make Spawn Log Request Server-Side
-2. Keep Track of Coordinate and 'Done' timer.
-3. On Done Timer (Spawn Planks and Cut Sound Effect and Add Claimable Wood Count to Player)
-4. Right-Click Planks to Pickup
-*/
+alt.onServer('lumber:SpawnLog', spawnLogQueue);
+alt.onServer('lumber:SpawnPlanks', spawnPlanks);
+alt.on('lumber:Pickup', pickup);
+alt.setInterval(logQueueHelper, 2000);
 
-alt.onServer('lumber:SpawnLog', player => {
-    spawnLog(player);
-});
+function spawnLogQueue() {
+    plankQueue += 1;
+}
 
-async function spawnLog(player) {
+async function spawnLog() {
+    if (plankQueue <= 0 || processing || plankCount > plankThreshold) {
+        return;
+    }
+
+    plankQueue -= 1;
+    processing = true;
     const log = native.createObjectNoOffset(
         logHash,
         logPoints[0].coord.x,
@@ -102,6 +104,7 @@ async function spawnLog(player) {
 
     const pos = logPoints[logPoints.length - 1].coord;
     native.deleteEntity(log);
+
     alt.emitServer('lumber:FinishLog');
 
     if (distance(alt.Player.local.pos, pos) <= 10) {
@@ -128,11 +131,13 @@ async function spawnLog(player) {
             pos.z
         );
     }
+
+    processing = false;
 }
 
-alt.onServer('lumber:SpawnPlanks', () => {
+function spawnPlanks(amount) {
     const pos = logPoints[logPoints.length - 1].coord;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < amount; i++) {
         const plank = native.createObjectNoOffset(
             plankHash,
             pos.x,
@@ -142,12 +147,56 @@ alt.onServer('lumber:SpawnPlanks', () => {
             false,
             false
         );
+        planks.push(plank);
+        plankCount += 1;
         native.activatePhysics(plank);
     }
-});
+}
 
-alt.on('lumber:Pickup', data => {
+function pickup(data) {
     const id = data.id;
     native.deleteEntity(id);
     alt.emitServer('lumber:Pickup');
-});
+}
+
+// Called every 2 seconds.
+function logQueueHelper() {
+    const startPoint = logPoints[0].coord;
+    const endPoint = logPoints[logPoints.length - 1].coord;
+    const endDistance = distance(alt.Player.local.pos, endPoint);
+    const startDistance = distance(alt.Player.local.pos, startPoint);
+
+    if (startDistance <= 90) {
+        spawnLog();
+    }
+
+    if (endDistance >= 25) {
+        if (planks.length >= 1) {
+            planks.forEach(plank => {
+                native.deleteEntity(plank);
+            });
+            planks = [];
+        }
+        hasComeIntoView = false;
+        return;
+    }
+
+    if (!hasComeIntoView) {
+        hasComeIntoView = true;
+        if (plankCount !== 0) {
+            for (let i = 0; i < plankCount; i++) {
+                const plank = native.createObjectNoOffset(
+                    plankHash,
+                    endPoint.x,
+                    endPoint.y,
+                    endPoint.z,
+                    false,
+                    false,
+                    false
+                );
+                planks.push(plank);
+                native.activatePhysics(plank);
+            }
+        }
+    }
+}

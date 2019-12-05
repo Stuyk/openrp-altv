@@ -24,7 +24,7 @@ alt.onClient('lumber:UseUnrefinedWood', (player, data) => {
 
     const players = getPlayersInRange(player.pos, 10);
     players.forEach(target => {
-        alt.emitClient(target, 'lumber:SpawnLog', player);
+        alt.emitClient(target, 'lumber:SpawnLog');
     });
 });
 
@@ -41,12 +41,12 @@ alt.onClient('lumber:FinishLog', player => {
     player.pendingLogs -= 1;
 
     if (!player.pendingLogPickups) {
-        player.pendingLogPickups = 3;
+        player.pendingLogPickups = 1 * planksToSpawn;
     } else {
-        player.pendingLogPickups += 3;
+        player.pendingLogPickups += 1 * planksToSpawn;
     }
 
-    alt.emitClient(player, 'lumber:SpawnPlanks');
+    alt.emitClient(player, 'lumber:SpawnPlanks', 1 * planksToSpawn);
 });
 
 alt.onClient('lumber:Pickup', player => {

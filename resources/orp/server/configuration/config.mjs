@@ -75,7 +75,10 @@ export const Config = {
     hoursPerSixtyMinutes: 1, // Used to set the Time Scale of the server for the hour.
     // Time Before Turf is Claimed Again
     nextTurfCheckTime: 60000, // 1 Minute
-    turfHighestWaitTime: 35 // 10 Minutes + Random up to This Amount = Next Claim Time
+    turfHighestWaitTime: 35, // 10 Minutes + Random up to This Amount = Next Claim Time
+    // Factions
+    maxPoliceFactions: 3,
+    maxEMSFactions: 2
 };
 
 alt.on('orp:SetConfig', jsonString => {

@@ -174,6 +174,10 @@ export const Character = new orm.EntitySchema({
         gang: {
             type: 'int',
             default: -1
+        },
+        faction: {
+            type: 'int',
+            default: -1
         }
     }
 });
@@ -218,6 +222,49 @@ export const Gangs = new orm.EntitySchema({
         color: {
             type: 'int',
             default: 1
+        }
+    }
+});
+
+export const Factions = new orm.EntitySchema({
+    name: 'Factions',
+    columns: {
+        // ID of User who Created Gang
+        id: {
+            primary: true,
+            type: 'int',
+            generated: false
+        },
+        // Creation
+        creation: {
+            type: 'bigint',
+            default: Date.now()
+        },
+        // Name of Gang
+        name: {
+            type: 'text'
+        },
+        // Members
+        members: {
+            type: 'text',
+            default: '[]'
+        },
+        // Ranks
+        ranks: {
+            type: 'text',
+            default: JSON.stringify(['Recruit', 'Owner'])
+        },
+        turfs: {
+            type: 'text',
+            default: '[]'
+        },
+        color: {
+            type: 'int',
+            default: 1
+        },
+        classification: {
+            type: 'int',
+            default: 0
         }
     }
 });

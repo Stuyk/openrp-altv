@@ -6,6 +6,7 @@ import { isFlagged } from '../utility/flags.mjs';
 
 const factions = [];
 const db = new SQL();
+const defaultRanks = ['Owner', 'Recruit'];
 const classifications = {
     GANG: 0,
     POLICE: 1,
@@ -19,8 +20,71 @@ const permissions = {
     PROMOTE: 4,
     MAX: 7
 };
-
-const defaultRanks = ['Owner', 'Recruit'];
+// Requirements are based on player reward points.
+// Reward points are non-refundable.
+const factionSkills = {
+    0: {
+        name: 'Armour Bonus on Respawn',
+        event: 'skill:RespawnArmour',
+        requirement: 900
+    },
+    1: {
+        name: '5x Faction Vehicle',
+        event: 'skill:RespawnVehicles',
+        requirement: 1800
+    },
+    2: {
+        name: '5x Faction Vehicle',
+        event: 'skill:RespawnVehicles',
+        requirement: 1800
+    },
+    3: {
+        name: '1x Faction Air Craft',
+        event: 'skill:RespawnAirCraft',
+        requirement: 3600
+    },
+    4: {
+        name: 'Gun Locker',
+        event: 'skill:GunLocker',
+        requirement: 100,
+        restriction: 1
+    },
+    5: {
+        name: 'Gang Safehouse',
+        event: 'skill:Warehouse',
+        requirement: 75,
+        restriction: 0
+    },
+    6: {
+        name: 'Warehouse',
+        event: 'skill:Warehouse',
+        requirement: 75,
+        restriction: 3
+    },
+    7: {
+        name: 'Gang Safehouse Respawn',
+        event: 'skill:GangRespawn',
+        requirement: 100,
+        restriction: 0
+    },
+    8: {
+        name: 'Faction Radio',
+        event: '',
+        requirement: 25
+    },
+    9: {
+        name: 'Paycheck Bonus',
+        event: 'skill:PaycheckBonus',
+        requirement: 500,
+        restriction: 1
+    },
+    10: {
+        name: 'Paycheck Bonus',
+        event: 'skill:PaycheckBonus',
+        requirement: 500,
+        restriction: 2
+    }
+};
 
 let totalFactions = 0;
 let totalPoliceFactions = 0;
@@ -41,6 +105,18 @@ db.fetchAllData('Factions', currentFactions => {
     alt.log(`Total Factions ${totalFactions}`);
     console.log(currentFactions);
 });
+
+alt.on('faction:Create', factionCreate);
+alt.on('faction:Attach', factionAttach);
+alt.onClient('faction:Rename', factionRename);
+alt.onClient('faction:RankUp', factionRankUp);
+alt.onClient('faction:RankDown', factionRankDown);
+alt.onClient('faction:Kick', factionKick);
+alt.onClient('faction:Disband', factionDisband);
+alt.onClient('faction:AppendRank', factionAppendRank);
+alt.onClient('faction:RemoveRank', factionRemoveRank);
+alt.onClient('faction:SetFlags', factionSetFlags);
+alt.onClient('faction:AddPoint', factionAddPoint);
 
 export class Faction {
     constructor(factionData) {
@@ -385,7 +461,7 @@ export class Faction {
         });
 
         db.deleteByIds(player.data.id, 'Factions', res => {
-            player.emitMeta('readyForNewGang', true);
+            player.emitMeta('readyForNewFaction', true);
             player.notify('The faction is now completely disbanded.');
             player.isDisbanding = false;
         });
@@ -480,10 +556,65 @@ export class Faction {
         this.syncMembers();
         this.notifyAll(`${members[index].name} is now available.`);
     }
-}
 
-alt.on('faction:Create', factionCreate);
-alt.on('faction:Attach', factionAttach);
+    setFlags(player, id, flags) {
+        const members = JSON.parse(this.members);
+        const index = members.findIndex(member => {
+            if (member.id === id) {
+                return member;
+            }
+        });
+
+        members[index].flags = flags;
+        this.members = JSON.stringify(members);
+        this.saveField('members', this.members);
+        this.syncMembers();
+        alt.emitClient(player, 'faction:Success', 'Flags have been updated.');
+    }
+
+    updateSkills(player, id) {
+        if (!factionSkills[id]) {
+            alt.emitClient(player, 'faction:Error', 'That skill does not exist.');
+            return false;
+        }
+
+        const skills = JSON.parse(this.skills);
+        if (!skills[id]) {
+            skills[id] = 0;
+        }
+
+        const max = factionSkills[id].requirement;
+        if (skills[id] + 1 > max) {
+            alt.emitClient(player, 'faction:Error', 'Skill is already maxed out.');
+            return false;
+        }
+
+        skills[id] += 1;
+        this.skills = JSON.stringify(skills);
+        this.saveField('skills', this.skills);
+        this.syncMembers();
+    }
+
+    addPoint(player, id) {
+        if (player.rewardpoints <= 0) {
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You have no reward points available.'
+            );
+            return;
+        }
+
+        if (!this.updateSkills(id)) {
+            return;
+        }
+
+        player.data.rewardpoints -= 1;
+        player.saveField(player.data.id, 'rewardpoints', player.data.rewardpoints);
+        alt.emitClient(player, 'faction:Success', 'Skill point was appended.');
+        this.syncMembers();
+    }
+}
 
 function factionAttach(player) {
     if (player.data.faction === -1) {
@@ -570,3 +701,21 @@ function factionCreate(player, type, factionName) {
         player.emitMeta('faction:Info', JSON.stringify(newFactionData));
     });
 }
+
+function factionRename() {}
+
+function factionRankUp() {}
+
+function factionRankDown() {}
+
+function factionKick() {}
+
+function factionDisband() {}
+
+function factionAppendRank() {}
+
+function factionRemoveRank() {}
+
+function factionSetFlags() {}
+
+function factionAddPoint() {}

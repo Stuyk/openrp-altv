@@ -265,6 +265,10 @@ export const Factions = new orm.EntitySchema({
         classification: {
             type: 'int',
             default: 0
+        },
+        skills: {
+            type: 'text',
+            default: '[]'
         }
     }
 });

@@ -46,42 +46,42 @@ const factionSkills = {
     4: {
         name: 'Gun Locker',
         event: 'skill:GunLocker',
-        requirement: 100,
+        requirement: 1200,
         restriction: 1
     },
     5: {
         name: 'Gang Safehouse',
         event: 'skill:Warehouse',
-        requirement: 75,
+        requirement: 1200,
         restriction: 0
     },
     6: {
         name: 'Warehouse',
         event: 'skill:Warehouse',
-        requirement: 75,
+        requirement: 1200,
         restriction: 3
     },
     7: {
         name: 'Gang Safehouse Respawn',
         event: 'skill:GangRespawn',
-        requirement: 100,
+        requirement: 3600,
         restriction: 0
     },
     8: {
         name: 'Faction Radio',
         event: '',
-        requirement: 25
+        requirement: 150
     },
     9: {
         name: 'Paycheck Bonus',
         event: 'skill:PaycheckBonus',
-        requirement: 500,
+        requirement: 5000,
         restriction: 1
     },
     10: {
         name: 'Paycheck Bonus',
         event: 'skill:PaycheckBonus',
-        requirement: 500,
+        requirement: 5000,
         restriction: 2
     }
 };
@@ -91,6 +91,10 @@ let totalPoliceFactions = 0;
 let totalEMSFactions = 0;
 
 db.fetchAllData('Factions', currentFactions => {
+    if (!currentFactions) {
+        return;
+    }
+
     currentFactions.forEach(factionData => {
         new Faction(factionData);
         if (factionData.classification === classifications.POLICE) {
@@ -481,14 +485,23 @@ export class Faction {
             }
         }
 
+        if (target.data.faction !== -1) {
+            target.notify('You must first leave your faction.');
+            return;
+        }
+
         const members = JSON.parse(this.members);
         members.push({ id: target.data.id, name: target.data.name, rank: 0 });
+
+        target.data.faction = this.id;
+        player.saveField(target.data.id, 'faction', target.data.faction);
         this.members = JSON.stringify(members);
         this.saveField('members', this.members);
         this.syncMembers();
         this.notifyAll(
             `${player.data.name} has recruited ${target.data.name}. Give them a warm welcome!`
         );
+        factionAttach(target);
     }
 
     kickMember(player, id) {
@@ -702,20 +715,74 @@ function factionCreate(player, type, factionName) {
     });
 }
 
-function factionRename() {}
+function factionRename(player, factionName) {
+    if (!player.faction) {
+        return;
+    }
 
-function factionRankUp() {}
+    player.faction.setFactionName(player, factionName);
+}
 
-function factionRankDown() {}
+function factionRankUp(player, id) {
+    if (!player.faction) {
+        return;
+    }
 
-function factionKick() {}
+    player.faction.rankUp(player, id);
+}
 
-function factionDisband() {}
+function factionRankDown(player, id) {
+    if (!player.faction) {
+        return;
+    }
 
-function factionAppendRank() {}
+    player.faction.rankDown(player, id);
+}
 
-function factionRemoveRank() {}
+function factionKick(player, id) {
+    if (!player.faction) {
+        return;
+    }
 
-function factionSetFlags() {}
+    player.faction.kick(player, id);
+}
 
-function factionAddPoint() {}
+function factionDisband(player, id) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.disband(player);
+}
+
+function factionAppendRank(player, rankName) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.appendRank(player, rankName);
+}
+
+function factionRemoveRank(player) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.removeRank(player);
+}
+
+function factionSetFlags(player, id, flags) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.setFlags(player, id, flags);
+}
+
+function factionAddPoint(player, category) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.addPoint(player, category);
+}

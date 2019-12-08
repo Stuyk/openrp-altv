@@ -1,0 +1,249 @@
+@dark: rgba(20, 20, 20, 0.9);
+@contrast1: rgb(0, 217, 255);
+@contrast2: rgb(255, 153, 0);
+@darkaccent: rgb(8, 8, 8);
+@whitecontrast: rgba(255, 255, 255, 0.2);
+@fontface: 'Roboto';
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: @fontface;
+    user-select: none;
+    color: white;
+}
+
+body {
+    background: @dark;
+}
+
+#render {
+    width: 100%;
+    height: 100%;
+}
+
+.navigation {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    justify-items: left;
+    align-content: center;
+    align-items: center;
+    height: 50px;
+
+    .navbtns {
+        width: 100%;
+        height: 100%;
+
+        .navbtn {
+            height: 100%;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left: 0px;
+            border-right: 0px;
+            border-bottom: 0px;
+            box-sizing: border-box;
+            color: @contrast1;
+            min-width: 100px;
+
+            &:hover {
+                color: white;
+                border: 2px solid white !important;
+                border-left: 0px !important;
+                border-right: 0px !important;
+                border-bottom: 0px !important;
+                cursor: pointer;
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .active {
+            color: @contrast2;
+            border: 2px solid @contrast2 !important;
+            border-left: 0px !important;
+            border-right: 0px !important;
+            border-bottom: 0px !important;
+        }
+    }
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+
+    .page {
+        min-height: 100%;
+        padding: 20px;
+
+        .header {
+            font-weight: normal;
+            text-transform: uppercase;
+        }
+
+        .members {
+            display: flex;
+            flex-direction: column;
+
+            .member {
+                display: flex;
+                flex-direction: column;
+                justify-content: left;
+                justify-items: center;
+                align-items: left;
+                align-content: center;
+                border: 2px solid rgba(0, 0, 0, 0.2);
+                margin-bottom: 10px;
+
+                .fields {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: left;
+                    justify-items: center;
+                    align-items: center;
+                    align-content: center;
+
+                    .name {
+                        margin-left: 10px;
+                    }
+
+                    .active {
+                        margin-left: 10px;
+                    }
+
+                    .manageMember {
+                        color: @contrast1;
+                        width: 35px;
+                        height: 35px;
+                        border: 2px solid rgba(255, 255, 255, 0.2);
+                        background: transparent;
+
+                        &:focus {
+                            outline: none;
+                        }
+
+                        &:hover {
+                            color: @contrast2;
+                            border: 2px solid @contrast2;
+                        }
+                    }
+                }
+
+                .permissions {
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    justify-items: center;
+                    align-items: center;
+                    margin: 10px;
+                    border: 2px solid rgba(0, 0, 0, 0.2);
+
+                    .rank {
+                        margin-left: 10px;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        justify-items: center;
+                        align-items: center;
+                        align-content: center;
+
+                        .ranklabel {
+                            padding: 0px 10px;
+                        }
+                    }
+
+                    .checkcontainer {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        justify-items: center;
+                        align-items: center;
+                        align-content: center;
+
+                        .label {
+                            padding-right: 10px;
+                        }
+                    }
+
+                    button {
+                        height: 25px;
+                        min-width: 25px;
+                        color: @contrast1;
+                        border: 2px solid rgba(0, 0, 0, 0.2);
+                        border-radius: 5px;
+                        background: none;
+
+                        &:focus {
+                            outline: none;
+                        }
+
+                        &:hover {
+                            color: @contrast2;
+                            border: 2px solid @contrast2;
+                        }
+                    }
+
+                    input {
+                        min-width: 25px;
+                        min-height: 25px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.pageBoard {
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+
+    .noticeboard {
+        width: 100%;
+        height: 20vh;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: @darkaccent;
+    box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer !important;
+}
+
+.edit {
+    height: 25px;
+    min-width: 25px;
+    color: @contrast1;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    background: none;
+    margin: 10px 0px;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:hover {
+        color: @contrast2;
+        border: 2px solid @contrast2;
+    }
+}

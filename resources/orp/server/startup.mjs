@@ -6,7 +6,8 @@ import {
     Vehicle,
     Details,
     Door,
-    Gangs
+    Gangs,
+    Factions
 } from './entities/entities.mjs'; // Schemas for Database
 import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.mjs';
 import { Doors } from './configuration/doors.mjs';
@@ -36,7 +37,7 @@ let db = new SQL(
     dbInfo.password,
     dbInfo.dbname,
     // Specify New Table Schemas Here
-    [Account, Character, Vehicle, Details, Door, Gangs]
+    [Account, Character, Vehicle, Details, Door, Gangs, Factions]
 );
 
 alt.on('ConnectionComplete', () => {

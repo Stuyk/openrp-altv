@@ -101,6 +101,7 @@ body {
                 align-content: center;
                 border: 2px solid rgba(0, 0, 0, 0.2);
                 margin-bottom: 10px;
+                background: rgba(0, 0, 0, 0.2);
 
                 .fields {
                     display: flex;
@@ -145,6 +146,7 @@ body {
                     align-items: center;
                     margin: 10px;
                     border: 2px solid rgba(0, 0, 0, 0.2);
+                    background: rgba(255, 255, 255, 0.1);
 
                     .rank {
                         margin-left: 10px;
@@ -195,6 +197,68 @@ body {
                     input {
                         min-width: 25px;
                         min-height: 25px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//rankPage, ranks, rank
+.rankPage {
+    display: flex;
+    width: 100%;
+
+    .ranks {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+
+        .rank {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.2);
+            justify-content: left;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            margin-bottom: 10px;
+
+            .rankNumber {
+                display: flex;
+                justify-content: center;
+                justify-items: center;
+                align-content: center;
+                align-items: center;
+                color: @contrast1;
+                border: 2px solid rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+                width: 25px;
+                height: 25px;
+                margin-left: 10px;
+            }
+
+            .rankName {
+                padding-left: 10px;
+                color: white;
+            }
+
+            .rankInput {
+                padding-left: 10px;
+
+                input {
+                    background: rgba(0, 0, 0, 0.1);
+                    border: 2px solid rgba(0, 0, 0, 0.2);
+                    color: white;
+                    height: 25px;
+                    text-align: center;
+                    margin-right: 10px;
+
+                    &:focus {
+                        outline: none;
+                        border: 2px solid @contrast2;
                     }
                 }
             }

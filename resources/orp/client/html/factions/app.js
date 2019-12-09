@@ -6,7 +6,8 @@ const permissions = {
     RECRUIT: 1,
     KICK: 2,
     PROMOTE: 4,
-    MAX: 7
+    ISOWNER: 8,
+    MAX: 15
 };
 
 const blipColors = {
@@ -109,10 +110,11 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.pages = {
-            Board: Board,
-            Members: Members,
-            Skills: Skills,
-            Options: Options
+            Board,
+            Members,
+            Ranks,
+            Skills,
+            Options
         };
 
         this.state = {
@@ -136,8 +138,7 @@ class App extends Component {
                     id: Math.floor(Math.random() * 50000),
                     rank: 1,
                     name: `Member_${(Math.random() * 50).toFixed(0)}`,
-                    active: Date.now(),
-                    flags: 0
+                    active: Date.now()
                 };
                 members.push(member);
             }
@@ -146,7 +147,6 @@ class App extends Component {
                 id: 9,
                 rank: 0,
                 name: 'Joe_Blow',
-                flags: 7,
                 active: Date.now()
             });
 
@@ -156,7 +156,8 @@ class App extends Component {
                     creation: '1573488563285',
                     name: 'Nerds',
                     members: JSON.stringify(members),
-                    ranks: '["Owner","Recruit"]',
+                    ranks:
+                        '[{"name":"Owner", "flags": 7},{"name":"Recruit", "flags": 0}, {"name":"Less Recruit", "flags": 0}, {"name":"Lesser Recruit", "flags": 0}]',
                     turfs: '[69,82,154,72,81]',
                     skills: '[]',
                     classification: 0
@@ -225,6 +226,12 @@ class App extends Component {
         this.setState({ editing: targetEdit });
     }
 
+    saveRank(index, name) {
+        const ranks = [...this.state.ranks];
+        ranks[index].name = name;
+        this.setState({ ranks });
+    }
+
     save(value) {
         if (!this.state.editing) {
             return;
@@ -251,6 +258,59 @@ class App extends Component {
         return h('div', { class: 'navbtns' }, buttons);
     }
 
+    kick(memberID) {
+        const members = [...this.state.members];
+        const index = members.findIndex(member => {
+            if (member.id === memberID) {
+                return member;
+            }
+        });
+
+        if (index <= -1) {
+            return;
+        }
+
+        members.splice(index, 1);
+        this.setState({ members });
+
+        if ('alt' in window) {
+            alt.emit('faction:Kick', memberID);
+        }
+    }
+
+    setRank(memberID, rank) {
+        const members = [...this.state.members];
+        const index = members.findIndex(member => {
+            if (member.id === memberID) {
+                return member;
+            }
+        });
+
+        if (index <= -1) {
+            return;
+        }
+
+        members[index].rank += rank;
+
+        if (members[index].rank < 0) {
+            members[index].rank = 0;
+        }
+
+        if (members[index].rank > this.state.ranks.length - 1) {
+            members[index].rank = this.state.ranks.length - 1;
+        }
+
+        this.setState({ members });
+
+        if ('alt' in window) {
+            if (rank < 0) {
+                alt.emit('faction:RankUp', memberID);
+            } else {
+                alt.emit('faction:RankDown', memberID);
+            }
+        }
+    }
+
     render() {
         const key = Object.keys(this.pages)[this.state.page];
         const renderPage = this.pages[key];
@@ -267,7 +327,10 @@ class App extends Component {
                         markAsTyping: this.markAsTyping.bind(this),
                         unmarkAsTyping: this.unmarkAsTyping.bind(this),
                         editing: this.editing.bind(this),
-                        save: this.save.bind(this)
+                        save: this.save.bind(this),
+                        setRank: this.setRank.bind(this),
+                        kick: this.kick.bind(this),
+                        saveRank: this.saveRank.bind(this)
                     }
                 })
             )
@@ -416,34 +479,25 @@ class Members extends Component {
         this.setState({ members });
     }
 
-    renderFlags(member) {
-        const memberFlags = Object.keys(permissions).map((key, index) => {
-            if (key !== 'MAX' && key !== 'MIN') {
-                const flagged = isFlagged(member.flags, permissions[key]);
-                return h(
-                    'div',
-                    { class: 'checkcontainer' },
-                    h('div', { class: 'label' }, key),
-                    h('input', { type: 'checkbox', class: 'checkbox', checked: flagged })
-                );
-            }
-        });
-        return memberFlags;
-    }
-
-    renderMember(myRank, myFlags, props, member, rankName) {
+    renderMember(myRank, myFlags, props, member, rankName, setRank, kick) {
         const state = props.state;
         const isExpanded = this.state.members[member.id] ? true : false;
         const activeTime = new Date(member.active);
-        const isOwner = state.id === state.myid ? true : false;
 
-        const canKick =
+        let canKick =
             isFlagged(myFlags, permissions.KICK) && member.rank > myRank ? true : false;
 
-        const canChangeRank =
-            isFlagged(myFlags, permissions.PROMOTE) && member.rank > myRank
-                ? true
-                : false;
+        let ableToChangeRanks =
+            isFlagged(myFlags, permissions.PROMOTE) && member.rank > myRank;
+        let ableToPromote = ableToChangeRanks && member.rank - 1 > myRank;
+        let ableToUnPromote = ableToChangeRanks && member.rank + 1 > myRank;
+
+        if (state.id === state.myid) {
+            canKick = true;
+            ableToChangeRanks = true;
+            ableToPromote = true;
+            ableToUnPromote = true;
+        }
 
         return h(
             'div',
@@ -477,19 +531,48 @@ class Members extends Component {
                 h(
                     'div',
                     { class: 'permissions' },
-                    canChangeRank &&
+                    ableToChangeRanks &&
                         h(
                             'div',
                             { class: 'rank' },
-                            h('button', { class: 'rankbtn' }, '-'),
+                            ableToUnPromote &&
+                                h(
+                                    'button',
+                                    {
+                                        class: 'rankbtn',
+                                        onclick: () => {
+                                            setRank(member.id, 1);
+                                        }
+                                    },
+                                    '-'
+                                ),
                             h(
                                 'div',
                                 { class: 'ranklabel' },
                                 `${member.rank} (${rankName})`
                             ),
-                            h('button', { class: 'rankbtn' }, '+')
+                            ableToPromote &&
+                                h(
+                                    'button',
+                                    {
+                                        class: 'rankbtn',
+                                        onclick: () => {
+                                            setRank(member.id, -1);
+                                        }
+                                    },
+                                    '+'
+                                )
                         ),
-                    canKick && h('button', {}, 'Kick'),
+                    canKick &&
+                        h(
+                            'button',
+                            {
+                                onclick: () => {
+                                    kick(member.id);
+                                }
+                            },
+                            'Kick'
+                        ),
                     h(
                         'div',
                         { class: 'active' },
@@ -499,19 +582,12 @@ class Members extends Component {
                             month: 'long',
                             day: 'numeric'
                         })}`
-                    ),
-                    isOwner &&
-                        h(
-                            'div',
-                            { class: 'flags' },
-                            h('div', {}, 'Permissions:'),
-                            this.renderFlags(member)
-                        )
+                    )
                 )
         );
     }
 
-    renderMembers({ props, members, ranks }) {
+    renderMembers({ props, members, ranks, functions }) {
         members = members.sort((a, b) => {
             return a.rank - b.rank;
         });
@@ -525,13 +601,16 @@ class Members extends Component {
         const membersData = members.map(member => {
             return this.renderMember(
                 me.rank,
-                me.flags,
+                ranks[me.rank].flags,
                 props,
                 member,
-                ranks[member.rank]
+                ranks[member.rank].name,
+                functions.setRank,
+                functions.kick
             );
         });
 
+        membersData.push(h('div', { class: 'newRank' }));
         return h('div', { class: 'members' }, membersData);
     }
 
@@ -543,9 +622,88 @@ class Members extends Component {
             h(this.renderMembers.bind(this), {
                 props,
                 members: state.members,
-                ranks: state.ranks
+                ranks: state.ranks,
+                functions: props.functions
             })
         );
+    }
+}
+
+class Ranks extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isEditing: false,
+            editing: -1
+        };
+    }
+
+    render(props) {
+        const state = props.state;
+        const isOwner = state.myid === state.id ? true : false;
+        const isEditing = this.state.isEditing;
+        const ranks = state.ranks.map((rank, index) => {
+            const editingHere = index === this.state.editing ? true : false;
+
+            if (isOwner) {
+                return h(
+                    'div',
+                    { class: 'rank' },
+                    h('div', { class: 'rankNumber' }, index),
+                    h('div', { class: 'rankName' }, rank.name),
+                    h(
+                        'div',
+                        { class: 'rankInput' },
+                        !isEditing &&
+                            h(
+                                'button',
+                                {
+                                    class: 'edit',
+                                    onclick: () => {
+                                        this.setState({
+                                            isEditing: true,
+                                            editing: index
+                                        });
+                                    }
+                                },
+                                'Edit'
+                            ),
+                        isEditing &&
+                            editingHere &&
+                            h('input', {
+                                type: 'text',
+                                id: `rank@${index}`,
+                                placholder: rank.name
+                            }),
+                        isEditing &&
+                            editingHere &&
+                            h(
+                                'button',
+                                {
+                                    class: 'edit',
+                                    onclick: () => {
+                                        const data = document.getElementById(
+                                            `rank@${index}`
+                                        );
+                                        props.functions.saveRank(index, data.value);
+                                        this.setState({ isEditing: false });
+                                    }
+                                },
+                                'Save'
+                            )
+                    )
+                );
+            }
+
+            return h(
+                'div',
+                { class: 'rank' },
+                h('div', { class: 'rankNumber' }, index),
+                h('div', { class: 'rankName' }, rank.name)
+            );
+        });
+
+        return h('div', { class: 'rankPage' }, h('div', { class: 'ranks' }, ranks));
     }
 }
 

@@ -6,7 +6,7 @@ import { isFlagged } from '../utility/flags.mjs';
 
 const factions = [];
 const db = new SQL();
-const defaultRanks = ['Owner', 'Recruit'];
+const defaultRanks = [{ name: 'Owner', flags: 7 }, { name: 'Recruit', flags: 0 }];
 const classifications = {
     GANG: 0,
     POLICE: 1,
@@ -165,13 +165,16 @@ export class Faction {
                 return member;
             }
         });
-        const member = members[index];
 
+        const member = members[index];
         if (!member) {
             return false;
         }
 
-        return isFlagged(member.flags, permission);
+        const ranks = JSON.parse(this.ranks);
+        const rank = ranks[member.rank];
+
+        return isFlagged(rank.flags, permission);
     }
 
     isRankGreater(officer, target) {
@@ -570,17 +573,16 @@ export class Faction {
         this.notifyAll(`${members[index].name} is now available.`);
     }
 
-    setFlags(player, id, flags) {
-        const members = JSON.parse(this.members);
-        const index = members.findIndex(member => {
-            if (member.id === id) {
-                return member;
-            }
-        });
+    setFlags(player, rankIndex, flags) {
+        const ranks = JSON.parse(this.ranks);
+        if (!ranks[rankIndex]) {
+            alt.emitClient(player, 'faction:Error', 'Faction rank was not found.');
+            return;
+        }
 
-        members[index].flags = flags;
-        this.members = JSON.stringify(members);
-        this.saveField('members', this.members);
+        ranks[rankIndex].flags = flags;
+        this.ranks = JSON.stringify(ranks);
+        this.saveField('ranks', this.ranks);
         this.syncMembers();
         alt.emitClient(player, 'faction:Success', 'Flags have been updated.');
     }
@@ -686,7 +688,6 @@ function factionCreate(player, type, factionName) {
             id: player.data.id,
             name: player.data.name,
             rank: 0,
-            flags: permissions.MAX,
             active: Date.now()
         }
     ]);

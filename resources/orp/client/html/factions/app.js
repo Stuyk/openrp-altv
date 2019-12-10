@@ -6,8 +6,7 @@ const permissions = {
     RECRUIT: 1,
     KICK: 2,
     PROMOTE: 4,
-    ISOWNER: 8,
-    MAX: 15
+    MAX: 7
 };
 
 const blipColors = {
@@ -118,7 +117,10 @@ class App extends Component {
         };
 
         this.state = {
-            page: 0,
+            messages: [],
+            ranks: [],
+            members: [],
+            page: -1,
             myrank: 0,
             myid: 9,
             notice:
@@ -127,10 +129,16 @@ class App extends Component {
 
         this.typing = false;
         this.keyUpBind = this.keyUp.bind(this);
+        setInterval(this.parseMessages.bind(this), 1000);
     }
 
     componentDidMount() {
         if ('alt' in window) {
+            alt.on('faction:SetMyData', this.setMyData.bind(this));
+            alt.on('faction:Ready', this.ready.bind(this));
+            alt.on('faction:Error', this.factionError.bind(this));
+            alt.on('faction:Success', this.factionSuccess.bind(this));
+            alt.emit('faction:Ready');
         } else {
             const members = [];
             for (let i = 0; i < 25; i++) {
@@ -163,6 +171,10 @@ class App extends Component {
                     classification: 0
                 })
             );
+
+            for (let i = 0; i < 20; i++) {
+                this.factionSuccess(`test ${i}`);
+            }
         }
 
         window.addEventListener('keyup', this.keyUpBind);
@@ -174,6 +186,39 @@ class App extends Component {
         }
 
         window.removeEventListener('keyup', this.keyUpBind);
+    }
+
+    parseMessages() {
+        const messages = [...this.state.messages];
+        if (messages.length <= 0) {
+            return;
+        }
+
+        for (let i = messages.length - 1; i > -1; i--) {
+            if (messages[i].time > Date.now()) {
+                continue;
+            }
+
+            messages.splice(i, 1);
+        }
+
+        this.setState({ messages });
+    }
+
+    factionError(msg) {
+        const messages = [...this.state.messages];
+        messages.push({ time: Date.now() + 2000, msg, type: 'error' });
+        this.setState({ messages });
+    }
+
+    factionSuccess(msg) {
+        const messages = [...this.state.messages];
+        messages.push({ time: Date.now() + 2000, msg, type: 'success' });
+        this.setState({ messages });
+    }
+
+    setMyData(rank, id) {
+        this.setState({ myrank: rank, myid: id });
     }
 
     markAsTyping() {
@@ -200,8 +245,10 @@ class App extends Component {
             members,
             ranks: JSON.parse(newData.ranks),
             turfs: JSON.parse(newData.turfs),
-            page: 0
+            page: 0,
+            notice: newData.notice
         };
+
         this.setState(refinedData);
     }
 
@@ -209,10 +256,6 @@ class App extends Component {
         if (this.typing) return;
         if ('alt' in window) {
             if (e.key === 'Escape') {
-                alt.emit('faction:Close');
-            }
-
-            if (e.key.toLowerCase() === 'u') {
                 alt.emit('faction:Close');
             }
         }
@@ -223,6 +266,7 @@ class App extends Component {
         if (!targetEdit) {
             return;
         }
+
         this.setState({ editing: targetEdit });
     }
 
@@ -230,11 +274,18 @@ class App extends Component {
         const ranks = [...this.state.ranks];
         ranks[index].name = name;
         this.setState({ ranks });
+        if ('alt' in window) {
+            alt.emit('faction:SaveRank', index, name);
+        }
     }
 
     save(value) {
         if (!this.state.editing) {
             return;
+        }
+
+        if ('alt' in window) {
+            alt.emit('faction:SaveInfo', this.state.editing, value);
         }
 
         this.setState({ [this.state.editing]: value, editing: undefined });
@@ -312,28 +363,36 @@ class App extends Component {
     }
 
     render() {
+        const messages = this.state.messages.map(message => {
+            return h('div', { class: 'message' }, message.msg);
+        });
+
         const key = Object.keys(this.pages)[this.state.page];
         const renderPage = this.pages[key];
         return h(
             'div',
             { class: 'content' },
-            h('div', { class: 'navigation' }, h(this.navigationRender.bind(this))),
-            h(
-                'div',
-                { class: 'page' },
-                h(renderPage, {
-                    state: this.state,
-                    functions: {
-                        markAsTyping: this.markAsTyping.bind(this),
-                        unmarkAsTyping: this.unmarkAsTyping.bind(this),
-                        editing: this.editing.bind(this),
-                        save: this.save.bind(this),
-                        setRank: this.setRank.bind(this),
-                        kick: this.kick.bind(this),
-                        saveRank: this.saveRank.bind(this)
-                    }
-                })
-            )
+            renderPage &&
+                h('div', { class: 'navigation' }, h(this.navigationRender.bind(this))),
+            renderPage &&
+                h(
+                    'div',
+                    { class: 'page' },
+                    h(renderPage, {
+                        state: this.state,
+                        functions: {
+                            markAsTyping: this.markAsTyping.bind(this),
+                            unmarkAsTyping: this.unmarkAsTyping.bind(this),
+                            editing: this.editing.bind(this),
+                            save: this.save.bind(this),
+                            setRank: this.setRank.bind(this),
+                            kick: this.kick.bind(this),
+                            saveRank: this.saveRank.bind(this)
+                        }
+                    })
+                ),
+            !renderPage && h('div', { class: 'specialPage' }, h(CreateFaction)),
+            h('div', { class: 'messages' }, messages)
         );
     }
 }
@@ -344,6 +403,10 @@ class Board extends Component {
     }
 
     transformText(text) {
+        if (!text) {
+            return '';
+        }
+
         const paragraphs = text.split(/\r?\n/);
         return paragraphs.map(text => {
             if (text.match(/[\#]{3}/)) {
@@ -359,10 +422,6 @@ class Board extends Component {
             if (text.match(/[\#]{1}/)) {
                 text = text.replace(/[\#]{1}/, '');
                 return h('h1', {}, text);
-            }
-
-            if (text.includes('*')) {
-                text = text.replace('*', '•');
             }
 
             return h('p', {}, text);
@@ -724,6 +783,97 @@ class Options extends Component {
 
     render() {
         return 'options';
+    }
+}
+
+class CreateFaction extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            type: -1
+        };
+    }
+
+    beginCreation(e) {
+        const type = parseInt(e.target.id);
+        this.setState({ type });
+    }
+
+    setupFaction(factionName) {
+        if (factionName.length <= 3) {
+            return;
+        }
+
+        if ('alt' in window) {
+            alt.emit('faction:Create', this.state.type, factionName);
+        }
+    }
+
+    renderFactionSelection() {
+        const pageNames = ['gang', 'police', 'ems', 'business'];
+        const pages = pageNames.map((page, index) => {
+            return h(
+                'div',
+                { class: 'group' },
+                h('h4', { class: 'factionLabel' }, page.toUpperCase()),
+                h(
+                    'div',
+                    { class: 'icon-wrapper' },
+                    h('svg', {
+                        type: 'image/svg+xml',
+                        style: `background: url('../icons/${page}.svg');`
+                    })
+                ),
+                h(
+                    'button',
+                    {
+                        class: 'factionBtn',
+                        id: index,
+                        onclick: this.beginCreation.bind(this)
+                    },
+                    'Create'
+                )
+            );
+        });
+
+        return h('div', { class: 'pages' }, pages);
+    }
+
+    renderFactionNameInput() {
+        return h(
+            'div',
+            { class: 'pages' },
+            h(
+                'div',
+                { class: 'group' },
+                h('h3', { class: 'factionLabel' }, 'Input Faction Name'),
+                h('input', {
+                    type: 'text',
+                    id: 'factionName',
+                    placeholder: 'Set Faction Name'
+                }),
+                h(
+                    'button',
+                    {
+                        class: 'factionBtn',
+                        onclick: () => {
+                            const value = document.getElementById('factionName').value;
+                            this.setupFaction(value);
+                        }
+                    },
+                    'Save'
+                )
+            )
+        );
+    }
+
+    render() {
+        return h(
+            'div',
+            { class: 'factionPage' },
+            this.state.type === -1 && h(this.renderFactionSelection.bind(this)),
+            this.state.type !== -1 && h(this.renderFactionNameInput.bind(this))
+        );
     }
 }
 

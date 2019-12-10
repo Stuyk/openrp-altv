@@ -15,6 +15,7 @@ import * as keybinds from '/client/events/keybinds.mjs';
 import * as eventsConnectionComplete from '/client/events/connectionComplete.mjs';
 import * as panelsTrade from '/client/panels/trade.mjs';
 import * as panelsInventory from '/client/panels/vehicleinventory.mjs';
+import * as panelsFactions from '/client/panels/factions.mjs';
 import * as systemsArrest from '/client/systems/arrest.mjs';
 import * as systemsEquip from '/client/systems/equip.mjs';
 import * as systemsInteraction from '/client/systems/interaction.mjs';
@@ -44,7 +45,3 @@ import * as contextmenuPlayer from '/client/contextmenus/player.mjs';
 
 // Extender
 import * as systemsObjectExtender from '/client/systems/objectextender.mjs';
-
-
-
-

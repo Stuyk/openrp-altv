@@ -269,6 +269,10 @@ export const Factions = new orm.EntitySchema({
         skills: {
             type: 'text',
             default: '[]'
+        },
+        notice: {
+            type: 'text',
+            default: 'Welcome to your faction. You can write messages here.'
         }
     }
 });

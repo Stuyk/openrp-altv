@@ -110,9 +110,8 @@ db.fetchAllData('Factions', currentFactions => {
     console.log(currentFactions);
 });
 
-alt.on('faction:Create', factionCreate);
 alt.on('faction:Attach', factionAttach);
-alt.onClient('faction:Rename', factionRename);
+alt.onClient('faction:Create', factionCreate);
 alt.onClient('faction:RankUp', factionRankUp);
 alt.onClient('faction:RankDown', factionRankDown);
 alt.onClient('faction:Kick', factionKick);
@@ -121,6 +120,8 @@ alt.onClient('faction:AppendRank', factionAppendRank);
 alt.onClient('faction:RemoveRank', factionRemoveRank);
 alt.onClient('faction:SetFlags', factionSetFlags);
 alt.onClient('faction:AddPoint', factionAddPoint);
+alt.onClient('faction:SetInfo', factionSetInfo);
+alt.onClient('faction:SaveRank', factionSaveRank);
 
 export class Faction {
     constructor(factionData) {
@@ -197,6 +198,7 @@ export class Faction {
 
         const factionData = JSON.stringify(this);
         members.forEach(member => {
+            member.emitMeta('faction:Id', this.id);
             member.emitMeta('faction:Info', factionData);
         });
     }
@@ -229,7 +231,7 @@ export class Faction {
     }
 
     rankUp(player, targetID) {
-        const isOwner = this.id === player.id ? true : false;
+        const isOwner = this.id === player.data.id;
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.PROMOTE)) {
                 alt.log('You do not have permission to promote.');
@@ -259,7 +261,7 @@ export class Faction {
     }
 
     rankDown(player, targetID) {
-        const isOwner = this.id === player.id ? true : false;
+        const isOwner = this.id === player.data.id;
 
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.PROMOTE)) {
@@ -344,7 +346,7 @@ export class Faction {
         }
 
         const ranks = JSON.parse(this.ranks);
-        ranks[index] = rankName;
+        ranks[index].name = rankName;
         this.ranks = JSON.stringify(ranks);
         alt.emitClient(player, 'faction:Success', 'Successfully changed rank name.');
         this.saveField('ranks', this.ranks);
@@ -476,7 +478,7 @@ export class Faction {
     }
 
     addMember(player, target) {
-        const isOwner = this.id === player.id ? true : false;
+        const isOwner = this.id === player.data.id;
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.RECRUIT)) {
                 alt.emitClient(
@@ -508,7 +510,12 @@ export class Faction {
     }
 
     kickMember(player, id) {
-        const isOwner = this.id === player.id ? true : false;
+        if (player.data.id === id) {
+            alt.emitClient(player, 'faction:Error', 'Cannot kick self.');
+            return;
+        }
+
+        const isOwner = this.id === player.data.id;
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.KICK)) {
                 alt.emitClient(
@@ -629,6 +636,27 @@ export class Faction {
         alt.emitClient(player, 'faction:Success', 'Skill point was appended.');
         this.syncMembers();
     }
+
+    setFactionNotice(player, notice) {
+        const isOwner = this.id === player.data.id;
+
+        if (!isOwner) {
+            alt.log('Is not faction owner.');
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You do not have permission to update the notice board.'
+            );
+            return;
+        }
+
+        console.log('Saving notice...');
+        console.log(notice);
+
+        this.notice = notice;
+        this.saveField('notice', notice);
+        this.syncMembers();
+    }
 }
 
 function factionAttach(player) {
@@ -658,6 +686,8 @@ function factionAttach(player) {
 }
 
 function factionCreate(player, type, factionName) {
+    alt.log('Creating Faction...');
+
     const isPoliceReady = totalPoliceFactions >= Config.maxPoliceFactions ? true : false;
     const isEmsReady = totalEMSFactions >= Config.maxEMSFactions ? true : false;
 
@@ -691,7 +721,7 @@ function factionCreate(player, type, factionName) {
             active: Date.now()
         }
     ]);
-    const ranks = JSON.stringify({ ...defaultRanks });
+    const ranks = JSON.stringify(defaultRanks);
     const classification = type;
 
     let color = Math.floor(Math.random() * 84) + 1;
@@ -707,21 +737,16 @@ function factionCreate(player, type, factionName) {
         classification
     };
 
+    alt.log('Saving created faction.');
+
     player.data.faction = player.data.id;
     db.upsertData(factionData, 'Factions', newFactionData => {
         new Faction(newFactionData);
         player.saveField(player.data.id, 'faction', player.data.id);
         player.emitMeta('faction:Id', player.data.id);
         player.emitMeta('faction:Info', JSON.stringify(newFactionData));
+        alt.log('Faction ready.');
     });
-}
-
-function factionRename(player, factionName) {
-    if (!player.faction) {
-        return;
-    }
-
-    player.faction.setFactionName(player, factionName);
 }
 
 function factionRankUp(player, id) {
@@ -745,7 +770,7 @@ function factionKick(player, id) {
         return;
     }
 
-    player.faction.kick(player, id);
+    player.faction.kickMember(player, id);
 }
 
 function factionDisband(player, id) {
@@ -786,4 +811,31 @@ function factionAddPoint(player, category) {
     }
 
     player.faction.addPoint(player, category);
+}
+
+function factionSetInfo(player, infoName, info) {
+    if (!player.faction) {
+        return;
+    }
+
+    console.log(infoName);
+    console.log(info);
+
+    if (infoName === 'name') {
+        player.faction.setFactionName(player, info);
+        return;
+    }
+
+    if (infoName === 'notice') {
+        player.faction.setFactionNotice(player, info);
+        return;
+    }
+}
+
+function factionSaveRank(player, index, rankName) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.setRankName(player, index, rankName);
 }

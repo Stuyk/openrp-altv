@@ -31,6 +31,9 @@ export class View {
             currentView.view = new alt.WebView(url);
             currentView.events = [];
         }
+        else {
+            showCursor(false);
+        }
 
         alt.Player.local.setMeta('viewOpen', true);
         alt.emit('chat:Toggle');

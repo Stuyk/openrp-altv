@@ -101,6 +101,11 @@ alt.on('hud:AdjustHud', value => {
     webview.emit('hud:AdjustHud', value);
 });
 
+alt.on('hud:Hide', value => {
+    if (!webview) return;
+    webview.emit('hud:Hide', value);
+});
+
 alt.on('hud:IsInVehicle', value => {
     if (!webview) return;
     webview.emit('hud:isInVehicle', value);

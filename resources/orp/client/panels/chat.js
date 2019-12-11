@@ -59,6 +59,7 @@ export function send(msg) {
 
 alt.on('chat:Send', send);
 alt.on('chat:Toggle', toggleHide);
+alt.on('chat:Hide', hide);
 
 export function toggleHide() {
     if (webview === undefined) return;
@@ -66,6 +67,11 @@ export function toggleHide() {
     isViewHidden = !isViewHidden;
     webview.emit('chat:Hide', isViewHidden);
     native.displayRadar(!isViewHidden);
+}
+
+function hide(value) {
+    if (!webview) return;
+    webview.emit('chat:Hide', value);
 }
 
 function routeMessage(msg) {

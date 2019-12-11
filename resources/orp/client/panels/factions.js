@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 import { View } from '/client/utility/view.js';
 import { showCursor } from '/client/utility/cursor.js';
 import { getLevel } from '/client/systems/xp.js';
@@ -34,6 +35,13 @@ export function showDialogue() {
     webview.on('faction:RankUp', rankUp);
     webview.on('faction:RankDown', rankDown);
     webview.on('faction:Create', create);
+    webview.on('faction:RemoveRank', removeRank);
+    webview.on('faction:AppendRank', appendRank);
+    webview.on('faction:SetFlags', setFlags);
+    native.transitionToBlurred(1000);
+
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
 }
 
 alt.on('meta:Changed', (key, value) => {
@@ -68,6 +76,9 @@ function ready() {
 function closeDialogue() {
     if (!webview) return;
     webview.close();
+    native.transitionFromBlurred(1000);
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
 }
 
 function rankUp(memberID) {
@@ -94,10 +105,30 @@ function saveRank(index, rankName) {
     alt.emitServer('faction:SaveRank', index, rankName);
 }
 
+function removeRank(index) {
+    alt.emitServer('faction:RemoveRank', index);
+}
+
+function appendRank(name) {
+    alt.emitServer('faction:AppendRank', name);
+}
+
+function setFlags(index, flagValue) {
+    alt.emitServer('faction:SetFlags', index, flagValue);
+}
+
 alt.onServer('faction:Error', msg => {
     if (!webview) {
         return;
     }
 
     webview.emit('faction:Error', msg);
+});
+
+alt.onServer('faction:Success', msg => {
+    if (!webview) {
+        return;
+    }
+
+    webview.emit('faction:Success', msg);
 });

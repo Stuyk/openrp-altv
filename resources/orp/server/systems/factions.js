@@ -203,6 +203,11 @@ export class Faction {
         });
     }
 
+    syncMember(player) {
+        player.emitMeta('faction:Id', this.id);
+        player.emitMeta('faction:Info', JSON.stringify(this));
+    }
+
     getRank(id) {
         const members = JSON.parse(this.members);
         const index = members.findIndex(member => {
@@ -232,6 +237,7 @@ export class Faction {
 
     rankUp(player, targetID) {
         const isOwner = this.id === player.data.id;
+
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.PROMOTE)) {
                 alt.log('You do not have permission to promote.');
@@ -255,8 +261,11 @@ export class Faction {
 
         if (!this.setRank(targetID, newRank)) {
             alt.emitClient(player, 'faction:Error', 'Failed to set rank.');
+            this.syncMember(player);
         } else {
             alt.emitClient(player, 'faction:Success', 'Successfully set rank.');
+            this.saveField('members', this.members);
+            this.syncMembers();
         }
     }
 
@@ -275,6 +284,7 @@ export class Faction {
                     'faction:Error',
                     'You are not a high enough rank.'
                 );
+                this.syncMember(player);
                 return;
             }
         }
@@ -283,6 +293,7 @@ export class Faction {
         const newRank = memberRank + 1 >= ranks.length ? ranks.length : memberRank + 1;
         if (!this.setRank(targetID, newRank)) {
             alt.emitClient(player, 'faction:Error', 'Failed to set rank.');
+            this.syncMember(player);
         } else {
             alt.emitClient(player, 'faction:Success', 'Successfully set rank.');
             this.saveField('members', this.members);
@@ -293,11 +304,24 @@ export class Faction {
     appendRank(player, rankName) {
         if (player.data.id !== this.id) {
             alt.emitClient(player, 'faction:Error', 'Cannot append rank as non-owner.');
+            this.syncMember(player);
             return;
         }
 
         const ranks = JSON.parse(this.ranks);
-        ranks.push(rankName);
+        const index = ranks.findIndex(rank => {
+            if (rank.name.toLowerCase() === rankName.toLowerCase()) {
+                return rank;
+            }
+        });
+
+        if (index !== -1) {
+            alt.emitClient(player, 'faction:Error', 'Rank name is already taken.');
+            this.syncMember(player);
+            return;
+        }
+
+        ranks.push({ name: rankName, flags: 0 });
         this.ranks = JSON.stringify(ranks);
         alt.emitClient(player, 'faction:Success', 'Successfully appended new rank.');
         this.saveField('ranks', this.ranks);
@@ -305,37 +329,55 @@ export class Faction {
         this.syncMembers();
     }
 
-    removeRank(player) {
+    removeRank(player, index) {
         if (player.data.id !== this.id) {
             alt.emitClient(player, 'faction:Error', 'Cannot remove rank as non-owner.');
+            this.syncMember(player);
             return;
         }
 
         const ranks = JSON.parse(this.ranks);
-        if (ranks.length - 1 <= 2) {
+        if (ranks.length - 1 < 2) {
             alt.emitClient(
                 player,
                 'faction:Error',
                 'Must have at least two ranks remaining at all times.'
             );
+            this.syncMember(player);
             return;
         }
 
-        const oldEndRank = ranks.length - 1;
-        const members = JSON.parse(this.members);
+        index = parseInt(index);
+        if (index <= -1) {
+            alt.emitClient(player, 'faction:Error', 'Rank was not found.');
+            this.syncMember(player);
+            return;
+        }
 
-        members.forEach(member => {
-            if (member.rank === oldEndRank) {
-                member.rank -= 1;
-            }
-        });
+        if (!ranks[index]) {
+            alt.emitClient(player, 'faction:Error', 'Rank was not found.');
+            this.syncMember(player);
+            return;
+        }
 
-        ranks.pop();
-        this.members = JSON.stringify(members);
+        const oldEndRankIndex = ranks.length - 1;
+        ranks.splice(index, 1);
+
+        if (oldEndRankIndex === index) {
+            const members = JSON.parse(this.members);
+            members.forEach(member => {
+                if (member.rank === index) {
+                    member.rank -= 1;
+                }
+            });
+
+            this.members = JSON.stringify(members);
+            this.saveField('members', this.members);
+        }
+
         this.ranks = JSON.stringify(ranks);
         alt.emitClient(player, 'faction:Success', 'Successfully removed a rank.');
         this.saveField('ranks', this.ranks);
-        this.saveField('members', this.members);
         this.syncMembers();
     }
 
@@ -789,20 +831,20 @@ function factionAppendRank(player, rankName) {
     player.faction.appendRank(player, rankName);
 }
 
-function factionRemoveRank(player) {
+function factionRemoveRank(player, index) {
     if (!player.faction) {
         return;
     }
 
-    player.faction.removeRank(player);
+    player.faction.removeRank(player, index);
 }
 
-function factionSetFlags(player, id, flags) {
+function factionSetFlags(player, index, flags) {
     if (!player.faction) {
         return;
     }
 
-    player.faction.setFlags(player, id, flags);
+    player.faction.setFlags(player, index, flags);
 }
 
 function factionAddPoint(player, category) {
@@ -817,9 +859,6 @@ function factionSetInfo(player, infoName, info) {
     if (!player.faction) {
         return;
     }
-
-    console.log(infoName);
-    console.log(info);
 
     if (infoName === 'name') {
         player.faction.setFactionName(player, info);

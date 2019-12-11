@@ -245,9 +245,13 @@ class App extends Component {
             members,
             ranks: JSON.parse(newData.ranks),
             turfs: JSON.parse(newData.turfs),
-            page: 0,
             notice: newData.notice
         };
+
+        if (!this.state.hasMounted) {
+            refinedData.hasMounted = true;
+            refinedData.page = 0;
+        }
 
         this.setState(refinedData);
     }
@@ -270,12 +274,65 @@ class App extends Component {
         this.setState({ editing: targetEdit });
     }
 
+    removeRank(index) {
+        const ranks = [...this.state.ranks];
+        ranks.splice(index, 1);
+        this.setState({ ranks });
+        if ('alt' in window) {
+            alt.emit('faction:RemoveRank', index);
+        }
+    }
+
+    appendRank(name) {
+        const ranks = [...this.state.ranks];
+        ranks.push({ name, flags: 0 });
+        this.setState({ ranks });
+        if ('alt' in window) {
+            alt.emit('faction:AppendRank', name);
+        }
+    }
+
     saveRank(index, name) {
+        if (!name) {
+            return;
+        }
+
+        if (name.length <= 3) {
+            return;
+        }
+
         const ranks = [...this.state.ranks];
         ranks[index].name = name;
         this.setState({ ranks });
         if ('alt' in window) {
             alt.emit('faction:SaveRank', index, name);
+        }
+    }
+
+    changeRankFlag(index, flagName) {
+        const permission = permissions[flagName];
+        if (!permission) {
+            return;
+        }
+
+        if (index === 0) {
+            return;
+        }
+
+        const ranks = [...this.state.ranks];
+        if (!ranks[index]) {
+            return;
+        }
+
+        if (isFlagged(ranks[index].flags, permission)) {
+            ranks[index].flags -= permission;
+        } else {
+            ranks[index].flags += permission;
+        }
+
+        this.setState({ ranks });
+        if ('alt' in window) {
+            alt.emit('faction:SetFlags', index, ranks[index].flags);
         }
     }
 
@@ -387,7 +444,10 @@ class App extends Component {
                             save: this.save.bind(this),
                             setRank: this.setRank.bind(this),
                             kick: this.kick.bind(this),
-                            saveRank: this.saveRank.bind(this)
+                            saveRank: this.saveRank.bind(this),
+                            removeRank: this.removeRank.bind(this),
+                            appendRank: this.appendRank.bind(this),
+                            changeRankFlag: this.changeRankFlag.bind(this)
                         }
                     })
                 ),
@@ -697,70 +757,209 @@ class Ranks extends Component {
         };
     }
 
+    toggleProperties(e) {
+        const name = e.target.id;
+
+        if (!name) {
+            return;
+        }
+
+        const value = this.state[name] ? false : true;
+        this.setState({ [name]: value });
+    }
+
+    renderExpandButtons({ rank }) {
+        if (this.state[rank.name]) {
+            return h(
+                'button',
+                {
+                    id: rank.name,
+                    class: 'toggle',
+                    onclick: this.toggleProperties.bind(this)
+                },
+                '-'
+            );
+        }
+
+        return h(
+            'button',
+            {
+                id: rank.name,
+                class: 'toggle',
+                onclick: this.toggleProperties.bind(this)
+            },
+            '+'
+        );
+    }
+
+    renderRankEditor({ props, isEditing, editingHere, rank, index }) {
+        return h(
+            'div',
+            { class: 'rankInput' },
+            !isEditing &&
+                h(
+                    'button',
+                    {
+                        class: 'edit',
+                        onclick: () => {
+                            this.setState({
+                                isEditing: true,
+                                editing: index
+                            });
+                        }
+                    },
+                    'Edit Rank Name'
+                ),
+            isEditing &&
+                editingHere &&
+                h('input', {
+                    type: 'text',
+                    id: `rank@${index}`,
+                    placeholder: 'Set rank name. Must be > 3 characters.',
+                    value: rank.name
+                }),
+            isEditing &&
+                editingHere &&
+                h(
+                    'button',
+                    {
+                        class: 'edit',
+                        onclick: () => {
+                            const data = document.getElementById(`rank@${index}`);
+                            props.functions.saveRank(index, data.value);
+                            this.setState({ isEditing: false });
+                        }
+                    },
+                    'Save'
+                )
+        );
+    }
+
+    renderRemoveableButton({ props, index }) {
+        return h(
+            'button',
+            {
+                class: 'remove',
+                onclick: () => {
+                    props.functions.removeRank(index);
+                }
+            },
+            'X'
+        );
+    }
+
+    renderFlagsEditor({ index, props, rank }) {
+        const flags = Object.keys(permissions).map(key => {
+            if (key === 'MIN' || key === 'MAX') {
+                return;
+            }
+
+            const isChecked = isFlagged(rank.flags, permissions[key]);
+            return h(
+                'div',
+                { class: 'checkContainer' },
+                h('div', { class: 'label' }, key),
+                h('input', {
+                    class: 'flagBox',
+                    onclick: () => {
+                        props.functions.changeRankFlag(index, key);
+                    },
+                    type: 'checkbox',
+                    checked: isChecked
+                })
+            );
+        });
+
+        return h('div', { class: 'rankFlags' }, flags);
+    }
+
     render(props) {
         const state = props.state;
         const isOwner = state.myid === state.id ? true : false;
         const isEditing = this.state.isEditing;
-        const ranks = state.ranks.map((rank, index) => {
-            const editingHere = index === this.state.editing ? true : false;
 
-            if (isOwner) {
+        const ranks = state.ranks.map((rank, index) => {
+            const editingHere = index === this.state.editing;
+            const isRemoveable = index >= 2;
+
+            if (!isOwner) {
                 return h(
                     'div',
                     { class: 'rank' },
                     h('div', { class: 'rankNumber' }, index),
-                    h('div', { class: 'rankName' }, rank.name),
-                    h(
-                        'div',
-                        { class: 'rankInput' },
-                        !isEditing &&
-                            h(
-                                'button',
-                                {
-                                    class: 'edit',
-                                    onclick: () => {
-                                        this.setState({
-                                            isEditing: true,
-                                            editing: index
-                                        });
-                                    }
-                                },
-                                'Edit'
-                            ),
-                        isEditing &&
-                            editingHere &&
-                            h('input', {
-                                type: 'text',
-                                id: `rank@${index}`,
-                                placholder: rank.name
-                            }),
-                        isEditing &&
-                            editingHere &&
-                            h(
-                                'button',
-                                {
-                                    class: 'edit',
-                                    onclick: () => {
-                                        const data = document.getElementById(
-                                            `rank@${index}`
-                                        );
-                                        props.functions.saveRank(index, data.value);
-                                        this.setState({ isEditing: false });
-                                    }
-                                },
-                                'Save'
-                            )
-                    )
+                    h('div', { class: 'rankName' }, rank.name)
                 );
             }
 
             return h(
                 'div',
                 { class: 'rank' },
-                h('div', { class: 'rankNumber' }, index),
-                h('div', { class: 'rankName' }, rank.name)
+                h(
+                    'div',
+                    { class: 'info' },
+                    h(this.renderExpandButtons.bind(this), { rank }),
+                    h(
+                        'div',
+                        { class: 'rankData' },
+                        h('div', { class: 'rankNumber' }, index),
+                        h('div', { class: 'rankName' }, rank.name)
+                    ),
+                    isRemoveable &&
+                        h(this.renderRemoveableButton.bind(this), { props, index }),
+                    !isRemoveable && h('button', { class: 'toggle disabled' }, 'X')
+                ),
+                this.state[rank.name] &&
+                    h(
+                        'div',
+                        { class: 'properties' },
+                        h(this.renderRankEditor.bind(this), {
+                            props,
+                            isEditing,
+                            editingHere,
+                            rank,
+                            index
+                        }),
+                        index !== 0 &&
+                            h(this.renderFlagsEditor.bind(this), { index, props, rank })
+                    )
             );
         });
+
+        if (isOwner) {
+            ranks.push(
+                h(
+                    'div',
+                    { class: 'addRankInput' },
+                    h('input', {
+                        class: 'rankInput',
+                        type: 'text',
+                        placeholder: 'Append a new rank.',
+                        id: 'appendNewRank'
+                    }),
+                    h(
+                        'button',
+                        {
+                            class: 'saveRank',
+                            onclick: () => {
+                                const value = document.getElementById('appendNewRank')
+                                    .value;
+
+                                if (!value) {
+                                    return;
+                                }
+
+                                if (value.length <= 3) {
+                                    return;
+                                }
+
+                                props.functions.appendRank(value);
+                            }
+                        },
+                        'Add New Rank'
+                    )
+                )
+            );
+        }
 
         return h('div', { class: 'rankPage' }, h('div', { class: 'ranks' }, ranks));
     }

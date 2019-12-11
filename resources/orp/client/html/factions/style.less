@@ -3,6 +3,7 @@
 @contrast2: rgb(255, 153, 0);
 @darkaccent: rgb(8, 8, 8);
 @whitecontrast: rgba(255, 255, 255, 0.2);
+@error: rgb(255, 123, 123);
 @fontface: 'Roboto';
 
 body,
@@ -206,60 +207,195 @@ body {
 
 //rankPage, ranks, rank
 .rankPage {
-    display: flex;
+    height: 100%;
     width: 100%;
 
     .ranks {
+        min-height: 100%;
         display: flex;
-        width: 100%;
         flex-direction: column;
 
         .rank {
             display: flex;
-            flex-direction: row;
-            width: 100%;
-            height: 45px;
-            background: rgba(0, 0, 0, 0.2);
-            justify-content: left;
+            flex-direction: column;
+            justify-content: center;
             justify-items: center;
             align-items: center;
             align-content: center;
+            min-height: 45px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(0, 0, 0, 0.2);
             margin-bottom: 10px;
 
-            .rankNumber {
+            .info {
+                width: 100%;
                 display: flex;
-                justify-content: center;
+                flex-direction: row;
+                justify-content: space-between;
                 justify-items: center;
-                align-content: center;
                 align-items: center;
-                color: @contrast1;
-                border: 2px solid rgba(0, 0, 0, 0.2);
-                border-radius: 5px;
-                width: 25px;
-                height: 25px;
-                margin-left: 10px;
+                align-content: center;
+
+                .rankData {
+                    min-width: 300px;
+                    display: flex;
+                    justify-content: left;
+                    justify-items: center;
+                    align-items: center;
+                    align-content: center;
+                    flex-grow: 1;
+
+                    .rankNumber {
+                        display: flex;
+                        height: 15px;
+                        width: 15px;
+                        border: 2px solid rgba(0, 0, 0, 0.2);
+                        color: @contrast1;
+                        padding: 5px;
+                        border-radius: 5px;
+                        justify-content: center;
+                        justify-items: center;
+                        align-items: center;
+                        align-content: center;
+                        margin: 0px 10px;
+                    }
+                }
+
+                .toggle {
+                    height: 45px;
+                    width: 45px;
+                    border: 2px solid rgba(255, 255, 255, 0.1);
+                    color: @contrast1;
+                    background: transparent;
+
+                    &:hover {
+                        color: @contrast2;
+                        border: 2px solid @contrast2;
+                    }
+
+                    &:focus {
+                        outline: none;
+                    }
+                }
+
+                .disabled {
+                    color: rgba(255, 255, 255, 0.1) !important;
+
+                    &:hover {
+                        color: rgba(255, 255, 255, 0.1) !important;
+                        border: 2px solid rgba(255, 255, 255, 0.1) !important;
+                    }
+                }
+
+                .remove {
+                    height: 45px;
+                    width: 45px;
+                    border: 2px solid rgba(255, 255, 255, 0.1);
+                    color: @contrast1;
+                    background: transparent;
+
+                    &:hover {
+                        color: @error;
+                        border: 2px solid @error;
+                    }
+
+                    &:focus {
+                        outline: none;
+                    }
+                }
             }
 
-            .rankName {
-                padding-left: 10px;
-                color: white;
-            }
-
-            .rankInput {
-                padding-left: 10px;
+            .properties {
+                width: 98.5%;
+                height: 100%;
+                min-height: 45px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                justify-items: center;
+                align-items: center;
+                align-content: center;
+                border: 2px solid rgba(0, 0, 0, 0.1);
+                background: rgba(255, 255, 255, 0.1);
+                margin: 1% 1.5% !important;
 
                 input {
-                    background: rgba(0, 0, 0, 0.1);
-                    border: 2px solid rgba(0, 0, 0, 0.2);
                     color: white;
-                    height: 25px;
+                    min-height: 30px;
+                    min-width: 450px;
+                    background: rgba(0, 0, 0, 0.2);
+                    border: 2px solid rgba(0, 0, 0, 0.3);
                     text-align: center;
                     margin-right: 10px;
 
                     &:focus {
                         outline: none;
-                        border: 2px solid @contrast2;
+                        border: 2px solid @contrast1;
                     }
+                }
+
+                .checkContainer {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    justify-items: center;
+                    align-items: center;
+                    align-content: center;
+
+                    .label {
+                        margin-right: 10px;
+                    }
+
+                    .flagBox {
+                        min-height: 30px;
+                        min-width: 30px;
+                    }
+                }
+            }
+        }
+
+        .addRankInput {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            min-height: 45px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+
+            input {
+                color: white;
+                min-height: 30px;
+                min-width: 450px;
+                background: rgba(0, 0, 0, 0.2);
+                border: 2px solid rgba(0, 0, 0, 0.3);
+                text-align: center;
+                margin-right: 10px;
+
+                &:focus {
+                    outline: none;
+                    border: 2px solid @contrast1;
+                }
+            }
+
+            button {
+                height: 35px;
+                width: auto;
+                padding: 0px 10px;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                color: @contrast1;
+                background: transparent;
+
+                &:hover {
+                    color: @contrast2;
+                    border: 2px solid @contrast2;
+                }
+
+                &:focus {
+                    outline: none;
                 }
             }
         }

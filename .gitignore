@@ -5,6 +5,7 @@ resources/*
 !resources/hospital-pillbox
 !resources/postgres-wrapper
 !resources/orp-addon/*
+!resources/orp/server/cache/*
 resources/orp/server/discord/configuration.json
 resources/orp/terms-and-conditions.json
 resources/orp/terms-and-conditions.*

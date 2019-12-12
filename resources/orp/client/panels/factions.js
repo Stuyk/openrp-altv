@@ -38,7 +38,7 @@ export function showDialogue() {
     webview.on('faction:RemoveRank', removeRank);
     webview.on('faction:AppendRank', appendRank);
     webview.on('faction:SetFlags', setFlags);
-    native.transitionToBlurred(1000);
+    native.triggerScreenblurFadeIn(1000);
 
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
@@ -76,7 +76,7 @@ function ready() {
 function closeDialogue() {
     if (!webview) return;
     webview.close();
-    native.transitionFromBlurred(1000);
+    native.triggerScreenblurFadeOut(1000);
     alt.emit('hud:Hide', false);
     alt.emit('chat:Hide', false);
 }

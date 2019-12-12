@@ -20,9 +20,9 @@ export function fadeOutFadeIn(ms, msToOut) {
 }
 
 export function blurOut(ms) {
-    native.transitionFromBlurred(ms);
+    native.triggerScreenblurFadeOut(ms);
 }
 
 export function blurIn(ms) {
-    native.transitionToBlurred(ms);
+    native.triggerScreenblurFadeIn(ms);
 }

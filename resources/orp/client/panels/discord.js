@@ -19,13 +19,13 @@ alt.onServer('discord:Connect', (token, communityDiscord) => {
     discordToken = token;
     webview.open(url, true);
     webview.on('ready', ready);
-    native.transitionToBlurred(0);
+    native.triggerScreenblurFadeIn(0);
 });
 
 alt.onServer('discord:Done', () => {
     webview.close();
     discordToken = null;
-    native.transitionFromBlurred(5000);
+    native.triggerScreenblurFadeOut(5000);
 });
 
 function ready() {

@@ -8,7 +8,7 @@ alt.on('disconnect', () => {
     native.destroyAllCams(true);
     native.displayRadar(true);
     native.renderScriptCams(false, false, 0, false, false);
-    native.transitionFromBlurred(0);
+    native.triggerScreenblurFadeOut(0);
 
     alt.emit('view:DestroyAll');
 

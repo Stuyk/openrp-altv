@@ -3,6 +3,7 @@ import SQL from '../../../postgres-wrapper/database.js';
 import { colshapes } from './grid.js';
 import { Config } from '../configuration/config.js';
 
+/*
 const gangs = [];
 const db = new SQL();
 db.fetchAllData('Gangs', currentGangs => {
@@ -385,10 +386,7 @@ function setupGangData(gang) {
     });
 }
 
-/**
- * Get a gang by the player.
- * @param player
- */
+
 export function getGang(player) {
     return gangs.find(gang => gang && parseInt(gang.id) === parseInt(player.data.gang));
 }
@@ -413,11 +411,7 @@ export function fetchTurfSectors(player) {
     return sectors;
 }
 
-/**
- * Create a New Gang
- * @param player
- * @param gangName
- */
+
 export function createGang(player, gangName) {
     if (player.isDisbandingGang) {
         player.notify('Please wait until gang is doing being disbanded.');
@@ -461,10 +455,7 @@ export function createGang(player, gangName) {
     });
 }
 
-/**
- * Remove a turf from a gang; set it to nobody.
- * @param id
- */
+
 export function setTurfToNeutral(id) {
     id = parseInt(id);
     if (colshapes[id]) {
@@ -564,6 +555,7 @@ alt.on('parse:Turfs', () => {
         alt.emit('grid:AddTurf', selectedGang, turfID, nextTime);
     });
 });
+
 
 // Panel Events
 alt.onClient('gang:ChangeGangName', (player, name) => {
@@ -714,6 +706,7 @@ alt.onClient('gang:Disband', player => {
     gang.disband(player);
 });
 
+*/
 alt.onClient('gangs:CheckCraftDialogue', (player, type) => {
     if (!doesUserHaveTurfAccess(player)) {
         player.notify('You must ownt his turf to access this crafting point.');

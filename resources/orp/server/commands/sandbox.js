@@ -1,7 +1,6 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.js';
 import fs from 'fs';
-import { fetchTurfSectors } from '../systems/gangs.js';
 
 // Development sandbox commands
 const sandboxhelp = [
@@ -126,8 +125,10 @@ chat.registerCmd('tempdoor', (player, args) => {
     }
 });
 
+/*
 chat.registerCmd('showturfs', player => {
     if (player.data.gang === -1) return;
     const sectors = fetchTurfSectors(player);
     alt.emitClient(player, 'grid:TempTurfs', sectors);
 });
+*/

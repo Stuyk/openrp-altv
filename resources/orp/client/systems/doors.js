@@ -183,7 +183,7 @@ alt.onServer('editingDoor', state => {
     }
 
     const hash = native.getHashKey('prop_cntrdoor_ld_l');
-    const playerPosition = alt.Player.local.pos;
+    const playerPosition = { ...alt.Player.local.pos };
     alt.loadModel(hash);
     native.requestModel(hash);
 
@@ -199,7 +199,7 @@ alt.onServer('editingDoor', state => {
 
     editDoorInterval = alt.setInterval(() => {
         native.disableInputGroup(0);
-        let pos = native.getEntityCoords(editDoorId, false);
+        let pos = { ...native.getEntityCoords(editDoorId, false) };
 
         // Scroll Down
         if (native.isDisabledControlJustPressed(0, 14)) {

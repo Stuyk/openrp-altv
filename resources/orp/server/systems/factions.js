@@ -3,6 +3,7 @@ import SQL from '../../../postgres-wrapper/database.js';
 import { colshapes } from './grid.js';
 import { Config } from '../configuration/config.js';
 import { isFlagged } from '../utility/flags.js';
+import { ExtPlayer } from '../utility/player.js';
 
 const factions = [];
 const db = new SQL();
@@ -104,10 +105,11 @@ db.fetchAllData('Factions', currentFactions => {
         if (factionData.classification === classifications.EMS) {
             totalEMSFactions += 1;
         }
+
+        totalFactions += 1;
     });
 
     alt.log(`Total Factions ${totalFactions}`);
-    console.log(currentFactions);
 });
 
 alt.on('faction:Attach', factionAttach);
@@ -503,9 +505,9 @@ export class Faction {
                 return;
             }
 
-            target.data.gang = -1;
-            target.saveField(target.data.id, 'faction', target.data.gang);
-            target.emitMeta('faction:Id', target.data.id);
+            target.data.faction = -1;
+            target.saveField(target.data.id, 'faction', target.data.faction);
+            target.emitMeta('faction:Id', -1);
             target.emitMeta('faction:Info', null);
             target.send('Your faction has disbanded.');
             target.notify('Your faction has disbanded.');
@@ -783,10 +785,10 @@ function factionCreate(player, type, factionName) {
 
     player.data.faction = player.data.id;
     db.upsertData(factionData, 'Factions', newFactionData => {
-        new Faction(newFactionData);
+        const parsedFactionData = new Faction(newFactionData);
         player.saveField(player.data.id, 'faction', player.data.id);
         player.emitMeta('faction:Id', player.data.id);
-        player.emitMeta('faction:Info', JSON.stringify(newFactionData));
+        player.emitMeta('faction:Info', JSON.stringify(parsedFactionData));
         alt.log('Faction ready.');
     });
 }
@@ -815,7 +817,7 @@ function factionKick(player, id) {
     player.faction.kickMember(player, id);
 }
 
-function factionDisband(player, id) {
+function factionDisband(player) {
     if (!player.faction) {
         return;
     }
@@ -871,6 +873,11 @@ function factionSetInfo(player, infoName, info) {
     }
 }
 
+/**
+ * @param {ExtPlayer} player
+ * @param {*} index
+ * @param {*} rankName
+ */
 function factionSaveRank(player, index, rankName) {
     if (!player.faction) {
         return;
@@ -878,3 +885,66 @@ function factionSaveRank(player, index, rankName) {
 
     player.faction.setRankName(player, index, rankName);
 }
+
+alt.on('parse:Turfs', () => {
+    /*
+    const currentPlayers = [...alt.Player.all];
+    const players = currentPlayers.filter(
+        player =>
+            player && // is player
+            player.data && // has data
+            player.data.faction !== -1 && // is in a faction
+            !player.data.dead && // is not dead
+            player.dimension === 0 // is in dimension 0
+    );
+
+    colshapes.forEach((shape, turfID) => {
+        if (Date.now() < shape.factions.nextClaim) {
+            return;
+        }
+
+        const filteredPlayers = players.filter(player => player.colshape === shape);
+        const nextTime =
+            Date.now() +
+            shape.sector.seed.getNumber(Config.turfHighestWaitTime) * 60000 +
+            60000 * 10;
+
+        // console.log(`Turf ${shape.sector.name} has initiated claim.`);
+        // console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
+
+        if (filteredPlayers.length <= 0) {
+            shape.factions.nextClaim = nextTime;
+            return;
+        }
+
+        const turfMembers = {};
+        filteredPlayers.forEach(player => {
+            if (!turfMembers[player.data.faction]) {
+                turfMembers[player.data.faction] = 1;
+            } else {
+                turfMembers[player.data.faction] += 1;
+            }
+        });
+
+        let selectedFaction;
+        Object.keys(turfMembers).forEach(key => {
+            if (!selectedFaction) {
+                selectedFaction = key;
+                return;
+            }
+
+            if (turfMembers[key] > turfMembers[selectedFaction]) {
+                selectedFaction = key;
+            }
+        });
+
+        if (parseInt(shape.factions.owner) === parseInt(selectedGang)) {
+            shape.factions.nextClaim = nextTime;
+            return;
+        }
+
+        alt.emit('grid:AddTurf', selectedGang, turfID, nextTime);
+    });
+
+    */
+});

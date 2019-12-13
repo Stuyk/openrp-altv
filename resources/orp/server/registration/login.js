@@ -183,7 +183,6 @@ alt.on('sync:Player', player => {
     player.syncInteractionBlips();
     player.syncXP();
     player.syncContacts();
-    player.syncGang();
     player.syncInventory(true);
     player.syncMoney();
     player.syncDoorStates();

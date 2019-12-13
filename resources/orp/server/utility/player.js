@@ -9,7 +9,6 @@ import { quitJob } from '../systems/job.js';
 import { fetchNextVehicleID, getCharacterName, modifyRank } from '../cache/cache.js';
 import { dropNewItem } from '../systems/inventory.js';
 import { doorStates } from '../systems/use.js';
-import { getGang } from '../systems/gangs.js';
 import { getLevel } from '../systems/xp.js';
 
 import * as systemsInteraction from '../systems/interaction.js';
@@ -20,12 +19,19 @@ import SQL from '../../../postgres-wrapper/database.js';
 // Load the database handler.
 const db = new SQL();
 
-export function setupPlayerFunctions(player) {
-    /**
-     * setupPlayerFunctions
-     * @exports setupPlayerfunctions
-     * @namespace player
-     */
+export class ExtPlayer {
+    constructor(player) {
+        this.player = player;
+        return new Promise(resolve => {
+            const functionNames = Object.getOwnPropertyNames(ExtPlayer.prototype);
+            functionNames.forEach(name => {
+                if (this[name]) {
+                    player[name] = this[name].bind(this);
+                }
+            });
+            return resolve(true);
+        });
+    }
 
     /**
      *  Used to emit meta to the local player and server.
@@ -34,169 +40,182 @@ export function setupPlayerFunctions(player) {
      * @param {any} key
      * @param {any} value
      */
-    player.emitMeta = (key, value) => {
-        player.setMeta(key, value);
-        alt.emitClient(player, 'meta:Emit', key, value);
-    };
+    emitMeta(key, value) {
+        this.player.setMeta(key, value);
+        alt.emitClient(this.player, 'meta:Emit', key, value);
+    }
 
     /**
-     *  Used to save all `player.data` information.
+     *  Used to save all `this.player.data` information.
      * @memberof player
      */
-    player.save = () => {
-        db.upsertData(player.data, 'Character', () => {});
-    };
+    save() {
+        db.upsertData(this.player.data, 'Character', () => {});
+    }
 
     /**
      *  Used to save a specific id, field, and value.
      * @memberof player
-     * @param {string/number} id User's database id. ie. player.data.id
+     * @param {string/number} id User's database id. ie. this.player.data.id
      * @param {string} fieldName The field name to use.
      * @param {any} fieldValue The field value to apply.
      */
-    player.saveField = (id, fieldName, fieldValue) => {
+    saveField(id, fieldName, fieldValue) {
         db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
-    };
+    }
 
-    player.setRank = flag => {
-        player.rank = flag;
-        modifyRank(player.pgid, flag);
-        db.updatePartialData(player.accountID, { rank: flag }, 'Account', () => {
-            alt.log(`Updated ${player.pgid} to rank ${flag}`);
+    setRank(flag) {
+        this.player.rank = flag;
+        modifyRank(this.player.pgid, flag);
+        db.updatePartialData(this.player.accountID, { rank: flag }, 'Account', () => {
+            alt.log(`Updated ${this.player.pgid} to rank ${flag}`);
         });
-    };
+    }
 
     /**
      * Updates the player's current playing time.
      * Calculated from start time; until now. Then resets it.
      * @memberof player
      */
-    player.addRewardPoint = () => {
-        player.saveField(player.data.id, 'rewardpoints', player.data.rewardpoints + 1);
-        player.saveField(
-            player.data.id,
-            'totalrewardpoints',
-            player.data.totalrewardpoints + 1
+    addRewardPoint() {
+        this.player.saveField(
+            this.player.data.id,
+            'rewardpoints',
+            this.player.data.rewardpoints + 1
         );
-    };
+        this.player.saveField(
+            this.player.data.id,
+            'totalrewardpoints',
+            this.player.data.totalrewardpoints + 1
+        );
+    }
 
     /**
-     * Returns the total reward points a player has.
+     * Returns the reward points a player has.
      * @memberof player
+     * @returns int
      */
-    player.getRewardPoints = () => {
-        return parseInt(player.data.rewardpoints);
-    };
+    getRewardPoints() {
+        return parseInt(this.player.data.rewardpoints);
+    }
 
-    player.getTotalRewardPoints = () => {
-        return parseInt(player.data.totalrewardpoints);
-    };
+    /**
+     * Returns the total reward points issued to a user.
+     * @returns int
+     */
+    getTotalRewardPoints() {
+        return parseInt(this.player.data.totalrewardpoints);
+    }
 
-    player.getTotalPlayTime = () => {
-        const totalPoints = player.getTotalRewardPoints();
+    getTotalPlayTime() {
+        const totalPoints = this.player.getTotalRewardPoints();
         const timePerPoint = Config.timeRewardTime;
         const timeInMS = totalPoints * timePerPoint;
         return timeInMS / 1000 / 60 / 60;
-    };
+    }
 
-    player.setLastLogin = () => {
-        const date = new Date(player.data.lastlogin * 1).toString();
-        player.send(`{FFFF00}Last Login: ${date}`);
-        player.data.lastlogin = Date.now();
-        player.saveField(player.data.id, 'lastlogin', player.data.lastlogin);
-    };
+    setLastLogin() {
+        const date = new Date(this.player.data.lastlogin * 1).toString();
+        this.player.send(`{FFFF00}Last Login: ${date}`);
+        this.player.data.lastlogin = Date.now();
+        this.player.saveField(
+            this.player.data.id,
+            'lastlogin',
+            this.player.data.lastlogin
+        );
+    }
 
     /**
-     *  Send a message to the player.
+     *  Send a message to the this.player.
      * @memberof player
      * @param {string} msg The message to send to the user.
      */
-    player.send = msg => {
-        alt.emitClient(player, 'chat:Send', msg);
-    };
+    send(msg) {
+        alt.emitClient(this.player, 'chat:Send', msg);
+    }
 
     /**
      *  Display a message in the center screen to the user.
      * @memberof player
      * @param {string} msg The message to send to the user.
      */
-    player.notice = msg => {
-        player.emitMeta('hudNotice', msg);
-    };
+    notice(msg) {
+        this.player.emitMeta('hudNotice', msg);
+    }
 
     /**
      *  Display a notification on the right-hand side.
      * @memberof player
      * @param {string} msg The message to send to the user.
      */
-    player.notify = msg => {
-        player.emitMeta('queueNotification', msg);
-    };
+    notify(msg) {
+        this.player.emitMeta('queueNotification', msg);
+    }
 
-    player.saveDimension = doorID => {
-        player.dimension = doorID;
-        player.data.dimension = doorID;
-        player.saveField(player.data.id, 'dimension', doorID);
-    };
+    saveDimension(doorID) {
+        this.player.dimension = doorID;
+        this.player.data.dimension = doorID;
+        this.player.saveField(this.player.data.id, 'dimension', doorID);
+    }
 
     // ====================================
     // Weather & Time
-    player.updateTime = () => {
-        systemsTime.updatePlayerTime(player);
-    };
+    updateTime() {
+        systemsTime.updatePlayerTime(this.player);
+    }
 
     /**
      *  Save the user's location.
      * @memberof player
      * @param {Vector3} pos A vector3 object.
      */
-    player.saveLocation = pos => {
-        player.data.lastposition = pos;
-        player.saveField(player.data.id, 'lastposition', JSON.stringify(pos));
-    };
+    saveLocation(pos) {
+        this.player.data.lastposition = pos;
+        this.player.saveField(this.player.data.id, 'lastposition', JSON.stringify(pos));
+    }
 
     /**
      *  Save the player's dead state.
      * @memberof player
      * @param {bool} value isPlayerDead?
      */
-    player.saveDead = value => {
-        player.data.dead = value;
+    saveDead(value) {
+        this.player.data.dead = value;
 
         if (!value) {
-            player.saveField(player.data.id, 'health', 200);
-            player.saveField(player.data.id, 'armour', 0);
+            this.player.saveField(this.player.data.id, 'health', 200);
+            this.player.saveField(this.player.data.id, 'armour', 0);
         }
 
-        player.saveField(player.data.id, 'dead', value);
-    };
+        this.player.saveField(this.player.data.id, 'dead', value);
+    }
 
     /**
      *  Save Common Data; health, armour, position.
      * @memberof player
      */
-    player.saveData = () => {
-        player.data.health = player.health;
-        player.data.armour = player.armour;
-        player.data.lastposition = JSON.stringify(player.pos);
-        player.save();
-    };
+    saveData() {
+        this.player.data.health = this.player.health;
+        this.player.data.armour = this.player.armour;
+        this.player.data.lastposition = JSON.stringify(this.player.pos);
+        this.player.save();
+    }
 
     /**
      *  Synchronize interaction blips for the interaction system.
      * @memberof player
      */
-    player.syncInteractionBlips = () => {
-        systemsInteraction.syncBlips(player);
-    };
+    syncInteractionBlips() {
+        systemsInteraction.syncBlips(this.player);
+    }
 
     /**
      *  Remove pedestrian blood.
      * @memberof player
      */
-    player.clearBlood = () => {
-        alt.emitClient(player, 'respawn:ClearPedBloodDamage');
-    };
+    clearBlood() {
+        alt.emitClient(this.player, 'respawn:ClearPedBloodDamage');
+    }
 
     /**
      *  Fade the screen in and out over a period of time.
@@ -204,231 +223,236 @@ export function setupPlayerFunctions(player) {
      * @param {number} fadeInOutMS Fade out for how long.
      * @param {number} timeoutMS Fade in after this time.
      */
-    player.screenFadeOutFadeIn = (fadeInOutMS, timeoutMS) => {
-        alt.emitClient(player, 'screen:FadeOutFadeIn', fadeInOutMS, timeoutMS);
-    };
+    screenFadeOutFadeIn(fadeInOutMS, timeoutMS) {
+        alt.emitClient(this.player, 'screen:FadeOutFadeIn', fadeInOutMS, timeoutMS);
+    }
 
     /**
      *  Fade the screen out.
      * @memberof player
      * @param {number} timeInMS How long to fade the screen out for.
      */
-    player.screenFadeOut = timeInMS => {
-        alt.emitClient(player, 'screen:FadeOut', timeInMS);
-    };
+    screenFadeOut(timeInMS) {
+        alt.emitClient(this.player, 'screen:FadeOut', timeInMS);
+    }
 
     /**
      *  Fade the screen in.
      * @memberof player
      * @param {number} timeInMS How long to fade the screen in.
      */
-    player.screenFadeIn = timeInMS => {
-        alt.emitClient(player, 'screen:FadeIn', timeInMS);
-    };
+    screenFadeIn(timeInMS) {
+        alt.emitClient(this.player, 'screen:FadeIn', timeInMS);
+    }
 
     /**
      *  Blur the screen.
      * @memberof player
      * @param {number} timeInMS How long it takes to blur the screen.
      */
-    player.screenBlurOut = timeInMS => {
-        alt.emitClient(player, 'screen:BlurOut', timeInMS);
-    };
+    screenBlurOut(timeInMS) {
+        alt.emitClient(this.player, 'screen:BlurOut', timeInMS);
+    }
 
     /**
      *  Unblur the screen.
      * @memberof player
      * @param {number} timeInMS How long to unblur the screen.
      */
-    player.screenBlurIn = timeInMS => {
-        alt.emitClient(player, 'screen:BlurIn', timeInMS);
-    };
+    screenBlurIn(timeInMS) {
+        alt.emitClient(this.player, 'screen:BlurIn', timeInMS);
+    }
 
     /**
-     *  Revive the player.
+     *  Revive the this.player.
      * @memberof player
      */
-    player.revive = () => {
-        player.screenFadeOutFadeIn(1000, 5000);
+    revive() {
+        this.player.screenFadeOutFadeIn(1000, 5000);
 
-        if (!player.revivePos) {
-            player.spawn(player.pos.x, player.pos.y, player.pos.z, 2000);
+        if (!this.player.revivePos) {
+            this.player.spawn(
+                this.player.pos.x,
+                this.player.pos.y,
+                this.player.pos.z,
+                2000
+            );
         } else {
-            player.spawn(
-                player.revivePos.x,
-                player.revivePos.y,
-                player.revivePos.z,
+            this.player.spawn(
+                this.player.revivePos.x,
+                this.player.revivePos.y,
+                this.player.revivePos.z,
                 2000
             );
         }
 
-        player.clearBlood();
-        player.setHealth(200);
-        player.setArmour(0);
-        player.hasDied = false;
-        player.revivePos = undefined;
-        player.reviveTime = undefined;
-        player.reviving = false;
-        player.isArrested = false;
-        player.lastLocation = undefined;
-        player.sendToJail = false;
-        player.saveDead(false);
-        player.taxIncome(Config.hospitalPctFee, true, 'Hospital Fee');
-        player.send('You have been revived.');
-        player.setSyncedMeta('dead', false);
-    };
+        this.player.clearBlood();
+        this.player.setHealth(200);
+        this.player.setArmour(0);
+        this.player.hasDied = false;
+        this.player.revivePos = undefined;
+        this.player.reviveTime = undefined;
+        this.player.reviving = false;
+        this.player.isArrested = false;
+        this.player.lastLocation = undefined;
+        this.player.sendToJail = false;
+        this.player.saveDead(false);
+        this.player.taxIncome(Config.hospitalPctFee, true, 'Hospital Fee');
+        this.player.send('You have been revived.');
+        this.player.setSyncedMeta('dead', false);
+    }
 
     /**
      * Set the user's health.
      * @memberof player
      * @param {number} amount The amount to set the user's health.
      */
-    player.setHealth = amount => {
-        player.health = amount;
-        player.data.health = amount;
-        player.lastHealth = player.health;
-    };
+    setHealth(amount) {
+        this.player.health = amount;
+        this.player.data.health = amount;
+        this.player.lastHealth = this.player.health;
+    }
 
     /**
      *  Set the user's armour.
      * @memberof player
      * @param {number} amount The amount to set the user's armour.
      */
-    player.setArmour = amount => {
-        player.armour = amount;
-        player.data.armour = amount;
-        player.lastArmour = player.armour;
-    };
+    setArmour(amount) {
+        this.player.armour = amount;
+        this.player.data.armour = amount;
+        this.player.lastArmour = this.player.armour;
+    }
 
     // ====================================
     // Face Customizer
-    player.showFaceCustomizerDialogue = location => {
+    showFaceCustomizerDialogue(location) {
         if (location !== undefined) {
-            player.lastLocation = location;
+            this.player.lastLocation = location;
         } else {
-            player.lastLocation = player.pos;
+            this.player.lastLocation = this.player.pos;
         }
 
-        player.dimension = parseInt(player.data.id);
-        alt.emitClient(player, 'face:ShowDialogue');
-    };
+        this.player.dimension = parseInt(this.player.data.id);
+        alt.emitClient(this.player, 'face:ShowDialogue');
+    }
 
-    player.applyFace = () => {
-        if (!player.data.sexgroup) return;
-        const sexGroup = JSON.parse(player.data.sexgroup);
+    applyFace() {
+        if (!this.player.data.sexgroup) return;
+        const sexGroup = JSON.parse(this.player.data.sexgroup);
         if (sexGroup[0].value === 0) {
-            player.model = 'mp_f_freemode_01';
+            this.player.model = 'mp_f_freemode_01';
         } else {
-            player.model = 'mp_m_freemode_01';
+            this.player.model = 'mp_m_freemode_01';
         }
 
-        Object.keys(player.data).forEach(key => {
+        Object.keys(this.player.data).forEach(key => {
             if (!key.includes('group')) return;
-            player.emitMeta(key, player.data[key]);
+            this.player.emitMeta(key, this.player.data[key]);
         });
-    };
+    }
 
     // ====================================
     // Roleplay Name Dialogues
-    player.showRoleplayInfoDialogue = () => {
-        alt.emitClient(player, 'roleplayinfo:ShowDialogue');
-    };
+    showRoleplayInfoDialogue() {
+        alt.emitClient(this.player, 'roleplayinfo:ShowDialogue');
+    }
 
-    player.closeRoleplayInfoDialogue = () => {
-        alt.emitClient(player, 'roleplayinfo:CloseDialogue');
-    };
+    closeRoleplayInfoDialogue() {
+        alt.emitClient(this.player, 'roleplayinfo:CloseDialogue');
+    }
 
     // ====================================
     // Money Functions
-    // Remove cash from the player.
-    player.syncMoney = () => {
-        player.emitMeta('bank', player.data.bank);
-        player.emitMeta('cash', player.data.cash);
-    };
+    // Remove cash from the this.player.
+    syncMoney() {
+        this.player.emitMeta('bank', this.player.data.bank);
+        this.player.emitMeta('cash', this.player.data.cash);
+    }
 
-    player.subCash = value => {
+    subCash(value) {
         let absValue = Math.abs(parseFloat(value)) * 1;
 
-        if (player.data.cash < absValue) return false;
+        if (this.player.data.cash < absValue) return false;
 
-        player.data.cash -= absValue;
-        player.data.cash = Number.parseFloat(player.data.cash).toFixed(2) * 1;
-        player.saveField(player.data.id, 'cash', player.data.cash);
-        player.syncMoney();
+        this.player.data.cash -= absValue;
+        this.player.data.cash = Number.parseFloat(this.player.data.cash).toFixed(2) * 1;
+        this.player.saveField(this.player.data.id, 'cash', this.player.data.cash);
+        this.player.syncMoney();
         return true;
-    };
+    }
 
-    // Add cash to the player.
-    player.addCash = value => {
+    // Add cash to the this.player.
+    addCash(value) {
         let absValue = Math.abs(parseFloat(value));
 
-        if (player.data.cash + absValue > 92233720368547758.07) {
+        if (this.player.data.cash + absValue > 92233720368547758.07) {
             absValue = 0;
         }
 
-        player.data.cash += absValue;
-        player.data.cash = Number.parseFloat(player.data.cash).toFixed(2) * 1;
-        player.saveField(player.data.id, 'cash', player.data.cash);
-        player.syncMoney();
+        this.player.data.cash += absValue;
+        this.player.data.cash = Number.parseFloat(this.player.data.cash).toFixed(2) * 1;
+        this.player.saveField(this.player.data.id, 'cash', this.player.data.cash);
+        this.player.syncMoney();
         return true;
-    };
+    }
 
     // Add cash to the bank.
-    player.addBank = value => {
+    addBank(value) {
         let absValue = Math.abs(parseFloat(value));
 
-        if (player.data.bank + absValue > 92233720368547758.07) {
+        if (this.player.data.bank + absValue > 92233720368547758.07) {
             absValue = 0;
         }
 
-        player.data.bank += absValue;
-        player.data.bank = Number.parseFloat(player.data.bank).toFixed(2) * 1;
-        player.saveField(player.data.id, 'bank', player.data.bank);
-        player.syncMoney();
+        this.player.data.bank += absValue;
+        this.player.data.bank = Number.parseFloat(this.player.data.bank).toFixed(2) * 1;
+        this.player.saveField(this.player.data.id, 'bank', this.player.data.bank);
+        this.player.syncMoney();
         return true;
-    };
+    }
 
     // Subtract the cash from the bank.
-    player.subBank = value => {
+    subBank(value) {
         let absValue = Math.abs(parseFloat(value)) * 1;
 
-        if (player.data.bank < absValue) return false;
+        if (this.player.data.bank < absValue) return false;
 
-        player.data.bank -= absValue;
-        player.data.bank = Number.parseFloat(player.data.bank).toFixed(2) * 1;
-        player.saveField(player.data.id, 'bank', player.data.bank);
-        player.syncMoney();
+        this.player.data.bank -= absValue;
+        this.player.data.bank = Number.parseFloat(this.player.data.bank).toFixed(2) * 1;
+        this.player.saveField(this.player.data.id, 'bank', this.player.data.bank);
+        this.player.syncMoney();
         return true;
-    };
+    }
 
     // Get the player's cash balance.
-    player.getCash = () => {
-        return player.data.cash;
-    };
+    getCash() {
+        return this.player.data.cash;
+    }
 
     // Get the player's bank balance.
-    player.getBank = () => {
-        return player.data.bank;
-    };
+    getBank() {
+        return this.player.data.bank;
+    }
 
-    player.subToZero = amount => {
-        const bank = player.data.bank;
-        const cash = player.data.cash;
+    subToZero(amount) {
+        const bank = this.player.data.bank;
+        const cash = this.player.data.cash;
         const removed = Math.abs(bank - amount);
-        player.data.bank = bank - amount <= 0 ? 0 : bank - amount;
+        this.player.data.bank = bank - amount <= 0 ? 0 : bank - amount;
 
         if (removed > 0) {
-            player.data.cash = cash - removed <= 0 ? 0 : cash - removed;
+            this.player.data.cash = cash - removed <= 0 ? 0 : cash - removed;
         }
 
-        player.saveField(player.data.id, 'bank', player.data.bank);
-        player.saveField(player.data.id, 'cash', player.data.cash);
-        player.syncMoney();
-    };
+        this.player.saveField(this.player.data.id, 'bank', this.player.data.bank);
+        this.player.saveField(this.player.data.id, 'cash', this.player.data.cash);
+        this.player.syncMoney();
+    }
 
-    player.taxIncome = (percentage, useHighest, reason) => {
-        let cash = player.getCash(); // 0
-        let bank = player.getBank(); // 1
+    taxIncome(percentage, useHighest, reason) {
+        let cash = this.player.getCash(); // 0
+        let bank = this.player.getBank(); // 1
 
         let taxType = 0;
 
@@ -448,79 +472,87 @@ export function setupPlayerFunctions(player) {
 
         if (taxType === 0) {
             let cashTaxAmount = cash * percentage;
-            player.subCash(cashTaxAmount);
-            player.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
+            this.player.subCash(cashTaxAmount);
+            this.player.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
         } else {
             let bankTaxAmount = bank * percentage;
-            player.subBank(bankTaxAmount);
-            player.saveField(player.data.id, 'bank', player.data.bank);
-            player.send(`You were taxed: $${bankTaxAmount.toFixed(2) * 1}`);
+            this.player.subBank(bankTaxAmount);
+            this.player.saveField(this.player.data.id, 'bank', this.player.data.bank);
+            this.player.send(`You were taxed: $${bankTaxAmount.toFixed(2) * 1}`);
         }
 
-        player.send(`Reason: ${reason}`);
-    };
+        this.player.send(`Reason: ${reason}`);
+    }
 
     // ====================================
     // Load Blip for client.
-    player.createBlip = (category, pos, sprite, colour, label) => {
-        alt.emitClient(player, 'blip:CreateBlip', category, pos, sprite, colour, label);
-    };
+    createBlip(category, pos, sprite, colour, label) {
+        alt.emitClient(
+            this.player,
+            'blip:CreateBlip',
+            category,
+            pos,
+            sprite,
+            colour,
+            label
+        );
+    }
 
     // ====================================
     // Show the ATM Panel / Dialogue
-    player.showAtmPanel = () => {
-        alt.emitClient(player, 'atm:ShowDialogue');
-    };
+    showAtmPanel() {
+        alt.emitClient(this.player, 'atm:ShowDialogue');
+    }
 
     // Close the ATM Panel / Dialogue
-    player.closeAtmPanel = () => {
-        alt.emitClient(player, 'atm:CloseDialogue');
-    };
+    closeAtmPanel() {
+        alt.emitClient(this.player, 'atm:CloseDialogue');
+    }
 
     // Update the ATM Cash balance the user sees.
-    player.updateAtmCash = value => {
-        alt.emitClient(player, 'atm:UpdateCash', value);
-    };
+    updateAtmCash(value) {
+        alt.emitClient(this.player, 'atm:UpdateCash', value);
+    }
 
     // Update the ATM Bank balance the user sees.
-    player.updateAtmBank = value => {
-        alt.emitClient(player, 'atm:UpdateBank', value);
-    };
+    updateAtmBank(value) {
+        alt.emitClient(this.player, 'atm:UpdateBank', value);
+    }
 
     // Show the ATM success message.
-    player.showAtmSuccess = msg => {
-        alt.emitClient(player, 'atm:ShowSuccess', msg);
-    };
+    showAtmSuccess(msg) {
+        alt.emitClient(this.player, 'atm:ShowSuccess', msg);
+    }
 
     // =================================
     /**
      * Show the Clothing Dialogue
      */
-    player.showClothingDialogue = () => {
-        alt.emitClient(player, 'clothing:ShowDialogue');
-    };
+    showClothingDialogue() {
+        alt.emitClient(this.player, 'clothing:ShowDialogue');
+    }
 
     /**
      * Close the clothing Dialogue.
      */
-    player.closeClothingDialogue = () => {
-        alt.emitClient(player, 'clothing:CloseDialogue');
-    };
+    closeClothingDialogue() {
+        alt.emitClient(this.player, 'clothing:CloseDialogue');
+    }
 
     // =================================
     /**
      * Set / Save the player's Roleplay Info
      */
-    player.saveRoleplayInfo = name => {
-        player.data.name = name;
-        player.setSyncedMeta('name', player.data.name);
-        player.saveField(player.data.id, 'name', player.data.name);
-    };
+    saveRoleplayInfo(name) {
+        this.player.data.name = name;
+        this.player.setSyncedMeta('name', this.player.data.name);
+        this.player.saveField(this.player.data.id, 'name', this.player.data.name);
+    }
 
     // =================================
     // INVENTORY
-    // Add an item to a player.
-    player.addItem = (
+    // Add an item to a this.player.
+    addItem(
         key,
         quantity,
         props = {},
@@ -529,7 +561,7 @@ export function setupPlayerFunctions(player) {
         name = undefined,
         icon = undefined,
         keyOverride = undefined
-    ) => {
+    ) {
         const item = Items[key];
         if (!item) {
             console.log('Item does not exist.');
@@ -552,13 +584,13 @@ export function setupPlayerFunctions(player) {
         }
 
         if (!skipStackable) {
-            const inventoryIndex = player.inventory.findIndex(item => {
+            const inventoryIndex = this.player.inventory.findIndex(item => {
                 if (item && item.key === clonedItem.key) return item;
             });
 
             if (base.abilities.stack && inventoryIndex >= 0) {
-                player.inventory[inventoryIndex].quantity += quantity;
-                player.saveInventory();
+                this.player.inventory[inventoryIndex].quantity += quantity;
+                this.player.saveInventory();
                 return true;
             }
         }
@@ -570,28 +602,28 @@ export function setupPlayerFunctions(player) {
             clonedItem.icon = icon;
         }
 
-        const nullIndex = player.inventory.findIndex(item => !item);
+        const nullIndex = this.player.inventory.findIndex(item => !item);
         if (nullIndex >= 28) {
-            player.send('{FF0000} No room for item in inventory.');
+            this.player.send('{FF0000} No room for item in inventory.');
             return false;
         }
 
-        player.inventory[nullIndex] = clonedItem;
+        this.player.inventory[nullIndex] = clonedItem;
 
         if (!skipSave) {
-            player.saveInventory();
+            this.player.saveInventory();
         }
         return true;
-    };
+    }
 
     // Remove an Item from the Player
     // Finds all matching items; adds up quantities.
     // Loops through each found item and removes quantity
     // when quantity is zero; it stops removing.
     // This allows for split stacks.
-    player.subItem = (key, quantity) => {
+    subItem(key, quantity) {
         const indexes = [];
-        const entries = player.inventory.entries();
+        const entries = this.player.inventory.entries();
         for (let entry of entries) {
             const [_index, _data] = entry;
             if (_data && _data.key === key) {
@@ -607,7 +639,7 @@ export function setupPlayerFunctions(player) {
 
         let total = 0;
         indexes.forEach(currIndex => {
-            total += parseInt(player.inventory[currIndex].quantity);
+            total += parseInt(this.player.inventory[currIndex].quantity);
         });
 
         if (total < quantity) {
@@ -616,35 +648,35 @@ export function setupPlayerFunctions(player) {
 
         indexes.forEach(currIndex => {
             if (quantity === 0) return;
-            if (player.inventory[currIndex].quantity < quantity) {
-                const currQuantity = parseInt(player.inventory[currIndex].quantity);
-                player.inventory[currIndex].quantity -= parseInt(currQuantity);
+            if (this.player.inventory[currIndex].quantity < quantity) {
+                const currQuantity = parseInt(this.player.inventory[currIndex].quantity);
+                this.player.inventory[currIndex].quantity -= parseInt(currQuantity);
                 quantity -= parseInt(currQuantity);
             } else {
-                player.inventory[currIndex].quantity -= parseInt(quantity);
+                this.player.inventory[currIndex].quantity -= parseInt(quantity);
                 quantity -= parseInt(quantity);
             }
 
-            if (player.inventory[currIndex].quantity <= 0) {
-                player.inventory[currIndex] = null;
+            if (this.player.inventory[currIndex].quantity <= 0) {
+                this.player.inventory[currIndex] = null;
             }
         });
 
-        player.saveInventory();
+        this.player.saveInventory();
         return true;
-    };
+    }
 
-    player.subItemByHash = hash => {
-        const index = player.inventory.findIndex(item => item && item.hash === hash);
+    subItemByHash(hash) {
+        const index = this.player.inventory.findIndex(item => item && item.hash === hash);
         if (index <= -1) return false;
-        player.inventory[index] = null;
-        player.saveInventory();
+        this.player.inventory[index] = null;
+        this.player.saveInventory();
         return true;
-    };
+    }
 
-    player.hasQuantityOfItem = (key, quantity) => {
+    hasQuantityOfItem(key, quantity) {
         const indexes = [];
-        const entries = player.inventory.entries();
+        const entries = this.player.inventory.entries();
         for (let entry of entries) {
             const [_index, _data] = entry;
             if (_data && _data.key === key) {
@@ -661,95 +693,106 @@ export function setupPlayerFunctions(player) {
 
         let total = 0;
         indexes.forEach(currIndex => {
-            total += parseInt(player.inventory[currIndex].quantity);
+            total += parseInt(this.player.inventory[currIndex].quantity);
         });
 
         if (total < quantity) {
             return false;
         }
         return true;
-    };
+    }
 
-    player.removeItemsOnArrest = () => {
+    removeItemsOnArrest() {
         const illegalBaseItems = ['weapon', 'boundweapon', 'unrefined', 'refineddrug'];
 
-        player.inventory.forEach((item, index) => {
+        this.player.inventory.forEach((item, index) => {
             if (!item) return;
             if (illegalBaseItems.includes(item.base)) {
-                player.inventory[index] = null;
+                this.player.inventory[index] = null;
             }
         });
 
-        player.equipment.forEach((item, index) => {
+        this.player.equipment.forEach((item, index) => {
             if (!item) return;
             if (illegalBaseItems.includes(item.base)) {
-                player.equipment[index] = null;
+                this.player.equipment[index] = null;
             }
         });
 
-        player.saveInventory();
-    };
+        this.player.saveInventory();
+    }
 
-    player.dropItemsOnDeath = () => {
-        if (!player.inventory) return;
-        player.inventory.forEach((item, index) => {
+    dropItemsOnDeath() {
+        if (!this.player.inventory) return;
+        this.player.inventory.forEach((item, index) => {
             if (!item) return;
             if (item.base.includes('weapon') || item.base.includes('unrefined')) {
                 const itemClone = { ...item };
-                dropNewItem(player.pos, itemClone);
-                player.inventory[index] = null;
+                dropNewItem(this.player.pos, itemClone);
+                this.player.inventory[index] = null;
             }
         });
-        player.saveInventory();
-    };
+        this.player.saveInventory();
+    }
 
-    player.saveInventory = () => {
-        player.data.inventory = JSON.stringify(player.inventory);
-        player.data.equipment = JSON.stringify(player.equipment);
-        player.saveField(player.data.id, 'inventory', player.data.inventory);
-        player.saveField(player.data.id, 'equipment', player.data.equipment);
-        player.syncInventory(true);
-    };
+    saveInventory() {
+        this.player.data.inventory = JSON.stringify(this.player.inventory);
+        this.player.data.equipment = JSON.stringify(this.player.equipment);
+        this.player.saveField(
+            this.player.data.id,
+            'inventory',
+            this.player.data.inventory
+        );
+        this.player.saveField(
+            this.player.data.id,
+            'equipment',
+            this.player.data.equipment
+        );
+        this.player.syncInventory(true);
+    }
 
-    player.syncInventory = (cleanse = false) => {
+    syncInventory(cleanse = false) {
         if (cleanse) {
-            const inventory = JSON.parse(player.data.inventory);
+            const inventory = JSON.parse(this.player.data.inventory);
             inventory.forEach(item => {
                 if (item) {
                     item = objectToNull(item);
                 }
             });
-            player.data.inventory = JSON.stringify(inventory);
+            this.player.data.inventory = JSON.stringify(inventory);
         }
 
-        player.equipment = JSON.parse(player.data.equipment);
-        player.inventory = JSON.parse(player.data.inventory);
+        this.player.equipment = JSON.parse(this.player.data.equipment);
+        this.player.inventory = JSON.parse(this.player.data.inventory);
 
-        player.emitMeta('equipment', player.data.equipment);
-        player.emitMeta('inventory', player.data.inventory);
+        this.player.emitMeta('equipment', this.player.data.equipment);
+        this.player.emitMeta('inventory', this.player.data.inventory);
 
-        if (player.equipment[11]) {
+        if (this.player.equipment[11]) {
             if (
-                player.equipment[11].base === 'weapon' ||
-                player.equipment[11].base === 'boundweapon'
+                this.player.equipment[11].base === 'weapon' ||
+                this.player.equipment[11].base === 'boundweapon'
             ) {
-                player.setSyncedMeta('prop:11', undefined);
-                player.setWeapon(player.equipment[11].props.hash);
+                this.player.setSyncedMeta('prop:11', undefined);
+                this.player.setWeapon(this.player.equipment[11].props.hash);
             } else {
-                player.removeAllWeapons();
-                player.setSyncedMeta('prop:11', player.equipment[11].props.propData);
+                this.player.removeAllWeapons();
+                this.player.setSyncedMeta(
+                    'prop:11',
+                    this.player.equipment[11].props.propData
+                );
             }
         } else {
-            player.setSyncedMeta('prop:11', undefined);
-            player.removeAllWeapons();
+            this.player.setSyncedMeta('prop:11', undefined);
+            this.player.removeAllWeapons();
         }
-    };
+    }
 
-    player.searchItems = () => {
+    searchItems() {
         let hasDrugs = false;
         let hasWeapons = false;
 
-        player.inventory.forEach(item => {
+        this.player.inventory.forEach(item => {
             if (!item) return;
             if (item.base === 'refineddrug') {
                 hasDrugs = true;
@@ -766,11 +809,11 @@ export function setupPlayerFunctions(player) {
         });
 
         return { hasDrugs, hasWeapons };
-    };
+    }
 
-    player.equipItem = (itemIndex, equipmentIndex) => {
-        let equippedItem = { ...player.equipment[equipmentIndex] };
-        let inventoryItem = { ...player.inventory[itemIndex] };
+    equipItem(itemIndex, equipmentIndex) {
+        let equippedItem = { ...this.player.equipment[equipmentIndex] };
+        let inventoryItem = { ...this.player.inventory[itemIndex] };
 
         if (equippedItem) {
             equippedItem = objectToNull(equippedItem);
@@ -782,28 +825,28 @@ export function setupPlayerFunctions(player) {
 
         // Going in to hand.
         if (inventoryItem.props && inventoryItem.props.lvl) {
-            const skills = JSON.parse(player.data.skills);
+            const skills = JSON.parse(this.player.data.skills);
             if (inventoryItem.props.lvl.skill) {
                 const skill = inventoryItem.props.lvl.skill;
                 const level = getLevel(skills[skill].xp);
 
                 if (level < inventoryItem.props.lvl.requirement) {
-                    player.notify(
+                    this.player.notify(
                         `You do not have level ${inventoryItem.props.lvl.requirement} ${skill}.`
                     );
-                    player.syncInventory();
+                    this.player.syncInventory();
                     return;
                 }
             }
         }
 
-        player.equipment[equipmentIndex] = inventoryItem;
-        player.inventory[itemIndex] = equippedItem;
-        player.saveInventory();
-    };
+        this.player.equipment[equipmentIndex] = inventoryItem;
+        this.player.inventory[itemIndex] = equippedItem;
+        this.player.saveInventory();
+    }
 
-    player.unequipItem = equipmentIndex => {
-        let equippedItem = { ...player.equipment[equipmentIndex] };
+    unequipItem(equipmentIndex) {
+        let equippedItem = { ...this.player.equipment[equipmentIndex] };
 
         if (equippedItem) {
             equippedItem = objectToNull(equippedItem);
@@ -812,7 +855,7 @@ export function setupPlayerFunctions(player) {
         if (!equippedItem) return false;
 
         if (
-            player.addItem(
+            this.player.addItem(
                 equippedItem.key,
                 equippedItem.quantity,
                 equippedItem.props,
@@ -822,75 +865,75 @@ export function setupPlayerFunctions(player) {
             )
         ) {
             if (equippedItem.base === 'fishingrod') {
-                if (player.job) {
-                    quitJob(player, false, true);
-                    player.send('You have quit fishing.');
+                if (this.player.job) {
+                    quitJob(this.player, false, true);
+                    this.player.send('You have quit fishing.');
                 }
             }
 
-            player.equipment[equipmentIndex] = null;
-            player.saveInventory();
+            this.player.equipment[equipmentIndex] = null;
+            this.player.saveInventory();
             return true;
         }
 
-        player.syncInventory();
+        this.player.syncInventory();
         return false;
-    };
+    }
 
-    player.splitItem = index => {
-        if (player.splitting) return;
-        player.splitting = true;
+    splitItem(index) {
+        if (this.player.splitting) return;
+        this.player.splitting = true;
 
-        if (!player.inventory[index]) {
-            player.syncInventory();
-            player.splitting = false;
+        if (!this.player.inventory[index]) {
+            this.player.syncInventory();
+            this.player.splitting = false;
             return false;
         }
 
-        if (player.inventory[index].quantity <= 1) {
-            player.syncInventory();
-            player.splitting = false;
+        if (this.player.inventory[index].quantity <= 1) {
+            this.player.syncInventory();
+            this.player.splitting = false;
             return false;
         }
 
-        const item = { ...player.inventory[index] };
+        const item = { ...this.player.inventory[index] };
         const split = Math.floor(parseInt(item.quantity) / 2);
         const remainder = parseInt(item.quantity) - split;
         let nullIndexes = 0;
-        player.inventory.forEach(item => {
+        this.player.inventory.forEach(item => {
             if (!item) {
                 nullIndexes += 1;
             }
         });
 
         if (nullIndexes <= 1) {
-            player.notify('No room to split item.');
-            player.splitting = false;
+            this.player.notify('No room to split item.');
+            this.player.splitting = false;
             return false;
         }
 
-        player.inventory[index] = null;
-        player.addItem(item.key, parseInt(split), item.props, true, true);
-        player.addItem(item.key, parseInt(remainder), item.props, true, true);
+        this.player.inventory[index] = null;
+        this.player.addItem(item.key, parseInt(split), item.props, true, true);
+        this.player.addItem(item.key, parseInt(remainder), item.props, true, true);
 
-        player.saveInventory();
-        player.splitting = false;
+        this.player.saveInventory();
+        this.player.splitting = false;
         return true;
-    };
+    }
 
-    player.removeItem = index => {
-        player.inventory[index] = null;
-        player.saveInventory();
-    };
+    removeItem(index) {
+        this.player.inventory[index] = null;
+        this.player.saveInventory();
+    }
 
-    player.setWeapon = hash => {
-        player.removeAllWeapons();
-        player.giveWeapon(hash, 999, true);
-    };
+    setWeapon(hash) {
+        this.player.removeAllWeapons();
+        this.player.giveWeapon(hash, 999, true);
+    }
 
-    player.getNullSlots = () => {
+    getNullSlots() {
         let count = 0;
-        player.inventory.forEach((item, index) => {
+        this.player.inventory.forEach((item, index) => {
             if (index >= 28) return;
             if (!item) {
                 count += 1;
@@ -898,11 +941,11 @@ export function setupPlayerFunctions(player) {
             }
         });
         return count;
-    };
+    }
 
-    player.hasItem = base => {
+    hasItem(base) {
         // Check for matching base.
-        let index = player.inventory.findIndex(item => {
+        let index = this.player.inventory.findIndex(item => {
             if (item && item.base === base) return item;
         });
 
@@ -911,7 +954,7 @@ export function setupPlayerFunctions(player) {
         }
 
         // Check for matching key.
-        index = player.inventory.findIndex(item => {
+        index = this.player.inventory.findIndex(item => {
             if (item && item.key === base) return item;
         });
 
@@ -919,7 +962,7 @@ export function setupPlayerFunctions(player) {
             return true;
         }
 
-        index = player.equipment.findIndex(item => {
+        index = this.player.equipment.findIndex(item => {
             if (item && item.key === base) return item;
         });
 
@@ -927,7 +970,7 @@ export function setupPlayerFunctions(player) {
             return true;
         }
 
-        index = player.equipment.findIndex(item => {
+        index = this.player.equipment.findIndex(item => {
             if (item && item.base === base) return item;
         });
 
@@ -936,9 +979,9 @@ export function setupPlayerFunctions(player) {
         }
 
         return false;
-    };
+    }
 
-    player.addStarterItems = () => {
+    addStarterItems() {
         let shirt = { ...Items.shirt };
         shirt.props = {
             restriction: -1,
@@ -971,77 +1014,77 @@ export function setupPlayerFunctions(player) {
         };
         shoes.hash = generateHash(shoes);
 
-        player.equipment[7] = shirt;
-        player.equipment[10] = pants;
-        player.equipment[13] = shoes;
+        this.player.equipment[7] = shirt;
+        this.player.equipment[10] = pants;
+        this.player.equipment[13] = shoes;
 
-        player.addItem('pickaxe', 1, Items.pickaxe.props);
-        player.addItem('hammer', 1, Items.hammer.props);
-        player.addItem('axe', 1, Items.axe.props);
-        player.addItem('fishingrod', 1, Items.fishingrod.props);
-    };
+        this.player.addItem('pickaxe', 1, Items.pickaxe.props);
+        this.player.addItem('hammer', 1, Items.hammer.props);
+        this.player.addItem('axe', 1, Items.axe.props);
+        this.player.addItem('fishingrod', 1, Items.fishingrod.props);
+    }
 
     // =================================
     // SOUND
-    player.playAudio = soundName => {
-        alt.emitClient(player, 'sound:PlayAudio', soundName);
-    };
+    playAudio(soundName) {
+        alt.emitClient(this.player, 'sound:PlayAudio', soundName);
+    }
 
-    player.playAudio3D = (target, soundName) => {
-        alt.emitClient(player, 'sound:PlayAudio3D', target, soundName);
-    };
+    playAudio3D(target, soundName) {
+        alt.emitClient(this.player, 'sound:PlayAudio3D', target, soundName);
+    }
 
     // =================================
     // Animation
-    player.playAnimation = (dictionary, name, durationInMS, flag) => {
+    playAnimation(dictionary, name, durationInMS, flag) {
         alt.emitClient(
-            player,
+            this.player,
             'animation:PlayAnimation',
-            player,
+            this.player,
             dictionary,
             name,
             durationInMS,
             flag
         );
-    };
+    }
 
     // =================================
     // Vehicles
-    player.spawnVehicles = () => {
-        if (!player.vehicles) {
-            player.vehicles = [];
-            player.emitMeta('pedflags', true);
+    spawnVehicles() {
+        if (!this.player.vehicles) {
+            this.player.vehicles = [];
+            this.player.emitMeta('pedflags', true);
         }
 
-        db.fetchAllByField('guid', player.data.id, 'Vehicle', vehicles => {
+        db.fetchAllByField('guid', this.player.data.id, 'Vehicle', vehicles => {
             if (vehicles === undefined) return;
 
             if (vehicles.length <= 0) return;
 
             vehicles.forEach(veh => {
-                if (!player) return;
-                spawnVehicle(player, veh);
+                if (!this.player) return;
+                spawnVehicle(this.player, veh);
             });
         });
-    };
+    }
 
-    player.hasVehicleSlot = () => {
-        if (Array.isArray(player.vehicles)) {
-            const vehicles = player.vehicles.filter(veh => veh.data);
-            const extraSlots = parseInt(player.data.extraVehicleSlots);
+    hasVehicleSlot() {
+        if (Array.isArray(this.player.vehicles)) {
+            const vehicles = this.player.vehicles.filter(veh => veh.data);
+            const extraSlots = parseInt(this.player.data.extraVehicleSlots);
             if (vehicles.length >= Config.defaultPlayerMaxVehicles + extraSlots) {
                 return false;
             }
         }
         return true;
-    };
+    }
 
-    player.addVehicle = (model, pos, rot) => {
-        if (Array.isArray(player.vehicles)) {
-            const vehicles = player.vehicles.filter(veh => veh.data);
-            const extraSlots = parseInt(player.data.extraVehicleSlots);
+    addVehicle(model, pos, rot) {
+        if (Array.isArray(this.player.vehicles)) {
+            const vehicles = this.player.vehicles.filter(veh => veh.data);
+            const extraSlots = parseInt(this.player.data.extraVehicleSlots);
             if (vehicles.length >= Config.defaultPlayerMaxVehicles + extraSlots) {
-                player.send(`You are not allowed to have any additional vehicles.`);
+                this.player.send(`You are not allowed to have any additional vehicles.`);
                 return false;
             }
         }
@@ -1057,7 +1100,7 @@ export function setupPlayerFunctions(player) {
         const nextVehicleID = fetchNextVehicleID();
         const veh = {
             id: nextVehicleID,
-            guid: player.data.id,
+            guid: this.player.data.id,
             model,
             position: JSON.stringify(pos),
             rotation: JSON.stringify(rot),
@@ -1065,77 +1108,77 @@ export function setupPlayerFunctions(player) {
             customization: null
         };
 
-        spawnVehicle(player, veh, true);
+        spawnVehicle(this.player, veh, true);
         db.upsertData(veh, 'Vehicle', () => {});
         return true;
-    };
+    }
 
-    player.deleteVehicle = id => {
+    deleteVehicle(id) {
         db.deleteByIds([id], 'Vehicle', res => {
             console.log(res);
         });
-    };
+    }
 
     // =================
     //
-    player.animatedText = (text, duration) => {
-        alt.emitClient(player, 'text:Animated', text, duration);
-    };
+    animatedText(text, duration) {
+        alt.emitClient(this.player, 'text:Animated', text, duration);
+    }
 
     // =================
     // Vehicle Funcs
-    player.eject = () => {
-        alt.emitClient(player, 'vehicle:Eject');
-    };
+    eject() {
+        alt.emitClient(this.player, 'vehicle:Eject');
+    }
 
-    player.ejectSlowly = () => {
-        alt.emitClient(player, 'vehicle:Eject', true);
-    };
+    ejectSlowly() {
+        alt.emitClient(this.player, 'vehicle:Eject', true);
+    }
 
     // =================
     // Skill Funcs
-    player.syncXP = () => {
-        player.emitMeta('skills', player.data.skills);
-    };
+    syncXP() {
+        this.player.emitMeta('skills', this.player.data.skills);
+    }
 
     // =================
     // Phone
-    player.addContact = number => {
-        let contacts = JSON.parse(player.data.contacts);
+    addContact(number) {
+        let contacts = JSON.parse(this.player.data.contacts);
         if (contacts.includes(number)) {
             return false;
         }
 
         contacts.push(number);
-        player.data.contacts = JSON.stringify(contacts);
-        player.saveField(player.data.id, 'contacts', player.data.contacts);
+        this.player.data.contacts = JSON.stringify(contacts);
+        this.player.saveField(this.player.data.id, 'contacts', this.player.data.contacts);
         return true;
-    };
+    }
 
-    player.removeContact = number => {
-        let contacts = JSON.parse(player.data.contacts);
+    removeContact(number) {
+        let contacts = JSON.parse(this.player.data.contacts);
         let index = contacts.findIndex(x => x === number);
         if (index <= -1) {
             return false;
         }
 
         contacts.splice(index, 1);
-        player.data.contacts = JSON.stringify(contacts);
-        player.saveField(player.data.id, 'contacts', player.data.contacts);
+        this.player.data.contacts = JSON.stringify(contacts);
+        this.player.saveField(this.player.data.id, 'contacts', this.player.data.contacts);
         return true;
-    };
+    }
 
-    player.hasContact = number => {
-        let contacts = JSON.parse(player.data.contacts);
+    hasContact(number) {
+        let contacts = JSON.parse(this.player.data.contacts);
         let index = contacts.findIndex(num => num === number);
         if (index <= -1) {
             return false;
         }
         return true;
-    };
+    }
 
-    player.syncContacts = () => {
-        const contacts = JSON.parse(player.data.contacts);
+    syncContacts() {
+        const contacts = JSON.parse(this.player.data.contacts);
         if (contacts.length >= 1) {
             const contactList = [];
             contacts.forEach(contact => {
@@ -1147,15 +1190,15 @@ export function setupPlayerFunctions(player) {
                     online: isOnline
                 });
             });
-            player.emitMeta('contactList', contactList);
+            this.player.emitMeta('contactList', contactList);
         } else {
-            player.emitMeta('contactList', []);
+            this.player.emitMeta('contactList', []);
         }
-    };
+    }
 
     // ==============================
     // Doors
-    player.syncDoorStates = () => {
+    syncDoorStates() {
         Object.keys(doorStates).forEach(state => {
             alt.emitClient(
                 null,
@@ -1165,80 +1208,67 @@ export function setupPlayerFunctions(player) {
                 doorStates[state].heading
             );
         });
-    };
+    }
 
     // =================
     // Prisoner
-    player.setArrestTime = ms => {
+    setArrestTime(ms) {
         if (ms <= 0) {
-            player.data.arrestTime = '-1';
-            player.pos = {
+            this.player.data.arrestTime = '-1';
+            this.player.pos = {
                 x: 441.4432067871094,
                 y: -982.8604125976562,
                 z: 30.68960952758789
             };
-            player.notice('You are now a free citizen.');
+            this.player.notice('You are now a free citizen.');
         } else {
-            player.data.arrestTime = `${Date.now() + ms}`;
+            this.player.data.arrestTime = `${Date.now() + ms}`;
         }
 
-        player.saveField(player.data.id, 'arrestTime', player.data.arrestTime);
-        player.syncArrest();
-    };
+        this.player.saveField(
+            this.player.data.id,
+            'arrestTime',
+            this.player.data.arrestTime
+        );
+        this.player.syncArrest();
+    }
 
-    player.syncArrest = () => {
-        if (Date.now() < parseInt(player.data.arrestTime)) {
-            player.setSyncedMeta('namecolor', '{ff8400}');
+    syncArrest() {
+        if (Date.now() < parseInt(this.player.data.arrestTime)) {
+            this.player.setSyncedMeta('namecolor', '{ff8400}');
         } else {
-            player.setSyncedMeta('namecolor', null);
+            this.player.setSyncedMeta('namecolor', null);
         }
-    };
+    }
 
     // ===============================
     // Bonuses / Loyalty
-    player.addVehicleSlot = (amount = 1) => {
-        player.data.extraVehicleSlots += amount;
-        player.saveField(
-            player.data.id,
+    addVehicleSlot(amount = 1) {
+        this.player.data.extraVehicleSlots += amount;
+        this.player.saveField(
+            this.player.data.id,
             'extraVehicleSlots',
-            player.data.extraVehicleSlots
+            this.player.data.extraVehicleSlots
         );
-    };
+    }
 
-    player.addHouseSlot = (amount = 1) => {
-        player.data.extraHouseSlots += amount;
-        player.saveField(player.data.id, 'extraHouseSlots', player.data.extraHouseSlots);
-    };
+    addHouseSlot(amount = 1) {
+        this.player.data.extraHouseSlots += amount;
+        this.player.saveField(
+            this.player.data.id,
+            'extraHouseSlots',
+            this.player.data.extraHouseSlots
+        );
+    }
 
-    player.addBusinessSlot = (amount = 1) => {
-        player.data.extraBusinessSlots += amount;
-        player.saveField(
-            player.data.id,
+    addBusinessSlot(amount = 1) {
+        this.player.data.extraBusinessSlots += amount;
+        this.player.saveField(
+            this.player.data.id,
             'extraBusinessSlots',
-            player.data.extraBusinessSlots
+            this.player.data.extraBusinessSlots
         );
-    };
-    // =============================
-    player.syncGang = () => {
-        player.emitMeta('gang:ID', player.data.gang);
-
-        if (player.data.gang !== -1) {
-            const info = getGang(player);
-            if (info === undefined || info === null) {
-                player.saveField(player.data.id, 'gang', -1);
-                player.emitMeta('gang:Info', null);
-                return;
-            }
-
-            player.emitMeta('gang:Info', JSON.stringify(info));
-        } else {
-            player.emitMeta('gang:Info', null);
-        }
-    };
-
-    player.saveGangID = () => {
-        player.saveField(player.data.id, 'gang', player.data.gang);
-    };
+    }
 }
 
 alt.on('orp:PlayerFunc', (...args) => {

@@ -140,6 +140,7 @@ class App extends Component {
             alt.on('faction:Success', this.factionSuccess.bind(this));
             alt.emit('faction:Ready');
         } else {
+            /*
             const members = [];
             for (let i = 0; i < 25; i++) {
                 const member = {
@@ -175,6 +176,7 @@ class App extends Component {
             for (let i = 0; i < 20; i++) {
                 this.factionSuccess(`test ${i}`);
             }
+            */
         }
 
         window.addEventListener('keyup', this.keyUpBind);
@@ -424,8 +426,27 @@ class App extends Component {
             return h('div', { class: 'message' }, message.msg);
         });
 
+        if (this.state.page === -2) {
+            return h('div', { class: 'wait' }, 'Please wait...');
+        }
+
         const key = Object.keys(this.pages)[this.state.page];
         const renderPage = this.pages[key];
+        const functions = {
+            markAsTyping: this.markAsTyping.bind(this),
+            unmarkAsTyping: this.unmarkAsTyping.bind(this),
+            editing: this.editing.bind(this),
+            save: this.save.bind(this),
+            setRank: this.setRank.bind(this),
+            kick: this.kick.bind(this),
+            saveRank: this.saveRank.bind(this),
+            removeRank: this.removeRank.bind(this),
+            appendRank: this.appendRank.bind(this),
+            changeRankFlag: this.changeRankFlag.bind(this),
+            factionError: this.factionError.bind(this),
+            navigate: this.navigate.bind(this)
+        };
+
         return h(
             'div',
             { class: 'content' },
@@ -437,21 +458,15 @@ class App extends Component {
                     { class: 'page' },
                     h(renderPage, {
                         state: this.state,
-                        functions: {
-                            markAsTyping: this.markAsTyping.bind(this),
-                            unmarkAsTyping: this.unmarkAsTyping.bind(this),
-                            editing: this.editing.bind(this),
-                            save: this.save.bind(this),
-                            setRank: this.setRank.bind(this),
-                            kick: this.kick.bind(this),
-                            saveRank: this.saveRank.bind(this),
-                            removeRank: this.removeRank.bind(this),
-                            appendRank: this.appendRank.bind(this),
-                            changeRankFlag: this.changeRankFlag.bind(this)
-                        }
+                        functions
                     })
                 ),
-            !renderPage && h('div', { class: 'specialPage' }, h(CreateFaction)),
+            !renderPage &&
+                h(
+                    'div',
+                    { class: 'specialPage' },
+                    h(CreateFaction, { state: this.state, functions })
+                ),
             h('div', { class: 'messages' }, messages)
         );
     }
@@ -980,8 +995,60 @@ class Options extends Component {
         super(props);
     }
 
-    render() {
-        return 'options';
+    disband() {
+        if ('alt' in window) {
+            alt.emit('faction:Disband');
+        }
+    }
+
+    renderDisbandOption({ props }) {
+        return h(
+            'div',
+            { class: 'option' },
+            h(
+                'p',
+                { class: 'description' },
+                'Warning! This will completely delete your faction and all members will be kicked out.'
+            ),
+            h(
+                'div',
+                { class: 'optionData' },
+                h('input', {
+                    id: 'disbandInput',
+                    type: 'text',
+                    placeholder: 'Type your gang name'
+                }),
+                h(
+                    'button',
+                    {
+                        onclick: () => {
+                            const value = document.getElementById('disbandInput').value;
+
+                            if (!value) {
+                                return;
+                            }
+
+                            if (props.state.name !== value) {
+                                props.functions.factionError(
+                                    'Failed to match faction name.'
+                                );
+                                return;
+                            }
+                            this.disband();
+                        }
+                    },
+                    'Disband Faction'
+                )
+            )
+        );
+    }
+
+    render(props) {
+        return h(
+            'div',
+            { class: 'optionPage' },
+            h(this.renderDisbandOption.bind(this), { props })
+        );
     }
 }
 
@@ -1038,7 +1105,7 @@ class CreateFaction extends Component {
         return h('div', { class: 'pages' }, pages);
     }
 
-    renderFactionNameInput() {
+    renderFactionNameInput({ props }) {
         return h(
             'div',
             { class: 'pages' },
@@ -1057,6 +1124,14 @@ class CreateFaction extends Component {
                         class: 'factionBtn',
                         onclick: () => {
                             const value = document.getElementById('factionName').value;
+                            if (value.length <= 3) {
+                                props.functions.factionError(
+                                    'Name must be greater than 3 characters.'
+                                );
+                                return;
+                            }
+
+                            props.functions.navigate({ target: { id: -2 } });
                             this.setupFaction(value);
                         }
                     },
@@ -1066,12 +1141,12 @@ class CreateFaction extends Component {
         );
     }
 
-    render() {
+    render(props) {
         return h(
             'div',
             { class: 'factionPage' },
             this.state.type === -1 && h(this.renderFactionSelection.bind(this)),
-            this.state.type !== -1 && h(this.renderFactionNameInput.bind(this))
+            this.state.type !== -1 && h(this.renderFactionNameInput.bind(this), { props })
         );
     }
 }

@@ -1,18 +1,18 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.js';
 import * as cache from '../cache/cache.js';
-import { setupPlayerFunctions } from '../utility/player.js';
+import { ExtPlayer } from '../utility/player.js';
 
 const db = new SQL(); // Get DB Reference
 
-alt.on('discord:FinishLogin', (player, discord) => {
+alt.on('discord:FinishLogin', async (player, discord) => {
     player.loginTimeout = undefined;
     delete player.loginTimeout;
 
     alt.log(`Authenticated ${discord.username}#${discord.discriminator}`);
 
     const account = cache.getAccount(discord.id);
-    setupPlayerFunctions(player);
+    await new ExtPlayer(player);
 
     if (account) {
         player.accountID = account.id;

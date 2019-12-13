@@ -38,6 +38,7 @@ export function showDialogue() {
     webview.on('faction:RemoveRank', removeRank);
     webview.on('faction:AppendRank', appendRank);
     webview.on('faction:SetFlags', setFlags);
+    webview.on('faction:Disband', disband);
     native.triggerScreenblurFadeIn(1000);
 
     alt.emit('hud:Hide', true);
@@ -115,6 +116,11 @@ function appendRank(name) {
 
 function setFlags(index, flagValue) {
     alt.emitServer('faction:SetFlags', index, flagValue);
+}
+
+function disband() {
+    closeDialogue();
+    alt.emitServer('faction:Disband');
 }
 
 alt.onServer('faction:Error', msg => {

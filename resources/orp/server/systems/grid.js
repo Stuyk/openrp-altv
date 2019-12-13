@@ -73,7 +73,7 @@ pairs.forEach((row, sector) => {
             false
         );
 
-        colshape.gangs = {
+        colshape.factions = {
             owner: -1,
             nextClaim: Date.now()
         };

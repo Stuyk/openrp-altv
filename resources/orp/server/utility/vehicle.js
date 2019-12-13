@@ -35,11 +35,9 @@ export function setupVehicleFunctions(vehicle, isSaveable = true) {
             vehicle.saveField(vehicle.data.id, 'fuel', vehicle.fuel);
 
             let vehicleData = {
-                appearance: vehicle.getAppearanceDataBase64(),
-                damageStatus: vehicle.getDamageStatusBase64(),
-                health: vehicle.getHealthDataBase64(),
-                lockState: vehicle.lockState,
-                scriptData: vehicle.getScriptDataBase64()
+                bodyHealth: vehicle.bodyHealth,
+                engineHealth: vehicle.engineHealth,
+                lockState: vehicle.lockState
             };
 
             vehicle.saveField(vehicle.data.id, 'stats', JSON.stringify(vehicleData));

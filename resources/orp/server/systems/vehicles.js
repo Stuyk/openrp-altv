@@ -79,18 +79,14 @@ export function spawnVehicle(player, veh, newVehicle = false) {
 
     // Synchronize the Stats
     /*
-        appearance: vehicle.getAppearanceDataBase64(),
-        damageStatus: vehicle.getDamageStatusBase64(),
-        health: vehicle.getHealthDataBase64(),
-        lockState: vehicle.lockState,
-        scriptData: vehicle.getScriptDataBase64()
+        bodyHealth: vehicle.bodyHealth,
+        engineHealth: vehicle.engineHealth,
+        lockState: vehicle.lockState
     */
     if (veh.stats !== null) {
         let stats = JSON.parse(veh.stats);
-        vehicle.setAppearanceDataBase64(stats.appearance);
-        vehicle.setDamageStatusBase64(stats.damageStatus);
-        vehicle.setHealthDataBase64(stats.health);
-        vehicle.setScriptDataBase64(stats.scriptData);
+        vehicle.bodyHealth = stats.bodyHealth;
+        vehicle.engineHealth = stats.engineHealth;
         vehicle.lockState = stats.lockState;
         vehicle.syncCustom();
     }

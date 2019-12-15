@@ -77,7 +77,7 @@ function parseData() {
 function closeDialogue() {
     if (!webview) return;
     webview.close();
-    native.triggerScreenblurFadeOut(1000);
+    native.triggerScreenblurFadeOut(0);
     alt.emit('hud:Hide', false);
     alt.emit('chat:Hide', false);
 }

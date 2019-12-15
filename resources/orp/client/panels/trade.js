@@ -80,6 +80,7 @@ function ready() {
 alt.onServer('trade:KillTrade', () => {
     if (!webview) return;
     webview.close();
+    showCursor(false);
 });
 
 alt.onServer('trade:SetOfferedItems', items => {

@@ -279,6 +279,7 @@ function updateVehicleColor(
 
 function saveChanges() {
     webview.close();
+    showCursor(false);
     webview = undefined;
 
     Object.keys(vehicleChanges).forEach(key => {
@@ -307,6 +308,7 @@ function saveChanges() {
 
 function exit() {
     webview.close();
+    showCursor(false);
     webview = undefined;
     const scriptID = alt.Player.local.vehicle.scriptID;
 

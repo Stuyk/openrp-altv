@@ -30,6 +30,7 @@ export function showDialogue() {
 function closeDialogue() {
     if (!webview) return;
     webview.close();
+    showCursor(false);
     vehicle = undefined;
     inventory = undefined;
 }

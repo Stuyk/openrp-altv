@@ -112,6 +112,7 @@ function purchase(name) {
 function exit() {
     if (!webview) return;
     webview.close();
+    showCursor(false);
 
     if (currentVehicle) {
         native.deleteEntity(currentVehicle);
@@ -123,8 +124,6 @@ function exit() {
         camera.destroy();
         camera = undefined;
     }
-
-    webview.close();
 }
 
 alt.onServer('return:VehiclePrices', prices => {

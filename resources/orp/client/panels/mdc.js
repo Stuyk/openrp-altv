@@ -28,6 +28,7 @@ export function showDialogue() {
 // Finish using this webview.
 export function closeDialogue() {
     webview.close();
+    showCursor(false);
 }
 
 export function data(data) {

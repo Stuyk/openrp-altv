@@ -3,7 +3,7 @@ import * as native from 'natives';
 import * as panelsInventory from '/client/panels/inventory.js';
 import * as panelsChat from '/client/panels/chat.js';
 import * as panelsHelp from '/client/panels/help.js';
-import * as panelsGangs from '/client/panels/gangs.js';
+import * as panelsFactions from '/client/panels/factions.js';
 import * as systemsVehicles from '/client/systems/vehicles.js';
 import * as systemsContext from '/client/systems/context.js';
 import * as utilityGameInfo from '/client/utility/gameinfo.js';
@@ -46,7 +46,7 @@ let keybinds = {
     85: {
         altModifier: false,
         shiftModifier: false,
-        onKeyUp: panelsGangs.showDialogue
+        onKeyUp: panelsFactions.showDialogue
     },
     // Shift + F2 - Get Location Info
     113: {

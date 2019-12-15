@@ -9,12 +9,6 @@ alt.log('Loaded: client->panels->info.js');
 const url = 'http://resource/client/html/factions/index.html';
 let webview;
 
-alt.on('consoleCommand', (cmd, ...args) => {
-    if (cmd === 'f') {
-        showDialogue();
-    }
-});
-
 // Show the webview for the player to type in their roleplay info.
 export function showDialogue() {
     if (!webview) {

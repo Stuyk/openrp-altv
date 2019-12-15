@@ -3,6 +3,8 @@ import * as alt from 'alt';
 import { Config } from '../configuration/config.js';
 
 alt.on('playerConnect', player => {
+    console.log(player.emitMeta);
+
     player.spawn(
         Config.characterPoint.x,
         Config.characterPoint.y,

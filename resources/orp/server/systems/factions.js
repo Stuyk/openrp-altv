@@ -3,7 +3,6 @@ import SQL from '../../../postgres-wrapper/database.js';
 import { colshapes } from './grid.js';
 import { Config } from '../configuration/config.js';
 import { isFlagged } from '../utility/flags.js';
-import { ExtPlayer } from '../utility/player.js';
 
 const factions = [];
 const db = new SQL();
@@ -873,11 +872,6 @@ function factionSetInfo(player, infoName, info) {
     }
 }
 
-/**
- * @param {ExtPlayer} player
- * @param {*} index
- * @param {*} rankName
- */
 function factionSaveRank(player, index, rankName) {
     if (!player.faction) {
         return;

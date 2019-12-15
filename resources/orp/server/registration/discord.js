@@ -1,7 +1,6 @@
 import * as alt from 'alt';
 import SQL from '../../../postgres-wrapper/database.js';
 import * as cache from '../cache/cache.js';
-import { ExtPlayer } from '../utility/player.js';
 
 const db = new SQL(); // Get DB Reference
 
@@ -12,7 +11,6 @@ alt.on('discord:FinishLogin', async (player, discord) => {
     alt.log(`Authenticated ${discord.username}#${discord.discriminator}`);
 
     const account = cache.getAccount(discord.id);
-    await new ExtPlayer(player);
 
     if (account) {
         player.accountID = account.id;

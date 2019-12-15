@@ -95,6 +95,10 @@ db.fetchAllData('Factions', currentFactions => {
         return;
     }
 
+    if (currentFactions.length <= 0) {
+        return;
+    }
+
     currentFactions.forEach(factionData => {
         new Faction(factionData);
         if (factionData.classification === classifications.POLICE) {
@@ -112,6 +116,7 @@ db.fetchAllData('Factions', currentFactions => {
 });
 
 alt.on('faction:Attach', factionAttach);
+alt.on('faction:AcceptMember', factionAcceptMember);
 alt.onClient('faction:Create', factionCreate);
 alt.onClient('faction:RankUp', factionRankUp);
 alt.onClient('faction:RankDown', factionRankDown);
@@ -123,6 +128,7 @@ alt.onClient('faction:SetFlags', factionSetFlags);
 alt.onClient('faction:AddPoint', factionAddPoint);
 alt.onClient('faction:SetInfo', factionSetInfo);
 alt.onClient('faction:SaveRank', factionSaveRank);
+alt.onClient('faction:InviteMember', factionInviteMember);
 
 export class Faction {
     constructor(factionData) {
@@ -249,6 +255,13 @@ export class Faction {
 
     rankUp(player, targetID) {
         const isOwner = this.id === player.data.id;
+        const member = this.getRank(targetID);
+        const memberRank = member.rank;
+
+        if (memberRank === undefined) {
+            alt.emitClient(player, 'faction:Error', 'Failed to find member.');
+            return;
+        }
 
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.PROMOTE)) {
@@ -257,7 +270,6 @@ export class Faction {
             }
 
             const officerRank = this.getRank(player.data.id);
-            const memberRank = this.getRank(targetID);
 
             if (!this.isRankGreater(officerRank, memberRank)) {
                 alt.emitClient(
@@ -283,6 +295,13 @@ export class Faction {
 
     rankDown(player, targetID) {
         const isOwner = this.id === player.data.id;
+        const member = this.getRank(targetID);
+        const memberRank = member.rank;
+
+        if (memberRank === undefined) {
+            alt.emitClient(player, 'faction:Error', 'Failed to find member.');
+            return;
+        }
 
         if (!isOwner) {
             if (!this.hasPermissions(player, permissions.PROMOTE)) {
@@ -302,7 +321,8 @@ export class Faction {
         }
 
         const ranks = JSON.parse(this.ranks);
-        const newRank = memberRank + 1 >= ranks.length ? ranks.length : memberRank + 1;
+        const newRank =
+            memberRank + 1 >= ranks.length ? ranks.length - 1 : memberRank + 1;
         if (!this.setRank(targetID, newRank)) {
             alt.emitClient(player, 'faction:Error', 'Failed to set rank.');
             this.syncMember(player);
@@ -540,17 +560,19 @@ export class Faction {
                     'faction:Error',
                     'You do not have permission to recruit.'
                 );
-                return;
+                return false;
             }
         }
 
         if (target.data.faction !== -1) {
             target.notify('You must first leave your faction.');
-            return;
+            return false;
         }
 
+        const ranks = JSON.parse(this.ranks);
+        const lowestRank = ranks.length - 1;
         const members = JSON.parse(this.members);
-        members.push({ id: target.data.id, name: target.data.name, rank: 0 });
+        members.push({ id: target.data.id, name: target.data.name, rank: lowestRank });
 
         target.data.faction = this.id;
         player.saveField(target.data.id, 'faction', target.data.faction);
@@ -561,6 +583,7 @@ export class Faction {
             `${player.data.name} has recruited ${target.data.name}. Give them a warm welcome!`
         );
         factionAttach(target);
+        return true;
     }
 
     kickMember(player, id) {
@@ -606,6 +629,8 @@ export class Faction {
         });
 
         if (target) {
+            target.data.faction = -1;
+            target.saveField(target.data.id, 'faction', target.data.faction);
             target.notify('You have been kicked from the faction.');
         }
     }
@@ -801,6 +826,7 @@ function factionCreate(player, type, factionName) {
         player.saveField(player.data.id, 'faction', player.data.id);
         player.emitMeta('faction:Id', player.data.id);
         player.emitMeta('faction:Info', JSON.stringify(parsedFactionData));
+        player.faction = parsedFactionData;
         alt.log('Faction ready.');
     });
 }
@@ -915,6 +941,68 @@ function setTurfToNeutral(id) {
 
     if (!foundFaction) return;
     foundFaction.removeTurf(id);
+}
+
+function factionInviteMember(player, data) {
+    const target = data.player;
+    if (!target) {
+        player.notify('That user was not found.');
+        return;
+    }
+
+    if (target.data.faction !== -1) {
+        player.notify('That user is already in a faction.');
+        return;
+    }
+
+    target.factionInvite = {
+        inviter: player,
+        expiration: Date.now() + 60000 * 2
+    };
+
+    player.send(`You have invited ${target.data.name}.`);
+    target.send(
+        `You were invited to {FFFF00} ${player.faction.name}. {FFFFFF}Type /acceptfaction to join.`
+    );
+}
+
+function factionAcceptMember(player) {
+    if (!player.factionInvite) {
+        player.notify('You do not have a faction invite.');
+        return;
+    }
+
+    if (Date.now() > player.factionInvite.expiration) {
+        player.factionInvite = undefined;
+        player.notify('The invite has expired.');
+        return;
+    }
+
+    if (!player.factionInvite.inviter) {
+        player.factionInvite = undefined;
+        player.notify('The invite has expired.');
+        return;
+    }
+
+    const faction = player.factionInvite.inviter.faction;
+
+    if (!faction) {
+        player.factionInvite = undefined;
+        player.notify('The invite has expired.');
+        return;
+    }
+
+    const joined = faction.addMember(player.factionInvite.inviter, player);
+    if (!joined) {
+        player.notify('Failed to join faction.');
+        faction.factionInvite.inviter.notify(
+            `${player.data.name} failed to join the faction.`
+        );
+        return;
+    }
+
+    player.notify('Accepted invite.');
+    player.factionInvite = undefined;
 }
 
 alt.on('parse:Turfs', () => {

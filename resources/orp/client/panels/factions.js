@@ -43,13 +43,16 @@ alt.on('meta:Changed', (key, value) => {
     if (key !== 'faction:Info') return;
     if (!webview) return;
     if (!webview.view) return;
-    ready();
+    parseData();
 });
 
 function ready() {
     if (!webview) return;
     showCursor(true);
+    parseData();
+}
 
+function parseData() {
     const factionInfo = alt.Player.local.getMeta('faction:Info');
     if (!factionInfo) {
         return;
@@ -57,6 +60,9 @@ function ready() {
 
     const parsedInfo = JSON.parse(factionInfo);
     webview.emit('faction:Ready', factionInfo);
+
+    alt.log(factionInfo);
+
     const id = alt.Player.local.getSyncedMeta('id');
     const members = JSON.parse(parsedInfo.members);
     const member = members.find(member => member.id === id);

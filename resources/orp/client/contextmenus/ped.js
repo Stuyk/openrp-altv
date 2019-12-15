@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as native from 'natives';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.js';
+import { isFlagged } from '/client/utility/flags.js';
 
 alt.log('Loaded: client->contextmenus->ped.js');
 
@@ -47,13 +48,15 @@ function player(ent) {
 
 function gangAddons(player) {
     const options = [];
-    const gangInfo = alt.Player.local.getMeta('gang:Info');
-    if (!gangInfo) {
+    const factionInfo = alt.Player.local.getMeta('faction:Info');
+    if (!factionInfo) {
         return options;
     }
 
-    const parsedInfo = JSON.parse(gangInfo);
-    const members = JSON.parse(parsedInfo.members);
+    alt.log('Is in faction.');
+
+    const faction = JSON.parse(factionInfo);
+    const members = JSON.parse(faction.members);
     const member = members.find(
         member => member.id === alt.Player.local.getSyncedMeta('id')
     );
@@ -62,9 +65,14 @@ function gangAddons(player) {
         return options;
     }
 
-    if (member.rank >= 2) {
-        appendContextItem('Invite to Gang', true, 'gang:InviteMember', { player });
+    alt.log('is member');
+
+    const ranks = JSON.parse(faction.ranks);
+    if (!isFlagged(ranks[member.rank].flags, 1)) {
+        return options;
     }
+
+    appendContextItem('Invite to Faction', true, 'faction:InviteMember', { player });
 }
 
 function arrestAddons(player) {

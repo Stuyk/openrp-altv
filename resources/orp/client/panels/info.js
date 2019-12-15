@@ -1,7 +1,5 @@
 import * as alt from 'alt';
 import { View } from '/client/utility/view.js';
-import { FirstNames } from '/client/gamedata/firstNames.js';
-import { LastNames } from '/client/gamedata/lastNames.js';
 import { showCursor } from '/client/utility/cursor.js';
 
 alt.log('Loaded: client->panels->info.js');
@@ -36,8 +34,6 @@ function ready() {
     showCursor(true);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
-    webview.emit('roleplay:SetFirstNames', JSON.stringify(FirstNames));
-    webview.emit('roleplay:SetLastNames', JSON.stringify(LastNames));
 }
 
 // Routed to the server; to set the user's roleplay info.

@@ -223,6 +223,10 @@ class App extends Component {
     }
 
     render() {
+        if (this.state.hidden) {
+            return h('div');
+        }
+
         return h(
             'div',
             { class: 'chatbox' },

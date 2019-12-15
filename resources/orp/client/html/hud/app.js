@@ -44,6 +44,7 @@ class App extends Component {
             alt.on('hud:QueueNotification', this.queueNotification.bind(this));
             alt.on('hud:isInVehicle', this.isInVehicle.bind(this));
             alt.on('hud:SetWeather', this.setWeather.bind(this));
+            alt.on('hud:Hide', this.hide.bind(this));
 
             setTimeout(() => {
                 alt.emit('hud:Ready');
@@ -70,6 +71,10 @@ class App extends Component {
             this.setWeather('thunder');
             //this.adjustHud(true);
         }
+    }
+
+    hide(value) {
+        this.setState({ hidden: value });
     }
 
     notificationInterval() {
@@ -205,6 +210,10 @@ class App extends Component {
     }
 
     render() {
+        if (this.state.hidden) {
+            return h('div');
+        }
+
         return h(
             'div',
             { class: 'hud' },

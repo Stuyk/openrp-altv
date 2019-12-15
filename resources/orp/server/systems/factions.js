@@ -129,6 +129,17 @@ export class Faction {
         Object.keys(factionData).forEach(key => {
             this[key] = factionData[key];
         });
+
+        const turfs = JSON.parse(this.turfs);
+        turfs.forEach(turf => {
+            if (!colshapes[turf]) return;
+            colshapes[turf].gangs = {
+                owner: this,
+                nextClaim: Date.now()
+            };
+            colshapes[turf].sector.color = this.color;
+        });
+
         factions.push(this);
         totalFactions += 1;
     }
@@ -419,7 +430,7 @@ export class Faction {
 
         const currentTurfs = JSON.parse(this.turfs);
         if (currentTurfs.includes(id)) {
-            colshape.gangs = {
+            colshape.factions = {
                 owner: this,
                 nextClaim
             };
@@ -433,7 +444,7 @@ export class Faction {
             console.log(`Turf ${id} was added to gang ${this.name}`);
         });
 
-        colshape.gangs = {
+        colshape.factions = {
             owner: this,
             nextClaim
         };
@@ -445,7 +456,7 @@ export class Faction {
                 return;
             }
 
-            player.send(`Gang ${this.name} has claimed turf ${colshape.sector.name}.`);
+            player.send(`Faction ${this.name} has claimed turf ${colshape.sector.name}.`);
             if (player.colshape && player.colshape === colshape) {
                 alt.emit('entityEnterColshape', colshape, player);
             }
@@ -731,8 +742,8 @@ function factionAttach(player) {
 function factionCreate(player, type, factionName) {
     alt.log('Creating Faction...');
 
-    const isPoliceReady = totalPoliceFactions >= Config.maxPoliceFactions ? true : false;
-    const isEmsReady = totalEMSFactions >= Config.maxEMSFactions ? true : false;
+    const isPoliceSlotsExceeded = totalPoliceFactions >= Config.maxPoliceFactions;
+    const isEMSSlotsExceeded = totalEMSFactions >= Config.maxEMSFactions;
 
     if (player.data.faction !== -1) {
         alt.log('You already own or are in a faction.');
@@ -744,13 +755,15 @@ function factionCreate(player, type, factionName) {
         return;
     }
 
-    if (type === classifications.POLICE && !isPoliceReady) {
+    if (type === classifications.POLICE && isPoliceSlotsExceeded) {
         player.notify('Too many police factions.');
+        alt.log('Too Many Police Factions');
         return;
     }
 
-    if (type === classifications.EMS && !isEmsReady) {
+    if (type === classifications.EMS && isEMSSlotsExceeded) {
         player.notify('Too many ems factions.');
+        alt.log('Too Many EMS Factions');
         return;
     }
 
@@ -880,8 +893,31 @@ function factionSaveRank(player, index, rankName) {
     player.faction.setRankName(player, index, rankName);
 }
 
+function setTurfToNeutral(id) {
+    id = parseInt(id);
+    if (colshapes[id]) {
+        colshapes[id].factions = {
+            owner: {
+                id: -2
+            }
+        };
+        colshapes[id].sector.color = 4;
+    }
+
+    const foundFaction = factions.find(faction => {
+        if (faction && faction.turfs) {
+            const turfs = JSON.parse(faction.turfs);
+            if (turfs.includes(id)) {
+                return faction;
+            }
+        }
+    });
+
+    if (!foundFaction) return;
+    foundFaction.removeTurf(id);
+}
+
 alt.on('parse:Turfs', () => {
-    /*
     const currentPlayers = [...alt.Player.all];
     const players = currentPlayers.filter(
         player =>
@@ -891,6 +927,10 @@ alt.on('parse:Turfs', () => {
             !player.data.dead && // is not dead
             player.dimension === 0 // is in dimension 0
     );
+
+    if (players.length <= 0) {
+        return;
+    }
 
     colshapes.forEach((shape, turfID) => {
         if (Date.now() < shape.factions.nextClaim) {
@@ -903,9 +943,6 @@ alt.on('parse:Turfs', () => {
             shape.sector.seed.getNumber(Config.turfHighestWaitTime) * 60000 +
             60000 * 10;
 
-        // console.log(`Turf ${shape.sector.name} has initiated claim.`);
-        // console.log(`Claim In: ${(nextTime - Date.now()) / 1000 / 60} Minutes`);
-
         if (filteredPlayers.length <= 0) {
             shape.factions.nextClaim = nextTime;
             return;
@@ -913,12 +950,29 @@ alt.on('parse:Turfs', () => {
 
         const turfMembers = {};
         filteredPlayers.forEach(player => {
+            if (!player.faction) {
+                return;
+            }
+
+            if (player.faction.classification === classifications.EMS) {
+                return;
+            }
+
+            if (player.faction.classification === classifications.BUSINESS) {
+                return;
+            }
+
             if (!turfMembers[player.data.faction]) {
                 turfMembers[player.data.faction] = 1;
             } else {
                 turfMembers[player.data.faction] += 1;
             }
         });
+
+        if (filteredPlayers.length <= 0) {
+            shape.factions.nextClaim = nextTime;
+            return;
+        }
 
         let selectedFaction;
         Object.keys(turfMembers).forEach(key => {
@@ -932,13 +986,99 @@ alt.on('parse:Turfs', () => {
             }
         });
 
-        if (parseInt(shape.factions.owner) === parseInt(selectedGang)) {
+        const factionIndex = factions.findIndex(
+            faction => faction.id === parseInt(selectedFaction)
+        );
+
+        if (factionIndex === -1) {
+            return;
+        }
+
+        const faction = factions[factionIndex];
+
+        if (!faction) {
             shape.factions.nextClaim = nextTime;
             return;
         }
 
-        alt.emit('grid:AddTurf', selectedGang, turfID, nextTime);
-    });
+        const isPoliceFaction = faction.classification === classifications.POLICE;
+        const isCurrentOwner = shape.factions.owner.id === faction.id;
 
-    */
+        if (isPoliceFaction && shape.factions.owner.id === -2) {
+            shape.factions.nextClaim = nextTime;
+            return;
+        }
+
+        if (isCurrentOwner) {
+            shape.factions.nextClaim = nextTime;
+            return;
+        }
+
+        alt.emit('grid:AddTurf', faction.id, turfID, nextTime);
+    });
 });
+
+alt.on('grid:AddTurf', (id, turfID, nextClaimTime) => {
+    const index = factions.findIndex(factionData => factionData.id === id);
+    const faction = factions[index];
+
+    if (!faction) {
+        return;
+    }
+
+    turfID = parseInt(turfID);
+    if (!colshapes[turfID]) {
+        return;
+    }
+
+    setTurfToNeutral(turfID);
+    if (faction.classification === classifications.POLICE) {
+        const currentPlayers = [...alt.Player.all];
+        currentPlayers.forEach(player => {
+            player.send(
+                `Faction ${faction.name} has neutralized turf ${colshapes[turfID].sector.name}.`
+            );
+
+            if (player.colshape && player.colshape === colshapes[turfID]) {
+                alt.emit('entityEnterColshape', colshapes[turfID], player);
+            }
+        });
+        return;
+    }
+
+    faction.addTurf(turfID, colshapes[turfID], nextClaimTime);
+});
+
+alt.onClient('gangs:CheckCraftDialogue', (player, type) => {
+    if (!doesUserHaveTurfAccess(player)) {
+        player.notify('You must own this turf to access this crafting point.');
+        return;
+    }
+
+    alt.emitClient(player, 'gangs:ShowCraftingDialogue', type);
+});
+
+export function doesUserHaveTurfAccess(player) {
+    if (player.data.faction === -1) {
+        player.notify('You must be in a gang to access this point.');
+        return false;
+    }
+
+    const currentTurf = player.colshape;
+    if (!currentTurf) {
+        player.notify('You are not in a turf.');
+        return false;
+    }
+
+    if (currentTurf.factions.owner === -1) {
+        player.notify('Nobody currently owns this turf.');
+        return false;
+    }
+
+    if (currentTurf.factions.owner.id !== player.data.faction) {
+        player.notify('You do not own this turf.');
+        return false;
+    }
+
+    return true;
+}

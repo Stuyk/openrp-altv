@@ -8,7 +8,7 @@ import {
     restrictions
 } from '../systems/job.js';
 import { Interaction } from '../systems/interaction.js';
-import { doesUserHaveTurfAccess } from '../systems/gangs.js';
+import { doesUserHaveTurfAccess } from '../systems/factions.js';
 
 const jobName = 'Kevlarium Refinery';
 const trackStart = {

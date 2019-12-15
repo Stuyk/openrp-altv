@@ -26,11 +26,16 @@ export function showDialogue() {
 // Finish using this webview.
 export function closeDialogue() {
     webview.close();
+    showCursor(false);
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
 }
 
 function ready() {
     if (!webview) return;
     showCursor(true);
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
     webview.emit('roleplay:SetFirstNames', JSON.stringify(FirstNames));
     webview.emit('roleplay:SetLastNames', JSON.stringify(LastNames));
 }
@@ -38,4 +43,5 @@ function ready() {
 // Routed to the server; to set the user's roleplay info.
 function setRoleplayInfo(name) {
     alt.emitServer('character:SetRoleplayInfo', name);
+    showCursor(false);
 }

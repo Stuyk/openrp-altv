@@ -29,6 +29,21 @@ html {
     align-items: center;
     align-content: center;
 
+    input {
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        color: white;
+        height: 35px;
+        box-sizing: border-box;
+        background: @dark;
+        margin: 0px;
+
+        &:focus {
+            outline: none;
+            border: 2px solid @contrast2;
+        }
+    }
+
     .current-name {
         width: 100%;
         text-align: center;

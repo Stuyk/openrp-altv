@@ -129,6 +129,7 @@ alt.onClient('faction:AddPoint', factionAddPoint);
 alt.onClient('faction:SetInfo', factionSetInfo);
 alt.onClient('faction:SaveRank', factionSaveRank);
 alt.onClient('faction:InviteMember', factionInviteMember);
+alt.onClient('faction:SetHome', factionSetHome);
 
 export class Faction {
     constructor(factionData) {
@@ -737,11 +738,27 @@ export class Faction {
             return;
         }
 
-        console.log('Saving notice...');
-        console.log(notice);
-
         this.notice = notice;
         this.saveField('notice', notice);
+        this.syncMembers();
+    }
+
+    setHome(player) {
+        const isOwner = this.id === player.data.id;
+
+        if (!isOwner) {
+            alt.log('Is not faction owner.');
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You do not have permission to update the home location.'
+            );
+            return;
+        }
+
+        this.home = JSON.stringify(player.pos);
+        this.saveField('home', this.home);
+        alt.emitClient(player, 'faction:Success', 'Home location was updated.');
         this.syncMembers();
     }
 }
@@ -1011,6 +1028,14 @@ function factionAcceptMember(player) {
 
     player.notify('Accepted invite.');
     player.factionInvite = undefined;
+}
+
+function factionSetHome(player) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.setHome(player);
 }
 
 alt.on('parse:Turfs', () => {

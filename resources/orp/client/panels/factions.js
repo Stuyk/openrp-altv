@@ -33,8 +33,8 @@ export function showDialogue() {
     webview.on('faction:AppendRank', appendRank);
     webview.on('faction:SetFlags', setFlags);
     webview.on('faction:Disband', disband);
+    webview.on('faction:SetHome', setHome);
     native.triggerScreenblurFadeIn(1000);
-
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
 }
@@ -119,6 +119,10 @@ function setFlags(index, flagValue) {
 function disband() {
     closeDialogue();
     alt.emitServer('faction:Disband');
+}
+
+function setHome() {
+    alt.emitServer('faction:SetHome');
 }
 
 alt.onServer('faction:Error', msg => {

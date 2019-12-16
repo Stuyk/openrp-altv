@@ -140,7 +140,6 @@ class App extends Component {
             alt.on('faction:Success', this.factionSuccess.bind(this));
             alt.emit('faction:Ready');
         } else {
-            /*
             const members = [];
             for (let i = 0; i < 25; i++) {
                 const member = {
@@ -176,7 +175,6 @@ class App extends Component {
             for (let i = 0; i < 20; i++) {
                 this.factionSuccess(`test ${i}`);
             }
-            */
         }
 
         window.addEventListener('keyup', this.keyUpBind);
@@ -1001,6 +999,12 @@ class Options extends Component {
         }
     }
 
+    setHome() {
+        if ('alt' in window) {
+            alt.emit('faction:SetHome');
+        }
+    }
+
     renderDisbandOption({ props }) {
         return h(
             'div',
@@ -1043,11 +1047,32 @@ class Options extends Component {
         );
     }
 
+    renderSetHome() {
+        return h(
+            'div',
+            { class: 'option' },
+            h('p', { class: 'description' }, 'Set the home point for your faction.'),
+            h(
+                'div',
+                { class: 'optionData' },
+                h(
+                    'button',
+                    {
+                        class: 'fullwidth',
+                        onclick: this.setHome.bind(this)
+                    },
+                    'Set Current Location as Home'
+                )
+            )
+        );
+    }
+
     render(props) {
         return h(
             'div',
             { class: 'optionPage' },
-            h(this.renderDisbandOption.bind(this), { props })
+            h(this.renderDisbandOption.bind(this), { props }),
+            h(this.renderSetHome.bind(this), { props })
         );
     }
 }

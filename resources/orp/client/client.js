@@ -26,6 +26,7 @@ import * as systemsCombat from '/client/systems/combat.js';
 import * as systemsDeathBox from '/client/systems/deathbox.js';
 import * as systemsDoors from '/client/systems/doors.js';
 import * as systemsInteriors from '/client/systems/interiors.js';
+import * as systemsFactions from '/client/systems/factions.js';
 import * as systemsJob from '/client/systems/job.js';
 import * as systemsRefinery from '/client/systems/refinery.js';
 import * as systemsLumber from '/client/systems/lumber.js';

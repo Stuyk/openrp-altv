@@ -727,7 +727,7 @@ export const Recipes = {
         },
         hammer1: {
             name: 'Oxidized Hammer',
-            key: 'axe1',
+            key: 'hammer1',
             requirements: [
                 { key: 'crafting', level: 10 },
                 { key: 'refinedmetal', amount: 15 },
@@ -768,7 +768,7 @@ export const Recipes = {
         },
         hammer2: {
             name: 'Used Hammer',
-            key: 'axe2',
+            key: 'hammer2',
             requirements: [
                 { key: 'crafting', level: 20 },
                 { key: 'refinedmetal', amount: 30 },
@@ -830,7 +830,7 @@ export const Recipes = {
         },
         hammer3: {
             name: 'Decayed Hammer',
-            key: 'axe3',
+            key: 'hammer3',
             requirements: [
                 { key: 'crafting', level: 30 },
                 { key: 'refinedmetal', amount: 75 },
@@ -871,7 +871,7 @@ export const Recipes = {
         },
         hammer4: {
             name: 'Worn Hammer',
-            key: 'axe4',
+            key: 'hammer4',
             requirements: [
                 { key: 'crafting', level: 40 },
                 { key: 'refinedmetal', amount: 100 },
@@ -912,7 +912,7 @@ export const Recipes = {
         },
         hammer5: {
             name: 'Slightly Worn Hammer',
-            key: 'axe5',
+            key: 'hammer5',
             requirements: [
                 { key: 'crafting', level: 50 },
                 { key: 'refinedmetal', amount: 135 },
@@ -953,7 +953,7 @@ export const Recipes = {
         },
         hammer6: {
             name: 'Nearly New Hammer',
-            key: 'axe6',
+            key: 'hammer6',
             requirements: [
                 { key: 'crafting', level: 60 },
                 { key: 'refinedmetal', amount: 150 },
@@ -994,7 +994,7 @@ export const Recipes = {
         },
         hammer7: {
             name: 'Nearly New Hammer',
-            key: 'axe7',
+            key: 'hammer7',
             requirements: [
                 { key: 'crafting', level: 70 },
                 { key: 'refinedmetal', amount: 170 },
@@ -1035,7 +1035,7 @@ export const Recipes = {
         },
         hammer8: {
             name: 'Master Hammer',
-            key: 'axe8',
+            key: 'hammer8',
             requirements: [
                 { key: 'crafting', level: 80 },
                 { key: 'refinedmetal', amount: 200 },
@@ -1076,7 +1076,7 @@ export const Recipes = {
         },
         hammer9: {
             name: 'Artisan Hammer',
-            key: 'axe9',
+            key: 'hammer9',
             requirements: [
                 { key: 'crafting', level: 90 },
                 { key: 'refinedmetal', amount: 300 },

@@ -996,7 +996,7 @@ function factionAcceptMember(player) {
     const joined = faction.addMember(player.factionInvite.inviter, player);
     if (!joined) {
         player.notify('Failed to join faction.');
-        faction.factionInvite.inviter.notify(
+        player.factionInvite.inviter.notify(
             `${player.data.name} failed to join the faction.`
         );
         return;

@@ -138,3 +138,8 @@ alt.on('hud:UpdateWeather', weatherName => {
     weather = weatherName;
     webview.emit('hud:SetWeather', weatherName);
 });
+
+alt.on('hud:SetPvpZone', toggle => {
+    if (!webview) return;
+    webview.emit('hud:SetPvpZone', toggle);
+});

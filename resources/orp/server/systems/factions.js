@@ -139,11 +139,12 @@ export class Faction {
         const turfs = JSON.parse(this.turfs);
         turfs.forEach(turf => {
             if (!colshapes[turf]) return;
-            colshapes[turf].gangs = {
+            colshapes[turf].factions = {
                 owner: this,
-                nextClaim: Date.now()
+                nextClaim: Date.now() + 30000
             };
             colshapes[turf].sector.color = this.color;
+            console.log(turf);
         });
 
         factions.push(this);

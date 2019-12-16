@@ -2,6 +2,12 @@ import * as alt from 'alt';
 import { Config } from '../configuration/config.js';
 import { colshapes } from './grid.js';
 
+
+
+
+
+
+
 const weatherGroups = [];
 const weatherCycle = Config.weatherCycle;
 const weatherCycleTime = Config.weatherCycleTime;

@@ -74,7 +74,7 @@ pairs.forEach((row, sector) => {
         );
 
         colshape.factions = {
-            owner: -1,
+            owner: { id: -2 },
             nextClaim: Date.now()
         };
 

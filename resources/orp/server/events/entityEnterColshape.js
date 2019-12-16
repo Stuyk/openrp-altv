@@ -15,6 +15,12 @@ alt.on('entityEnterColshape', (colshape, entity) => {
         if (colshape.sector) {
             entity.colshape = colshape;
             entity.sector = colshape.sector;
+
+            if (colshape.factions) {
+                const isPvPEnabled = colshape.factions.owner.id !== -2;
+                alt.emitClient(entity, 'combat:ToggleCombat', isPvPEnabled);
+            }
+
             alt.emitClient(entity, 'blip:CleanSectorBlips'); // Remove all sector blips
             alt.emitClient(entity, 'blip:CreateSectorBlip', colshape.sector); // Show the sector blip, the user is currently in
             alt.emitClient(entity, 'door:RenderDoors', colshape.sector.doors);

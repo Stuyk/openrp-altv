@@ -1,7 +1,0 @@
-{
-    "maxstatements": 80,
-    "maxdepth": 4,
-    "maxcomplexity": 10,
-    "esversion": 9,
-    "lastsemic": true
-}

@@ -44,6 +44,8 @@ class App extends Component {
             alt.on('hud:QueueNotification', this.queueNotification.bind(this));
             alt.on('hud:isInVehicle', this.isInVehicle.bind(this));
             alt.on('hud:SetWeather', this.setWeather.bind(this));
+            alt.on('hud:Hide', this.hide.bind(this));
+            alt.on('hud:SetPvpZone', this.setPvpZone.bind(this));
 
             setTimeout(() => {
                 alt.emit('hud:Ready');
@@ -67,9 +69,15 @@ class App extends Component {
             }, 500);
             */
 
+            this.setPvpZone(false);
+
             this.setWeather('thunder');
             //this.adjustHud(true);
         }
+    }
+
+    hide(value) {
+        this.setState({ hidden: value });
     }
 
     notificationInterval() {
@@ -156,6 +164,10 @@ class App extends Component {
         }
     }
 
+    setPvpZone(value) {
+        this.setState({ pvpEnabled: value });
+    }
+
     displayNotifications() {
         const notifications = this.state.notifications.map(note => {
             return h('div', { class: 'notification' }, note.message);
@@ -205,6 +217,13 @@ class App extends Component {
     }
 
     render() {
+        if (this.state.hidden) {
+            return h('div');
+        }
+
+        const pvpIcon = this.state.pvpEnabled ? 'skull' : 'angel';
+        console.log(pvpIcon);
+
         return h(
             'div',
             { class: 'hud' },
@@ -274,6 +293,17 @@ class App extends Component {
             // Minigame Text for Jobs
             this.state.data.minigametext !== '' &&
                 h('div', { class: 'minigametext' }, this.state.data.minigametext),
+            h(
+                'div',
+                {
+                    class: 'pvp',
+                    style: `right: ${this.state.xOffset + 425}px !important;`
+                },
+                h('svg', {
+                    type: 'image/svg+xml',
+                    style: `background: url('../icons/${pvpIcon}.svg');`
+                })
+            ),
             // Notifications
             h(this.displayNotifications.bind(this))
         );

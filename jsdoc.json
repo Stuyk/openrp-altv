@@ -1,7 +1,7 @@
 {
     "source": {
         "include": ["./resources/orp/server"],
-        "includePattern": ".mjs$",
+        "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs)"
     },
     "plugins": ["plugins/markdown"],

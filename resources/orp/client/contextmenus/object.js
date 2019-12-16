@@ -9,6 +9,7 @@ import { getLevel } from '/client/systems/xp.js';
 import { getItemByEntity } from '/client/systems/inventory.js';
 import { getResourceDataByCoord } from '/client/systems/resource.js';
 import { getObjectById } from '/client/systems/objectextender.js';
+import { getBoxByEntity } from '/client/systems/deathbox.js';
 
 alt.log('Loaded: client->contextmenus->object.js');
 
@@ -565,13 +566,29 @@ function fruitDispenser(ent) {
 }
 
 function itemDrop(ent) {
+    const deathBox = getBoxByEntity(ent);
     const currentItem = getItemByEntity(ent);
-    if (!currentItem) return;
-    appendContextItem(`Pickup`, false, 'item:Pickup', {
-        id: currentItem.id,
-        hash: currentItem.data.item.hash
-    });
-    setContextTitle(`${currentItem.data.item.name} x${currentItem.data.item.quantity}`);
+    if (deathBox) {
+        alt.log(JSON.stringify(deathBox, null, '\t'));
+        deathBox.items.forEach(item => {
+            alt.log(JSON.stringify(item, null, '\t'));
+            appendContextItem(`${item.name} x${item.quantity}`, true, 'deathbox:Pickup', {
+                hash: item.hash,
+                boxhash: deathBox.hash
+            });
+        });
+        setContextTitle(`Death Box`);
+    }
+
+    if (currentItem) {
+        appendContextItem(`Pickup`, false, 'item:Pickup', {
+            id: currentItem.id,
+            hash: currentItem.data.item.hash
+        });
+        setContextTitle(
+            `${currentItem.data.item.name} x${currentItem.data.item.quantity}`
+        );
+    }
 }
 
 function toolBench(ent) {

@@ -144,8 +144,15 @@ export class Faction {
                 nextClaim: Date.now() + 30000
             };
             colshapes[turf].sector.color = this.color;
-            console.log(turf);
         });
+
+        if (factionData.classification === classifications.POLICE) {
+            totalPoliceFactions += 1;
+        }
+
+        if (factionData.classification === classifications.EMS) {
+            totalEMSFactions += 1;
+        }
 
         factions.push(this);
         totalFactions += 1;

@@ -106,7 +106,7 @@ function handleHospital(player) {
         }
     });
 
-    player.dropItemsOnDeath();
+    alt.emit('deathbox:Create', player);
     player.hasDied = true;
     player.revivePos = player.sendToJail
         ? { x: 459.00830078125, y: -998.204833984375, z: 24.91485023498535 }

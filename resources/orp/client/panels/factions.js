@@ -61,8 +61,6 @@ function parseData() {
     const parsedInfo = JSON.parse(factionInfo);
     webview.emit('faction:Ready', factionInfo);
 
-    alt.log(factionInfo);
-
     const id = alt.Player.local.getSyncedMeta('id');
     const members = JSON.parse(parsedInfo.members);
     const member = members.find(member => member.id === id);

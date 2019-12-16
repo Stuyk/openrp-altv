@@ -222,7 +222,6 @@ class App extends Component {
         }
 
         const pvpIcon = this.state.pvpEnabled ? 'skull' : 'angel';
-        console.log(pvpIcon);
 
         return h(
             'div',

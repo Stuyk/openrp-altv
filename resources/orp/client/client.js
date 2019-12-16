@@ -23,6 +23,7 @@ import * as systemsWeather from '/client/systems/weather.js';
 import * as systemsCallbacks from '/client/systems/callbacks.js';
 import * as systemsContext from '/client/systems/context.js';
 import * as systemsCombat from '/client/systems/combat.js';
+import * as systemsDeathBox from '/client/systems/deathbox.js';
 import * as systemsDoors from '/client/systems/doors.js';
 import * as systemsInteriors from '/client/systems/interiors.js';
 import * as systemsJob from '/client/systems/job.js';

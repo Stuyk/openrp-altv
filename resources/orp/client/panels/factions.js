@@ -36,6 +36,7 @@ export function showDialogue() {
     webview.on('faction:SetHome', setHome);
     webview.on('faction:AddVehiclePoint', addVehiclePoint);
     webview.on('faction:RemoveVehiclePoint', removeVehiclePoint);
+    webview.on('faction:SetSubType', setSubType);
     native.triggerScreenblurFadeIn(1000);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
@@ -66,6 +67,11 @@ function parseData() {
     const id = alt.Player.local.getSyncedMeta('id');
     const members = JSON.parse(parsedInfo.members);
     const member = members.find(member => member.id === id);
+
+    const skillTree = alt.Player.local.getMeta('faction:SkillTree');
+    if (skillTree) {
+        webview.emit('faction:SetSkillTree', skillTree);
+    }
 
     if (!member) {
         return;
@@ -136,6 +142,10 @@ function addVehiclePoint() {
 
 function removeVehiclePoint() {
     alt.emitServer('faction:RemoveVehiclePoint');
+}
+
+function setSubType(type) {
+    alt.emitServer('faction:SetSubType', type);
 }
 
 alt.onServer('faction:Error', msg => {

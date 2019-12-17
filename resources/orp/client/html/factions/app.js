@@ -9,6 +9,8 @@ const permissions = {
     MAX: 7
 };
 
+const skillTreeExample = `{"0":{"gun":{"desc":"Gain access to gun running jobs with primary focus on the gun trade.","radio":{"description":"A faction designated chat.","requirement":250},"vehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"vehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"vehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"recon":{"description":"Able to see all faction members online.","requirement":3500},"vehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"vehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"vehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"aircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"warehouse":{"description":"Gain access to a faction warehouse for storing items.","requirement":38000},"main":{"description":"Access to gun running jobs.","requirement":1}},"drug":{"desc":"Gain access to drug running jobs with primary focus on the drug trade.","radio":{"description":"A faction designated chat.","requirement":250},"vehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"vehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"vehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"recon":{"description":"Able to see all faction members online.","requirement":3500},"vehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"vehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"vehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"aircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"warehouse":{"description":"Gain access to a faction warehouse for storing items.","requirement":38000},"main":{"description":"Access to drug running jobs.","requirement":1}}},"1":{"fbi":{"desc":"Your team will investigate murders and assist police with finding a killer.","recon":{"description":"Able to see all faction members online.","requirement":200},"radio":{"description":"A faction designated chat.","requirement":250},"fvehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"fvehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"fvehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"fvehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"fvehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"fvehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"faircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"paybonus0":{"description":"All members recieve a $5 paycheck bonus.","requirement":250000},"paybonus1":{"description":"All members recieve a $5 paycheck bonus.","requirement":500000},"main":{"description":"Investigate corpses information on a killer.","requirement":1}},"police":{"desc":"Your responsibility is to capture wanted criminals and maintain order.","recon":{"description":"Able to see all faction members online.","requirement":200},"radio":{"description":"A faction designated chat.","requirement":250},"fvehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"fvehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"fvehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"fvehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"fvehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"fvehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"faircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"paybonus0":{"description":"All members recieve a $5 paycheck bonus.","requirement":250000},"paybonus1":{"description":"All members recieve a $5 paycheck bonus.","requirement":500000},"main":{"description":"Standard police faction. Arrest other players. Access to MDC.","requirement":1}},"swat":{"desc":"Your factions responsibility is to help police neutralize heavily occupied turfs from gang activity.","recon":{"description":"Able to see all faction members online.","requirement":200},"radio":{"description":"A faction designated chat.","requirement":250},"fvehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"fvehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"fvehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"fvehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"fvehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"fvehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"faircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"paybonus0":{"description":"All members recieve a $5 paycheck bonus.","requirement":250000},"paybonus1":{"description":"All members recieve a $5 paycheck bonus.","requirement":500000},"main":{"description":"Access to heavy weaponry.","requirement":1}}},"2":{"firefighter":{"desc":"Put out fires and restore functionality to stores, jobs, etc.","recon":{"description":"Able to see all faction members online.","requirement":200},"radio":{"description":"A faction designated chat.","requirement":250},"fvehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"fvehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"fvehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"fvehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"fvehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"fvehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"faircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"paybonus0":{"description":"All members recieve a $5 paycheck bonus.","requirement":250000},"paybonus1":{"description":"All members recieve a $5 paycheck bonus.","requirement":500000},"main":{"description":"Retrieve locations of on-going fires.","requirement":1}},"ems":{"desc":"Retrieve downed civilians.","recon":{"description":"Able to see all faction members online.","requirement":200},"radio":{"description":"A faction designated chat.","requirement":250},"fvehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"fvehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"fvehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"fvehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"fvehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"fvehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"faircraft":{"description":"Unlock a faction aircraft.","requirement":32000},"paybonus0":{"description":"All members recieve a $5 paycheck bonus.","requirement":250000},"paybonus1":{"description":"All members recieve a $5 paycheck bonus.","requirement":500000},"main":{"description":"Retrieve and revive players. Recieve EMS calls.","requirement":1}}},"3":{"business":{"desc":"Start a business based on the item trading or any other service.","endpoint":{"description":"A special textable line for users talk to your business members.","requirement":100},"radio":{"description":"A faction designated chat.","requirement":250},"warehouse":{"description":"Gain access to a faction warehouse for storing items.","requirement":500},"vehicle0":{"description":"Unlock a faction vehicle.","requirement":500},"vehicle1":{"description":"Unlock a faction vehicle.","requirement":1000},"vehicle2":{"description":"Unlock a faction vehicle.","requirement":2000},"recon":{"description":"Able to see all faction members online.","requirement":3500},"vehicle3":{"description":"Unlock a faction vehicle.","requirement":4000},"vehicle4":{"description":"Unlock a faction vehicle.","requirement":8000},"vehicle5":{"description":"Unlock a faction vehicle.","requirement":16000},"aircraft":{"description":"Unlock a faction aircraft.","requirement":32000}}}}`;
+
 const blipColors = {
     1: 'e13b3b',
     2: '79ce79',
@@ -117,6 +119,9 @@ class App extends Component {
         };
 
         this.state = {
+            subtype: '',
+            classification: -1,
+            skilltree: {},
             messages: [],
             ranks: [],
             members: [],
@@ -134,6 +139,7 @@ class App extends Component {
 
     componentDidMount() {
         if ('alt' in window) {
+            alt.on('faction:SetSkillTree', this.setSkillTree.bind(this));
             alt.on('faction:SetMyData', this.setMyData.bind(this));
             alt.on('faction:Ready', this.ready.bind(this));
             alt.on('faction:Error', this.factionError.bind(this));
@@ -170,13 +176,18 @@ class App extends Component {
                     skills: '[]',
                     classification: 0,
                     vehiclepoints: '[{"x": 0, "y": 0, "z": 0}, {"x": 0, "y": 0, "z": 0}]',
-                    home: '{"x": 0, "y": 0, "z": 0}'
+                    home: '{"x": 0, "y": 0, "z": 0}',
+                    subtype: ''
                 })
             );
 
+            this.setSkillTree(skillTreeExample);
+
+            /*
             for (let i = 0; i < 20; i++) {
                 this.factionSuccess(`test ${i}`);
             }
+            */
         }
 
         window.addEventListener('keyup', this.keyUpBind);
@@ -188,6 +199,12 @@ class App extends Component {
         }
 
         window.removeEventListener('keyup', this.keyUpBind);
+    }
+
+    setSkillTree(jsonData) {
+        console.log(jsonData);
+
+        this.setState({ skilltree: JSON.parse(jsonData) });
     }
 
     parseMessages() {
@@ -249,7 +266,9 @@ class App extends Component {
             turfs: JSON.parse(newData.turfs),
             notice: newData.notice,
             vehiclepoints: JSON.parse(newData.vehiclepoints),
-            home: JSON.parse(newData.home)
+            home: JSON.parse(newData.home),
+            classification: newData.classification,
+            subtype: newData.subtype
         };
 
         if (!this.state.hasMounted) {
@@ -987,8 +1006,65 @@ class Skills extends Component {
         super(props);
     }
 
-    render() {
-        return 'skills';
+    setSubType(e) {
+        const type = e.target.id;
+
+        if (!type) {
+            return;
+        }
+
+        if ('alt' in window) {
+            alt.emit('faction:SetSubType', type);
+        } else {
+            console.log(type);
+        }
+    }
+
+    renderSubSkills({ props }) {
+        const state = props.state;
+        const subTree = state.skilltree[state.classification];
+        if (state.subtype === '') {
+            const subtypes = Object.keys(subTree).map(key => {
+                return h(
+                    'div',
+                    { class: 'subtype' },
+                    h('h4', {}, `${key.toUpperCase()} Subtype`),
+                    h('p', {}, subTree[key].desc),
+                    h(
+                        'button',
+                        {
+                            class: 'subtypebtn',
+                            id: key,
+                            onclick: this.setSubType.bind(this)
+                        },
+                        `Select ${key.toUpperCase()} Subtype`
+                    )
+                );
+            });
+
+            return h(
+                'div',
+                { class: 'selectType' },
+                h('h3', {}, 'Select Faction Subtype'),
+                h(
+                    'p',
+                    {},
+                    'A subtype will give you access to a specific skill tree for your faction.'
+                ),
+                subtypes
+            );
+        }
+
+        // Show other Types
+        return 'Working!';
+    }
+
+    render(props) {
+        return h(
+            'div',
+            { class: 'skillPage' },
+            h(this.renderSubSkills.bind(this), { props })
+        );
     }
 }
 

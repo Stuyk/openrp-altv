@@ -539,6 +539,64 @@ body {
     }
 }
 
+.skillPage {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+
+    h3,
+    h4 {
+        margin: 0;
+        padding: 10px 0px;
+    }
+
+    p {
+        margin: 0;
+        padding: 0;
+    }
+
+    button {
+        background: transparent;
+        min-height: 30px;
+        min-width: 200px;
+        color: @contrast1;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-sizing: border-box;
+
+        &:hover {
+            color: @contrast2;
+            border: 2px solid @contrast2;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    .selectType {
+        width: 100%;
+
+        .subtype {
+            padding: 0px 10px;
+            display: flex;
+            justify-content: space-between;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.1);
+            margin: 10px 0px;
+        }
+    }
+}
+
 .optionPage {
     display: flex;
     flex-direction: column;

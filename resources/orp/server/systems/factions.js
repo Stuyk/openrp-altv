@@ -21,71 +21,6 @@ const permissions = {
     PROMOTE: 4,
     MAX: 7
 };
-// Requirements are based on player reward points.
-// Reward points are non-refundable.
-const factionSkills = {
-    0: {
-        name: 'Armour Bonus on Respawn',
-        event: 'skill:RespawnArmour',
-        requirement: 900
-    },
-    1: {
-        name: '5x Faction Vehicle',
-        event: 'skill:RespawnVehicles',
-        requirement: 1800
-    },
-    2: {
-        name: '5x Faction Vehicle',
-        event: 'skill:RespawnVehicles',
-        requirement: 1800
-    },
-    3: {
-        name: '1x Faction Air Craft',
-        event: 'skill:RespawnAirCraft',
-        requirement: 3600
-    },
-    4: {
-        name: 'Gun Locker',
-        event: 'skill:GunLocker',
-        requirement: 1200,
-        restriction: 1
-    },
-    5: {
-        name: 'Gang Safehouse',
-        event: 'skill:Warehouse',
-        requirement: 1200,
-        restriction: 0
-    },
-    6: {
-        name: 'Warehouse',
-        event: 'skill:Warehouse',
-        requirement: 1200,
-        restriction: 3
-    },
-    7: {
-        name: 'Gang Safehouse Respawn',
-        event: 'skill:GangRespawn',
-        requirement: 3600,
-        restriction: 0
-    },
-    8: {
-        name: 'Faction Radio',
-        event: '',
-        requirement: 150
-    },
-    9: {
-        name: 'Paycheck Bonus',
-        event: 'skill:PaycheckBonus',
-        requirement: 5000,
-        restriction: 1
-    },
-    10: {
-        name: 'Paycheck Bonus',
-        event: 'skill:PaycheckBonus',
-        requirement: 5000,
-        restriction: 2
-    }
-};
 
 let totalFactions = 0;
 let totalPoliceFactions = 0;
@@ -133,6 +68,7 @@ alt.onClient('faction:InviteMember', factionInviteMember);
 alt.onClient('faction:SetHome', factionSetHome);
 alt.onClient('faction:AddVehiclePoint', factionAddVehiclePoint);
 alt.onClient('faction:RemoveVehiclePoint', factionRemoveVehiclePoint);
+alt.onClient('faction:SetSubType', factionSetSubType);
 
 export class Faction {
     constructor(factionData) {
@@ -664,6 +600,7 @@ export class Faction {
             return;
         }
 
+        alt.emit('faction:SetSkillTree', player);
         members[index].active = Date.now();
         this.members = JSON.stringify(members);
         this.saveField('members', this.members);
@@ -787,7 +724,6 @@ export class Faction {
     removeVehiclePoint(player) {
         const isOwner = this.id === player.data.id;
         if (!isOwner) {
-            alt.log('Is not faction owner.');
             alt.emitClient(
                 player,
                 'faction:Error',
@@ -816,6 +752,31 @@ export class Faction {
         this.vehiclepoints = JSON.stringify(points);
         this.saveField('vehiclepoints', this.vehiclepoints);
         alt.emitClient(player, 'faction:Success', 'Removed vehicle point.');
+        this.syncMembers();
+    }
+
+    setSubType(player, type) {
+        const isOwner = this.id === player.data.id;
+        if (!isOwner) {
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You do not have permission to set the faction subtype.'
+            );
+            return;
+        }
+
+        if (this.subtype !== '') {
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You cannot change subtypes after picking one.'
+            );
+            return;
+        }
+
+        this.subtype = type;
+        this.saveField('subtype', this.subtype);
         this.syncMembers();
     }
 }
@@ -909,7 +870,7 @@ function factionCreate(player, type, factionName) {
         player.emitMeta('faction:Id', player.data.id);
         player.emitMeta('faction:Info', JSON.stringify(parsedFactionData));
         player.faction = parsedFactionData;
-        alt.log('Faction ready.');
+        alt.emit('faction:SetSkillTree', player);
     });
 }
 
@@ -1109,6 +1070,14 @@ function factionRemoveVehiclePoint(player) {
     }
 
     player.faction.removeVehiclePoint(player);
+}
+
+function factionSetSubType(player, type) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.setSubType(player, type);
 }
 
 alt.on('parse:Turfs', () => {

@@ -169,10 +169,6 @@ export const Character = new orm.EntitySchema({
             type: 'int',
             default: 0
         },
-        gang: {
-            type: 'int',
-            default: -1
-        },
         faction: {
             type: 'int',
             default: -1
@@ -235,6 +231,10 @@ export const Factions = new orm.EntitySchema({
         vehiclepoints: {
             type: 'text',
             default: '[]'
+        },
+        subtype: {
+            type: 'text',
+            default: ''
         }
     }
 });

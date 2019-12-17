@@ -167,8 +167,6 @@ alt.onClient('mdc:TurnIn', (player, hash) => {
             return;
         }
 
-        addXP(criminal, 'notoriety', foundCharge.xp);
-        addXP(player, 'nobility', Math.abs(foundCharge.xp));
         amount += foundCharge.amount;
         arrestTime += foundCharge.time;
         criminal.send(`Charges: ${charge.reason}`);

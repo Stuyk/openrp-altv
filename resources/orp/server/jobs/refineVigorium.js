@@ -118,11 +118,7 @@ alt.on('job:RefineVigorium1', player => {
     obj.setBlip(367, 2, pos);
     obj.setRange(3);
     obj.setFinishedSound('complete');
-    obj.setRewards([
-        { type: 'xp', prop: 'crafting', quantity: 20 },
-        { type: 'xp', prop: 'notoriety', quantity: 25 },
-        { type: 'xp', prop: 'nobility', quantity: -75 }
-    ]);
+    obj.setRewards([{ type: 'xp', prop: 'crafting', quantity: 20 }]);
     obj.setAnimationAndSound(
         'anim@amb@business@coc@coc_packing@',
         'operate_press_basicmould_v3_pressoperator',
@@ -169,9 +165,7 @@ alt.on('job:RefineVigorium1', player => {
     obj.setFinishedSound('complete');
     obj.setRewards([
         { type: 'xp', prop: 'crafting', quantity: 20 },
-        { type: 'item', prop: 'refinedvigorium', quantity: 1 },
-        { type: 'xp', prop: 'notoriety', quantity: 35 },
-        { type: 'xp', prop: 'nobility', quantity: -140 }
+        { type: 'item', prop: 'refinedvigorium', quantity: 1 }
     ]);
     job.add(copyObjective(obj));
 

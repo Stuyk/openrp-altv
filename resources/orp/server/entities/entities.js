@@ -141,8 +141,6 @@ export const Character = new orm.EntitySchema({
                 mechanic: { xp: 0 },
                 medicine: { xp: 0 },
                 mining: { xp: 0 },
-                nobility: { xp: 0 },
-                notoriety: { xp: 0 },
                 smithing: { xp: 0 },
                 woodcutting: { xp: 0 }
             })

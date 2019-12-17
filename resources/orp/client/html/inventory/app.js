@@ -144,8 +144,6 @@ const skillDescriptions = {
     cooking: 'Cook raw food like fish at campfires and bbqs.',
     crafting: 'Craft weaponry, better tools, and more at their dedicated locations.',
     mechanic: 'Repair vehicles and gain access to repair kits.',
-    notoriety: 'Be a bad citizen. Traffic refined drugs, and craft weaponry.',
-    nobility: 'Be a good citizen. Sell legal goods, food, and work in civil services.',
     fishing: 'Catch raw fish and rarer fish with a Fishing Rod.',
     smithing: 'Create refined metal for crafting tools.',
     woodcutting: 'Chop wood for unrefined wood and refine that wood.',
@@ -858,8 +856,6 @@ class Stats extends Component {
             this.addStat('cooking', 25, 859215);
             this.addStat('crafting', 25, 459215);
             this.addStat('mechanic', 25, 555215);
-            this.addStat('notoriety', 25, 859215);
-            this.addStat('nobility', 25, 852215);
             this.addStat('fishing', 25, 859215);
             this.addStat('smithing', 25, 651215);
             this.addStat('woodcutting', 25, 859215);

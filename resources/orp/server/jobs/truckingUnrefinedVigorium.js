@@ -228,8 +228,6 @@ alt.on('job:TruckingUnrefinedVigorium', player => {
         );
         if (index === trackPoints[course].length - 1) {
             obj.setRewards([
-                { type: 'xp', prop: 'nobility', quantity: -500 },
-                { type: 'xp', prop: 'notoriety', quantity: 125 },
                 { type: 'xp', prop: 'gathering', quantity: 160 },
                 { type: 'item', prop: 'unrefinedvigorium', quantity: 14 }
             ]);

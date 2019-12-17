@@ -122,8 +122,6 @@ alt.on('job:DeliveryFruitStand', player => {
         100
     );
     obj.setRewards([
-        { type: 'xp', prop: 'nobility', quantity: 125 },
-        { type: 'xp', prop: 'notoriety', quantity: -500 },
         {
             type: 'table',
             prop: 'rawfish',

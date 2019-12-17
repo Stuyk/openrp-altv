@@ -901,7 +901,7 @@ export class Job {
     }
 
     /**
-     * [{ skill: 'notoriety', xp: '50000' }]
+     * [{ skill: 'mining', xp: '50000' }]
      * @param arrayOfLevels
      */
     setLevelRestrictions(arrayOfLevels) {

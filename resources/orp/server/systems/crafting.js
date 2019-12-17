@@ -66,8 +66,6 @@ alt.onClient('craft:CraftItem', (player, type, key) => {
 
     if (type === 'weaponry') {
         addXP(player, 'crafting', recipe.xp);
-        addXP(player, 'notoriety', recipe.xp);
-        addXP(player, 'nobility', -recipe.xp);
         addXP(player, 'smithing', Math.floor(recipe.xp / 2));
 
         if (recipe.requirements[0].level >= 90) {

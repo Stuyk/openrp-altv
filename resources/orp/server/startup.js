@@ -36,7 +36,7 @@ let db = new SQL(
     dbInfo.password,
     dbInfo.dbname,
     // Specify New Table Schemas Here
-    [Account, Character, Vehicle, Details, Door, Gangs, Factions]
+    [Account, Character, Vehicle, Details, Door, Factions]
 );
 
 alt.on('ConnectionComplete', () => {

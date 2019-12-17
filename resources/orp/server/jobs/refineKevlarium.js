@@ -82,11 +82,7 @@ alt.on('job:RefineKevlarium1', player => {
         100
     );
     obj.setFinishedSound('complete');
-    obj.setRewards([
-        { type: 'xp', prop: 'crafting', quantity: 5 },
-        { type: 'xp', prop: 'notoriety', quantity: 25 },
-        { type: 'xp', prop: 'nobility', quantity: -75 }
-    ]);
+    obj.setRewards([{ type: 'xp', prop: 'crafting', quantity: 5 }]);
     obj.setMaxProgress(5);
     // /tryparticle core water_splash_whale_wade 1000 1 0 1 0
     // /tryparticle core ent_dst_gen_water_spray 1000 1 0 1 0
@@ -151,11 +147,7 @@ alt.on('job:RefineKevlarium1', player => {
         100
     );
     obj.setFinishedSound('complete');
-    obj.setRewards([
-        { type: 'xp', prop: 'crafting', quantity: 20 },
-        { type: 'xp', prop: 'notoriety', quantity: 25 },
-        { type: 'xp', prop: 'nobility', quantity: -75 }
-    ]);
+    obj.setRewards([{ type: 'xp', prop: 'crafting', quantity: 20 }]);
     obj.setMaxProgress(10);
     obj.setAnimationAndSound(
         'anim@amb@business@coc@coc_packing@',
@@ -200,9 +192,7 @@ alt.on('job:RefineKevlarium1', player => {
     obj.setFinishedSound('complete');
     obj.setRewards([
         { type: 'xp', prop: 'crafting', quantity: 20 },
-        { type: 'item', prop: 'refinedkevlarium', quantity: 1 },
-        { type: 'xp', prop: 'notoriety', quantity: 35 },
-        { type: 'xp', prop: 'nobility', quantity: -140 }
+        { type: 'item', prop: 'refinedkevlarium', quantity: 1 }
     ]);
     job.add(copyObjective(obj));
 

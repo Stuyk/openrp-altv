@@ -304,9 +304,7 @@ alt.on('job:GatheringVigorium1', player => {
         ]);
         obj.setRewards([
             { type: 'xp', prop: 'gathering', quantity: 20 },
-            { type: 'item', prop: 'unrefinedvigorium', quantity: 1 },
-            { type: 'xp', prop: 'nobility', quantity: -125 },
-            { type: 'xp', prop: 'notoriety', quantity: 25 }
+            { type: 'item', prop: 'unrefinedvigorium', quantity: 1 }
         ]);
         job.add(copyObjective(obj));
     });

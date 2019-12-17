@@ -704,6 +704,47 @@ export const Recipes = {
     90 - Artisan
     */
     tools: {
+        // 1 - Rusty
+        pickaxe0: {
+            name: 'Rusty Pickaxe',
+            key: 'pickaxe0',
+            requirements: [
+                { key: 'crafting', level: 1 },
+                { key: 'refinedmetal', amount: 5 },
+                { key: 'refinedwood', amount: 2 }
+            ],
+            xp: 15
+        },
+        axe0: {
+            name: 'Rusty Axe',
+            key: 'axe0',
+            requirements: [
+                { key: 'crafting', level: 1 },
+                { key: 'refinedmetal', amount: 5 },
+                { key: 'refinedwood', amount: 2 }
+            ],
+            xp: 15
+        },
+        hammer0: {
+            name: 'Rusty Hammer',
+            key: 'hammer0',
+            requirements: [
+                { key: 'crafting', level: 1 },
+                { key: 'refinedmetal', amount: 5 },
+                { key: 'refinedwood', amount: 2 }
+            ],
+            xp: 15
+        },
+        fishingrod0: {
+            name: 'Rusty Fishing Rod',
+            key: 'fishingrod0',
+            requirements: [
+                { key: 'crafting', level: 1 },
+                { key: 'refinedmetal', amount: 2 },
+                { key: 'refinedwood', amount: 8 }
+            ],
+            xp: 15
+        },
         // 10 - Oxidized
         pickaxe1: {
             name: 'Oxidized Pickaxe',

@@ -182,50 +182,6 @@ export const Character = new orm.EntitySchema({
     }
 });
 
-export const Gangs = new orm.EntitySchema({
-    name: 'Gangs',
-    columns: {
-        // ID of User who Created Gang
-        id: {
-            primary: true,
-            type: 'int',
-            generated: false
-        },
-        // Creation
-        creation: {
-            type: 'bigint',
-            default: Date.now()
-        },
-        // Name of Gang
-        name: {
-            type: 'text'
-        },
-        // Members
-        members: {
-            type: 'text',
-            default: '[]'
-        },
-        // Ranks
-        ranks: {
-            type: 'text',
-            default: JSON.stringify([
-                'Youngens',
-                'Street Soldiers',
-                'High Council',
-                'Shotcaller'
-            ])
-        },
-        turfs: {
-            type: 'text',
-            default: '[]'
-        },
-        color: {
-            type: 'int',
-            default: 1
-        }
-    }
-});
-
 export const Factions = new orm.EntitySchema({
     name: 'Factions',
     columns: {

@@ -6,7 +6,6 @@ import {
     Vehicle,
     Details,
     Door,
-    Gangs,
     Factions
 } from './entities/entities.js'; // Schemas for Database
 import { cacheAccount, setVehicleID, cacheCharacter } from './cache/cache.js';

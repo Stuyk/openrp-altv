@@ -168,7 +168,9 @@ class App extends Component {
                         '[{"name":"Owner", "flags": 7},{"name":"Recruit", "flags": 0}, {"name":"Less Recruit", "flags": 0}, {"name":"Lesser Recruit", "flags": 0}]',
                     turfs: '[69,82,154,72,81]',
                     skills: '[]',
-                    classification: 0
+                    classification: 0,
+                    vehiclepoints: '[{"x": 0, "y": 0, "z": 0}, {"x": 0, "y": 0, "z": 0}]',
+                    home: '{"x": 0, "y": 0, "z": 0}'
                 })
             );
 
@@ -245,7 +247,9 @@ class App extends Component {
             members,
             ranks: JSON.parse(newData.ranks),
             turfs: JSON.parse(newData.turfs),
-            notice: newData.notice
+            notice: newData.notice,
+            vehiclepoints: JSON.parse(newData.vehiclepoints),
+            home: JSON.parse(newData.home)
         };
 
         if (!this.state.hasMounted) {
@@ -1005,6 +1009,18 @@ class Options extends Component {
         }
     }
 
+    addVehiclePoint() {
+        if ('alt' in window) {
+            alt.emit('faction:AddVehiclePoint');
+        }
+    }
+
+    rmvVehiclePoint() {
+        if ('alt' in window) {
+            alt.emit('faction:RemoveVehiclePoint');
+        }
+    }
+
     renderDisbandOption({ props }) {
         return h(
             'div',
@@ -1047,7 +1063,7 @@ class Options extends Component {
         );
     }
 
-    renderSetHome() {
+    renderSetHome({ props }) {
         return h(
             'div',
             { class: 'option' },
@@ -1067,12 +1083,47 @@ class Options extends Component {
         );
     }
 
+    renderVehicleSpawns({ props }) {
+        const state = props.state;
+
+        return h(
+            'div',
+            { class: 'option' },
+            h(
+                'p',
+                { class: 'description' },
+                `Vehicle Spawn Points: ${state.vehiclepoints.length}`
+            ),
+            h(
+                'div',
+                { class: 'optionData' },
+                h(
+                    'button',
+                    {
+                        class: 'fullwidth',
+                        onclick: this.addVehiclePoint.bind(this)
+                    },
+                    'Add Spawn Here'
+                ),
+                h(
+                    'button',
+                    {
+                        class: 'fullwidth',
+                        onclick: this.rmvVehiclePoint.bind(this)
+                    },
+                    'Remove Closest'
+                )
+            )
+        );
+    }
+
     render(props) {
         return h(
             'div',
             { class: 'optionPage' },
             h(this.renderDisbandOption.bind(this), { props }),
-            h(this.renderSetHome.bind(this), { props })
+            h(this.renderSetHome.bind(this), { props }),
+            h(this.renderVehicleSpawns.bind(this), { props })
         );
     }
 }

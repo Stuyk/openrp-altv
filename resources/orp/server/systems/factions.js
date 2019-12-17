@@ -3,6 +3,7 @@ import SQL from '../../../postgres-wrapper/database.js';
 import { colshapes } from './grid.js';
 import { Config } from '../configuration/config.js';
 import { isFlagged } from '../utility/flags.js';
+import { distance } from '../utility/vector.js';
 
 const factions = [];
 const db = new SQL();
@@ -130,6 +131,8 @@ alt.onClient('faction:SetInfo', factionSetInfo);
 alt.onClient('faction:SaveRank', factionSaveRank);
 alt.onClient('faction:InviteMember', factionInviteMember);
 alt.onClient('faction:SetHome', factionSetHome);
+alt.onClient('faction:AddVehiclePoint', factionAddVehiclePoint);
+alt.onClient('faction:RemoveVehiclePoint', factionRemoveVehiclePoint);
 
 export class Faction {
     constructor(factionData) {
@@ -747,7 +750,6 @@ export class Faction {
         const isOwner = this.id === player.data.id;
 
         if (!isOwner) {
-            alt.log('Is not faction owner.');
             alt.emitClient(
                 player,
                 'faction:Error',
@@ -759,6 +761,61 @@ export class Faction {
         this.home = JSON.stringify(player.pos);
         this.saveField('home', this.home);
         alt.emitClient(player, 'faction:Success', 'Home location was updated.');
+        this.syncMembers();
+    }
+
+    addVehiclePoint(player, heading) {
+        const isOwner = this.id === player.data.id;
+        if (!isOwner) {
+            alt.log('Is not faction owner.');
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You do not have permission to add a vehicle point.'
+            );
+            return;
+        }
+
+        const points = JSON.parse(this.vehiclepoints);
+        points.push({ pos: player.pos, rot: heading });
+        this.vehiclepoints = JSON.stringify(points);
+        this.saveField('vehiclepoints', this.vehiclepoints);
+        alt.emitClient(player, 'faction:Success', 'Added point successfully.');
+        this.syncMembers();
+    }
+
+    removeVehiclePoint(player) {
+        const isOwner = this.id === player.data.id;
+        if (!isOwner) {
+            alt.log('Is not faction owner.');
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'You do not have permission to remove a vehicle point.'
+            );
+            return;
+        }
+
+        const points = JSON.parse(this.vehiclepoints);
+        const index = points.findIndex(point => {
+            if (distance(point.pos, player.pos) <= 3) {
+                return point;
+            }
+        });
+
+        if (!points[index]) {
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'Point not found or not close enough.'
+            );
+            return;
+        }
+
+        points.splice(index, 1);
+        this.vehiclepoints = JSON.stringify(points);
+        this.saveField('vehiclepoints', this.vehiclepoints);
+        alt.emitClient(player, 'faction:Success', 'Removed vehicle point.');
         this.syncMembers();
     }
 }
@@ -1036,6 +1093,22 @@ function factionSetHome(player) {
     }
 
     player.faction.setHome(player);
+}
+
+function factionAddVehiclePoint(player, heading) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.addVehiclePoint(player, heading);
+}
+
+function factionRemoveVehiclePoint(player) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.removeVehiclePoint(player);
 }
 
 alt.on('parse:Turfs', () => {

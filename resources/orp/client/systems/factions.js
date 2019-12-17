@@ -31,6 +31,7 @@ alt.on('meta:Changed', (key, value) => {
 
     currentDataSet = data;
     currentDataSet.home = JSON.parse(currentDataSet.home);
+    currentDataSet.vehiclepoints = JSON.parse(currentDataSet.vehiclepoints);
 
     blip = createBlip(
         'factionhome',
@@ -61,7 +62,28 @@ function drawFactionData() {
             255,
             255,
             255,
-            255
+            150
         );
+    }
+
+    const vehiclePoints = [...currentDataSet.vehiclepoints];
+    if (vehiclePoints.length >= 1) {
+        vehiclePoints.forEach(point => {
+            if (distance(point.pos, alt.Player.local.pos) <= 25) {
+                const newPoint = { ...point.pos };
+                newPoint.z -= 1;
+                drawMarker(
+                    1,
+                    newPoint,
+                    empVector,
+                    empVector,
+                    { x: 0.2, y: 0.2, z: 2 },
+                    63,
+                    191,
+                    191,
+                    150
+                );
+            }
+        });
     }
 }

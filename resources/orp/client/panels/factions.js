@@ -34,6 +34,8 @@ export function showDialogue() {
     webview.on('faction:SetFlags', setFlags);
     webview.on('faction:Disband', disband);
     webview.on('faction:SetHome', setHome);
+    webview.on('faction:AddVehiclePoint', addVehiclePoint);
+    webview.on('faction:RemoveVehiclePoint', removeVehiclePoint);
     native.triggerScreenblurFadeIn(1000);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
@@ -123,6 +125,17 @@ function disband() {
 
 function setHome() {
     alt.emitServer('faction:SetHome');
+}
+
+function addVehiclePoint() {
+    alt.emitServer(
+        'faction:AddVehiclePoint',
+        native.getEntityHeading(alt.Player.local.scriptID)
+    );
+}
+
+function removeVehiclePoint() {
+    alt.emitServer('faction:RemoveVehiclePoint');
 }
 
 alt.onServer('faction:Error', msg => {

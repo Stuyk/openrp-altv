@@ -277,6 +277,10 @@ export const Factions = new orm.EntitySchema({
         home: {
             type: 'text',
             default: null
+        },
+        vehiclepoints: {
+            type: 'text',
+            default: '[]'
         }
     }
 });

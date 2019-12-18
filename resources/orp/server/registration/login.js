@@ -45,7 +45,6 @@ alt.on('orp:Login', (player, id, discordID) => {
                 lastposition: JSON.stringify(Config.defaultSpawnPoint),
                 health: 200,
                 cash: Config.defaultPlayerCash,
-                bank: Config.defaultPlayerBank,
                 creation: currentTime,
                 lastlogin: currentTime
             };
@@ -164,7 +163,6 @@ alt.on('sync:Player', player => {
 
     // Fixes any 'string' issue that may arise.
     player.data.cash = parseInt(player.data.cash);
-    player.data.bank = parseInt(player.data.bank);
 
     if (player.data.dimension !== 0) {
         player.dimension = parseInt(player.data.dimension);

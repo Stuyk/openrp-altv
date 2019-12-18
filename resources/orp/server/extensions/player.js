@@ -364,7 +364,6 @@ alt.Player.prototype.closeRoleplayInfoDialogue = function closeRoleplayInfoDialo
 // Money Functions
 // Remove cash from the this.
 alt.Player.prototype.syncMoney = function syncMoney() {
-    this.emitMeta('bank', this.data.bank);
     this.emitMeta('cash', this.data.cash);
 };
 
@@ -395,90 +394,26 @@ alt.Player.prototype.addCash = function addCash(value) {
     return true;
 };
 
-// Add cash to the bank.
-alt.Player.prototype.addBank = function addCash(value) {
-    let absValue = Math.abs(parseFloat(value));
-
-    if (this.data.bank + absValue > 92233720368547758.07) {
-        absValue = 0;
-    }
-
-    this.data.bank += absValue;
-    this.data.bank = Number.parseFloat(this.data.bank).toFixed(2) * 1;
-    this.saveField(this.data.id, 'bank', this.data.bank);
-    this.syncMoney();
-    return true;
-};
-
-// Subtract the cash from the bank.
-alt.Player.prototype.subBank = function subBank(value) {
-    let absValue = Math.abs(parseFloat(value)) * 1;
-
-    if (this.data.bank < absValue) return false;
-
-    this.data.bank -= absValue;
-    this.data.bank = Number.parseFloat(this.data.bank).toFixed(2) * 1;
-    this.saveField(this.data.id, 'bank', this.data.bank);
-    this.syncMoney();
-    return true;
-};
-
 // Get the player's cash balance.
 alt.Player.prototype.getCash = function getCash() {
     return this.data.cash;
 };
 
-// Get the player's bank balance.
-alt.Player.prototype.getBank = function getBank() {
-    return this.data.bank;
-};
-
 alt.Player.prototype.subToZero = function subToZero(amount) {
-    const bank = this.data.bank;
-    const cash = this.data.cash;
-    const removed = Math.abs(bank - amount);
-    this.data.bank = bank - amount <= 0 ? 0 : bank - amount;
-
-    if (removed > 0) {
-        this.data.cash = cash - removed <= 0 ? 0 : cash - removed;
+    this.data.cash -= amount;
+    if (this.data.cash < 0) {
+        this.data.cash = 0;
     }
 
-    this.saveField(this.data.id, 'bank', this.data.bank);
     this.saveField(this.data.id, 'cash', this.data.cash);
     this.syncMoney();
 };
 
 alt.Player.prototype.taxIncome = function taxIncome(percentage, useHighest, reason) {
-    let cash = this.getCash(); // 0
-    let bank = this.getBank(); // 1
-
-    let taxType = 0;
-
-    if (useHighest) {
-        if (cash > bank) {
-            taxType = 0;
-        } else {
-            taxType = 1;
-        }
-    } else {
-        if (cash < bank) {
-            taxType = 0;
-        } else {
-            taxType = 1;
-        }
-    }
-
-    if (taxType === 0) {
-        let cashTaxAmount = cash * percentage;
-        this.subCash(cashTaxAmount);
-        this.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
-    } else {
-        let bankTaxAmount = bank * percentage;
-        this.subBank(bankTaxAmount);
-        this.saveField(this.data.id, 'bank', this.data.bank);
-        this.send(`You were taxed: $${bankTaxAmount.toFixed(2) * 1}`);
-    }
-
+    const cash = player.data.cash;
+    let cashTaxAmount = cash * percentage;
+    this.subToZero(cashTaxAmount);
+    this.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
     this.send(`Reason: ${reason}`);
 };
 

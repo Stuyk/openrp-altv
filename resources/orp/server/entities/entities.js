@@ -122,10 +122,6 @@ export const Character = new orm.EntitySchema({
             type: 'numeric',
             default: 0
         },
-        bank: {
-            type: 'numeric',
-            default: 0
-        },
         dead: {
             type: 'bool',
             default: false

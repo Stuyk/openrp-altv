@@ -46,7 +46,6 @@ export function newCharacter(player) {
         model: 'mp_m_freemode_01',
         health: 200,
         cash: Config.defaultPlayerCash,
-        bank: Config.defaultPlayerBank,
         creation: currentTime,
         lastlogin: currentTime
     };

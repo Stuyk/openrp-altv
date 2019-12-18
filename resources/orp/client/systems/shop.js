@@ -147,7 +147,7 @@ const shops = [
         color: 53,
         ids: [141057, 165121, 137985, 174849, 179969, 234241, 139265],
         func: panelsAtm.showDialogue,
-        message: `Press ~INPUT_CONTEXT~ to access funds.`
+        message: `Press ~INPUT_CONTEXT~ to exchange reward points.`
     }
 ];
 

@@ -374,9 +374,12 @@ function dumpster(ent) {
 }
 
 function atm(ent) {
-    if (alt.Player.local.vehicle) return;
-    appendContextItem('Use', true, 'use:Atm', {});
-    setContextTitle('ATM');
+    if (alt.Player.local.vehicle) {
+        return;
+    }
+
+    appendContextItem('Exchange', false, 'atm:Open', {});
+    setContextTitle('Reward Point Exchange');
 }
 
 function mineshaft(ent) {

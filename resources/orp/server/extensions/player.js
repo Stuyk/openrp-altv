@@ -66,6 +66,26 @@ alt.Player.prototype.setRank = function setRank(flag) {
 alt.Player.prototype.addRewardPoint = function addRewardPoint() {
     this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints + 1);
     this.saveField(this.data.id, 'totalrewardpoints', this.data.totalrewardpoints + 1);
+    this.syncRewardPoints();
+};
+
+alt.Player.prototype.removeRewardPoints = function removeRewardPoints(amount) {
+    if (isNaN(amount)) {
+        return false;
+    }
+
+    if (amount <= -1) {
+        return false;
+    }
+
+    if (this.data.rewardpoints - amount <= -1) {
+        return false;
+    }
+
+    this.data.rewardpoints -= amount;
+    this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints);
+    this.syncRewardPoints();
+    return true;
 };
 
 /**
@@ -83,6 +103,12 @@ alt.Player.prototype.getRewardPoints = function getRewardPoints() {
  */
 alt.Player.prototype.getTotalRewardPoints = function getTotalRewardPoints() {
     return parseInt(this.data.totalrewardpoints);
+};
+
+alt.Player.prototype.syncRewardPoints = function syncRewardPoints() {
+    this.emitMeta('reward:Available', parseInt(this.data.rewardpoints));
+    this.emitMeta('reward:Total', parseInt(this.data.totalrewardpoints));
+    this.emitMeta('reward:PerPoint', Config.defaultPlayerPaycheck);
 };
 
 alt.Player.prototype.getTotalPlayTime = function getTotalPlayTime() {

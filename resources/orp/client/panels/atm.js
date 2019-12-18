@@ -1,9 +1,10 @@
 import * as alt from 'alt';
-//import { WebView } from 'client/utility/webview.js';
 import { View } from '/client/utility/view.js';
 import { showCursor } from '/client/utility/cursor.js';
 
 alt.log(`Loaded: client->panels->atm.js`);
+alt.on('atm:Open', showDialogue);
+alt.on('meta:Changed', updateData);
 
 const url = 'http://resource/client/html/atm/index.html';
 let webview;
@@ -20,38 +21,46 @@ export function showDialogue() {
 
     // Load Webview
     webview.open(url);
-    webview.on('atm:Withdraw', withdrawBalance);
-    webview.on('atm:Deposit', depositBalance);
-    webview.on('atm:Ready', atmReady);
+    webview.on('atm:Redeem', redeem);
+    webview.on('atm:Ready', ready);
+    webview.on('atm:Close', close);
 }
 
-// Update the cash value on the Webview.
-export function updateCash(value) {
-    webview.emit('setCash', value);
+function close() {
+    if (!webview) {
+        return;
+    }
+
+    webview.close();
+    showCursor(false);
 }
 
-// Show the bank value for the atm menu.
-export function updateBank(value) {
-    webview.emit('setBank', value);
+function redeem(points) {
+    alt.emitServer('atm:Redeem', points);
 }
 
-function atmReady() {
-    alt.emitServer('atm:Ready');
+function ready() {
     showCursor(true);
+    loadData();
 }
 
-// Called when the user is withdrawing balance from the Bank.
-function withdrawBalance(value) {
-    alt.emitServer('atm:Withdraw', value);
+function loadData() {
+    if (!webview) {
+        return;
+    }
+
+    const availablePoints = alt.Player.local.getMeta('reward:Available');
+    const totalPoints = alt.Player.local.getMeta('reward:Total');
+    const cashPerPoint = alt.Player.local.getMeta('reward:PerPoint');
+    webview.emit('atm:SetAvailablePoints', availablePoints);
+    webview.emit('atm:SetTotalPoints', totalPoints);
+    webview.emit('atm:CashPerPoint', cashPerPoint);
 }
 
-// Called when the user is depositing cash into the Bank.
-function depositBalance(value) {
-    alt.emitServer('atm:Deposit', value);
-}
+function updateData(key, value) {
+    if (!key.includes('reward:')) {
+        return;
+    }
 
-// Show a success message on the ATM.
-export function showSuccess(msg) {
-    if (webview.view === undefined) return;
-    webview.emit('showSuccess', msg);
+    loadData();
 }

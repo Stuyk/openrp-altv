@@ -32,7 +32,6 @@ export const Config = {
     // - Player
     timeRewardTime: 60000 * 5, // How much time before a reward point is added.
     timePlayerSaveTime: 60000 * 2, // How many minutes before we save all player data.
-    timePaycheckTime: 60000 * 5, // Every 5 Minutes
     timeRefreshContactsTime: 60000, // Every 1 Minute; Refresh Player Contacts
     timeCookingTime: 10000,
     // - Vehicle

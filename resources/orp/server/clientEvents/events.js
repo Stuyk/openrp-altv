@@ -10,7 +10,6 @@ import * as systemsInteraction from '../systems/interaction.js';
 import * as systemsInventory from '../systems/inventory.js';
 import * as systemsVehicles from '../systems/vehicles.js';
 import * as systemsJob from '../systems/job.js';
-import * as systemsAtm from '../systems/atm.js';
 import * as systemsPhone from '../systems/phone.js';
 import * as systemsSkills from '../systems/skills.js';
 import * as systemsVehicleVendor from '../systems/vehiclevendor.js';
@@ -41,11 +40,6 @@ alt.onClient('character:New', characterInfo.newCharacter);
 
 // Interaction Stuff
 alt.onClient('interaction:Exec', systemsInteraction.attemptToExecuteInteraction);
-
-// Atm Handler
-alt.onClient('atm:Withdraw', systemsAtm.withdraw);
-alt.onClient('atm:Deposit', systemsAtm.deposit);
-alt.onClient('atm:Ready', systemsAtm.ready);
 
 // Clothing Handler
 alt.onClient('clothing:Purchase', characterClothing.purchase);

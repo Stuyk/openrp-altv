@@ -97,10 +97,6 @@ export function searchDumpster(player) {
     player.send('You find nobody inside.');
 }
 
-export function atm(player) {
-    player.showAtmPanel();
-}
-
 export function hospitalBed(player, coords) {
     coords = {
         x: coords.x,

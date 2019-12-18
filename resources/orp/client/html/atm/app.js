@@ -14,162 +14,122 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            feedback: 'Welcome, deposit or withdraw.',
-            cash: 0,
-            bank: 0,
-            ready: false,
-            amount: 0
+            messages: [],
+            redeem: 1,
+            perPoint: 40
         };
     }
 
     componentDidMount() {
         if ('alt' in window) {
-            alt.on('setBank', this.setBankBalance.bind(this));
-            alt.on('setCash', this.setCashBalance.bind(this));
-            alt.on('showSuccess', this.showSuccess.bind(this));
+            alt.on('atm:SetAvailablePoints', this.setAvailablePoints.bind(this));
+            alt.on('atm:SetTotalPoints', this.setTotalPoints.bind(this));
+            alt.on('atm:Message', this.message.bind(this));
+            alt.on('atm:CashPerPoint', this.setCashPerPoint.bind(this));
+
+            setTimeout(() => {
+                alt.emit('atm:Ready');
+            }, 200);
+        } else {
+            this.setAvailablePoints(0);
+            this.setTotalPoints(30);
         }
 
-        window.addEventListener('keyup', e => {
-            if (keys.includes(e.keyCode)) {
-                if ('alt' in window) {
-                    alt.emit('close');
-                }
+        window.addEventListener('keyup', this.handleKeyPresses.bind(this));
+    }
+
+    handleKeyPresses(e) {
+        if (keys.includes(e.keyCode)) {
+            if ('alt' in window) {
+                alt.emit('atm:Close');
             }
-        });
-    }
-
-    setBankBalance(bank) {
-        console.log(bank);
-        this.setState({ bank });
-    }
-
-    setCashBalance(cash) {
-        console.log(cash);
-        this.setState({ cash });
-    }
-
-    showSuccess(feedback) {
-        this.setState({ feedback });
-    }
-
-    amountChange(e) {
-        let amount = e.target.value * 1;
-
-        if (amount > 800000) {
-            this.setState({
-                feedback: `Cannot move more than $800,000 at a time.`,
-                ready: false
-            });
-            return;
         }
-
-        if (amount < 0) {
-            this.setState({ feedback: `${amount} must be positive.`, ready: false });
-            return;
-        }
-
-        this.setState({ ready: true, amount });
     }
 
-    deposit() {
-        if (!this.state.ready) {
-            this.setState({ feedback: `Conditions for deposit not met.` });
-            return;
-        }
+    message(message) {
+        const messages = [...this.state.messages];
+        messages.push({ expire: Date.now() + 2500, message });
+        this.setState({ messages });
+    }
 
-        if (this.state.cash < this.state.amount) {
-            this.setState({ feedback: `You don't have that much cash to deposit.` });
-            return;
-        }
+    setAvailablePoints(availablePoints) {
+        this.setState({ availablePoints });
+    }
 
-        const amount = Math.abs(this.state.amount);
+    setTotalPoints(totalPoints) {
+        this.setState({ totalPoints });
+    }
+
+    setCashPerPoint(perPoint) {
+        this.setState({ perPoint });
+    }
+
+    inputChange(e) {
+        const value = e.target.value;
+        this.setState({ redeem: parseInt(value) });
+    }
+
+    redeemPoints() {
         if ('alt' in window) {
-            alt.emit('atm:Deposit', amount);
-        }
-    }
-
-    withdraw() {
-        if (!this.state.ready) {
-            this.setState({ feedback: `Conditions for withdraw not met.` });
-            return;
-        }
-
-        if (this.state.bank < this.state.amount) {
-            this.setState({ feedback: `You don't have that much cash to withdraw.` });
-            return;
-        }
-
-        const amount = Math.abs(this.state.amount);
-        if ('alt' in window) {
-            alt.emit('atm:Withdraw', amount);
+            alt.emit('atm:Redeem', this.state.redeem);
+        } else {
+            console.log(this.state.redeem);
         }
     }
 
     render() {
+        const pointsAvailable = this.state.availablePoints >= 1;
         return h(
             'div',
-            { id: 'app' },
-            h('div', { class: 'header' }, h('div', { class: 'logo' }, 'Bank')),
+            { class: 'atmPage' },
+            h('div', { class: 'title' }, 'Reward Point Exchange'),
             h(
-                'div',
-                { class: 'animated flash container' },
-                h('p', { class: 'center-feedback', id: 'feedback' }, this.state.feedback)
+                'p',
+                {},
+                `Reward points act as your paycheck. Reward points at a ratio of 1:${this.state.perPoint} may be exchanged for cash. Keep note that reward points are used for other rewards.`
             ),
             h(
                 'div',
-                {
-                    ref: this.wrapper,
-                    class: 'innerwrapper'
-                },
+                { class: 'dataPoints' },
+                h('div', { class: 'dataTitle' }, 'Available Points'),
+                h('div', { class: 'dataTitle' }, 'Total Points')
+            ),
+
+            h(
+                'div',
+                { class: 'dataPoints' },
+                h('div', { class: 'availablePoints' }, this.state.availablePoints),
+                h('div', { class: 'totalPoints' }, this.state.totalPoints)
+            ),
+            pointsAvailable &&
+                h(rangeInput, {
+                    state: this.state,
+                    inputChange: this.inputChange.bind(this)
+                }),
+            pointsAvailable &&
                 h(
                     'div',
-                    { class: 'container' },
-                    h(
-                        'div',
-                        { class: 'center-p' },
-                        h('p', {}, `Cash: $${this.state.cash}`),
-                        h('p', {}, `Bank: $${this.state.bank}`)
-                    )
+                    { class: 'redeemTitle' },
+                    `Redeeming: ${this.state.redeem} Points`
                 ),
+            pointsAvailable &&
                 h(
-                    'div',
-                    { class: 'container' },
-                    h(
-                        'div',
-                        {
-                            class: 'content'
-                        },
-                        h('p', {}, 'Amount'),
-                        h('input', {
-                            type: 'number',
-                            name: 'value',
-                            min: 1,
-                            max: 150000,
-                            placerholder: 'value',
-                            oninput: this.amountChange.bind(this)
-                        })
-                    )
-                ),
-                h('div', { class: 'container' }),
-                h(
-                    'div',
-                    { class: 'container' },
-                    h(
-                        'div',
-                        { class: 'center' },
-                        h('button', { onclick: this.withdraw.bind(this) }, 'Withdraw'),
-                        h('button', { onclick: this.deposit.bind(this) }, 'Deposit')
-                    )
+                    'button',
+                    { class: 'redeemCash', onclick: this.redeemPoints.bind(this) },
+                    `Redeem Cash: $${this.state.redeem * this.state.perPoint}`
                 )
-            )
         );
     }
 }
 
-render(h(App), document.querySelector('#render'));
+const rangeInput = ({ state, inputChange }) => {
+    return h('input', {
+        type: 'range',
+        value: state.redeem,
+        min: 1,
+        max: state.availablePoints,
+        oninput: inputChange.bind(this)
+    });
+};
 
-function ready() {
-    if ('alt' in window) {
-        alt.emit('atm:Ready');
-    }
-}
+render(h(App), document.querySelector('#render'));

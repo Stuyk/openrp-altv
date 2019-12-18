@@ -1,38 +1,38 @@
 import * as alt from 'alt';
+import { Config } from '../configuration/config.js';
 
-// Called when the player wants to make a withdrawl from the ATM.
-export function withdraw(player, value) {
-    const result = player.subBank(value);
+alt.onClient('atm:Redeem', redeemPoints);
 
-    if (!result) {
-        // Add alert.
-        console.log(`${player.name} is trying to break the system.`);
+function redeemPoints(player, amount) {
+    if (player.isRedeeming) {
         return;
     }
 
-    player.addCash(value);
-    player.updateAtmCash(player.getCash());
-    player.updateAtmBank(player.getBank());
-    player.showAtmSuccess(`Successfully withdrew $${value}.`);
-}
+    player.isRedeeming = true;
 
-// Called when the player wants to make a deposit to the ATM.
-export function deposit(player, value) {
-    const result = player.subCash(value);
-
-    if (!result) {
-        // Add alert.
-        console.log(`${player.name} is trying to break the system.`);
+    if (isNaN(amount)) {
+        player.isRedeeming = false;
         return;
     }
 
-    player.addBank(value);
-    player.updateAtmCash(player.getCash());
-    player.updateAtmBank(player.getBank());
-    player.showAtmSuccess(`Successfully deposited $${value}.`);
-}
+    if (amount <= 0) {
+        player.isRedeeming = false;
+        return;
+    }
 
-export function ready(player) {
-    player.updateAtmCash(player.getCash());
-    player.updateAtmBank(player.getBank());
+    if (player.data.rewardpoints - amount <= -1) {
+        player.isRedeeming = false;
+        return;
+    }
+
+    if (!player.removeRewardPoints(amount)) {
+        player.isRedeeming = false;
+        return;
+    }
+
+    const perPoint = Config.defaultPlayerPaycheck;
+    const totalCash = amount * perPoint;
+    player.addCash(totalCash);
+    player.notify(`You redeemed ${amount} points for $${totalCash}.`);
+    player.isRedeeming = false;
 }

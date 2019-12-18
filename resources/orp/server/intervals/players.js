@@ -4,7 +4,6 @@ import { Config } from '../configuration/config.js';
 
 let nextRewardPointTime = Date.now() + Config.timeRewardTime;
 let nextSavePlayerTime = Date.now() + Config.timePlayerSaveTime;
-let nextPaycheckTime = Date.now() + Config.timePaycheckTime;
 let nextRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
 let handling = false;
 
@@ -32,11 +31,6 @@ function handlePlayerInterval() {
     if (nextRewardPointTime < now) {
         alt.log('Saving Reward Points');
         nextRewardPointTime = now + Config.timeRewardTime;
-    }
-
-    if (nextPaycheckTime < now) {
-        alt.log('Adding Paychecks');
-        nextPaycheckTime = now + Config.timePaycheckTime;
     }
 
     if (nextRefreshContactsTime < now) {
@@ -68,18 +62,6 @@ alt.on('parse:Player', (player, now) => {
             } catch (err) {
                 alt.log(err);
                 alt.error(`Could not add a reward point.`);
-            }
-        }
-    }
-
-    if (nextPaycheckTime < now) {
-        if (player.addCash(Config.defaultPlayerPaycheck)) {
-            try {
-                const msg = `+$${Config.defaultPlayerPaycheck} from Paycheck`;
-                player.notify(msg);
-            } catch (err) {
-                alt.log(err);
-                alt.error(`Could not add paycheck.`);
             }
         }
     }

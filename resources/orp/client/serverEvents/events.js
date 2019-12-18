@@ -15,7 +15,6 @@ import * as systemsVehicles from '/client/systems/vehicles.js';
 
 // Panels
 import * as panelsChat from '/client/panels/chat.js';
-import * as panelsAtm from '/client/panels/atm.js';
 import * as panelsInfo from '/client/panels/info.js';
 import * as panelsInventory from '/client/panels/inventory.js';
 import * as panelsClothing from '/client/panels/clothing.js';
@@ -71,13 +70,6 @@ alt.onServer('blip:CreateBlip', blipsBlipHelper.createBlip);
 alt.onServer('blip:CreateAreaBlip', blipsBlipHelper.createAreaBlip);
 alt.onServer('blip:CreateSectorBlip', blipsBlipHelper.createSectorBlip);
 alt.onServer('blip:CleanSectorBlips', blipsBlipHelper.cleanSectorBlips);
-
-// =======================================================
-// ATM Events
-alt.onServer('atm:ShowDialogue', panelsAtm.showDialogue);
-alt.onServer('atm:UpdateCash', panelsAtm.updateCash);
-alt.onServer('atm:UpdateBank', panelsAtm.updateBank);
-alt.onServer('atm:ShowSuccess', panelsAtm.showSuccess);
 
 // =======================================================
 // Clothing Events

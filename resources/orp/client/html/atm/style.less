@@ -1,258 +1,230 @@
-@sidebarWidth: 25vw;
-@dark: #141414e0;
-@contrast1: #0aa712;
+@dark: rgba(20, 20, 20, 0.9);
+@contrast1: rgb(0, 217, 255);
+@contrast2: rgb(255, 153, 0);
 @darkaccent: rgb(8, 8, 8);
+@whitecontrast: rgba(255, 255, 255, 0.2);
+@error: rgb(255, 123, 123);
+@success: rgb(131, 255, 162);
 @fontface: 'Roboto';
 
 body,
 html {
+    width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: transparent;
     font-family: @fontface;
     user-select: none;
+    color: white;
+}
+
+#render {
+    display: flex !important;
+    justify-items: center;
+    justify-content: center;
+    width: 500px;
+    height: 100%;
+    margin: 0 auto;
 }
 
 .menu {
     display: flex;
-    align-items: center;
     justify-content: center;
-    width: @sidebarWidth;
-    height: auto;
-    color: white;
-    background-color: @dark;
-    transition: 2s;
-
-    div {
-        display: flex-start;
-    }
-}
-
-#app {
-    height: 100%;
+    justify-items: center;
     align-items: center;
     align-content: center;
-    justify-content: center;
-    flex-direction: column;
-}
 
-.regular {
-    display: flex !important;
-}
-
-.none {
-    display: flex !important;
-    opacity: 0 !important;
-    cursor: wait;
-}
-
-.header {
-    width: auto;
-    height: auto;
-    text-align: center;
-    line-height: 30px;
-    padding: 15px;
-    user-select: none;
-    transition: 2s;
-
-    .title {
-        color: @contrast1;
-        transition: 2s;
-        border: 1px solid transparent;
-        letter-spacing: 0.2em;
-    }
-
-    .title:hover {
-        color: white;
-        border: 1px solid white;
-    }
-
-    .logo {
-        color: @contrast1;
-        transition: 2s;
-        font-size: 24px;
-        transition: 2s;
-    }
-
-    .logo:hover {
-        color: white;
-    }
-}
-
-.innerwrapper {
-    height: auto;
-    width: 100%;
-}
-
-.container {
-    display: flex;
-    transition: 0.2s;
-    font-size: 10px;
-    height: 50px;
-    max-height: 50px;
-
-    .center-feedback {
-        flex-grow: 1;
-        text-align: center;
-    }
-
-    .content {
-        display: flex;
-        justify-content: space-between;
+    .atmPage {
         width: 100%;
-        max-height: inherit;
-        transition: 2s;
+        background: @dark;
+        padding: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
 
-        p {
+        .title {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .dataPoints {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            justify-items: center;
             align-items: center;
-            padding-left: 2vw;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            transition: 2s;
+            align-content: center;
+            width: 100%;
+            margin-bottom: 10px;
+
+            .dataTitle {
+                color: white;
+            }
+
+            .usedPoints {
+                color: @contrast1;
+            }
+
+            .totalPoints {
+                color: @contrast1;
+            }
         }
 
         input {
-            width: 50%;
-            height: inherit;
-            background-color: @darkaccent;
-            border: 1px solid transparent;
-            color: white;
-            padding: 5px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            margin-right: 2vw;
-            font-family: 'Helvetica', 'Arial';
-            font-size: 12px;
-            font-weight: 100;
-            transition: 2s;
+            width: 100%;
         }
 
-        input:focus {
-            outline: none;
+        .redeemTitle {
+            display: flex;
+            justify-content: center;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            height: 35px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin: 10px 0px;
+            text-align: center;
         }
-    }
 
-    .content:hover {
-        background: rgba(255, 255, 255, 0.1);
-        box-shadow: inset 3px 0px 0px 0px @contrast1;
-
-        p {
+        .redeemCash {
+            display: flex;
+            justify-content: center;
+            justify-items: center;
+            align-items: center;
+            align-content: center;
+            height: 35px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
             color: @contrast1;
+
+            &:hover {
+                color: @contrast2;
+                border: 2px solid @contrast2;
+            }
+
+            &:focus {
+                outline: none;
+            }
         }
     }
+}
 
-    .right {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-        height: 50px;
-        max-height: 50px;
+@track-color: black;
+@thumb-color: @contrast2;
 
-        button {
-            height: inherit;
-            background: rgba(0, 0, 0, 0);
-            border: 0;
-            color: #feffff;
-            font-weight: 100;
-            font-size: 12px;
-            transition: 1s;
-            font-family: @fontface;
-            margin-right: 2vw;
-        }
+@thumb-radius: 0px;
+@thumb-height: 15px;
+@thumb-width: 10px;
+@thumb-shadow-size: 1px;
+@thumb-shadow-blur: 1px;
+@thumb-shadow-color: #111;
+@thumb-border-width: 0px;
+@thumb-border-color: white;
 
-        button:hover {
-            cursor: pointer;
-            color: @contrast1;
-        }
+@track-width: 100%;
+@track-height: 2px;
+@track-shadow-size: 0px;
+@track-shadow-blur: 0px;
+@track-shadow-color: #222;
+@track-border-width: 0px;
+@track-border-color: black;
 
-        button:focus {
-            outline: none;
-        }
+@track-radius: 0px;
+@contrast: 5%;
+
+.shadow(@shadow-size,@shadow-blur,@shadow-color) {
+    box-shadow: @shadow-size @shadow-size @shadow-blur @shadow-color,
+        0px 0px @shadow-size lighten(@shadow-color, 5%);
+}
+
+.track() {
+    width: @track-width;
+    height: @track-height;
+    cursor: pointer;
+    animate: 0.2s;
+}
+
+.thumb() {
+    .shadow(@thumb-shadow-size, @thumb-shadow-blur, @thumb-shadow-color);
+    border: @thumb-border-width solid @thumb-border-color;
+    height: @thumb-height;
+    width: @thumb-width;
+    border-radius: @thumb-radius;
+    background: @thumb-color;
+    cursor: pointer;
+}
+
+input[type='range'] {
+    -webkit-appearance: none;
+    margin: @thumb-height / 2 0;
+    width: @track-width;
+
+    &:focus {
+        outline: none;
     }
 
-    .center {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        height: auto;
-        transition: 2s;
-        padding-right: 2vw;
-        padding-left: 2vw;
-
-        button {
-            flex-grow: 1;
-            border: 0;
-            height: inherit;
-            background: transparent;
-            color: #feffff;
-            font-weight: 100;
-            font-size: 12px;
-            transition: 1s;
-            font-family: @fontface;
-            margin-bottom: 1vh;
-            border: 1px solid rgba(0, 0, 0, 0.5);
-        }
-
-        button:hover {
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        button:focus {
-            outline: none;
-        }
+    &::-webkit-slider-runnable-track {
+        .track();
+        .shadow(@track-shadow-size, @track-shadow-blur, @track-shadow-color);
+        background: @track-color;
+        border-radius: @track-radius;
+        border: @track-border-width solid @track-border-color;
     }
 
-    .center-p {
-        display: flex;
-        justify-content: space-evenly;
-        width: 100%;
+    &::-webkit-slider-thumb {
+        .thumb();
+        -webkit-appearance: none;
+        margin-top: ((-@track-border-width * 2 + @track-height) / 2) - (@thumb-height / 2);
     }
-}
 
-#feedback {
-    padding: 0;
-    margin-left: 2vw;
-    margin-right: 2vw;
-    font-size: 12px;
-    text-transform: none;
-    text-align: center;
-}
+    &::-webkit-slider-thumb:hover {
+        background: @contrast1;
+    }
 
-.red {
-    border: 1px solid white !important;
-}
+    &:focus::-webkit-slider-runnable-track {
+        background: lighten(@track-color, @contrast);
+    }
 
-.green {
-    border: 1px solid @contrast1 !important;
-}
+    &::-moz-range-track {
+        .track();
+        .shadow(@track-shadow-size, @track-shadow-blur, @track-shadow-color);
+        background: @track-color;
+        border-radius: @track-radius;
+        border: @track-border-width solid @track-border-color;
+    }
+    &::-moz-range-thumb {
+        .thumb();
+    }
 
-button .red {
-    border: 1px solid white !important;
-    cursor: not-allowed;
-}
+    &::-ms-track {
+        .track();
+        background: transparent;
+        border-color: transparent;
+        border-width: @thumb-width 0;
+        color: transparent;
+    }
 
-button .green {
-    border: 1px solid @contrast1 !important;
-}
-
-.scroll::-webkit-scrollbar {
-    width: 8px;
-    background: @darkaccent;
-    box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.25);
-}
-
-.scroll::-webkit-scrollbar-thumb {
-    background: @contrast1;
-    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.1);
-}
-
-.scroll::-webkit-scrollbar-thumb:hover {
-    cursor: pointer !important;
+    &::-ms-fill-lower {
+        background: darken(@track-color, @contrast);
+        border: @track-border-width solid @track-border-color;
+        border-radius: @track-radius*2;
+        .shadow(@track-shadow-size, @track-shadow-blur, @track-shadow-color);
+    }
+    &::-ms-fill-upper {
+        background: @track-color;
+        border: @track-border-width solid @track-border-color;
+        border-radius: @track-radius*2;
+        .shadow(@track-shadow-size, @track-shadow-blur, @track-shadow-color);
+    }
+    &::-ms-thumb {
+        .thumb();
+    }
+    &:focus::-ms-fill-lower {
+        background: @track-color;
+    }
+    &:focus::-ms-fill-upper {
+        background: lighten(@track-color, @contrast);
+    }
 }

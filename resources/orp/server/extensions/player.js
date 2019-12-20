@@ -64,8 +64,11 @@ alt.Player.prototype.setRank = function setRank(flag) {
  * @memberof player
  */
 alt.Player.prototype.addRewardPoint = function addRewardPoint() {
-    this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints + 1);
-    this.saveField(this.data.id, 'totalrewardpoints', this.data.totalrewardpoints + 1);
+    this.data.rewardpoints += 1;
+    this.data.totalrewardpoints += 1;
+
+    this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints);
+    this.saveField(this.data.id, 'totalrewardpoints', this.data.totalrewardpoints);
     this.syncRewardPoints();
 };
 

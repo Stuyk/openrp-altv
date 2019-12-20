@@ -44,6 +44,7 @@ alt.on('parse:Player', async (player, now) => {
         player.timePlayerSaveTime = Date.now() + Config.timePlayerSaveTime;
     } else {
         if (Date.now() > player.timePlayerSaveTime) {
+            alt.log(`${player.data.name} was saved.`);
             player.timePlayerSaveTime = Date.now() + Config.timePlayerSaveTime;
             savePlayer(player);
         }
@@ -54,6 +55,7 @@ alt.on('parse:Player', async (player, now) => {
         player.timeRewardTime = Date.now() + Config.timeRewardTime;
     } else {
         if (Date.now() > player.timeRewardTime) {
+            alt.log(`${player.data.name} was given a reward point.`);
             player.timeRewardTime = Date.now() + Config.timeRewardTime;
             addRewardPoint(player);
         }

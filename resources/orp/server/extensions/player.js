@@ -614,6 +614,15 @@ alt.Player.prototype.hasQuantityOfItem = function hasQuantityOfItem(key, quantit
             indexes.push(_index);
             continue;
         }
+
+        if (_data && _data.base == key) {
+            if (indexes.includes(_index)) {
+                continue;
+            }
+
+            indexes.push(_index);
+            continue;
+        }
     }
 
     if (indexes.length <= 0) {
@@ -650,19 +659,6 @@ alt.Player.prototype.removeItemsOnArrest = function removeItemsOnArrest() {
         }
     });
 
-    this.saveInventory();
-};
-
-alt.Player.prototype.dropItemsOnDeath = function dropItemsOnDeath() {
-    if (!this.inventory) return;
-    this.inventory.forEach((item, index) => {
-        if (!item) return;
-        if (item.base.includes('weapon') || item.base.includes('unrefined')) {
-            const itemClone = { ...item };
-            dropNewItem(this.pos, itemClone);
-            this.inventory[index] = null;
-        }
-    });
     this.saveInventory();
 };
 

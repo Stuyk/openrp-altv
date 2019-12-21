@@ -16,6 +16,21 @@ alt.on('playerDisconnect', player => {
         return;
     }
 
+    if (player.vehicles && player.vehicles.length >= 1) {
+        player.vehicles.forEach(vehicle => {
+            if (!vehicle) {
+                return;
+            }
+
+            try { 
+                vehicle.destroy();
+            } catch(err) {
+                alt.log(`Could not destroy vehicle; probably doesn't exist.`);
+            }
+            
+        });
+    }
+
     alt.emit('logout:Player', player);
 
     // Attempt to Quit Jobs / Target Jobs

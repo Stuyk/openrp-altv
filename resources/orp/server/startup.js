@@ -94,12 +94,6 @@ function LoadFiles() {
     }, 5000);
 }
 
-
-
-
-
-
-
 // Used to speed up the server dramatically.
 function cacheInformation() {
     db.fetchLastId('Vehicle', res => {

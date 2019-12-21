@@ -3,6 +3,7 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { addXP } from '../systems/skills.js';
 
+const vehicleSyncFuelTime = 10000;
 let nextVehicleSaveTime = Date.now() + Config.vehicleSaveTime;
 let handling = false;
 
@@ -27,18 +28,27 @@ function handleVehicleInterval() {
 }
 
 alt.on('parse:Vehicle', (vehicle, now) => {
-    // Synchronize Fuel
-    if (vehicle.syncFuel) {
-        vehicle.syncFuel();
+    if (!vehicle.vehicleSyncFuelTime) {
+        vehicle.vehicleSyncFuelTime = Date.now() * vehicleSyncFuelTime;
+    } else {
+        if (Date.now() > vehicle.vehicleSyncFuelTime) {
+            vehicle.vehicleSyncFuelTime = Date.now() * vehicleSyncFuelTime;
+            vehicle.syncFuel();
+
+        }
     }
 
-    // Save Vehicles
-    if (now > nextVehicleSaveTime) {
-        if (vehicle.saveVehicleData) {
-            try {
-                vehicle.saveVehicleData();
-            } catch (err) {
-                console.log('Could not save vehicle data.');
+    if (!vehicle.vehicleSaveTime) {
+        vehicle.vehicleSaveTime = Date.now() * Config.vehicleSaveTime;
+    } else {
+        if (Date.now() > vehicle.vehicleSyncFuelTime) {
+            vehicle.vehicleSaveTime = Date.now() * Config.vehicleSaveTime;
+            if (vehicle.saveVehicleData) {
+                try {
+                    vehicle.saveVehicleData();
+                } catch (err) {
+                    console.log('Could not save vehicle data.');
+                }
             }
         }
     }

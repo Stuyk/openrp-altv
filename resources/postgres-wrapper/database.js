@@ -25,7 +25,8 @@ export default class ConnectionInfo {
                 password: `${dbPassword}`,
                 database: `${dbName}`,
                 entities: entityArray,
-                cache: true
+                cache: true,
+                extra: { max: 100, min: 1 }
             };
 
             console.log(`---> Starting Database Connection`);

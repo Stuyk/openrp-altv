@@ -42,7 +42,7 @@ let keybinds = {
         shiftModifier: false,
         onKeyUp: panelsChat.toggleDialogue
     },
-    // U - Gang Panel
+    // U - Faction Panel
     85: {
         altModifier: false,
         shiftModifier: false,

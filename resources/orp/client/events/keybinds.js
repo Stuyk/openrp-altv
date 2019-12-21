@@ -74,11 +74,13 @@ let keybinds = {
         onKeyUp: systemsContext.hideContext
     },
     // F1 - Help
+    /*
     112: {
         altModifier: false,
         shiftModifier: false,
         onKeyUp: panelsHelp.toggleHelp
     }
+    */
 };
 
 let cooldown = false;

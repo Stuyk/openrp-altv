@@ -26,7 +26,7 @@ export default class ConnectionInfo {
                 database: `${dbName}`,
                 entities: entityArray,
                 cache: true,
-                extra: { max: 100, min: 1 }
+                extra: { max: 25 }
             };
 
             console.log(`---> Starting Database Connection`);
@@ -92,7 +92,7 @@ export default class ConnectionInfo {
 
     fetchLastId(repoName, callback) {
         const repo = this.connection.getRepository(repoName);
-        repo.findOne({order: {id: "DESC"}}).then(res => {
+        repo.findOne({ order: { id: "DESC" } }).then(res => {
             callback(res);
         });
     }

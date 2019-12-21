@@ -2,43 +2,18 @@ import * as alt from 'alt';
 import { getCharacterName } from '../cache/cache.js';
 import { Config } from '../configuration/config.js';
 
-let nextRewardPointTime = Date.now() + Config.timeRewardTime;
-let nextSavePlayerTime = Date.now() + Config.timePlayerSaveTime;
-let nextRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
-let handling = false;
 
-setInterval(handlePlayerInterval, 10000);
+alt.on('parse:Player', parsePlayer);
 
-function handlePlayerInterval() {
-    alt.emit('interval:Player');
-    if (alt.Player.all.length <= 0) {
-        return;
-    }
-
-    if (handling) {
-        return;
-    }
-
-    handling = true;
-
-    const activePlayers = alt.Player.all.filter(p => p && p.data);
-    const now = Date.now();
-    for (let i = 0; i < activePlayers.length; i++) {
-        const player = activePlayers[i];
-        if (!player) {
-            continue;
-        }
-
-        alt.emit('parse:Player', player, now);
-    }
-
-    handling = false;
-}
-
-alt.on('parse:Player', async (player, now) => {
+function parsePlayer(player) {
     if (!player) {
         return;
     }
+
+    const now = Date.now();
+    player.timeoutTicker = setTimeout(() => {
+        alt.emit('parse:Player', player);
+    }, 10000);
 
     if (!player.timePlayerSaveTime) {
         player.timePlayerSaveTime = Date.now() + Config.timePlayerSaveTime;
@@ -102,7 +77,7 @@ alt.on('parse:Player', async (player, now) => {
             alt.log('Could not parse farming data.');
         }
     }
-});
+}
 
 function addRewardPoint(player) {
     if (player.addRewardPoint) {
@@ -118,7 +93,6 @@ function addRewardPoint(player) {
 function savePlayer(player) {
     if (player.saveData) {
         try {
-            console.log('Saving player...');
             player.saveData();
         } catch (err) {
             alt.log(err);

@@ -5,7 +5,6 @@ import { distance, randPosAround } from '../utility/vector.js';
 import { addXP } from '../systems/skills.js';
 import { Items, BaseItems } from '../configuration/items.js';
 import { generateHash } from '../utility/encryption.js';
-import { setupVehicleFunctions } from '../utility/vehicle.js';
 import { getRandomLoot } from '../systems/loot.js';
 import { getLevel } from '../systems/xp.js';
 
@@ -402,6 +401,7 @@ export class Objective {
             Math.abs(this.veh.rot)
         );
 
+        vehicle.startTick();
         vehicle.job = {
             player,
             preventHijack: true
@@ -420,7 +420,7 @@ export class Objective {
             player.job.vehicleHealth = vehicle.engineHealth - 100;
         }
 
-        setupVehicleFunctions(vehicle, false);
+        vehicle.noSave = true;
         if (this.veh.warpIntoVehicle) {
             alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
         }

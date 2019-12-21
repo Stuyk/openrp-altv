@@ -3,51 +3,39 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { addXP } from '../systems/skills.js';
 
-const vehicleSyncFuelTime = 10000;
-let nextVehicleSaveTime = Date.now() + Config.vehicleSaveTime;
-let handling = false;
+alt.on('parse:Vehicle', (vehicle) => {
+    if (!vehicle) {
+        return;
+    }
 
-setInterval(handleVehicleInterval, 10000);
+    setTimeout(() => {
+        alt.emit('parse:Vehicle', vehicle);
+    }, 10000);
 
-function handleVehicleInterval() {
-    alt.emit('interval:Vehicle');
-    if (handling) return;
-    handling = true;
     const now = Date.now();
-    for (let i = 0; i < alt.Vehicle.all.length; i++) {
-        const vehicle = alt.Vehicle.all[i];
-        if (!vehicle) continue;
-        alt.emit('parse:Vehicle', vehicle, now);
-    }
-
-    if (now > nextVehicleSaveTime) {
-        nextVehicleSaveTime = now + Config.vehicleSaveTime;
-    }
-
-    handling = false;
-}
-
-alt.on('parse:Vehicle', (vehicle, now) => {
     if (!vehicle.vehicleSyncFuelTime) {
-        vehicle.vehicleSyncFuelTime = Date.now() * vehicleSyncFuelTime;
+        vehicle.vehicleSyncFuelTime = Date.now() + Config.vehicleSyncFuelTime;
     } else {
         if (Date.now() > vehicle.vehicleSyncFuelTime) {
-            vehicle.vehicleSyncFuelTime = Date.now() * vehicleSyncFuelTime;
-            vehicle.syncFuel();
-
+            vehicle.vehicleSyncFuelTime = Date.now() + Config.vehicleSyncFuelTime;
+            try {
+                vehicle.syncFuel();
+            } catch (err) {
+                alt.log(`Could not sync vehicle fuel.`);
+            }
         }
     }
 
     if (!vehicle.vehicleSaveTime) {
-        vehicle.vehicleSaveTime = Date.now() * Config.vehicleSaveTime;
+        vehicle.vehicleSaveTime = Date.now() + Config.vehicleSaveTime;
     } else {
-        if (Date.now() > vehicle.vehicleSyncFuelTime) {
-            vehicle.vehicleSaveTime = Date.now() * Config.vehicleSaveTime;
+        if (Date.now() > vehicle.vehicleSaveTime) {
+            vehicle.vehicleSaveTime = Date.now() + Config.vehicleSaveTime;
             if (vehicle.saveVehicleData) {
                 try {
                     vehicle.saveVehicleData();
                 } catch (err) {
-                    console.log('Could not save vehicle data.');
+                    alt.log('Could not save vehicle data.');
                 }
             }
         }

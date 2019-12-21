@@ -1,6 +1,5 @@
 import * as alt from 'alt';
 import { randPosAround, distance } from '../utility/vector.js';
-import * as utilityVehicle from '../utility/vehicle.js';
 import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { Items, BaseItems } from '../configuration/items.js';
@@ -59,17 +58,15 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         rot = new alt.Vector3(0, 0, 0);
     }
 
-    let vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
+    const vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
+    vehicle.startTick()
 
     if (vehicle.modKitsCount >= 1) {
         vehicle.modKit = 1;
     }
 
-    // Setup extended functions for the new vehicle.
-    utilityVehicle.setupVehicleFunctions(vehicle);
-
     // Set the data on the vehicle from the DB.
-    vehicle.data = veh;
+    vehicle.data = { ...veh };
     vehicle.engineOn = false;
     vehicle.lockState = 2;
     vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : 100;

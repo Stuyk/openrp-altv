@@ -22,12 +22,11 @@ alt.on('playerDisconnect', player => {
                 return;
             }
 
-            try { 
+            try {
                 vehicle.destroy();
-            } catch(err) {
+            } catch (err) {
                 alt.log(`Could not destroy vehicle; probably doesn't exist.`);
             }
-            
         });
     }
 

@@ -4,8 +4,6 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { Items, BaseItems } from '../configuration/items.js';
 
-let VehicleMap = new Map();
-
 /**
  * Vehicles are spawned when the player logs in.
  * Vehicles that are owned by the user have blips for 30 seconds when tracking.
@@ -13,36 +11,6 @@ let VehicleMap = new Map();
  * Only the owner can save the position; after they exit.
  */
 export function spawnVehicle(player, veh, newVehicle = false) {
-    // Existing Vehicle; Player Rejoined
-    if (VehicleMap.has(veh.id)) {
-        let mappedVehicle = VehicleMap.get(veh.id);
-
-        if (!Array.isArray(player.vehicles)) {
-            player.vehicles = [];
-            player.vehicles.push(mappedVehicle);
-            player.emitMeta('vehicles', player.vehicles);
-
-            const vehData = [];
-            player.vehicles.forEach(veh => {
-                vehData.push(JSON.stringify(veh.data));
-            });
-            player.emitMeta('vehiclesMeta', vehData);
-            return;
-        }
-
-        if (player.vehicles.includes(mappedVehicle)) return;
-        player.vehicles.push(mappedVehicle);
-        player.emitMeta('vehicles', player.vehicles);
-
-        const vehData = [];
-        player.vehicles.forEach(veh => {
-            vehData.push(JSON.stringify(veh.data));
-        });
-        player.emitMeta('vehiclesMeta', vehData);
-        return;
-    }
-
-    // Otherwise Create / Spawn the Vehicle
     let pos = undefined;
     let rot = undefined;
 
@@ -87,8 +55,6 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         vehicle.lockState = stats.lockState;
         vehicle.syncCustom();
     }
-
-    VehicleMap.set(veh.id, vehicle);
 
     if (newVehicle) {
         alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);

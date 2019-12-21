@@ -16,6 +16,14 @@ export const Account = new orm.EntitySchema({
         rank: {
             type: 'int',
             default: 0
+        },
+        email: {
+            type: 'text',
+            default: ''
+        },
+        premium: {
+            type: 'int',
+            default: 0
         }
     }
 });

@@ -2,7 +2,6 @@ import * as alt from 'alt';
 import { getCharacterName } from '../cache/cache.js';
 import { Config } from '../configuration/config.js';
 
-
 alt.on('parse:Player', parsePlayer);
 
 function parsePlayer(player) {

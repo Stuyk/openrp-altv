@@ -74,6 +74,24 @@ export class GridCuboid extends alt.ColshapeCuboid {
         }
     }
 
+    resync() {
+        if (this.players.length <= 0) {
+            return;
+        }
+
+        this.players.forEach(player => {
+            if (!player || !player.valid) {
+                return;
+            }
+
+            const isPvPEnabled = this.factions.owner.id !== -2;
+            alt.emitClient(player, 'combat:ToggleCombat', isPvPEnabled);
+            alt.emitClient(player, 'blip:CleanSectorBlips'); // Remove all sector blips
+            alt.emitClient(player, 'blip:CreateSectorBlip', this.sector); // Show the sector blip, the user is currently in
+            alt.emitClient(player, 'door:RenderDoors', this.sector.doors);
+        });
+    }
+
     rmvPlayer(player) {
         if (!this.players.includes(player)) {
             return;

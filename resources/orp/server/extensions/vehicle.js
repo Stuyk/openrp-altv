@@ -55,7 +55,7 @@ alt.Vehicle.prototype.updateField = function updateField(fieldName, fieldValue) 
         return;
     }
 
-    if (fieldName !== 'stats' || fieldName !== 'fuel') {
+    if (fieldName !== 'stats' && fieldName !== 'fuel') {
         if (!this.data[fieldName]) {
             alt.log(`That field does not exist for vehicle. ${fieldName}`);
             return;

@@ -559,6 +559,10 @@ alt.Player.prototype.addClonedItem = function addClonedItem(data) {
         return false;
     }
 
+    if (!data.quantity) {
+        data.quantity = 1;
+    }
+
     const inventoryIndex = this.inventory.findIndex(item => {
         if (item && item.key === data.key) {
             return item;
@@ -718,6 +722,10 @@ alt.Player.prototype.syncInventory = function syncInventory(cleanse = false) {
         inventory.forEach(item => {
             if (item) {
                 item = objectToNull(item);
+
+                if (item && !item.quantity) {
+                    item.quantity = 1;
+                }
             }
         });
         this.data.inventory = JSON.stringify(inventory);

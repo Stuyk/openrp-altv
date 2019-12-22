@@ -69,6 +69,7 @@ alt.onClient('faction:SetHome', factionSetHome);
 alt.onClient('faction:AddVehiclePoint', factionAddVehiclePoint);
 alt.onClient('faction:RemoveVehiclePoint', factionRemoveVehiclePoint);
 alt.onClient('faction:SetSubType', factionSetSubType);
+alt.onClient('faction:SetColor', factionSetColor);
 
 export class Faction {
     constructor(factionData) {
@@ -776,9 +777,34 @@ export class Faction {
             return;
         }
 
+        alt.emitClient(player, 'faction:Success', `Subtype was changed to ${type}.`);
         this.subtype = type;
         this.saveField('subtype', this.subtype);
         this.syncMembers();
+    }
+
+    setColor(player, id) {
+        if (player.data.id !== this.id) {
+            player.notify('You do not own this faction.');
+            player.isDisbanding = false;
+            return false;
+        }
+
+        alt.emitClient(player, 'faction:Success', `Faction Turf color was updated.`);
+        this.color = parseInt(id);
+        this.saveField('color', this.color);
+        this.syncMembers();
+        this.syncTurfs();
+    }
+
+    syncTurfs() {
+        const turfs = JSON.parse(this.turfs);
+        turfs.forEach(turf => {
+            if (colshapes[turf] && colshapes[turf].sector) {
+                colshapes[turf].sector.color = this.color;
+                colshapes[turf].resync();
+            }
+        });
     }
 }
 
@@ -1074,6 +1100,14 @@ function factionRemoveVehiclePoint(player) {
     }
 
     player.faction.removeVehiclePoint(player);
+}
+
+function factionSetColor(player, id) {
+    if (!player.faction) {
+        return;
+    }
+
+    player.faction.setColor(player, id);
 }
 
 function factionSetSubType(player, type) {

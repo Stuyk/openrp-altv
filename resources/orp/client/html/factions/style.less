@@ -665,6 +665,34 @@ body {
                     border: 2px solid @contrast2;
                 }
             }
+
+            select {
+                color: white;
+                background: @dark;
+                width: 100%;
+
+                &:focus {
+                    outline: none;
+                }
+
+                option {
+                    color: white;
+
+                    &:hover {
+                        background-color: black;
+                        color: white;
+                        text-shadow: 1px 1px black;
+                    }
+
+                    &:focus {
+                        background-color: black;
+                    }
+
+                    &:active {
+                        background-color: black;
+                    }
+                }
+            }
         }
     }
 }

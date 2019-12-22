@@ -37,6 +37,7 @@ export function showDialogue() {
     webview.on('faction:AddVehiclePoint', addVehiclePoint);
     webview.on('faction:RemoveVehiclePoint', removeVehiclePoint);
     webview.on('faction:SetSubType', setSubType);
+    webview.on('faction:SetColor', setColor);
     native.triggerScreenblurFadeIn(1000);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
@@ -146,6 +147,10 @@ function removeVehiclePoint() {
 
 function setSubType(type) {
     alt.emitServer('faction:SetSubType', type);
+}
+
+function setColor(id) {
+    alt.emitServer('faction:SetColor', id);
 }
 
 alt.onServer('faction:Error', msg => {

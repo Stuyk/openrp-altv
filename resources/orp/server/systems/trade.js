@@ -128,12 +128,14 @@ function killTrade(player) {
 
     player.emitMeta('trade', null);
     player.trading = null;
+    player.isTradeLocked = false;
     alt.emitClient(player, 'trade:KillTrade');
 
     if (!target) {
         return;
     }
 
+    target.isTradeLocked = false;
     target.emitMeta('trade', null);
     target.trading = null;
     alt.emitClient(target, 'trade:KillTrade');

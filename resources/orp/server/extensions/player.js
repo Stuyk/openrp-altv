@@ -36,7 +36,7 @@ alt.Player.prototype.emitMeta = function emitMeta(key, value) {
  * @memberof player
  */
 alt.Player.prototype.save = function save() {
-    db.upsertData(this.data, 'Character', () => { });
+    db.upsertData(this.data, 'Character', () => {});
 };
 
 /**
@@ -47,7 +47,7 @@ alt.Player.prototype.save = function save() {
  * @param {any} fieldValue The field value to apply.
  */
 alt.Player.prototype.saveField = function saveField(id, fieldName, fieldValue) {
-    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => { });
+    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
 };
 
 alt.Player.prototype.setRank = function setRank(flag) {
@@ -550,6 +550,37 @@ alt.Player.prototype.addItem = function addItem(
     return true;
 };
 
+alt.Player.prototype.addClonedItem = function addClonedItem(data) {
+    const base = BaseItems[data.base];
+
+    // Item has no base.
+    if (!base) {
+        alt.log(`${data.key} has no base. Base: ${data.base}`);
+        return false;
+    }
+
+    const inventoryIndex = this.inventory.findIndex(item => {
+        if (item && item.key === data.key) return item;
+    });
+
+    if (base.abilities.stack && inventoryIndex >= 0) {
+        this.inventory[inventoryIndex].quantity += quantity;
+        this.saveInventory();
+        return true;
+    }
+
+    const nullIndex = this.inventory.findIndex(item => !item);
+    if (nullIndex >= 28) {
+        this.send('{FF0000} No room for item in inventory.');
+        this.notify('You have no more room in your inventory.');
+        return false;
+    }
+
+    this.inventory[nullIndex] = data;
+    this.saveInventory();
+    return true;
+};
+
 // Remove an Item from the Player
 // Finds all matching items; adds up quantities.
 // Loops through each found item and removes quantity
@@ -1038,7 +1069,7 @@ alt.Player.prototype.addVehicle = function addVehicle(model, pos, rot) {
     };
 
     spawnVehicle(this, veh, true);
-    db.upsertData(veh, 'Vehicle', (res) => { });
+    db.upsertData(veh, 'Vehicle', res => {});
     return true;
 };
 

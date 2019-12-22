@@ -410,19 +410,8 @@ alt.onClient('vehicle:RemoveItemFromVehicle', (player, hash, vehicle) => {
 
     const item = { ...inventory[index] };
     // key, quantity, props = {}, skipStackable = false, skipSave = false, name = undefined, icon = undefined, keyOverride = undefined
-    if (
-        !player.addItem(
-            item.key,
-            item.quantity,
-            item.props,
-            false,
-            false,
-            item.name,
-            item.icon,
-            item.key
-        )
-    ) {
-        player.notify('Failed to add item to inventory.');
+    if (!player.addClonedItem(item)) {
+        player.notify('Item could not be added to inventory from vehicle.');
         return;
     }
 

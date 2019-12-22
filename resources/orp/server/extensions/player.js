@@ -806,18 +806,11 @@ alt.Player.prototype.unequipItem = function unequipItem(equipmentIndex) {
         equippedItem = objectToNull(equippedItem);
     }
 
-    if (!equippedItem) return false;
+    if (!equippedItem) {
+        return false;
+    }
 
-    if (
-        this.addItem(
-            equippedItem.key,
-            equippedItem.quantity,
-            equippedItem.props,
-            false,
-            false,
-            equippedItem.name
-        )
-    ) {
+    if (this.addClonedItem(equippedItem)) {
         if (equippedItem.base === 'fishingrod') {
             if (this.job) {
                 quitJob(this, false, true);
@@ -830,6 +823,7 @@ alt.Player.prototype.unequipItem = function unequipItem(equipmentIndex) {
         return true;
     }
 
+    this.notify('You do not have enough room in your inventory to unequip.');
     this.syncInventory();
     return false;
 };

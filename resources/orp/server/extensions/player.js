@@ -560,13 +560,17 @@ alt.Player.prototype.addClonedItem = function addClonedItem(data) {
     }
 
     const inventoryIndex = this.inventory.findIndex(item => {
-        if (item && item.key === data.key) return item;
+        if (item && item.key === data.key) {
+            return item;
+        }
     });
 
-    if (base.abilities.stack && inventoryIndex >= 0) {
-        this.inventory[inventoryIndex].quantity += quantity;
-        this.saveInventory();
-        return true;
+    if (base.abilities.stack && inventoryIndex !== -1) {
+        if (this.inventory[inventoryIndex].quantity) {
+            this.inventory[inventoryIndex].quantity += quantity;
+            this.saveInventory();
+            return true;
+        }
     }
 
     const nullIndex = this.inventory.findIndex(item => !item);

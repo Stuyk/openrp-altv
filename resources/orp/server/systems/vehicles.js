@@ -195,8 +195,17 @@ export function toggleEngine(player, data) {
 
 export function toggleSafetyLock(player, data) {
     const vehicle = data.vehicle;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
 
-    if (!player.vehicle) return;
+    if (!player || !player.valid) {
+        return;
+    }
+
+    if (!player.vehicle) {
+        return;
+    }
 
     if (player.vehicles === undefined) return;
 
@@ -212,7 +221,9 @@ export function toggleSafetyLock(player, data) {
 }
 
 export function saveChanges(player, vehicle, jsonData) {
-    if (!vehicle.saveCustom) return;
+    if (!vehicle.saveCustom) {
+        return;
+    }
 
     if (!player.vehicles || !player.vehicles.includes(vehicle)) {
         player.send('This is not your vehicle; you cannot modify it.');
@@ -244,6 +255,7 @@ export function fillFuel(player, data) {
         player.send(msg + `{FF0000}You do not have enough cash.`);
         return;
     }
+
     player.send(msg);
     actionMessage(player, 'Begins to fill the closest vehicle with fuel.');
     vehicle.isBeingFilled = {
@@ -254,18 +266,25 @@ export function fillFuel(player, data) {
 
 export function checkFuel(player, data) {
     const vehicle = data.vehicle;
-    if (!vehicle) return;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
+
     player.send(`{FFFF00}Remaining Fuel: {FFFFFF}${vehicle.fuel}`);
 }
 
 export function repairVehicle(player, data) {
+    if (!player || !player.valid) {
+        return;
+    }
+
     if (!player.subItem('repairkit', 1)) {
         player.notify('You do not have a repair kit.');
         return;
     }
 
     const vehicle = data.vehicle;
-    if (!vehicle) {
+    if (!vehicle || !vehicle.valid) {
         return;
     }
 
@@ -278,16 +297,28 @@ export function repairVehicle(player, data) {
 }
 
 export function trackVehicle(player, id) {
-    if (!player.vehicles) return;
+    if (!player.vehicles) {
+        return;
+    }
+
     const vehicle = player.vehicles.find(x => x.data.id === id);
-    if (!vehicle) return;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
+
     alt.emitClient(player, 'vehicle:TrackVehicle', vehicle.pos);
 }
 
 export function destroyVehicle(player, id) {
-    if (!player.vehicles) return;
+    if (!player.vehicles) {
+        return;
+    }
+
     const vehicle = player.vehicles.find(x => parseInt(x.data.id) === id);
-    if (!vehicle) return;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
+
     player.send(`{FFFF00} Confirm Destroying your ${vehicle.data.model} at ${id}.`);
     player.send(`{FFFF00} Type: {FFFFFF}/destroyvehicle`);
     player.destroyVehicle = id;
@@ -295,7 +326,10 @@ export function destroyVehicle(player, id) {
 
 export function refuelVehicle(player, data) {
     const vehicle = data.vehicle;
-    if (!vehicle) return;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
+
     if (vehicle.fuel >= 100) {
         player.notify('The tank is already full.');
         return;
@@ -309,10 +343,14 @@ export function refuelVehicle(player, data) {
 }
 
 export function leaveEngineRunning(player) {
-    if (!player) return;
+    if (!player || !player.valid) {
+        return;
+    }
 
     const vehicle = player.lastVehicle;
-    if (!vehicle) return;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
 
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
@@ -329,7 +367,7 @@ alt.onClient('vehicle:AccessInventory', (player, data) => {
     }
 
     const vehicle = data.vehicle;
-    if (!vehicle) {
+    if (!vehicle || !vehicle.valid) {
         return;
     }
 

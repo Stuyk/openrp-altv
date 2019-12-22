@@ -18,7 +18,7 @@ const notVehicles = [
 
 alt.Vehicle.prototype.startTick = function startTick() {
     alt.emit('parse:Vehicle', this);
-}
+};
 
 alt.Vehicle.prototype.save = function save() {
     if (this.noSave) {
@@ -39,7 +39,7 @@ alt.Vehicle.prototype.save = function save() {
     });
 
     this.markedForSave = [];
-    db.updatePartialData(this.data.id, dataToSave, 'Vehicle', res => { });
+    db.updatePartialData(this.data.id, dataToSave, 'Vehicle', res => {});
 };
 
 alt.Vehicle.prototype.saveField = function saveField(id, fieldName, fieldValue) {
@@ -47,7 +47,7 @@ alt.Vehicle.prototype.saveField = function saveField(id, fieldName, fieldValue) 
         return;
     }
 
-    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Vehicle', () => { });
+    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Vehicle', () => {});
 };
 
 alt.Vehicle.prototype.updateField = function updateField(fieldName, fieldValue) {
@@ -69,11 +69,11 @@ alt.Vehicle.prototype.updateField = function updateField(fieldName, fieldValue) 
     }
 
     if (this.markedForSave.includes(fieldName)) {
-        return
+        return;
     }
 
     this.markedForSave.push(fieldName);
-}
+};
 
 alt.Vehicle.prototype.saveVehicleData = function saveVehicleData() {
     if (this.noSave) {
@@ -83,11 +83,14 @@ alt.Vehicle.prototype.saveVehicleData = function saveVehicleData() {
     this.updateField('position', JSON.stringify(this.pos));
     this.updateField('rotation', JSON.stringify(this.rot));
     this.updateField('fuel', this.fuel);
-    this.updateField('stats', JSON.stringify({
-        bodyHealth: this.bodyHealth,
-        engineHealth: this.engineHealth,
-        lockState: this.lockState
-    }))
+    this.updateField(
+        'stats',
+        JSON.stringify({
+            bodyHealth: this.bodyHealth,
+            engineHealth: this.engineHealth,
+            lockState: this.lockState
+        })
+    );
     this.save();
 };
 
@@ -97,7 +100,7 @@ alt.Vehicle.prototype.getInventory = function getInventory() {
     }
 
     return JSON.parse(this.data.inventory);
-}
+};
 
 alt.Vehicle.prototype.subItemByHash = function subItemByHash(hash) {
     if (this.noSave) {
@@ -163,7 +166,7 @@ alt.Vehicle.prototype.despawnVehicle = function despawnVehicle() {
     }
 
     this.destroy();
-}
+};
 
 alt.Vehicle.prototype.saveCustom = function saveCustom(json) {
     if (this.noSave) {
@@ -171,14 +174,10 @@ alt.Vehicle.prototype.saveCustom = function saveCustom(json) {
     }
 
     this.data.customization = json;
-    this.saveField(
-        this.data.id,
-        'customization',
-        this.data.customization
-    );
+    this.saveField(this.data.id, 'customization', this.data.customization);
 
     this.syncCustom();
-}
+};
 
 alt.Vehicle.prototype.sync = function sync() {
     if (!this.data.stats) {
@@ -221,9 +220,7 @@ alt.Vehicle.prototype.syncCustom = function syncCustom() {
                 try {
                     this.setMod(index, value);
                 } catch (e) {
-                    console.log(
-                        `Mod: ${index} could not be applied with value ${value}`
-                    );
+                    console.log(`Mod: ${index} could not be applied with value ${value}`);
                 }
             } else {
                 this.setSyncedMeta('vehicleWheels', value);
@@ -239,15 +236,12 @@ alt.Vehicle.prototype.syncCustom = function syncCustom() {
 
             if (mods[key].secondary) {
                 this.setSyncedMeta('secondaryPaint', mods[key].secondary.type);
-                this.setSyncedMeta(
-                    'secondaryColor',
-                    mods[key].secondary.color
-                );
+                this.setSyncedMeta('secondaryColor', mods[key].secondary.color);
             }
             return;
         }
     });
-}
+};
 
 alt.Vehicle.prototype.saveDimension = function saveDimension(number) {
     this.data.dimension = number;
@@ -259,7 +253,39 @@ alt.Vehicle.prototype.honkHorn = function honkHorn(times, duration) {
 };
 
 alt.Vehicle.prototype.repair = function repair() {
-    alt.emitClient(null, 'vehicle:Repair', this);
+    const pos = { ...this.pos };
+    const rot = { ...this.rot };
+    const data = { ...this.data };
+
+    try {
+        this.destroy();
+    } catch (err) {}
+
+    data.position = JSON.stringify(pos);
+    data.rotation = JSON.stringify(rot);
+    data.stats = JSON.stringify({
+        bodyHealth: 1000,
+        engineHealth: 0,
+        lockState: data.lockState
+    });
+
+    db.updatePartialData(
+        data.id,
+        { position: data.position, rotation: data.rotation, stats: data.stats },
+        'Vehicle',
+        () => {}
+    );
+
+    if (!this.owner) {
+        return;
+    }
+
+    const index = this.owner.vehicles.findIndex(vehicle => vehicle === this);
+    if (index != -1) {
+        this.owner.vehicles.splice(index, 1);
+    }
+
+    alt.emit('vehicle:Respawn', this.owner, data);
 };
 
 alt.Vehicle.prototype.toggleDoor = function toggleDoor(player, id, closeAll = false) {

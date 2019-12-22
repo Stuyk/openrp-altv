@@ -4,6 +4,10 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { Items, BaseItems } from '../configuration/items.js';
 
+alt.on('vehicle:Respawn', (player, veh) => {
+    spawnVehicle(player, veh);
+});
+
 /**
  * Vehicles are spawned when the player logs in.
  * Vehicles that are owned by the user have blips for 30 seconds when tracking.
@@ -27,7 +31,7 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     }
 
     const vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
-    vehicle.startTick()
+    vehicle.startTick();
 
     if (vehicle.modKitsCount >= 1) {
         vehicle.modKit = 1;
@@ -37,11 +41,14 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     vehicle.data = { ...veh };
     vehicle.engineOn = false;
     vehicle.lockState = 2;
-    vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : Config.vehicleBaseFuel;
+    vehicle.fuel = vehicle.data.fuel
+        ? parseFloat(vehicle.data.fuel)
+        : Config.vehicleBaseFuel;
     vehicle.setSyncedMeta('fuel', vehicle.fuel);
     vehicle.setSyncedMeta('id', veh.id);
     vehicle.dimension = parseInt(vehicle.data.dimension);
     vehicle.sync();
+    vehicle.owner = player;
 
     // Synchronize the Stats
     /*
@@ -89,7 +96,6 @@ export function closeAllDoors(player, data) {
     if (!vehicle) {
         return;
     }
-
 
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;

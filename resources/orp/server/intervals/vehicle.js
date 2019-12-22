@@ -77,10 +77,10 @@ alt.on('parse:Vehicle', (vehicle) => {
                     return;
                 }
 
-                addXP(player, 'mechanic', 25);
+                addXP(player, 'mechanic', 50);
                 actionMessage(player, 'Successfully repairs the vehicle.');
                 alt.emitClient(player, 'vehicle:FinishRepair');
-                vehicle.repair();
+                vehicle.repair(player);
                 vehicle.isBeingRepaired = undefined;
             } catch (err) {
                 console.error('Failed to repair the vehicle.');

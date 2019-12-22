@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 import { View } from '/client/utility/view.js';
 import { showCursor } from '/client/utility/cursor.js';
 
@@ -28,20 +29,29 @@ export function showDialogue() {
 }
 
 function closeDialogue() {
-    if (!webview) return;
+    if (!webview) {
+        return;
+    }
+
     webview.close();
     showCursor(false);
     vehicle = undefined;
     inventory = undefined;
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
+    native.triggerScreenblurFadeOut(1000);
 }
 
 function ready() {
     if (!webview) return;
     showCursor(true);
     webview.emit('vehinv:SyncInventory', inventory);
-
     const playerInventory = JSON.parse(alt.Player.local.getMeta('inventory'));
     webview.emit('vehinv:SetInventory', playerInventory);
+
+    native.triggerScreenblurFadeIn(1000);
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
 }
 
 function addItem(hash) {

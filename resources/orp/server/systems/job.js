@@ -1170,6 +1170,14 @@ export function quitTarget(player) {
 }
 
 export function quitJob(player, loggingOut = false, playFailSound = false) {
+    if (!player) {
+        return;
+    }
+
+    if (!player.valid) {
+        return;
+    }
+
     if (!player.data) return;
     if (!player.vehicles) return;
     if (player.vehicles.length >= 1) {

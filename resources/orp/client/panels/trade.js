@@ -1,4 +1,5 @@
 import * as alt from 'alt';
+import * as native from 'natives';
 import { View } from '/client/utility/view.js';
 import { showCursor } from '/client/utility/cursor.js';
 
@@ -54,7 +55,13 @@ function closeDialogue() {
 }
 
 function ready() {
-    if (!webview) return;
+    if (!webview) {
+        return;
+    }
+
+    native.triggerScreenblurFadeIn(1000);
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
     showCursor(true);
 
     const inventory = JSON.parse(alt.Player.local.getMeta('inventory'));
@@ -78,7 +85,13 @@ function ready() {
 }
 
 alt.onServer('trade:KillTrade', () => {
-    if (!webview) return;
+    if (!webview) {
+        return;
+    }
+
+    native.triggerScreenblurFadeOut(1000);
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
     webview.close();
     showCursor(false);
 });

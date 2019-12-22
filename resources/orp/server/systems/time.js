@@ -46,7 +46,14 @@ alt.on('interval:Player', () => {
 });
 
 export function updatePlayerTime(player) {
-    if (!player) return;
+    if (!player) {
+        return;
+    }
+
+    if (!player.valid) {
+        return;
+    }
+
     const today = new Date();
     player.setDateTime(
         today.getDay(),

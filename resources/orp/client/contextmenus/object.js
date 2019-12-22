@@ -446,6 +446,8 @@ function hospitalBed(ent) {
 }
 
 function chair(ent) {
+    alt.log('Disabled sitting for now.');
+    /*
     if (alt.Player.local.vehicle) return;
     native.freezeEntityPosition(ent, true);
     let pos = native.getEntityCoords(ent, false);
@@ -474,6 +476,7 @@ function chair(ent) {
     native.setFollowPedCamViewMode(2);
     alt.Player.local.sitting = true;
     alt.on('keyup', clearSit);
+    */
 }
 
 function clearSit(key) {

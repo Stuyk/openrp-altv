@@ -54,6 +54,6 @@ function pursue(hash) {
 
 alt.on('keyup', key => {
     if (key === 'u'.charCodeAt(0)) {
-        showDialogue();
+        // showDialogue();
     }
 });

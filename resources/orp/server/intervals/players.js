@@ -2,72 +2,49 @@ import * as alt from 'alt';
 import { getCharacterName } from '../cache/cache.js';
 import { Config } from '../configuration/config.js';
 
-let nextRewardPointTime = Date.now() + Config.timeRewardTime;
-let nextSavePlayerTime = Date.now() + Config.timePlayerSaveTime;
-let nextRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
-let handling = false;
+alt.on('parse:Player', parsePlayer);
 
-setInterval(handlePlayerInterval, 10000);
+function parsePlayer(player) {
+    if (!player) {
+        return;
+    }
 
-function handlePlayerInterval() {
-    alt.emit('interval:Player');
-    if (alt.Player.all.length <= 0) return;
-    if (handling) return;
-    handling = true;
+    if (!player.valid) {
+        return;
+    }
 
-    const activePlayers = alt.Player.all.filter(p => p && p.data);
     const now = Date.now();
-    for (let i = 0; i < activePlayers.length; i++) {
-        const player = activePlayers[i];
-        if (!player) continue;
-        alt.emit('parse:Player', player, now);
-    }
+    player.timeoutTicker = setTimeout(() => {
+        alt.emit('parse:Player', player);
+    }, 10000);
 
-    if (nextSavePlayerTime < now) {
-        alt.log('Saving Players');
-        nextSavePlayerTime = now + Config.timePlayerSaveTime;
-    }
-
-    if (nextRewardPointTime < now) {
-        alt.log('Saving Reward Points');
-        nextRewardPointTime = now + Config.timeRewardTime;
-    }
-
-    if (nextRefreshContactsTime < now) {
-        nextRefreshContactsTime = now + Config.timeRefreshContactsTime;
-    }
-
-    handling = false;
-}
-
-alt.on('parse:Player', (player, now) => {
-    // Save Player Data
-    if (nextSavePlayerTime < now) {
-        if (player.saveData) {
-            try {
-                console.log('Saving player...');
-                player.saveData();
-            } catch (err) {
-                alt.log(err);
-                alt.error(`Could not save player data.`);
-            }
+    if (!player.timePlayerSaveTime) {
+        player.timePlayerSaveTime = Date.now() + Config.timePlayerSaveTime;
+    } else {
+        if (Date.now() > player.timePlayerSaveTime) {
+            alt.log(`${player.data.name} was saved.`);
+            player.timePlayerSaveTime = Date.now() + Config.timePlayerSaveTime;
+            savePlayer(player);
         }
     }
 
-    // Save Playing Time
-    if (nextRewardPointTime < now) {
-        if (player.addRewardPoint) {
-            try {
-                player.addRewardPoint();
-            } catch (err) {
-                alt.log(err);
-                alt.error(`Could not add a reward point.`);
-            }
+    if (!player.timeRewardTime) {
+        player.timeRewardTime = Date.now() + Config.timeRewardTime;
+    } else {
+        if (Date.now() > player.timeRewardTime) {
+            alt.log(`${player.data.name} was given a reward point.`);
+            player.timeRewardTime = Date.now() + Config.timeRewardTime;
+            addRewardPoint(player);
         }
     }
 
-    if (nextRefreshContactsTime < now) {
-        player.syncContacts();
+    if (!player.timeRefreshContactsTime) {
+        player.timeRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
+    } else {
+        if (Date.now() > player.timeRefreshContactsTime) {
+            player.timeRefreshContactsTime = Date.now() + Config.timeRefreshContactsTime;
+            player.syncContacts();
+        }
     }
 
     // Handle Arrest Times / Prison Releases
@@ -102,4 +79,26 @@ alt.on('parse:Player', (player, now) => {
             alt.log('Could not parse farming data.');
         }
     }
-});
+}
+
+function addRewardPoint(player) {
+    if (player.addRewardPoint) {
+        try {
+            player.addRewardPoint();
+        } catch (err) {
+            alt.log(err);
+            alt.error(`Could not add a reward point.`);
+        }
+    }
+}
+
+function savePlayer(player) {
+    if (player.saveData) {
+        try {
+            player.saveData();
+        } catch (err) {
+            alt.log(err);
+            alt.error(`Could not save player data.`);
+        }
+    }
+}

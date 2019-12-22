@@ -1,5 +1,6 @@
 import * as alt from 'alt';
 import { RandomNumberGenerator } from '../utility/encryption.js';
+import { GridCuboid } from '../extensions/gridCuboid.js';
 
 // Furthest Y Land Coordinate is +8000
 // Lowest Y Land Coordinate is -4000
@@ -38,7 +39,7 @@ for (let row = 0; row <= rows; row++) {
 pairs.forEach((row, sector) => {
     sectors.set(sector, row);
     row.forEach((column, index) => {
-        let colshape = new alt.ColshapeCuboid(
+        let colshape = new GridCuboid(
             column.pos1.x,
             column.pos1.y,
             -20,
@@ -73,12 +74,6 @@ pairs.forEach((row, sector) => {
             false
         );
 
-        colshape.factions = {
-            owner: { id: -2 },
-            nextClaim: Date.now()
-        };
-
-        colshape.players = [];
         colshapes.push(colshape);
     });
 });

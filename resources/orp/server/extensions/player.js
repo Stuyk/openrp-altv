@@ -64,8 +64,11 @@ alt.Player.prototype.setRank = function setRank(flag) {
  * @memberof player
  */
 alt.Player.prototype.addRewardPoint = function addRewardPoint() {
-    this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints + 1);
-    this.saveField(this.data.id, 'totalrewardpoints', this.data.totalrewardpoints + 1);
+    this.data.rewardpoints += 1;
+    this.data.totalrewardpoints += 1;
+
+    this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints);
+    this.saveField(this.data.id, 'totalrewardpoints', this.data.totalrewardpoints);
     this.syncRewardPoints();
 };
 
@@ -547,6 +550,37 @@ alt.Player.prototype.addItem = function addItem(
     return true;
 };
 
+alt.Player.prototype.addClonedItem = function addClonedItem(data) {
+    const base = BaseItems[data.base];
+
+    // Item has no base.
+    if (!base) {
+        alt.log(`${data.key} has no base. Base: ${data.base}`);
+        return false;
+    }
+
+    const inventoryIndex = this.inventory.findIndex(item => {
+        if (item && item.key === data.key) return item;
+    });
+
+    if (base.abilities.stack && inventoryIndex >= 0) {
+        this.inventory[inventoryIndex].quantity += quantity;
+        this.saveInventory();
+        return true;
+    }
+
+    const nullIndex = this.inventory.findIndex(item => !item);
+    if (nullIndex >= 28) {
+        this.send('{FF0000} No room for item in inventory.');
+        this.notify('You have no more room in your inventory.');
+        return false;
+    }
+
+    this.inventory[nullIndex] = data;
+    this.saveInventory();
+    return true;
+};
+
 // Remove an Item from the Player
 // Finds all matching items; adds up quantities.
 // Loops through each found item and removes quantity
@@ -768,18 +802,11 @@ alt.Player.prototype.unequipItem = function unequipItem(equipmentIndex) {
         equippedItem = objectToNull(equippedItem);
     }
 
-    if (!equippedItem) return false;
+    if (!equippedItem) {
+        return false;
+    }
 
-    if (
-        this.addItem(
-            equippedItem.key,
-            equippedItem.quantity,
-            equippedItem.props,
-            false,
-            false,
-            equippedItem.name
-        )
-    ) {
+    if (this.addClonedItem(equippedItem)) {
         if (equippedItem.base === 'fishingrod') {
             if (this.job) {
                 quitJob(this, false, true);
@@ -792,6 +819,7 @@ alt.Player.prototype.unequipItem = function unequipItem(equipmentIndex) {
         return true;
     }
 
+    this.notify('You do not have enough room in your inventory to unequip.');
     this.syncInventory();
     return false;
 };
@@ -1026,11 +1054,12 @@ alt.Player.prototype.addVehicle = function addVehicle(model, pos, rot) {
         position: JSON.stringify(pos),
         rotation: JSON.stringify(rot),
         stats: null,
-        customization: null
+        customization: null,
+        inventory: '[]'
     };
 
     spawnVehicle(this, veh, true);
-    db.upsertData(veh, 'Vehicle', () => {});
+    db.upsertData(veh, 'Vehicle', res => {});
     return true;
 };
 
@@ -1179,6 +1208,11 @@ alt.on('orp:PlayerFunc', (...args) => {
     const passedPlayer = args.shift();
     const player = alt.Player.all.find(x => x.id === passedPlayer.id);
     if (!player) {
+        console.error('Player was not found from PlayerFunc call.');
+        return;
+    }
+
+    if (!player.valid) {
         console.error('Player was not found from PlayerFunc call.');
         return;
     }

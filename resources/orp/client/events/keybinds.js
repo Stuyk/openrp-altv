@@ -42,7 +42,7 @@ let keybinds = {
         shiftModifier: false,
         onKeyUp: panelsChat.toggleDialogue
     },
-    // U - Gang Panel
+    // U - Faction Panel
     85: {
         altModifier: false,
         shiftModifier: false,
@@ -74,11 +74,13 @@ let keybinds = {
         onKeyUp: systemsContext.hideContext
     },
     // F1 - Help
+    /*
     112: {
         altModifier: false,
         shiftModifier: false,
         onKeyUp: panelsHelp.toggleHelp
     }
+    */
 };
 
 let cooldown = false;

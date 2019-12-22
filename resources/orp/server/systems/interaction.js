@@ -39,7 +39,14 @@ export class Interaction {
 
     // Call the server event from anywhere on the server-side.
     exec(player) {
-        if (!player);
+        if (!player) {
+            return;
+        }
+
+        if (!player.valid) {
+            return;
+        }
+
         if (utilityVector.distance(player.pos, this.pos) > this.radius) {
             player.emitMeta('interaction', undefined);
             return;

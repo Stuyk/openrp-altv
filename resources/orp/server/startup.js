@@ -18,6 +18,7 @@ const dbData = fs
     .readFileSync(path.join(resourceDir, '/server/configuration/database.json'))
     .toString();
 let dbInfo;
+let isConnectionReady = false;
 
 try {
     dbInfo = JSON.parse(dbData);
@@ -40,6 +41,22 @@ let db = new SQL(
 );
 
 alt.on('ConnectionComplete', () => {
+    if (isConnectionReady) {
+        return;
+    }
+
+    isConnectionReady = true;
+});
+
+const startupInterval = setInterval(() => {
+    alt.log('Checking if connection is ready...');
+    if (isConnectionReady) {
+        clearInterval(startupInterval);
+        LoadFiles();
+    }
+}, 2000);
+
+function LoadFiles() {
     let filesLoaded = 0;
     const folders = fs.readdirSync(path.join(alt.rootDir, '/resources/orp/server/'));
     const filterFolders = folders.filter(x => !x.includes('.js'));
@@ -49,27 +66,25 @@ alt.on('ConnectionComplete', () => {
             path.join(alt.rootDir, `/resources/orp/server/${folder}`)
         );
         const filterFiles = files.filter(x => x.includes('.js'));
-
         for (let f = 0; f < filterFiles.length; f++) {
             const newPath = `./${folder}/${filterFiles[f]}`;
-            /* jshint ignore:start */
-            import(newPath)
-                .then(res => {
-                    if (!res) {
-                        alt.log(`Failed to load: ${newPath}`);
-                    } else {
-                        filesLoaded += 1;
-                        alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
-                    }
-                })
-                .catch(err => {
-                    console.log('\r\n\x1b[31mERROR IN LOADED FILE');
-                    alt.log(newPath);
-                    alt.log(err);
-                    console.log('\r\n \x1b[0m');
-                    return undefined;
-                });
-            /* jshint ignore:end */
+            import(newPath).catch(err => {
+                console.log('\r\n\x1b[31mERROR IN LOADED FILE');
+                alt.log(`Failed to load: ${newPath}`);
+                alt.log('Killing process; failed to load a file.');
+                process.kill(-1);
+                console.log('\r\n \x1b[0m');
+                return undefined;
+            }).then(loadedResult => {
+                if (loadedResult) {
+                    filesLoaded += 1;
+                    alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
+                } else {
+                    alt.log(`Failed to load: ${newPath}`);
+                    alt.log('Killing process; failed to load a file.');
+                    process.kill(-1);
+                }
+            })
         }
     }
 
@@ -78,7 +93,7 @@ alt.on('ConnectionComplete', () => {
         alt.log('\r\nORP Ready - Loading Any Addons\r\n');
         alt.emit('orp:Ready');
     }, 5000);
-});
+}
 
 // Used to speed up the server dramatically.
 function cacheInformation() {

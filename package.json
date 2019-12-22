@@ -5,10 +5,9 @@
     "main": "index.js",
     "scripts": {
         "orp": "npm install && node ./install.js",
-        "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
+        "docs": "jsdoc -c jsdoc.json"
     },
     "author": "stuyk",
-    "license": "ISC",
     "dependencies": {
         "discord.js": "^11.5.1",
         "download": "^7.1.0",
@@ -30,5 +29,16 @@
         "tabWidth": 4,
         "singleQuote": true,
         "bracketSpacing": true
-    }
+    },
+    "directories": {
+        "doc": "docs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/stuyk/altV-Open-Roleplay.git"
+    },
+    "bugs": {
+        "url": "https://github.com/stuyk/altV-Open-Roleplay/issues"
+    },
+    "homepage": "https://github.com/stuyk/altV-Open-Roleplay#readme"
 }

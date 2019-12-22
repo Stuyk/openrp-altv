@@ -1,11 +1,12 @@
 import * as alt from 'alt';
 import { randPosAround, distance } from '../utility/vector.js';
-import * as utilityVehicle from '../utility/vehicle.js';
 import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { Items, BaseItems } from '../configuration/items.js';
 
-let VehicleMap = new Map();
+alt.on('vehicle:Respawn', (player, veh) => {
+    spawnVehicle(player, veh);
+});
 
 /**
  * Vehicles are spawned when the player logs in.
@@ -14,36 +15,6 @@ let VehicleMap = new Map();
  * Only the owner can save the position; after they exit.
  */
 export function spawnVehicle(player, veh, newVehicle = false) {
-    // Existing Vehicle; Player Rejoined
-    if (VehicleMap.has(veh.id)) {
-        let mappedVehicle = VehicleMap.get(veh.id);
-
-        if (!Array.isArray(player.vehicles)) {
-            player.vehicles = [];
-            player.vehicles.push(mappedVehicle);
-            player.emitMeta('vehicles', player.vehicles);
-
-            const vehData = [];
-            player.vehicles.forEach(veh => {
-                vehData.push(JSON.stringify(veh.data));
-            });
-            player.emitMeta('vehiclesMeta', vehData);
-            return;
-        }
-
-        if (player.vehicles.includes(mappedVehicle)) return;
-        player.vehicles.push(mappedVehicle);
-        player.emitMeta('vehicles', player.vehicles);
-
-        const vehData = [];
-        player.vehicles.forEach(veh => {
-            vehData.push(JSON.stringify(veh.data));
-        });
-        player.emitMeta('vehiclesMeta', vehData);
-        return;
-    }
-
-    // Otherwise Create / Spawn the Vehicle
     let pos = undefined;
     let rot = undefined;
 
@@ -59,23 +30,25 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         rot = new alt.Vector3(0, 0, 0);
     }
 
-    let vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
+    const vehicle = new alt.Vehicle(veh.model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
+    vehicle.startTick();
 
     if (vehicle.modKitsCount >= 1) {
         vehicle.modKit = 1;
     }
 
-    // Setup extended functions for the new vehicle.
-    utilityVehicle.setupVehicleFunctions(vehicle);
-
     // Set the data on the vehicle from the DB.
-    vehicle.data = veh;
+    vehicle.data = { ...veh };
     vehicle.engineOn = false;
     vehicle.lockState = 2;
-    vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : 100;
+    vehicle.fuel = vehicle.data.fuel
+        ? parseFloat(vehicle.data.fuel)
+        : Config.vehicleBaseFuel;
     vehicle.setSyncedMeta('fuel', vehicle.fuel);
     vehicle.setSyncedMeta('id', veh.id);
     vehicle.dimension = parseInt(vehicle.data.dimension);
+    vehicle.sync();
+    vehicle.owner = player;
 
     // Synchronize the Stats
     /*
@@ -90,8 +63,6 @@ export function spawnVehicle(player, veh, newVehicle = false) {
         vehicle.lockState = stats.lockState;
         vehicle.syncCustom();
     }
-
-    VehicleMap.set(veh.id, vehicle);
 
     if (newVehicle) {
         alt.emitClient(player, 'vehicle:SetIntoVehicle', vehicle);
@@ -122,6 +93,10 @@ export function spawnVehicle(player, veh, newVehicle = false) {
 
 export function closeAllDoors(player, data) {
     const vehicle = data.vehicle;
+    if (!vehicle) {
+        return;
+    }
+
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
     if (vehicle.lockState === 2) {
@@ -143,6 +118,10 @@ export function closeAllDoors(player, data) {
 
 export function toggleDoor(player, data) {
     const vehicle = data.vehicle;
+    if (!vehicle) {
+        return;
+    }
+
     const id = data.door;
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
@@ -431,19 +410,8 @@ alt.onClient('vehicle:RemoveItemFromVehicle', (player, hash, vehicle) => {
 
     const item = { ...inventory[index] };
     // key, quantity, props = {}, skipStackable = false, skipSave = false, name = undefined, icon = undefined, keyOverride = undefined
-    if (
-        !player.addItem(
-            item.key,
-            item.quantity,
-            item.props,
-            false,
-            false,
-            item.name,
-            item.icon,
-            item.key
-        )
-    ) {
-        player.notify('Failed to add item to inventory.');
+    if (!player.addClonedItem(item)) {
+        player.notify('Item could not be added to inventory from vehicle.');
         return;
     }
 

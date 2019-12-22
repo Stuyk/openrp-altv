@@ -59,8 +59,8 @@ class App extends Component {
     render() {
         const firstName = this.state.firstName === '' ? 'Select' : this.state.firstName;
         const lastName = this.state.lastName === '' ? 'Name' : this.state.lastName;
-        let allValid = firstName !== 'Select' && lastName !== 'Name' ? true : false;
-        allValid = firstName.length >= 2 && lastName.length >= 2 ? true : false;
+        let allValid = firstName.length >= 2 && lastName.length >= 2 ? true : false;
+        allValid = firstName !== 'Select' && lastName !== 'Name' ? true : false;
 
         return h(
             'div',

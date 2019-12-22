@@ -16,6 +16,14 @@ export const Account = new orm.EntitySchema({
         rank: {
             type: 'int',
             default: 0
+        },
+        email: {
+            type: 'text',
+            default: ''
+        },
+        premium: {
+            type: 'int',
+            default: 0
         }
     }
 });
@@ -257,15 +265,18 @@ export const Vehicle = new orm.EntitySchema({
         },
         rotation: {
             type: 'text',
-            nullable: true
+            nullable: true,
+            default: '{ "x": 0, "y": 0, "z": 0 }'
         },
         stats: {
             type: 'text',
-            nullable: true
+            nullable: true,
+            default: '{"bodyHealth":1000,"engineHealth":0,"lockState":1}'
         },
         customization: {
             type: 'text',
-            nullable: true
+            nullable: true,
+            default: '{}'
         },
         fuel: {
             type: 'decimal',

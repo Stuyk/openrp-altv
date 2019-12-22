@@ -128,12 +128,14 @@ function killTrade(player) {
 
     player.emitMeta('trade', null);
     player.trading = null;
+    player.isTradeLocked = false;
     alt.emitClient(player, 'trade:KillTrade');
 
     if (!target) {
         return;
     }
 
+    target.isTradeLocked = false;
     target.emitMeta('trade', null);
     target.trading = null;
     alt.emitClient(target, 'trade:KillTrade');
@@ -195,16 +197,7 @@ function finishTrade(player, target) {
             return;
         }
         player.subItemByHash(item.hash);
-        target.addItem(
-            itemDuplicate.key,
-            itemDuplicate.quantity,
-            itemDuplicate.props,
-            false,
-            false,
-            itemDuplicate.name,
-            itemDuplicate.icon,
-            itemDuplicate.key
-        );
+        target.addClonedItem(itemDuplicate);
     });
 
     targetItems.forEach(item => {
@@ -216,15 +209,7 @@ function finishTrade(player, target) {
         }
 
         target.subItemByHash(item.hash);
-        player.addItem(
-            itemDuplicate.key,
-            itemDuplicate.quantity,
-            itemDuplicate.props,
-            false,
-            false,
-            itemDuplicate.name,
-            itemDuplicate.icon
-        );
+        player.addClonedItem(itemDuplicate);
     });
 
     if (playerCash > 0) {

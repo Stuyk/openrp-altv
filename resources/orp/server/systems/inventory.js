@@ -216,10 +216,10 @@ export function pickup(player, hash) {
     if (!ItemDrops.has(hash)) return;
     player.pickingUpItem = true;
 
-    let item = { ...ItemDrops.get(hash) };
+    const item = { ...ItemDrops.get(hash) };
     ItemDrops.delete(hash);
 
-    if (!player.addItem(item.key, item.quantity, item.props, false, false, item.name)) {
+    if (!player.addClonedItem(item)) {
         ItemDrops.set(hash, item);
         player.pickingUpItem = false;
         return;

@@ -3,8 +3,10 @@ import * as alt from 'alt';
 import { Config } from '../configuration/config.js';
 
 alt.on('playerConnect', player => {
-    console.log(player.emitMeta);
+    alt.log(`${player.name} is beginning connection.`);
+});
 
+alt.onClient('connectionComplete', async (player) => {
     player.spawn(
         Config.characterPoint.x,
         Config.characterPoint.y,

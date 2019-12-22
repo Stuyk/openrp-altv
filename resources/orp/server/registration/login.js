@@ -59,7 +59,7 @@ alt.on('orp:Login', (player, id, discordID) => {
 
 // Called for any existing characters.
 export function existingCharacter(player, data) {
-    player.data = data;
+    player.data = { ...data };
     player.emitMeta('loggedin', true);
     player.dimension = 0;
 }
@@ -68,6 +68,12 @@ alt.on('logout:Player', player => {
     if (!player) {
         return;
     }
+
+    if (!player.valid) {
+        return;
+    }
+
+    alt.log(`${player.data.name} has disconnected.`);
 
     if (player.trading) {
         alt.emit('trade:KillTrade', player);
@@ -97,9 +103,6 @@ alt.on('logout:Player', player => {
 
     // Save Player
     player.save();
-
-    // Logout Message
-    alt.log(`${player.discord} has disconnected.`);
 });
 
 /**
@@ -199,4 +202,8 @@ alt.on('sync:Player', player => {
     player.armour = player.data.armour;
     player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 0);
     alt.emit('faction:Attach', player);
+
+    player.timeoutTicker = setTimeout(() => {
+        alt.emit('parse:Player', player);
+    }, 10000);
 });

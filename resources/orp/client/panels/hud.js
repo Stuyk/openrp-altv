@@ -103,6 +103,13 @@ alt.on('hud:AdjustHud', value => {
 
 alt.on('hud:Hide', value => {
     if (!webview) return;
+
+    if (value) {
+        native.displayRadar(false);
+    } else {
+        native.displayRadar(true);
+    }
+
     webview.emit('hud:Hide', value);
 });
 

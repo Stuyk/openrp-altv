@@ -17,6 +17,10 @@ let categories = {};
 
 // Used to create blips for the player to see.
 export function createBlip(category, pos, sprite, color, label, display = 2) {
+    if (!pos || !category || !sprite) {
+        return;
+    }
+
     const blip = native.addBlipForCoord(pos.x, pos.y, pos.z);
     native.setBlipAsShortRange(blip, true);
     native.setBlipSprite(blip, sprite);

@@ -10,11 +10,18 @@ alt.on('playerLeftVehicle', (player, vehicle) => {
         quitTarget(player);
     }
 
-    if (player.vehicles === undefined) return;
+    if (player.vehicles === undefined) {
+        return;
+    }
 
     // Not their vehicle.
-    if (!player.vehicles.includes(vehicle)) return;
-    if (vehicle.data === undefined) return;
+    if (!player.vehicles.includes(vehicle)) {
+        return;
+    }
+
+    if (vehicle.data === undefined) {
+        return;
+    }
 
     vehicle.saveVehicleData();
 

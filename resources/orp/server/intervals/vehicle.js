@@ -3,42 +3,40 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { addXP } from '../systems/skills.js';
 
-let nextVehicleSaveTime = Date.now() + Config.vehicleSaveTime;
-let handling = false;
+alt.on('parse:Vehicle', vehicle => {
+    if (!vehicle) {
+        return;
+    }
 
-setInterval(handleVehicleInterval, 10000);
+    setTimeout(() => {
+        alt.emit('parse:Vehicle', vehicle);
+    }, 10000);
 
-function handleVehicleInterval() {
-    alt.emit('interval:Vehicle');
-    if (handling) return;
-    handling = true;
     const now = Date.now();
-    for (let i = 0; i < alt.Vehicle.all.length; i++) {
-        const vehicle = alt.Vehicle.all[i];
-        if (!vehicle) continue;
-        alt.emit('parse:Vehicle', vehicle, now);
-    }
-
-    if (now > nextVehicleSaveTime) {
-        nextVehicleSaveTime = now + Config.vehicleSaveTime;
-    }
-
-    handling = false;
-}
-
-alt.on('parse:Vehicle', (vehicle, now) => {
-    // Synchronize Fuel
-    if (vehicle.syncFuel) {
-        vehicle.syncFuel();
-    }
-
-    // Save Vehicles
-    if (now > nextVehicleSaveTime) {
-        if (vehicle.saveVehicleData) {
+    if (!vehicle.vehicleSyncFuelTime) {
+        vehicle.vehicleSyncFuelTime = Date.now() + Config.vehicleSyncFuelTime;
+    } else {
+        if (Date.now() > vehicle.vehicleSyncFuelTime) {
+            vehicle.vehicleSyncFuelTime = Date.now() + Config.vehicleSyncFuelTime;
             try {
-                vehicle.saveVehicleData();
+                vehicle.syncFuel();
             } catch (err) {
-                console.log('Could not save vehicle data.');
+                alt.log(`Could not sync vehicle fuel.`);
+            }
+        }
+    }
+
+    if (!vehicle.vehicleSaveTime) {
+        vehicle.vehicleSaveTime = Date.now() + Config.vehicleSaveTime;
+    } else {
+        if (Date.now() > vehicle.vehicleSaveTime) {
+            vehicle.vehicleSaveTime = Date.now() + Config.vehicleSaveTime;
+            if (vehicle.saveVehicleData) {
+                try {
+                    vehicle.saveVehicleData();
+                } catch (err) {
+                    alt.log('Could not save vehicle data.');
+                }
             }
         }
     }
@@ -70,6 +68,11 @@ alt.on('parse:Vehicle', (vehicle, now) => {
             return;
         }
 
+        if (!player.valid) {
+            vehicle.isBeingRepaired = undefined;
+            return;
+        }
+
         player.playAudio3D(player, 'ratchet');
         if (now > vehicle.isBeingRepaired.time) {
             try {
@@ -79,10 +82,10 @@ alt.on('parse:Vehicle', (vehicle, now) => {
                     return;
                 }
 
-                addXP(player, 'mechanic', 25);
+                addXP(player, 'mechanic', 50);
                 actionMessage(player, 'Successfully repairs the vehicle.');
                 alt.emitClient(player, 'vehicle:FinishRepair');
-                vehicle.repair();
+                vehicle.repair(player);
                 vehicle.isBeingRepaired = undefined;
             } catch (err) {
                 console.error('Failed to repair the vehicle.');

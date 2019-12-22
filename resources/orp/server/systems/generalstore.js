@@ -47,7 +47,7 @@ export function buyItem(player, shopType, itemKey, amount) {
         }
 
         const itemKey = Items[generalItem.key].key;
-        const itemProps = Items[generalItem.key].props;
+        const itemProps = { ...Items[generalItem.key].props };
 
         // key, quantity, props = {}, skipStackable = false, skipSave = false, name = undefined
         if (!player.addItem(itemKey, amount, itemProps)) {
@@ -56,7 +56,7 @@ export function buyItem(player, shopType, itemKey, amount) {
             return;
         }
     } else {
-        const props = generalItem.props ? generalItem.props : {};
+        const props = generalItem.props ? { ...generalItem.props } : {};
         for (let i = 0; i < amount; i++) {
             if (
                 !player.addItem(

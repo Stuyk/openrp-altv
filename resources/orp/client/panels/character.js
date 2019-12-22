@@ -68,7 +68,6 @@ export function showDialogue(playerPos, flags = 255, removeAllClothes = true) {
     webview.on('character:Zoom', changeZoom);
     webview.on('character:ZPos', changeZPos);
     webview.on('character:SaveChanges', saveChanges);
-
     // Setup a temporary teleport.
     alt.emit('chat:Toggle');
 
@@ -83,7 +82,12 @@ export function showDialogue(playerPos, flags = 255, removeAllClothes = true) {
 }
 
 function ready() {
-    if (!webview) return;
+    if (!webview) {
+        return;
+    }
+
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
     showCursor(true);
     webview.emit('character:SetGroupFlags', groupFlags);
     if (groupFlags === 255) {
@@ -123,39 +127,60 @@ function ready() {
             facePropsClone.TattooGroup[index].value = 1;
         });
 
-        alt.log(JSON.stringify(facePropsClone));
-
         webview.emit('character:SetFaceProperties', JSON.stringify(facePropsClone));
         resetCamera();
     }
+
+    alt.emit('animation:Play', {
+        dict: 'amb@world_human_hang_out_street@female_arms_crossed@base',
+        name: 'base',
+        duration: -1,
+        flag: 2
+    });
 }
 
 function changeZoom(value) {
     zoom = parseFloat(value);
-    alt.log(`Zoom: ${zoom}`);
     adjustCamera();
 }
 
 function changeZPos(value) {
     zPos = parseFloat(value);
-    alt.log(`ZPos: ${zPos}`);
     adjustCamera();
 }
 
 function adjustCamera() {
-    const modifiedCam = {
-        x: playerCamPoint.x,
-        y: playerCamPoint.y,
-        z: playerCamPoint.z + zPos
+    const forwardVector = native.getEntityForwardVector(alt.Player.local.scriptID);
+    const pPos = alt.Player.local.pos;
+    const testCamPoint = {
+        x: pPos.x + forwardVector.x * 1.2,
+        y: pPos.y + forwardVector.y * 1.2,
+        z: pPos.z + zPos
     };
-    camera.position(modifiedCam.x, modifiedCam.y, modifiedCam.z);
 
-    const modifiedPos = {
-        x: playerStandPoint.x,
-        y: playerStandPoint.y,
-        z: playerStandPoint.z + zPos
+    if (!playerCamPoint) {
+        playerCamPoint = testCamPoint;
+    }
+
+    const isXUnequal = testCamPoint.x !== playerCamPoint.x;
+    const isYUnequal = testCamPoint.y !== playerCamPoint.y;
+    const isZUnequal = testCamPoint.z !== playerCamPoint.z;
+
+    if (!camera) {
+        camera = new Camera(playerCamPoint, zoom);
+    }
+
+    if (isXUnequal || isYUnequal || isZUnequal) {
+        playerCamPoint = testCamPoint;
+        camera.position(playerCamPoint.x, playerCamPoint.y, playerCamPoint.z);
+    }
+
+    const playerPosOffset = {
+        x: pPos.x,
+        y: pPos.y,
+        z: pPos.z + zPos
     };
-    camera.pointAtCoord(modifiedPos);
+    camera.pointAtCoord(playerPosOffset);
     camera.fov(zoom);
     camera.render();
 }
@@ -444,21 +469,15 @@ function resetCamera(modelToUse) {
     }
 
     alt.nextTick(() => {
-        rotation = 279;
-        native.setEntityHeading(alt.Player.local.scriptID, rotation);
-        const forwardVector = native.getEntityForwardVector(alt.Player.local.scriptID);
-        playerCamPoint = {
-            x: playerStandPoint.x + forwardVector.x * 1,
-            y: playerStandPoint.y + forwardVector.y * 1,
-            z: playerStandPoint.z
-        };
-
-        if (!camera) {
-            camera = new Camera(playerCamPoint, zoom);
-        }
-
         adjustCamera();
         webview.emit('character:SexUpdate');
+    });
+
+    alt.emit('animation:Play', {
+        dict: 'amb@world_human_hang_out_street@female_arms_crossed@base',
+        name: 'base',
+        duration: -1,
+        flag: 2
     });
 }
 
@@ -477,5 +496,7 @@ function saveChanges(data) {
         return;
     }
 
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
     alt.emitServer('face:SetFacialData', data);
 }

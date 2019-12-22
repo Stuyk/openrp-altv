@@ -8,6 +8,7 @@ let loginAttempts = 0;
 let maxAttempts = 120;
 
 alt.on('connectionComplete', () => {
+    alt.emitServer('connectionComplete');
     alt.emit('discord:Request');
     alt.log('Loading Interiors');
     alt.loadModel('mp_f_freemode_01');

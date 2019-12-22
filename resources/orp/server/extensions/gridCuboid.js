@@ -16,8 +16,7 @@ export class GridCuboid extends alt.ColshapeCuboid {
 
         setTimeout(() => {
             this.update();
-        }, 20000);
-        // Math.floor(Math.random() * 120000) + 10000
+        }, Math.floor(Math.random() * 120000) + 10000);
     }
 
     setupTimeout(nextUpdateTime) {
@@ -29,7 +28,6 @@ export class GridCuboid extends alt.ColshapeCuboid {
     update() {
         const randomValue = this.sector.seed.getNumber(Config.turfHighestWaitTime);
         const nextTime = randomValue * 60000 + 60000 * 10; // 10 - 45 Minutes
-        const nextTime = 60000;
         this.setupTimeout(nextTime);
 
         if (this.players.length <= 0) {

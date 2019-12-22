@@ -195,16 +195,7 @@ function finishTrade(player, target) {
             return;
         }
         player.subItemByHash(item.hash);
-        target.addItem(
-            itemDuplicate.key,
-            itemDuplicate.quantity,
-            itemDuplicate.props,
-            false,
-            false,
-            itemDuplicate.name,
-            itemDuplicate.icon,
-            itemDuplicate.key
-        );
+        target.addClonedItem(itemDuplicate);
     });
 
     targetItems.forEach(item => {
@@ -216,15 +207,7 @@ function finishTrade(player, target) {
         }
 
         target.subItemByHash(item.hash);
-        player.addItem(
-            itemDuplicate.key,
-            itemDuplicate.quantity,
-            itemDuplicate.props,
-            false,
-            false,
-            itemDuplicate.name,
-            itemDuplicate.icon
-        );
+        player.addClonedItem(itemDuplicate);
     });
 
     if (playerCash > 0) {

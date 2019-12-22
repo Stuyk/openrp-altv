@@ -85,6 +85,11 @@ export function spawnVehicle(player, veh, newVehicle = false) {
 
 export function closeAllDoors(player, data) {
     const vehicle = data.vehicle;
+    if (!vehicle) {
+        return;
+    }
+
+
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;
     if (vehicle.lockState === 2) {
@@ -106,6 +111,10 @@ export function closeAllDoors(player, data) {
 
 export function toggleDoor(player, data) {
     const vehicle = data.vehicle;
+    if (!vehicle) {
+        return;
+    }
+
     const id = data.door;
     const dist = distance(player.pos, vehicle.pos);
     if (dist > 5) return;

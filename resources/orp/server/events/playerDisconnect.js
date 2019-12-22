@@ -2,7 +2,9 @@ import * as alt from 'alt';
 import { quitJob, quitTarget } from '../systems/job.js';
 
 alt.on('playerDisconnect', player => {
-    if (!player) return;
+    if (!player) {
+        return;
+    }
 
     // If the player isn't logged in; don't do anything else.
     if (player.guid === undefined) {
@@ -29,6 +31,7 @@ alt.on('playerDisconnect', player => {
             }
         });
     }
+
 
     alt.emit('logout:Player', player);
 

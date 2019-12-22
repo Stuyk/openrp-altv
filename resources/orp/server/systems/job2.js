@@ -2,10 +2,6 @@ import * as alt from 'alt';
 import { distance } from '../utility/vector';
 import { isFlagged } from '../utility/flags';
 
-export const Objectives = {
-    Point
-};
-
 export const ObjectiveFlags = {
     MIN: 0,
     ON_FOOT: 1,
@@ -32,6 +28,10 @@ class Objective {
         this.timeLimit = -1;
         this.vehicleType = undefined;
         this.players = [];
+        this.blip = {
+            sprite: 1,
+            color: 1
+        };
     }
 
     /**
@@ -52,11 +52,22 @@ class Objective {
         }
 
         if (!this.players.includes(player)) {
-            this.player.push(player);
+            this.players.push(player);
         }
 
-        alt.emitClient(player, 'objective:Info', JSON.stringify(this));
+        const data = { ...this };
+        delete data.players;
+
+        alt.emitClient(player, 'objective:Info', JSON.stringify(data));
         return true;
+    }
+
+    addBlip(sprite, color, description) {
+        this.blip = {
+            sprite,
+            color,
+            description
+        };
     }
 
     /**
@@ -299,7 +310,12 @@ class AddVehicle extends Objective {
     }
 }
 
-class Job {
+export const Objectives = {
+    Point,
+    AddVehicle
+};
+
+export class Job {
     /**
      *
      * @param {*} player
@@ -309,6 +325,7 @@ class Job {
         this.objectives = objectives;
         this.party = [player];
         this.freeze = false;
+        player.job = this;
     }
 
     /**
@@ -332,6 +349,7 @@ class Job {
         }
 
         this.party.push(player);
+        player.job = this;
     }
 
     /**
@@ -401,6 +419,8 @@ class Job {
             this.party.forEach(player => {
                 player.send('The job has been complete.');
                 player.job = undefined;
+                player.playAudio('complete');
+                alt.emitClient(player, 'objective:Info', null);
                 this.removeJobVehicles(player, true);
             });
             return;
@@ -408,13 +428,14 @@ class Job {
 
         objective.start();
         this.party.forEach(player => {
+            player.playAudio('complete');
             objective.sync(player);
         });
 
         this.freeze = false;
     }
 
-    checkObjective() {
+    checkObjective(player) {
         if (this.freeze) {
             return;
         }
@@ -429,4 +450,46 @@ class Job {
 
         this.nextObjective();
     }
+}
+
+alt.onClient('objective:Test', objectiveTest);
+alt.onClient('job:AddPlayer', addPlayer);
+
+/**
+ *
+ * @param {*} player
+ * @param {Job} job
+ */
+function objectiveTest(player, job = null) {
+    if (!player) {
+        return;
+    }
+
+    if (!player.job) {
+        return;
+    }
+
+    job = player.job;
+    job.checkObjective(player);
+}
+
+/**
+ *
+ * @param {alt.Player} player
+ * @param {*} data
+ * @param {Job} job
+ */
+function addPlayer(player, data, job = null) {
+    const target = data.player;
+
+    if (!player) {
+        return;
+    }
+
+    if (!player.job) {
+        return;
+    }
+
+    job = player.job;
+    job.addPlayer(target);
 }

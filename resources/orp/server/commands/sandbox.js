@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.js';
 import fs from 'fs';
+import { Job, Objectives, ObjectiveFlags } from '../systems/job2.js';
 
 // Development sandbox commands
 const sandboxhelp = [
@@ -125,10 +126,27 @@ chat.registerCmd('tempdoor', (player, args) => {
     }
 });
 
-/*
-chat.registerCmd('showturfs', player => {
-    if (player.data.gang === -1) return;
-    const sectors = fetchTurfSectors(player);
-    alt.emitClient(player, 'grid:TempTurfs', sectors);
+const positions = [
+    { x: -1234.08642578125, y: -902.2484130859375, z: 12.115489959716797 },
+    { x: -1241.5947265625, y: -907.8602294921875, z: 11.793697357177734 },
+    { x: -1255.260986328125, y: -917.5906982421875, z: 11.235647201538086 }
+];
+
+chat.registerCmd('testjob', player => {
+    const objectives = [];
+
+    const flags = ObjectiveFlags.ON_FOOT;
+
+    positions.forEach(pos => {
+        const objective = new Objectives.Point(pos, 2, 1);
+        objective.addBlip(1, 1, 'Walk to this bs.');
+        objective.setModifierFlags(flags);
+        objectives.push(objective);
+    });
+
+    const jobInstance = new Job(player, [...objectives]);
 });
-*/
+
+chat.registerCmd('startjob', player => {
+    player.job.start();
+});

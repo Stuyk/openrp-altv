@@ -43,6 +43,7 @@ function player(ent) {
     tradeAddons(player);
     arrestAddons(player);
     gangAddons(player);
+    appendContextItem('Add Player to Job', true, 'job:AddPlayer', { player });
     setContextTitle(name);
 }
 

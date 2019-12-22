@@ -37,10 +37,11 @@ export function spawnVehicle(player, veh, newVehicle = false) {
     vehicle.data = { ...veh };
     vehicle.engineOn = false;
     vehicle.lockState = 2;
-    vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : 100;
+    vehicle.fuel = vehicle.data.fuel ? parseFloat(vehicle.data.fuel) : Config.vehicleBaseFuel;
     vehicle.setSyncedMeta('fuel', vehicle.fuel);
     vehicle.setSyncedMeta('id', veh.id);
     vehicle.dimension = parseInt(vehicle.data.dimension);
+    vehicle.sync();
 
     // Synchronize the Stats
     /*

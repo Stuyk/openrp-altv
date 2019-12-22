@@ -6,7 +6,7 @@ alt.on('playerConnect', player => {
     player.loginTimeout = Date.now() + 60000 * 3;
     setTimeout(() => {
         loginTimer(player);
-    }, player.loginTimeout);
+    }, 60000 * 3);
 
     player.token = generateHash(
         JSON.stringify(
@@ -17,6 +17,10 @@ alt.on('playerConnect', player => {
 });
 
 function loginTimer(player) {
+    if (!player) {
+        return;
+    }
+
     if (!player.loginTimeout) {
         return;
     }

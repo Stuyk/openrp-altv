@@ -36,7 +36,7 @@ alt.Player.prototype.emitMeta = function emitMeta(key, value) {
  * @memberof player
  */
 alt.Player.prototype.save = function save() {
-    db.upsertData(this.data, 'Character', () => {});
+    db.upsertData(this.data, 'Character', () => { });
 };
 
 /**
@@ -47,7 +47,7 @@ alt.Player.prototype.save = function save() {
  * @param {any} fieldValue The field value to apply.
  */
 alt.Player.prototype.saveField = function saveField(id, fieldName, fieldValue) {
-    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
+    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => { });
 };
 
 alt.Player.prototype.setRank = function setRank(flag) {
@@ -1033,11 +1033,12 @@ alt.Player.prototype.addVehicle = function addVehicle(model, pos, rot) {
         position: JSON.stringify(pos),
         rotation: JSON.stringify(rot),
         stats: null,
-        customization: null
+        customization: null,
+        inventory: '[]'
     };
 
     spawnVehicle(this, veh, true);
-    db.upsertData(veh, 'Vehicle', () => {});
+    db.upsertData(veh, 'Vehicle', (res) => { });
     return true;
 };
 

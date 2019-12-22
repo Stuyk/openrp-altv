@@ -2,12 +2,6 @@ import * as alt from 'alt';
 import { Config } from '../configuration/config.js';
 import { colshapes } from './grid.js';
 
-
-
-
-
-
-
 const weatherGroups = [];
 const weatherCycle = Config.weatherCycle;
 const weatherCycleTime = Config.weatherCycleTime;
@@ -26,50 +20,10 @@ colshapes.forEach((shape, index) => {
             )
                 return current;
         });
-        weatherGroups.push(shapes);
-    }
-});
 
-alt.on('interval:Player', () => {
-    const now = Date.now();
-    if (now < lastUpdate) return;
-    lastUpdate = now + weatherCycleTime;
-
-    weatherGroups.forEach((group, index) => {
         const newWeatherIndex = Math.floor(Math.random() * weatherCycle.length);
-        group.forEach(colshape => {
-            const weather = colshape.getMeta('weather');
-            if (!weather) {
-                const weatherType = weatherCycle[newWeatherIndex];
-                colshape.setMeta('weather', {
-                    lastWeather: newWeatherIndex,
-                    weatherIndex: newWeatherIndex,
-                    weatherType
-                });
-            } else {
-                let weatherIndex = weather.weatherIndex + 1;
-                if (weatherIndex > weatherCycle.length - 1) {
-                    weatherIndex = 0;
-                }
-                colshape.setMeta('weather', {
-                    lastWeather: colshape.getMeta('weather'),
-                    weatherIndex,
-                    weatherType: weatherCycle[weatherIndex]
-                });
-            }
+        shapes.forEach(shape => {
+            shape.setupWeather(newWeatherIndex);
         });
-    });
-
-    const players = [...alt.Player.all];
-    players.forEach(player => {
-        if (!player.colshape) return;
-        const weather = player.colshape.getMeta('weather');
-        if (weather === null) return;
-        alt.emitClient(
-            player,
-            'transition:Weather',
-            weather.weatherType,
-            weather.lastWeather
-        );
-    });
+    }
 });

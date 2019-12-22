@@ -55,9 +55,11 @@ alt.Vehicle.prototype.updateField = function updateField(fieldName, fieldValue) 
         return;
     }
 
-    if (!this.data[fieldName]) {
-        alt.log(`That field does not exist for vehicle. ${fieldName}`);
-        return;
+    if (fieldName !== 'stats' || fieldName !== 'fuel') {
+        if (!this.data[fieldName]) {
+            alt.log(`That field does not exist for vehicle. ${fieldName}`);
+            return;
+        }
     }
 
     this.data[fieldName] = fieldValue;
@@ -178,6 +180,23 @@ alt.Vehicle.prototype.saveCustom = function saveCustom(json) {
     this.syncCustom();
 }
 
+alt.Vehicle.prototype.sync = function sync() {
+    if (!this.data.stats) {
+        this.data.stats = '{"bodyHealth":1000,"engineHealth":0,"lockState":1}';
+        this.updateField('stats', this.data.stats);
+    }
+
+    if (!this.data.customization) {
+        this.data.customization = '{}';
+        this.updateField('customization', this.data.customization);
+    }
+
+    if (!this.data.inventory) {
+        this.data.inventory = '[]';
+        this.updateField('inventory', this.data.inventory);
+    }
+};
+
 alt.Vehicle.prototype.syncCustom = function syncCustom() {
     if (this.noSave) {
         return;
@@ -193,7 +212,7 @@ alt.Vehicle.prototype.syncCustom = function syncCustom() {
 
     const mods = JSON.parse(this.data.customization);
     Object.keys(mods).forEach(key => {
-        if (key !== 'colors') {
+        if (key !== 'colors' && this.modKitsCount > 0) {
             this.modKit = 1;
             let index = parseInt(key);
             let value = parseInt(mods[key]) + 1;

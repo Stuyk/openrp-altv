@@ -144,15 +144,6 @@ async function handleLoginRequest(author, msg) {
     });
 }
 
-
-
-
-
-
-
-
-
-
 // Establish Connection
 client.login(config.token);
 

@@ -70,14 +70,15 @@ function LoadFiles() {
             const newPath = `./${folder}/${filterFiles[f]}`;
             import(newPath).catch(err => {
                 console.log('\r\n\x1b[31mERROR IN LOADED FILE');
-                alt.log(newPath);
-                alt.log(err);
+                alt.log(`Failed to load: ${newPath}`);
+                alt.log('Killing process; failed to load a file.');
+                process.kill(-1);
                 console.log('\r\n \x1b[0m');
                 return undefined;
             }).then(loadedResult => {
                 if (loadedResult) {
                     filesLoaded += 1;
-                        alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
+                    alt.log(`[${filesLoaded}] Loaded: ${newPath}`);
                 } else {
                     alt.log(`Failed to load: ${newPath}`);
                     alt.log('Killing process; failed to load a file.');

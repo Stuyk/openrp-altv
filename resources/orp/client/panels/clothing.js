@@ -35,6 +35,8 @@ export function showDialogue() {
     webview.on('clothing:ChangeRotation', changeRotation);
     webview.on('clothing:Close', closeDialogue);
     webview.on('clothing:Purchase', purchaseClothing);
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
 
     changeRotation(rotation);
 }
@@ -186,6 +188,9 @@ export function closeDialogue() {
         camera.destroy();
         camera = undefined;
     }
+
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
 
     native.freezeEntityPosition(alt.Player.local.scriptID, false);
     alt.emitServer('clothing:Resync');

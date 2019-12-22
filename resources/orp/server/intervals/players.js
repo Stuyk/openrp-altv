@@ -9,6 +9,10 @@ function parsePlayer(player) {
         return;
     }
 
+    if (!player.valid) {
+        return;
+    }
+
     const now = Date.now();
     player.timeoutTicker = setTimeout(() => {
         alt.emit('parse:Player', player);
@@ -22,7 +26,6 @@ function parsePlayer(player) {
             player.timePlayerSaveTime = Date.now() + Config.timePlayerSaveTime;
             savePlayer(player);
         }
-        
     }
 
     if (!player.timeRewardTime) {

@@ -12,7 +12,7 @@ export class GridCuboid extends alt.ColshapeCuboid {
         this.nextTurfTime = Date.now() + 60000;
         this.factions = {
             owner: { id: -2 }
-        }
+        };
 
         setTimeout(() => {
             this.update();
@@ -28,7 +28,7 @@ export class GridCuboid extends alt.ColshapeCuboid {
 
     update() {
         const randomValue = this.sector.seed.getNumber(Config.turfHighestWaitTime);
-        // const nextTime = (randomValue * 60000) + (60000 * 10); // 10 - 45 Minutes
+        const nextTime = randomValue * 60000 + 60000 * 10; // 10 - 45 Minutes
         const nextTime = 60000;
         this.setupTimeout(nextTime);
 
@@ -36,16 +36,15 @@ export class GridCuboid extends alt.ColshapeCuboid {
             return;
         }
 
-        alt.log('Updating Turf');
-        alt.log(this.sector.name);
-
         // Push Turf Update
-        const validPlayers = this.players.filter(player =>
-            player && // is player
-            player.data && // has data
-            player.data.faction >= 0 && // is in a faction
-            !player.data.dead && // is not dead
-            player.dimension === 0 // is in dimension 0
+        const validPlayers = this.players.filter(
+            player =>
+                player && // is player
+                player.valid &&
+                player.data && // has data
+                player.data.faction >= 0 && // is in a faction
+                !player.data.dead && // is not dead
+                player.dimension === 0 // is in dimension 0
         );
 
         if (validPlayers.length <= 0) {
@@ -92,17 +91,15 @@ export class GridCuboid extends alt.ColshapeCuboid {
 
     setupWeather(startingWeather) {
         const weatherType = weatherCycle[startingWeather];
-        this.setMeta('weather',
-            {
-                lastWeather: startingWeather,
-                weatherIndex: startingWeather,
-                weatherType
-            }
-        );
+        this.setMeta('weather', {
+            lastWeather: startingWeather,
+            weatherIndex: startingWeather,
+            weatherType
+        });
 
         setTimeout(() => {
             this.nextWeather();
-        }, Config.weatherCycleTime)
+        }, Config.weatherCycleTime);
     }
 
     nextWeather() {
@@ -116,11 +113,15 @@ export class GridCuboid extends alt.ColshapeCuboid {
             lastWeather: weather.weatherIndex,
             weatherIndex: newWeatherIndex,
             weatherType: weatherCycle[newWeatherIndex]
-        }
+        };
         this.setMeta('weather', newWeatherData);
 
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
+            if (!player.valid) {
+                continue;
+            }
+
             alt.emitClient(
                 player,
                 'transition:Weather',
@@ -131,6 +132,6 @@ export class GridCuboid extends alt.ColshapeCuboid {
 
         setTimeout(() => {
             this.nextWeather();
-        }, Config.weatherCycleTime)
+        }, Config.weatherCycleTime);
     }
 }

@@ -1191,6 +1191,11 @@ alt.on('orp:PlayerFunc', (...args) => {
         return;
     }
 
+    if (!player.valid) {
+        console.error('Player was not found from PlayerFunc call.');
+        return;
+    }
+
     if (args.length <= 0) return;
     const funcName = args.shift();
 

@@ -69,6 +69,10 @@ alt.on('logout:Player', player => {
         return;
     }
 
+    if (!player.valid) {
+        return;
+    }
+
     alt.log(`${player.data.name} has disconnected.`);
 
     if (player.trading) {

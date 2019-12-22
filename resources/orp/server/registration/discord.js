@@ -5,6 +5,7 @@ import * as cache from '../cache/cache.js';
 const db = new SQL(); // Get DB Reference
 
 alt.on('discord:FinishLogin', async (player, discord) => {
+    clearInterval(player.loginTimer);
     player.loginTimeout = undefined;
     delete player.loginTimeout;
 

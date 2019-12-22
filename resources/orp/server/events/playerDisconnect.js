@@ -18,6 +18,10 @@ alt.on('playerDisconnect', player => {
         return;
     }
 
+    if (player.colshape) {
+        player.colshape.rmvPlayer(player);
+    }
+
     if (player.vehicles && player.vehicles.length >= 1) {
         player.vehicles.forEach(vehicle => {
             if (!vehicle) {
@@ -31,7 +35,6 @@ alt.on('playerDisconnect', player => {
             }
         });
     }
-
 
     alt.emit('logout:Player', player);
 

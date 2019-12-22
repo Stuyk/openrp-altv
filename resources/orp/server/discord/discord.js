@@ -4,7 +4,7 @@ import config from './configuration.json';
 
 alt.on('playerConnect', player => {
     player.loginTimeout = Date.now() + 60000 * 3;
-    setTimeout(() => {
+    player.loginTimer = setTimeout(() => {
         loginTimer(player);
     }, 60000 * 3);
 
@@ -21,12 +21,20 @@ function loginTimer(player) {
         return;
     }
 
+    if (!player.valid) {
+        return;
+    }
+
     if (!player.loginTimeout) {
         return;
     }
 
     if (Date.now() > player.loginTimeout) {
-        player.kick();
-        alt.log(`${player.name} was kicked for not logging in.`);
+        try {
+            player.kick();
+            alt.log(`${player.name} was kicked for not logging in.`);
+        } catch (err) {
+            return;
+        }
     }
 }

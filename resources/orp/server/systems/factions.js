@@ -104,7 +104,7 @@ export class Faction {
                 [fieldName]: fieldValue
             },
             'Factions',
-            () => { }
+            () => {}
         );
     }
 
@@ -163,6 +163,14 @@ export class Faction {
 
         const factionData = JSON.stringify(this);
         members.forEach(member => {
+            if (!member) {
+                return;
+            }
+
+            if (!member.valid) {
+                return;
+            }
+
             member.emitMeta('faction:Id', this.id);
             member.emitMeta('faction:Info', factionData);
         });

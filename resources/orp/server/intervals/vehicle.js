@@ -3,7 +3,7 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { addXP } from '../systems/skills.js';
 
-alt.on('parse:Vehicle', (vehicle) => {
+alt.on('parse:Vehicle', vehicle => {
     if (!vehicle) {
         return;
     }
@@ -64,6 +64,11 @@ alt.on('parse:Vehicle', (vehicle) => {
     if (vehicle.isBeingRepaired) {
         const player = vehicle.isBeingRepaired.player;
         if (!player) {
+            vehicle.isBeingRepaired = undefined;
+            return;
+        }
+
+        if (!player.valid) {
             vehicle.isBeingRepaired = undefined;
             return;
         }

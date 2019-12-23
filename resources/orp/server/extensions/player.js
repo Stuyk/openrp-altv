@@ -571,7 +571,7 @@ alt.Player.prototype.addClonedItem = function addClonedItem(data) {
 
     if (base.abilities.stack && inventoryIndex !== -1) {
         if (this.inventory[inventoryIndex].quantity) {
-            this.inventory[inventoryIndex].quantity += quantity;
+            this.inventory[inventoryIndex].quantity += data.quantity;
             this.saveInventory();
             return true;
         }

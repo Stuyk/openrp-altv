@@ -18,6 +18,9 @@ alt.on('discord:FinishLogin', async (player, discord) => {
         player.pgid = account.pgid;
         player.rank = account.rank;
         alt.emit('orp:Login', player, account.id, discord.id);
+        if (account.email) {
+            alt.emit('gumroad:GetSubbedProducts', player, account.email);
+        }
         return;
     }
 

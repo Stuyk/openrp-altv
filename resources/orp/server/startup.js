@@ -70,7 +70,10 @@ function LoadFiles() {
             const newPath = `./${folder}/${filterFiles[f]}`;
             import(newPath)
                 .catch(err => {
+<<<<<<< HEAD
                     console.log(err);
+=======
+>>>>>>> a1d805afb47e39397866ad772f18272fdf90548a
                     console.log('\r\n\x1b[31mERROR IN LOADED FILE');
                     alt.log(`Failed to load: ${newPath}`);
                     alt.log('Killing process; failed to load a file.');
@@ -109,11 +112,11 @@ function cacheInformation() {
     });
 
     // Passwords are encrypted.
-    db.selectData('Account', ['id', 'userid', 'rank'], data => {
+    db.selectData('Account', ['id', 'userid', 'rank', 'email'], data => {
         if (!data) return;
 
         for (let i = 0; i < data.length; i++) {
-            cacheAccount(data[i].userid, data[i].id, data[i].rank);
+            cacheAccount(data[i].userid, data[i].id, data[i].rank, data[i].email);
         }
 
         alt.log(`=====> Cached: ${data.length} Accounts`);

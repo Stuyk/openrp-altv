@@ -73,7 +73,10 @@ class App extends Component {
     }
 
     close(e) {
-        if (e.key !== 'Escape') return;
+        if (e.key !== 'Escape') {
+            return;
+        }
+
         if ('alt' in window) {
             alt.emit('trade:Close');
         } else {

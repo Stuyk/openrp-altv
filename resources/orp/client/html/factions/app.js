@@ -177,7 +177,8 @@ class App extends Component {
                     classification: 0,
                     vehiclepoints: '[{"x": 0, "y": 0, "z": 0}, {"x": 0, "y": 0, "z": 0}]',
                     home: '{"x": 0, "y": 0, "z": 0}',
-                    subtype: ''
+                    subtype: '',
+                    color: '1'
                 })
             );
 
@@ -248,6 +249,14 @@ class App extends Component {
         this.typing = false;
     }
 
+    setColor(id) {
+        this.setState({ color: id });
+
+        if ('alt' in window) {
+            alt.emit('faction:SetColor', parseInt(id));
+        }
+    }
+
     ready(data) {
         const newData = JSON.parse(data);
         let members = JSON.parse(newData.members);
@@ -268,7 +277,8 @@ class App extends Component {
             vehiclepoints: JSON.parse(newData.vehiclepoints),
             home: JSON.parse(newData.home),
             classification: newData.classification,
-            subtype: newData.subtype
+            subtype: newData.subtype,
+            color: newData.color
         };
 
         if (!this.state.hasMounted) {
@@ -465,7 +475,8 @@ class App extends Component {
             appendRank: this.appendRank.bind(this),
             changeRankFlag: this.changeRankFlag.bind(this),
             factionError: this.factionError.bind(this),
-            navigate: this.navigate.bind(this)
+            navigate: this.navigate.bind(this),
+            setColor: this.setColor.bind(this)
         };
 
         return h(
@@ -1193,13 +1204,54 @@ class Options extends Component {
         );
     }
 
+    renderColorOptions({ props, functions }) {
+        const colors = Object.keys(blipColors).map(key => {
+            return h(
+                'option',
+                {
+                    id: key,
+                    style: `background-color: #${blipColors[key]}; min-height: 25px; color: #${blipColors[key]}`,
+                    value: key
+                },
+                `${blipColors[key]}`
+            );
+        });
+
+        return h(
+            'div',
+            { class: 'option' },
+            h('p', { class: 'description' }, `Pick Your Faction's Turf Color`),
+            h(
+                'div',
+                { class: 'optionData' },
+                h(
+                    'select',
+                    {
+                        multiple: false,
+                        oninput: e => {
+                            console.log(e.target.value);
+                            props.functions.setColor(e.target.value);
+                        },
+                        value: `${props.state.color}`,
+                        style: `background-color: #${
+                            blipColors[props.state.color]
+                        } !important;`
+                    },
+                    colors
+                )
+            )
+        );
+    }
+
     render(props) {
         return h(
             'div',
             { class: 'optionPage' },
             h(this.renderDisbandOption.bind(this), { props }),
             h(this.renderSetHome.bind(this), { props }),
-            h(this.renderVehicleSpawns.bind(this), { props })
+            h(this.renderVehicleSpawns.bind(this), { props }),
+            props.state.classification === 0 &&
+                h(this.renderColorOptions.bind(this), { props })
         );
     }
 }

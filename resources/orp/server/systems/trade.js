@@ -108,14 +108,13 @@ function offerCash(player, cash) {
 
 function lockState(player, lockState) {
     const target = player.trading;
-    if (!target) {
+    if (!target || !target.valid) {
         killTrade(player);
         return;
     }
 
     player.isTradeLocked = lockState;
     if (target.isTradeLocked && player.isTradeLocked) {
-        // Trade Confirmed. Finish Up.
         finishTrade(player, target);
         return;
     }
@@ -124,14 +123,17 @@ function lockState(player, lockState) {
 }
 
 function killTrade(player) {
-    const target = player.trading;
+    if (!player || !player.valid) {
+        return;
+    }
 
+    const target = player.trading;
     player.emitMeta('trade', null);
     player.trading = null;
     player.isTradeLocked = false;
     alt.emitClient(player, 'trade:KillTrade');
 
-    if (!target) {
+    if (!target || !target.valid) {
         return;
     }
 
@@ -190,20 +192,31 @@ function finishTrade(player, target) {
     }
 
     playerItems.forEach(item => {
+        if (!item) {
+            return;
+        }
+
         const itemDuplicate = {
             ...player.inventory.find(i => i && i.hash === item.hash)
         };
+
         if (itemDuplicate === {}) {
             return;
         }
+
         player.subItemByHash(item.hash);
         target.addClonedItem(itemDuplicate);
     });
 
     targetItems.forEach(item => {
+        if (!item) {
+            return;
+        }
+
         const itemDuplicate = {
             ...target.inventory.find(i => i && i.hash === item.hash)
         };
+
         if (itemDuplicate === {}) {
             return;
         }

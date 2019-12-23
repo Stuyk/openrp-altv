@@ -1,4 +1,6 @@
+.gitmodules
 resources/*
+resources/gumroad
 !resources/orp
 !resources/club-bahama
 !resources/comedy-club

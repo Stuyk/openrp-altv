@@ -413,7 +413,7 @@ alt.Player.prototype.subToZero = function subToZero(amount) {
 };
 
 alt.Player.prototype.taxIncome = function taxIncome(percentage, useHighest, reason) {
-    const cash = player.data.cash;
+    const cash = this.data.cash;
     let cashTaxAmount = cash * percentage;
     this.subToZero(cashTaxAmount);
     this.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);
@@ -559,6 +559,10 @@ alt.Player.prototype.addClonedItem = function addClonedItem(data) {
         return false;
     }
 
+    if (!data.quantity) {
+        data.quantity = 1;
+    }
+
     const inventoryIndex = this.inventory.findIndex(item => {
         if (item && item.key === data.key) {
             return item;
@@ -567,7 +571,11 @@ alt.Player.prototype.addClonedItem = function addClonedItem(data) {
 
     if (base.abilities.stack && inventoryIndex !== -1) {
         if (this.inventory[inventoryIndex].quantity) {
+<<<<<<< HEAD
             this.inventory[inventoryIndex].quantity += quantity;
+=======
+            this.inventory[inventoryIndex].quantity += data.quantity;
+>>>>>>> a1d805afb47e39397866ad772f18272fdf90548a
             this.saveInventory();
             return true;
         }
@@ -714,6 +722,10 @@ alt.Player.prototype.syncInventory = function syncInventory(cleanse = false) {
         inventory.forEach(item => {
             if (item) {
                 item = objectToNull(item);
+
+                if (item && !item.quantity) {
+                    item.quantity = 1;
+                }
             }
         });
         this.data.inventory = JSON.stringify(inventory);

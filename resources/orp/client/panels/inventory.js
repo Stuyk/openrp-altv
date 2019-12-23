@@ -98,6 +98,7 @@ export function showDialogue() {
 function ready() {
     if (!webview) return;
     showCursor(true);
+    native.triggerScreenblurFadeIn(0);
 }
 
 export function fetchEquipment(value) {

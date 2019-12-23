@@ -14,11 +14,12 @@ const accounts = {};
 const characters = {};
 let vehicleID;
 
-export function cacheAccount(userID, id, rank) {
+export function cacheAccount(userID, id, rank, email = null) {
     accounts[userID] = {
         pgid: userID,
         id,
-        rank
+        rank,
+        email
     };
 }
 

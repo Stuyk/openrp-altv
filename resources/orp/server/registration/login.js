@@ -206,4 +206,15 @@ alt.on('sync:Player', player => {
     player.timeoutTicker = setTimeout(() => {
         alt.emit('parse:Player', player);
     }, 10000);
+
+    const products = player.getMeta('gumroad:Products');
+    if (products && products.length >= 1) {
+        player.send(
+            `{00FF00} You have {FFFF00}${products.length}{00FF00} active subscriptions.`
+        );
+
+        products.forEach(product => {
+            player.send(`{00FF00}Subscribed to Product:{FF0000} ${product}`);
+        });
+    }
 });

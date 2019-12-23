@@ -19,6 +19,7 @@ const ObjectiveFlags = {
 };
 
 const emptyVec = { x: 0, y: 0, z: 0 };
+let tapThreshold = 0;
 let objective;
 let displayInterval;
 let lastCheck = Date.now() + 2500;
@@ -92,10 +93,46 @@ function display() {
 }
 
 function checkObjective(dist) {
-    alt.log('Checking Objective...');
     if (dist > objective.range) {
         return;
     }
 
+    if (isFlagged(objective.flags, ObjectiveFlags.TAP_ACTION_KEY)) {
+        if (!tapActionKey()) {
+            return;
+        }
+    }
+
+    if (isFlagged(objective.flags, ObjectiveFlags.HOLD_ACTION_KEY)) {
+        if (!holdActionKey()) {
+            return;
+        }
+    }
+
     alt.emitServer('objective:Test');
 }
+
+function holdActionKey() {
+    if (!native.isControlPressed(0, 38)) {
+        return false;
+    }
+
+    return true;
+}
+
+function tapActionKey() {
+    if (native.isControlPressed(0, 38)) {
+        tapThreshold += 1;
+    }
+
+    if (tapThreshold >= 5) {
+        tapThreshold = 0;
+        return true;
+    }
+
+    return false;
+}
+
+//
+// HOLD_ACTION_KEY: 16,
+// TAP_ACTION_KEY: 32,

@@ -32,6 +32,9 @@ alt.on('entityEnterColshape', (colshape, entity) => {
 
         player.colshape = colshape;
         player.sector = colshape.sector;
+    }
+
+    if (isPlayer && entity.dimension === 0) {
         forwardEventToPlayer(colshape, player);
         forwardColshapeEnter(colshape, player);
     }

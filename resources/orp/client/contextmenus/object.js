@@ -2,7 +2,7 @@ import * as alt from 'alt';
 import * as native from 'natives';
 // import { ContextMenu } from '/client/systems/context.js';
 import { distance } from '/client/utility/vector.js';
-import { playAnimation } from '/client/systems/animation.js';
+import { playAnimation, loadAnim } from '/client/systems/animation.js';
 import { appendContextItem, setContextTitle } from '/client/panels/hud.js';
 import { findDoor } from '/client/systems/doors.js';
 import { getLevel } from '/client/systems/xp.js';
@@ -446,47 +446,171 @@ function hospitalBed(ent) {
 }
 
 function chair(ent) {
-    alt.log('Disabled sitting for now.');
-    /*
-    if (alt.Player.local.vehicle) return;
-    native.freezeEntityPosition(ent, true);
-    let pos = native.getEntityCoords(ent, false);
-    let heading = native.getEntityHeading(ent) + 180.0;
+    appendContextItem('Male Genric Idle A', false, 'handle:Seat', {
+        ent,
+        anim: { dict: 'amb@prop_human_seat_chair@male@generic@idle_a', name: 'idle_a' }
+    });
 
-    if (alt.Player.local.sitting) {
-        alt.Player.local.sitting = false;
-        native.clearPedTasksImmediately(alt.Player.local.scriptID);
-        native.clearPedSecondaryTask(alt.Player.local.scriptID);
+    appendContextItem('Male Thinking A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@male@left_elbow_on_knee@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Male Skinny A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@male@generic_skinny@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Male Relaxed A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@male@right_foot_out@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Generic Male', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair_mp@male@generic@idle_a',
+            name: 'idle_b'
+        }
+    });
+
+    appendContextItem('Generic Female', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair_mp@female@heels@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Female Folded Idle A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@female@arms_folded@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Female Crossed Idle A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@female@legs_crossed@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Female Proper Idle A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@female@proper_skinny@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    appendContextItem('Female Thinking A', false, 'handle:Seat', {
+        ent,
+        anim: {
+            dict: 'amb@prop_human_seat_chair@male@elbows_on_knees@idle_a',
+            name: 'idle_a'
+        }
+    });
+
+    setContextTitle('Sit');
+}
+
+alt.on('handle:Seat', data => {
+    const ent = data.ent;
+    const anim = data.anim;
+
+    if (alt.Player.local.vehicle) {
         return;
     }
 
-    if (native.hasObjectBeenBroken(ent)) return;
-    native.taskStartScenarioAtPosition(
+    if (native.hasObjectBeenBroken(ent)) {
+        return;
+    }
+
+    native.setEntityCollision(ent, false, false);
+    native.freezeEntityPosition(ent, true);
+    const pos = native.getEntityCoords(ent, false);
+    const heading = native.getEntityHeading(ent) + 180.0;
+    const local = alt.Player.local.scriptID;
+
+    if (alt.Player.local.isSeated) {
+        alt.Player.local.isSeated = false;
+        native.clearPedTasksImmediately(alt.Player.local.scriptID);
+        native.clearPedSecondaryTask(alt.Player.local.scriptID);
+        native.setEntityCollision(local, true, true);
+        native.freezeEntityPosition(local, false);
+        native.setEntityCoords(
+            local,
+            pos.x,
+            pos.y,
+            pos.z + 0.5,
+            false,
+            false,
+            false,
+            false
+        );
+        alt.off('keyup', clearSit);
+    }
+
+    alt.on('keyup', clearSit);
+    alt.Player.local.isSeated = true;
+    alt.Player.local.chair = ent;
+    native.setEntityHeading(local, heading);
+    native.setEntityCollision(local, false, false);
+    native.freezeEntityPosition(local, true);
+    native.setEntityCoords(local, pos.x, pos.y, pos.z - 0.5, false, false, false, false);
+    loadAnim(anim.dict).then(() => {
+        native.taskPlayAnim(
+            local,
+            anim.dict,
+            anim.name,
+            1,
+            0,
+            -1,
+            1,
+            1,
+            false,
+            false,
+            false
+        );
+    });
+});
+
+function clearSit(key) {
+    if (key !== 'W'.charCodeAt(0)) {
+        return;
+    }
+
+    alt.off('keyup', clearSit);
+    alt.Player.local.isSeated = false;
+    const pos = alt.Player.local.pos;
+    const local = alt.Player.local.scriptID;
+    native.setEntityCoords(
         alt.Player.local.scriptID,
-        'PROP_HUMAN_SEAT_BENCH',
         pos.x,
         pos.y,
         pos.z + 0.5,
-        heading,
-        -1,
-        true,
-        true
+        false,
+        false,
+        false,
+        false
     );
-
-    native.setFollowPedCamViewMode(2);
-    alt.Player.local.sitting = true;
-    alt.on('keyup', clearSit);
-    */
-}
-
-function clearSit(key) {
-    if (alt.Player.local.vehicle) return;
-    if (key === 'W'.charCodeAt(0)) {
-        alt.off('keyup', clearSit);
-        native.clearPedTasksImmediately(alt.Player.local.scriptID);
-        native.clearPedSecondaryTask(alt.Player.local.scriptID);
-        alt.Player.local.sitting = false;
-    }
+    native.clearPedTasksImmediately(local);
+    native.clearPedSecondaryTask(local);
+    native.setEntityCollision(alt.Player.local.chair, true, false);
+    native.freezeEntityPosition(local, false);
+    native.setEntityCollision(local, true, true);
 }
 
 function gasPump(ent) {

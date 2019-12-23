@@ -192,6 +192,10 @@ export function drop(player, hash) {
     player.notify(`Dropped: ${clonedItem.name} ${clonedItem.quantity}x`);
     const randomPos = utilityVector.randPosAround(player.pos, 2);
     alt.emitClient(null, 'inventory:ItemDrop', player, clonedItem, randomPos);
+
+
+
+    
     player.isDropping = false;
 }
 

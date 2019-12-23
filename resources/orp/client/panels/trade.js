@@ -59,7 +59,7 @@ function ready() {
         return;
     }
 
-    native.triggerScreenblurFadeIn(1000);
+    native.triggerScreenblurFadeIn(0);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
     showCursor(true);

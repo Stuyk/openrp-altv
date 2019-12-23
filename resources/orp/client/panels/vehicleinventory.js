@@ -49,7 +49,7 @@ function ready() {
     const playerInventory = JSON.parse(alt.Player.local.getMeta('inventory'));
     webview.emit('vehinv:SetInventory', playerInventory);
 
-    native.triggerScreenblurFadeIn(1000);
+    native.triggerScreenblurFadeIn(0);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
 }

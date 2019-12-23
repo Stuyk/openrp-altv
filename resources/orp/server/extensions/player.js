@@ -413,7 +413,7 @@ alt.Player.prototype.subToZero = function subToZero(amount) {
 };
 
 alt.Player.prototype.taxIncome = function taxIncome(percentage, useHighest, reason) {
-    const cash = player.data.cash;
+    const cash = this.data.cash;
     let cashTaxAmount = cash * percentage;
     this.subToZero(cashTaxAmount);
     this.send(`You were taxed: $${cashTaxAmount.toFixed(2) * 1}`);

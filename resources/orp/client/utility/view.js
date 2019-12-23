@@ -30,8 +30,7 @@ export class View {
         if (!currentView.view) {
             currentView.view = new alt.WebView(url);
             currentView.events = [];
-        }
-        else {
+        } else {
             showCursor(false);
         }
 
@@ -62,6 +61,10 @@ export class View {
         currentView.view.url = 'http://resource/client/html/empty/index.html';
         currentView.view.unfocus();
         currentView.events = [];
+
+        for (let i = 0; i < 5; i++) {
+            native.triggerScreenblurFadeOut(0);
+        }
 
         showCursor(false);
         native.displayRadar(true);

@@ -10,7 +10,12 @@ export const ObjectiveFlags = {
     IS_CAPTURE: 8,
     HOLD_ACTION_KEY: 16,
     TAP_ACTION_KEY: 32,
-    MAX: 63
+    IS_IN_JOB_VEHICLE: 64,
+    NO_DIEING: 128,
+    HAS_WEAPON: 256,
+    DELAYED: 512,
+    DESTROY: 1024,
+    MAX: 2047
 };
 
 class Objective {
@@ -130,6 +135,16 @@ class Objective {
             }
         }
 
+        if (isFlagged(this.flags, ObjectiveFlags.IS_IN_JOB_VEHICLE)) {
+            if (!player.vehicle) {
+                return false;
+            }
+
+            if (!player.vehicle.isJobVehicle) {
+                return false;
+            }
+        }
+
         if (isFlagged(this.flags, ObjectiveFlags.ON_FOOT)) {
             if (player.vehicle) {
                 return false;
@@ -144,11 +159,20 @@ class Objective {
             }
         }
 
+        if (isFlagged(this.flags, ObjectiveFlags.HAS_WEAPON)) {
+            const equipment = player.equipment[11];
+            const isWeapon = equipment && equipment.base.includes('weapon');
+            if (!isWeapon) {
+                return false;
+            }
+        }
+
         const isCapture = isFlagged(this.flags, ObjectiveFlags.IS_CAPTURE);
         const isTap = isFlagged(this.flags, ObjectiveFlags.TAP_ACTION_KEY);
         const isHold = isFlagged(this.flags, ObjectiveFlags.HOLD_ACTION_KEY);
+        const isDestroy = isFlagged(this.flags, ObjectiveFlags.DESTROY);
 
-        if (isCapture || isTap || isHold) {
+        if (isCapture || isTap || isHold || isDestroy) {
             if (!this.isProgressExceeded()) {
                 return false;
             }
@@ -310,9 +334,67 @@ class AddVehicle extends Objective {
     }
 }
 
+class RemoveVehicle extends Objective {
+    constructor(pos, range, markerType, color) {
+        super(pos, range, markerType, color);
+        this.flags = ObjectiveFlags.IS_IN_JOB_VEHICLE;
+    }
+
+    check(player) {
+        if (this.checkingObjective) {
+            return false;
+        }
+
+        if (!this.isPlayerInRange(player)) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        if (!this.areObjectivePropsValid(player)) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        this.markAsUnchecked();
+        this.finishObjective();
+        return true;
+    }
+}
+
+class DestroyObject extends Objective {
+    constructor(pos, range, markerType, color) {
+        super(pos, range, markerType, color);
+        this.objectType = 'hei_prop_heist_box';
+        this.flags =
+            ObjectiveFlags.HAS_WEAPON | ObjectiveFlags.ON_FOOT | ObjectiveFlags.DESTROY;
+    }
+
+    check(player) {
+        if (this.checkingObjective) {
+            return false;
+        }
+
+        if (!this.isPlayerInRange(player)) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        if (!this.areObjectivePropsValid(player)) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        this.markAsUnchecked();
+        this.finishObjective();
+        return true;
+    }
+}
+
 export const Objectives = {
     Point,
-    AddVehicle
+    AddVehicle,
+    RemoveVehicle,
+    DestroyObject
 };
 
 export class Job {
@@ -435,6 +517,18 @@ export class Job {
         this.freeze = false;
     }
 
+    addJobVehicle(player, vehicleType, pos, heading) {
+        const vehicle = new alt.Vehicle(vehicleType, pos.x, pos.y, pos.z, 0, 0, heading);
+        vehicle.isJobVehicle = true;
+        vehicle.noSave = true;
+        vehicle.setSyncedMeta('isJobVehicle', true);
+        this.party.forEach(partyMember => {
+            partyMember.vehicles.push(vehicle);
+        });
+
+        alt.emitClient(player, 'objective:SetIntoVehicle', vehicle);
+    }
+
     checkObjective(player) {
         if (this.freeze) {
             return;
@@ -448,10 +542,29 @@ export class Job {
             return;
         }
 
+        if (objective.constructor.name === 'AddVehicle') {
+            this.addJobVehicle(
+                player,
+                objective.vehicleType,
+                objective.pos,
+                objective.heading
+            );
+        }
+
+        if (objective.constructor.name === 'RemoveVehicle') {
+            this.party.forEach(partyMember => {
+                this.removeJobVehicles(partyMember, true);
+            });
+        }
+
         this.nextObjective();
     }
 }
 
+// Official
+alt.onClient('objective:Died', objectiveDied);
+
+// Unconfirmed
 alt.onClient('objective:Test', objectiveTest);
 alt.onClient('job:AddPlayer', addPlayer);
 
@@ -492,4 +605,18 @@ function addPlayer(player, data, job = null) {
 
     job = player.job;
     job.addPlayer(target);
+}
+
+/**
+ *
+ * @param {*} player
+ * @param {Job} job
+ */
+function objectiveDied(player, job = null) {
+    if (!player.job) {
+        return;
+    }
+
+    job = player.job;
+    job.fail();
 }

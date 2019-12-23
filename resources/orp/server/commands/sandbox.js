@@ -135,14 +135,51 @@ const positions = [
 chat.registerCmd('testjob', player => {
     const objectives = [];
 
-    const flags = ObjectiveFlags.ON_FOOT;
+    objectives.push(
+        new Objectives.DestroyObject(
+            { x: -1217.9599609375, y: -893.2340087890625, z: 12.676430702209473 },
+            20,
+            1,
+            { r: 255, g: 255, b: 255, a: 255 }
+        )
+    );
 
+    objectives.push(
+        new Objectives.AddVehicle(
+            { x: -1234.8282470703125, y: -887.120361328125, z: 12.394454956054688 },
+            5,
+            1,
+            { r: 255, g: 255, b: 255, a: 255 },
+            'mule',
+            0
+        )
+    );
+
+    const flags = ObjectiveFlags.IS_IN_JOB_VEHICLE | ObjectiveFlags.POINT;
     positions.forEach(pos => {
         const objective = new Objectives.Point(pos, 2, 1);
         objective.addBlip(1, 1, 'Walk to this bs.');
         objective.setModifierFlags(flags);
         objectives.push(objective);
     });
+
+    objectives.push(
+        new Objectives.RemoveVehicle(
+            { x: -1262.722412109375, y: -925.7390747070312, z: 11.198620796203613 },
+            3,
+            1,
+            { r: 255, g: 255, b: 255, a: 255 }
+        )
+    );
+
+    objectives.push(
+        new Objectives.Point(
+            { x: -1267.330810546875, y: -940.5103759765625, z: 11.33724594116211 },
+            2,
+            1,
+            { r: 255, g: 255, b: 255, a: 255 }
+        )
+    );
 
     const jobInstance = new Job(player, [...objectives]);
 });

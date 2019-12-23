@@ -50,8 +50,12 @@ function lockState(state) {
 }
 
 function closeDialogue() {
-    if (!webview) return;
+    if (!webview) {
+        return;
+    }
+
     alt.emitServer('trade:KillTrade');
+    killTrade();
 }
 
 function ready() {
@@ -84,7 +88,9 @@ function ready() {
     alt.emitServer('trade:SetTargetSlotsAvailable', nullSlotCount);
 }
 
-alt.onServer('trade:KillTrade', () => {
+alt.onServer('trade:KillTrade', killTrade);
+
+function killTrade() {
     if (!webview) {
         return;
     }
@@ -94,7 +100,7 @@ alt.onServer('trade:KillTrade', () => {
     alt.emit('chat:Hide', false);
     webview.close();
     showCursor(false);
-});
+}
 
 alt.onServer('trade:SetOfferedItems', items => {
     if (!webview) return;

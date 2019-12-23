@@ -123,7 +123,7 @@ function lockState(player, lockState) {
 }
 
 function killTrade(player) {
-    if (!player || player.valid) {
+    if (!player || !player.valid) {
         return;
     }
 

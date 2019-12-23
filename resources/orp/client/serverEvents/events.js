@@ -8,7 +8,6 @@ import * as blipsBlipHelper from '/client/blips/bliphelper.js';
 import * as systemsCharacter from '/client/systems/character.js';
 
 // Systems
-import * as systemsInventory from '/client/systems/inventory.js';
 import * as systemsSound from '/client/systems/sound.js';
 import * as systemsAnimation from '/client/systems/animation.js';
 import * as systemsVehicles from '/client/systems/vehicles.js';
@@ -80,13 +79,6 @@ alt.onServer('clothing:CloseDialogue', panelsClothing.closeDialogue);
 // Inventory
 // Sync
 alt.onServer('inventory:FetchItems', panelsInventory.fetchItems);
-// Drop Item
-alt.onServer('inventory:ItemDrop', systemsInventory.itemDrop);
-// Pickup Item
-alt.onServer('inventory:ItemPickup', systemsInventory.itemPickup);
-// Use RepairKit from Inventory
-alt.onServer('inventory:UseRepairKit', systemsInventory.useRepairKit);
-alt.onServer('inventory:UseGasCan', systemsInventory.useGasCan);
 
 // =======================================================
 // Sound

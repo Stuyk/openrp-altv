@@ -7,7 +7,7 @@ import { objectToNull } from '../utility/object.js';
 import { actionMessage } from '../chat/chat.js';
 
 // hash, itemdata
-let ItemDrops = new Map();
+const ItemDrops = [];
 
 export function rename(player, hash, newName) {
     let index = player.inventory.findIndex(
@@ -133,10 +133,15 @@ export function dropNewItem(pos, item) {
     let newHash = generateHash(JSON.stringify({ hash: item.hash, clonedItem }));
     clonedItem.hash = newHash;
 
-    // Setup the dropped item.
-    ItemDrops.set(newHash, clonedItem);
     const randomPos = utilityVector.randPosAround(pos, 2);
-    alt.emitClient(null, 'inventory:ItemDrop', null, clonedItem, randomPos);
+    // Setup the dropped item.
+    ItemDrops.push({
+        pos: randomPos,
+        hash: newHash,
+        item: clonedItem
+    });
+
+    alt.emitClient(null, 'inventory:ItemDrops', JSON.stringify(ItemDrops));
 }
 
 export function drop(player, hash) {
@@ -186,16 +191,18 @@ export function drop(player, hash) {
     let newHash = generateHash(JSON.stringify({ hash, clonedItem }));
     clonedItem.hash = newHash;
 
-    // Setup the dropped item.
-    ItemDrops.set(newHash, clonedItem);
-
-    player.notify(`Dropped: ${clonedItem.name} ${clonedItem.quantity}x`);
     const randomPos = utilityVector.randPosAround(player.pos, 2);
-    alt.emitClient(null, 'inventory:ItemDrop', player, clonedItem, randomPos);
 
+    // Setup the dropped item.
+    ItemDrops.push({
+        hash: newHash,
+        item: clonedItem,
+        pos: randomPos
+    });
 
-
-    
+    player.playAudio('drop');
+    player.notify(`Dropped: ${clonedItem.name} ${clonedItem.quantity}x`);
+    alt.emitClient(null, 'inventory:ItemDrops', JSON.stringify(ItemDrops));
     player.isDropping = false;
 }
 
@@ -216,16 +223,24 @@ export function destroy(player, hash) {
 }
 
 export function pickup(player, hash) {
-    if (player.pickingUpItem) return;
-    if (!ItemDrops.has(hash)) return;
-    player.pickingUpItem = true;
+    if (player.pickingUpItem) {
+        return;
+    }
 
-    const item = { ...ItemDrops.get(hash) };
-    ItemDrops.delete(hash);
+    const itemIndex = ItemDrops.findIndex(item => item.hash === hash);
+    if (itemIndex <= -1) {
+        return;
+    }
+
+    player.pickingUpItem = true;
+    const itemRef = { ...ItemDrops[itemIndex] };
+    const item = itemRef.item;
+    ItemDrops.splice(itemIndex, 1);
 
     if (!player.addClonedItem(item)) {
-        ItemDrops.set(hash, item);
+        ItemDrops.push(itemRef);
         player.pickingUpItem = false;
+        alt.emitClient(null, 'inventory:ItemDrops', JSON.stringify(ItemDrops));
         return;
     }
 
@@ -276,3 +291,7 @@ export function addBoundWeapon(player, weaponName, name = undefined) {
     player.addItem('boundweapon', 1, props, false, false, useCustomName);
     return true;
 }
+
+alt.on('sync:Player', player => {
+    alt.emitClient(player, 'inventory:ItemDrops', JSON.stringify(ItemDrops));
+});

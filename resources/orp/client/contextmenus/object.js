@@ -588,6 +588,14 @@ alt.on('handle:Seat', data => {
 });
 
 function clearSit(key) {
+    if (alt.Player.local.getMeta('viewOpen')) {
+        return;
+    }
+
+    if (alt.Player.local.getMeta('chat')) {
+        return;
+    }
+
     if (key !== 'W'.charCodeAt(0)) {
         return;
     }

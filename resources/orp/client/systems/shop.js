@@ -235,7 +235,7 @@ function shopKey() {
     if (currentShop === undefined) return;
     native.beginTextCommandDisplayHelp('STRING');
     native.addTextComponentSubstringPlayerName(currentShop.message);
-    native.endTextCommandDisplayHelp(0, false, true, -1);
+    native.endTextCommandDisplayHelp(0, false, false, -1);
 
     if (native.isControlJustReleased(0, 38)) {
         if (timeout) return;

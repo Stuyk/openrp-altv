@@ -6,6 +6,7 @@ import { playAudio } from '/client/systems/sound.js';
 import { playParticleFX } from '/client/utility/particle.js';
 import { distance } from '/client/utility/vector.js';
 import { isFlagged } from '/client/utility/flags.js';
+import { helpText } from '/client/utility/helpText.js';
 
 const ObjectiveFlags = {
     MIN: 0,
@@ -30,7 +31,7 @@ let objective;
 let displayInterval;
 let lastCheck = Date.now() + 2500;
 let blip;
-let targetHit = false;
+let lastHit = Date.now() + 250;
 let targetObject;
 let targetObjectLastUpdate = Date.now();
 let lastDelay = Date.now() + 1000;
@@ -40,9 +41,6 @@ alt.onServer('objective:Info', objectiveInfo);
 alt.onServer('objective:SetIntoVehicle', setIntoVehicle);
 
 function objectiveInfo(value) {
-    alt.log('Got Data?');
-    alt.log(value);
-
     if (displayInterval) {
         alt.clearInterval(displayInterval);
         displayInterval = undefined;
@@ -53,18 +51,21 @@ function objectiveInfo(value) {
         blip = undefined;
     }
 
-    if (!value) {
-        objective = undefined;
-        return;
-    }
-
     if (targetObject) {
         native.deleteEntity(targetObject);
         targetObject = undefined;
     }
 
-    lastCheck = Date.now() + 2500;
+    alt.Player.local.inJob = false;
+
+    if (!value) {
+        objective = undefined;
+        return;
+    }
+
     objective = JSON.parse(value);
+    alt.Player.local.inJob = true;
+    lastCheck = Date.now() + 250;
     blip = createBlip(
         'job',
         objective.pos,
@@ -79,6 +80,7 @@ function objectiveInfo(value) {
         native.requestModel(hash);
     }
 
+    targetObjectLastUpdate = Date.now();
     displayInterval = alt.setInterval(display, 0);
 }
 
@@ -90,6 +92,8 @@ function display() {
     if (alt.Player.local.getMeta('viewOpen')) {
         return;
     }
+
+    helpText(objective.description);
 
     const dist = distance(alt.Player.local.pos, objective.pos);
     if (Date.now() > lastCheck) {
@@ -110,7 +114,7 @@ function display() {
     if (shouldDrawMarker) {
         drawMarker(
             objective.markerType,
-            { x: objective.pos.x, y: objective.pos.y, z: objective.pos.z - 0.5 },
+            { x: objective.pos.x, y: objective.pos.y, z: objective.pos.z - 1 },
             emptyVec,
             emptyVec,
             { x: 0.5, y: 0.5, z: 3 },
@@ -121,7 +125,7 @@ function display() {
         );
     }
 
-    if (targetObjectLastUpdate < Date.now() && dist < 20) {
+    if (targetObjectLastUpdate < Date.now() && dist < 50) {
         targetObjectLastUpdate = Date.now() + 2500;
 
         if (targetObject) {
@@ -140,22 +144,34 @@ function display() {
             false
         );
 
+        native.setEntityAlpha(targetObject, objective.objectAlpha, false);
         native.setEntityInvincible(targetObject, true);
         native.freezeEntityPosition(targetObject, true);
     }
 
-    if (targetObject && dist < 20) {
+    if (targetObject && dist < 50) {
         const [isFreeAiming, ent] = native.getEntityPlayerIsFreeAimingAt(
             alt.Player.local.scriptID,
             targetObject
         );
 
-        targetHit = false;
         const firing = native.isControlPressed(0, 24);
         if (isFreeAiming && ent === targetObject) {
             if (firing) {
-                targetHit = true;
+                alt.emit('objective:Hit');
             }
+
+            drawMarker(
+                0,
+                { x: objective.pos.x, y: objective.pos.y, z: objective.pos.z + 0.75 },
+                emptyVec,
+                emptyVec,
+                { x: 0.2, y: 0.2, z: 0.5 },
+                255,
+                0,
+                0,
+                125
+            );
         }
     }
 
@@ -225,15 +241,20 @@ function checkObjective(dist) {
     }
 
     if (isFlagged(objective.flags, ObjectiveFlags.DESTROY)) {
-        if (!targetHit) {
-            return;
-        }
-
-        targetHit = false;
+        return;
     }
 
     alt.emitServer('objective:Test');
 }
+
+alt.on('objective:Hit', () => {
+    if (Date.now() < lastHit) {
+        return;
+    }
+
+    lastHit = Date.now() + 250;
+    alt.emitServer('objective:Test');
+});
 
 function holdActionKey() {
     if (!native.isControlPressed(0, 38)) {

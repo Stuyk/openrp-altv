@@ -127,59 +127,32 @@ chat.registerCmd('tempdoor', (player, args) => {
 });
 
 const positions = [
-    { x: -1234.08642578125, y: -902.2484130859375, z: 12.115489959716797 },
-    { x: -1241.5947265625, y: -907.8602294921875, z: 11.793697357177734 },
-    { x: -1255.260986328125, y: -917.5906982421875, z: 11.235647201538086 }
+    { x: 20.420696258544922, y: -1090.2625732421875, z: 29.7962646484375 },
+    { x: 20.081329345703125, y: -1083.61962890625, z: 29.79705810546875 },
+    { x: 16.442224502563477, y: -1077.5777587890625, z: 29.797040939331055 },
+    { x: 20.236013412475586, y: -1074.916015625, z: 29.797040939331055 },
+    { x: 13.37805461883545, y: -1084.8057861328125, z: 29.795671463012695 },
+    { x: 15.975090980529785, y: -1091.344482421875, z: 29.797260284423828 }
 ];
 
 chat.registerCmd('testjob', player => {
     const objectives = [];
 
-    objectives.push(
-        new Objectives.DestroyObject(
-            { x: -1217.9599609375, y: -893.2340087890625, z: 12.676430702209473 },
-            20,
-            1,
-            { r: 255, g: 255, b: 255, a: 255 }
-        )
-    );
-
-    objectives.push(
-        new Objectives.AddVehicle(
-            { x: -1234.8282470703125, y: -887.120361328125, z: 12.394454956054688 },
-            5,
-            1,
-            { r: 255, g: 255, b: 255, a: 255 },
-            'mule',
-            0
-        )
-    );
-
-    const flags = ObjectiveFlags.IS_IN_JOB_VEHICLE | ObjectiveFlags.POINT;
     positions.forEach(pos => {
-        const objective = new Objectives.Point(pos, 2, 1);
-        objective.addBlip(1, 1, 'Walk to this bs.');
-        objective.setModifierFlags(flags);
-        objectives.push(objective);
+        const shootObjective = new Objectives.DestroyObject(pos, 50, 1, {
+            r: 255,
+            g: 255,
+            b: 255,
+            a: 75
+        });
+        shootObjective.setOptions({
+            description: 'Shoot the object',
+            blip: { sprite: 1, color: 1 },
+            maxProgress: 1,
+            objectType: 'gr_prop_gr_target_02a'
+        });
+        objectives.push(shootObjective);
     });
-
-    objectives.push(
-        new Objectives.RemoveVehicle(
-            { x: -1262.722412109375, y: -925.7390747070312, z: 11.198620796203613 },
-            3,
-            1,
-            { r: 255, g: 255, b: 255, a: 255 }
-        )
-    );
-
-    objectives.push(
-        new Objectives.Point(
-            { x: -1267.330810546875, y: -940.5103759765625, z: 11.33724594116211 },
-            2,
-            1,
-            { r: 255, g: 255, b: 255, a: 255 }
-        )
-    );
 
     const jobInstance = new Job(player, [...objectives]);
 });

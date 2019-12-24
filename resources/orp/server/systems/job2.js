@@ -37,6 +37,13 @@ class Objective {
             sprite: 1,
             color: 1
         };
+        this.description = 'Go to the point.';
+        this.objectType = 'hei_prop_heist_box';
+        this.objectAlpha = 255;
+
+        if (this.range < 2) {
+            this.range = 3;
+        }
     }
 
     /**
@@ -44,6 +51,26 @@ class Objective {
      */
     start() {
         this.startTime = Date.now();
+    }
+
+    /**
+     *
+     * @param {Object} options
+     * @param {String} [options.description] Text to display.
+     * @param {Number} [options.progress] Current progress.
+     * @param {Number} [options.maxProgress] Maximum progress to mark as complete.
+     * @param {{x, y, z}} [options.pos] The position to set the objective to.
+     * @param {Number} [options.range] The range of the objective. Recommended: 3
+     * @param {{r, g, b}} [options.color] The color of the Marker.
+     * @param {Number} [options.flags] The objective modifiers to use.
+     * @param {{sprite, color, description}} [options.blip] The blip type and color to use.
+     * @param {String} [objectType] Object string for an object model.
+     * @param {Number} [objectAlpha] The opacity of this object. 0 - 255.
+     */
+    setOptions(options) {
+        Object.keys(options).forEach(key => {
+            this[key] = options[key];
+        });
     }
 
     /**

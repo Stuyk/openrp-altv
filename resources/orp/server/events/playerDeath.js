@@ -127,11 +127,15 @@ function handleMdcRegistration(target, killer) {
     if (!killer) return;
 
     if (killer.constructor.name === 'Vehicle') {
-        const owner = alt.Player.all.find(p => p.vehicles.find(veh => veh === killer));
-        if (!owner) return;
-        if (target === owner) return;
+        if (!killer) {
+            return;
+        }
 
-        appendToMdc(target, owner, 'Vehicular Manslaughter');
+        if (!killer.owner) {
+            return;
+        }
+
+        appendToMdc(target, killer.owner, 'Vehicular Manslaughter');
         return;
     }
 

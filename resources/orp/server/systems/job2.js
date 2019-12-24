@@ -21,13 +21,13 @@ export const ObjectiveFlags = {
 };
 
 class Objective {
-    constructor(pos, range, markerType = -1, color = { r: 255, g: 255, b: 255, a: 100 }) {
+    constructor(pos, range, objectiveIdentifier = undefined) {
         this.progress = 0;
         this.maxProgress = 10;
         this.pos = pos;
         this.range = range;
-        this.markerType = markerType;
-        this.color = color;
+        this.markerType = -1;
+        this.color = { r: 255, g: 255, b: 255, a: 100 };
         this.checkingObjective = false;
         this.flags = 0;
         this.baseItemRequirements = [];
@@ -43,6 +43,7 @@ class Objective {
         this.objectType = undefined;
         this.objectAlpha = 255;
         this.hash = generateHash(JSON.stringify(this));
+        this.objectiveIdentifier = objectiveIdentifier;
 
         if (this.range < 2) {
             this.range = 3;
@@ -314,8 +315,8 @@ class Objective {
 }
 
 class Point extends Objective {
-    constructor(pos, range, markerType, color) {
-        super(pos, range, markerType, color);
+    constructor(pos, range, objectiveIdentifier = undefined) {
+        super(pos, range, objectiveIdentifier);
     }
 
     check(player, hash = undefined) {
@@ -342,8 +343,14 @@ class Point extends Objective {
 }
 
 class AddVehicle extends Objective {
-    constructor(pos, range, markerType, color, vehicleType = 'blista', heading = 0) {
-        super(pos, range, markerType, color);
+    constructor(
+        pos,
+        range,
+        objectiveIdentifier = undefined,
+        vehicleType = 'blista',
+        heading = 0
+    ) {
+        super(pos, range, objectiveIdentifier);
         this.vehicleType = vehicleType;
         this.heading = heading;
     }
@@ -365,8 +372,8 @@ class AddVehicle extends Objective {
 }
 
 class RemoveVehicle extends Objective {
-    constructor(pos, range, markerType, color) {
-        super(pos, range, markerType, color);
+    constructor(pos, range, objectiveIdentifier = undefined) {
+        super(pos, range, objectiveIdentifier);
         this.flags = ObjectiveFlags.IS_IN_JOB_VEHICLE;
     }
 
@@ -392,8 +399,8 @@ class RemoveVehicle extends Objective {
 }
 
 class DestroyObject extends Objective {
-    constructor(pos, range, markerType, color) {
-        super(pos, range, markerType, color);
+    constructor(pos, range, objectiveIdentifier = undefined) {
+        super(pos, range, objectiveIdentifier);
         this.objectType = 'hei_prop_heist_box';
         this.flags =
             ObjectiveFlags.HAS_WEAPON | ObjectiveFlags.ON_FOOT | ObjectiveFlags.DESTROY;
@@ -421,8 +428,8 @@ class DestroyObject extends Objective {
 }
 
 class MiniGame extends Objective {
-    constructor(pos, range, markerType, color, miniGameIdentifier) {
-        super(pos, range, markerType, color);
+    constructor(pos, range, objectiveIdentifier, miniGameIdentifier) {
+        super(pos, range, objectiveIdentifier);
         this.flags = ObjectiveFlags.ON_FOOT | ObjectiveFlags.MINIGAME;
         this.miniGameIdentifier = miniGameIdentifier;
     }
@@ -555,11 +562,12 @@ export class Job {
     }
 
     nextObjective() {
+        let lastObjective;
         this.freeze = true;
         if (!this.started) {
             this.started = true;
         } else {
-            this.objectives.shift();
+            lastObjective = this.objectives.shift();
         }
 
         const objective = this.objectives[0];
@@ -577,9 +585,12 @@ export class Job {
 
         objective.start();
         this.party.forEach(player => {
+            if (lastObjective) {
+                alt.emit('job:ObjectiveComplete', this.identifier, lastObjective, player);
+            }
+
             player.playAudio('complete');
             objective.sync(player);
-            alt.emit('job:ObjectiveComplete', this.identifier, player);
         });
 
         this.freeze = false;

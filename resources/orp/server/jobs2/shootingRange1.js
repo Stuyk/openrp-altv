@@ -65,10 +65,13 @@ function completedJob(identifier, player) {
     player.notify('Added 1 Unrefined Metal');
 }
 
-function completedObjective(identifier, player) {
+function completedObjective(identifier, objective, player) {
     if (jobIdentifier !== identifier) {
         return;
     }
 
-    player.send('{00FF00} Nice Shot!');
+    if (!objective.identifier) {
+        player.send('{00FF00} Nice Shot!');
+        return;
+    }
 }

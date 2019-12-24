@@ -17,6 +17,10 @@ const currentSkills = {
 export function addXP(player, skill, xpToAdd) {
     if (parseInt(xpToAdd) > 13034431) return;
 
+    if (skill === 'notoriety' || skill === 'nobility') {
+        return;
+    }
+
     skill = skill.toLowerCase();
     let oldLevel = 1;
     let newLevel;

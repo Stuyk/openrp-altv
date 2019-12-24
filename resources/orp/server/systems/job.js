@@ -1130,7 +1130,14 @@ export function checkRestrictions(player) {
  * };
  */
 export function quitTarget(player) {
-    if (!player.jobber) return;
+    if (!player || !player.valid) {
+        return;
+    }
+
+    if (!player.jobber) {
+        return;
+    }
+
     const dist = distance(player.pos, player.jobber.position);
     const employee = player.jobber.employee;
     const fare = player.jobber.fare;
@@ -1138,7 +1145,7 @@ export function quitTarget(player) {
     player.notify('You have cancelled your request.');
 
     // Employee doesn't exist; don't pay.
-    if (!employee) {
+    if (!employee || !employee.valid) {
         player.jobber = undefined;
         return;
     }

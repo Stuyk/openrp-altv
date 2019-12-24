@@ -39,11 +39,7 @@ export class Interaction {
 
     // Call the server event from anywhere on the server-side.
     exec(player) {
-        if (!player) {
-            return;
-        }
-
-        if (!player.valid) {
+        if (!player || !player.valid) {
             return;
         }
 
@@ -58,8 +54,15 @@ export class Interaction {
 
 // Synchronize Blips
 export function syncBlips(player) {
+    if (!player || !player.valid) {
+        return;
+    }
+
     interactions.forEach(i => {
-        if (!i.blip) return;
+        if (!i.blip) {
+            return;
+        }
+
         player.createBlip(
             i.blip.category,
             i.blip.position,
@@ -77,7 +80,13 @@ export function syncBlips(player) {
 export function forwardEventToPlayer(colshape, entity) {
     let index = interactions.findIndex(x => x.colshape === colshape);
 
-    if (index <= -1) return;
+    if (index <= -1) {
+        return;
+    }
+
+    if (!entity || !entity.valid) {
+        return;
+    }
 
     entity.emitMeta('interaction', {
         index: index,
@@ -89,14 +98,21 @@ export function forwardEventToPlayer(colshape, entity) {
 // player hits the correct button. This is basically called
 // after the player press 'E' and is standing in a ColShape.
 export function attemptToExecuteInteraction(player) {
-    if (!player) return;
+    if (!player || !player.valid) {
+        return;
+    }
+
     const data = player.getMeta('interaction');
 
-    if (data === undefined || data === null) return;
+    if (data === undefined || data === null) {
+        return;
+    }
 
     const index = data.index;
 
-    if (interactions[index] === undefined) return;
+    if (interactions[index] === undefined) {
+        return;
+    }
 
     player.emitMeta('interaction', undefined);
     interactions[index].exec(player);
@@ -104,14 +120,21 @@ export function attemptToExecuteInteraction(player) {
 
 // Clear the interaction synced meta information.
 export function clearInteraction(player) {
-    if (!player) return;
+    if (!player || !player.valid) {
+        return;
+    }
+
     const data = player.getMeta('interaction');
 
-    if (data === undefined || data === null) return;
+    if (data === undefined || data === null) {
+        return;
+    }
 
     const index = data.index;
 
-    if (interactions[index] === undefined) return;
+    if (interactions[index] === undefined) {
+        return;
+    }
 
     player.emitMeta('interaction', undefined);
 }

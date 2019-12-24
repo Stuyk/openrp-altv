@@ -7,8 +7,10 @@ import { playParticleFX } from '/client/utility/particle.js';
 import { distance } from '/client/utility/vector.js';
 import { isFlagged } from '/client/utility/flags.js';
 import { helpText } from '/client/utility/helpText.js';
+import { showCursor } from '/client/utility/cursor.js';
+import { View } from '../utility/view.js';
 
-const ObjectiveFlags = {
+export const ObjectiveFlags = {
     MIN: 0,
     ON_FOOT: 1,
     IN_VEHICLE: 2,
@@ -21,7 +23,8 @@ const ObjectiveFlags = {
     HAS_WEAPON: 256,
     DELAYED: 512,
     DESTROY: 1024,
-    MAX: 2047
+    MINIGAME: 2048,
+    MAX: 4095
 };
 
 const emptyVec = { x: 0, y: 0, z: 0 };
@@ -35,12 +38,15 @@ let lastHit = Date.now() + 250;
 let targetObject;
 let targetObjectLastUpdate = Date.now();
 let lastDelay = Date.now() + 1000;
+let minigameView;
 
 alt.log('Loaded New Job Framework');
 alt.onServer('objective:Info', objectiveInfo);
 alt.onServer('objective:SetIntoVehicle', setIntoVehicle);
 
 function objectiveInfo(value) {
+    objective = undefined;
+
     if (displayInterval) {
         alt.clearInterval(displayInterval);
         displayInterval = undefined;
@@ -56,6 +62,7 @@ function objectiveInfo(value) {
         targetObject = undefined;
     }
 
+    alt.Player.local.inMiniGame = false;
     alt.Player.local.inJob = false;
 
     if (!value) {
@@ -158,7 +165,7 @@ function display() {
         const firing = native.isControlPressed(0, 24);
         if (isFreeAiming && ent === targetObject) {
             if (firing) {
-                alt.emit('objective:Hit');
+                alt.emit('objective:Hit', dist);
             }
 
             drawMarker(
@@ -244,17 +251,22 @@ function checkObjective(dist) {
         return;
     }
 
-    alt.emitServer('objective:Test');
-}
+    if (isFlagged(objective.flags, ObjectiveFlags.MINIGAME)) {
+        if (alt.Player.local.getMeta('viewOpen')) {
+            return;
+        }
 
-alt.on('objective:Hit', () => {
-    if (Date.now() < lastHit) {
+        if (alt.Player.local.inMiniGame) {
+            return;
+        }
+
+        alt.log('Starting Minigame...');
+        startMiniGame();
         return;
     }
 
-    lastHit = Date.now() + 250;
     alt.emitServer('objective:Test');
-});
+}
 
 function holdActionKey() {
     if (!native.isControlPressed(0, 38)) {
@@ -278,3 +290,52 @@ function setIntoVehicle(vehicle) {
         native.taskWarpPedIntoVehicle(alt.Player.local.scriptID, vehicle.scriptID, -1);
     }, 500);
 }
+
+function startMiniGame() {
+    if (!minigameView) {
+        minigameView = new View();
+    }
+
+    alt.Player.local.inMiniGame = true;
+    minigameView.open('http://resource/client/html/pixigames/index.html', true);
+    minigameView.on('minigame:Complete', completeMinigame);
+    minigameView.on('minigame:Ready', () => {
+        alt.log('Minigame Ready');
+        showCursor(true);
+        minigameView.emit(`minigame:${objective.miniGameIdentifier}`, objective.hash);
+    });
+
+    minigameView.on('minigame:Quit', () => {
+        minigameView.close();
+        alt.setTimeout(() => {
+            alt.Player.local.inMiniGame = false;
+        }, 3500);
+    });
+}
+
+function completeMinigame(hash) {
+    if (!minigameView) {
+        return;
+    }
+
+    alt.setTimeout(() => {
+        alt.Player.local.inMiniGame = false;
+    }, 3500);
+
+    minigameView.close();
+    alt.emitServer('objective:Test', hash);
+}
+
+alt.on('objective:Hit', dist => {
+    if (Date.now() < lastHit) {
+        return;
+    }
+
+    const maxWepRange = native.getMaxRangeOfCurrentPedWeapon(alt.Player.local.scriptID);
+    if (dist > maxWepRange) {
+        return;
+    }
+
+    lastHit = Date.now() + 250;
+    alt.emitServer('objective:Test');
+});

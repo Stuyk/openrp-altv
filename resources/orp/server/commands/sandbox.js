@@ -126,35 +126,17 @@ chat.registerCmd('tempdoor', (player, args) => {
     }
 });
 
-const positions = [
-    { x: 20.420696258544922, y: -1090.2625732421875, z: 29.7962646484375 },
-    { x: 20.081329345703125, y: -1083.61962890625, z: 29.79705810546875 },
-    { x: 16.442224502563477, y: -1077.5777587890625, z: 29.797040939331055 },
-    { x: 20.236013412475586, y: -1074.916015625, z: 29.797040939331055 },
-    { x: 13.37805461883545, y: -1084.8057861328125, z: 29.795671463012695 },
-    { x: 15.975090980529785, y: -1091.344482421875, z: 29.797260284423828 }
-];
-
 chat.registerCmd('testjob', player => {
     const objectives = [];
-
-    positions.forEach(pos => {
-        const shootObjective = new Objectives.DestroyObject(pos, 50, 1, {
-            r: 255,
-            g: 255,
-            b: 255,
-            a: 75
-        });
-        shootObjective.setOptions({
-            description: 'Shoot the object',
-            blip: { sprite: 1, color: 1 },
-            maxProgress: 1,
-            objectType: 'gr_prop_gr_target_02a'
-        });
-        objectives.push(shootObjective);
-    });
-
-    const jobInstance = new Job(player, [...objectives]);
+    const testObjective = new Objectives.MiniGame(
+        { x: -1881.7315673828125, y: 2164.57421875, z: 115.81851196289062 },
+        2,
+        1,
+        { r: 255, g: 255, b: 255, a: 100 },
+        'GrabTheLeaves'
+    );
+    objectives.push(testObjective);
+    const jobInstance = new Job(player, 'test', [...objectives]);
 });
 
 chat.registerCmd('startjob', player => {

@@ -657,7 +657,7 @@ alt.Player.prototype.hasQuantityOfItem = function hasQuantityOfItem(key, quantit
             continue;
         }
 
-        if (_data && _data.base == key) {
+        if (_data && _data.base === key) {
             if (indexes.includes(_index)) {
                 continue;
             }

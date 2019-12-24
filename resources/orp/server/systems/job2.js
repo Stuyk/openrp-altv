@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import { distance } from '../utility/vector';
 import { isFlagged } from '../utility/flags';
+import { generateHash } from '../utility/encryption';
 
 export const ObjectiveFlags = {
     MIN: 0,
@@ -15,7 +16,8 @@ export const ObjectiveFlags = {
     HAS_WEAPON: 256,
     DELAYED: 512,
     DESTROY: 1024,
-    MAX: 2047
+    MINIGAME: 2048,
+    MAX: 4095
 };
 
 class Objective {
@@ -38,8 +40,9 @@ class Objective {
             color: 1
         };
         this.description = 'Go to the point.';
-        this.objectType = 'hei_prop_heist_box';
+        this.objectType = undefined;
         this.objectAlpha = 255;
+        this.hash = generateHash(JSON.stringify(this));
 
         if (this.range < 2) {
             this.range = 3;
@@ -315,7 +318,7 @@ class Point extends Objective {
         super(pos, range, markerType, color);
     }
 
-    check(player) {
+    check(player, hash = undefined) {
         if (this.checkingObjective) {
             return false;
         }
@@ -345,7 +348,7 @@ class AddVehicle extends Objective {
         this.heading = heading;
     }
 
-    check(player) {
+    check(player, hash = undefined) {
         if (this.checkingObjective) {
             return false;
         }
@@ -367,7 +370,7 @@ class RemoveVehicle extends Objective {
         this.flags = ObjectiveFlags.IS_IN_JOB_VEHICLE;
     }
 
-    check(player) {
+    check(player, hash = undefined) {
         if (this.checkingObjective) {
             return false;
         }
@@ -396,7 +399,7 @@ class DestroyObject extends Objective {
             ObjectiveFlags.HAS_WEAPON | ObjectiveFlags.ON_FOOT | ObjectiveFlags.DESTROY;
     }
 
-    check(player) {
+    check(player, hash = undefined) {
         if (this.checkingObjective) {
             return false;
         }
@@ -417,22 +420,58 @@ class DestroyObject extends Objective {
     }
 }
 
+class MiniGame extends Objective {
+    constructor(pos, range, markerType, color, miniGameIdentifier) {
+        super(pos, range, markerType, color);
+        this.flags = ObjectiveFlags.ON_FOOT | ObjectiveFlags.MINIGAME;
+        this.miniGameIdentifier = miniGameIdentifier;
+    }
+
+    check(player, hash = undefined) {
+        if (this.checkingObjective) {
+            return false;
+        }
+
+        if (!this.isPlayerInRange(player)) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        if (!this.areObjectivePropsValid(player)) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        if (hash !== this.hash) {
+            this.markAsUnchecked();
+            return false;
+        }
+
+        this.markAsUnchecked();
+        this.finishObjective();
+        return true;
+    }
+}
+
 export const Objectives = {
     Point,
     AddVehicle,
     RemoveVehicle,
-    DestroyObject
+    DestroyObject,
+    MiniGame
 };
 
 export class Job {
     /**
      *
      * @param {*} player
+     * @param {String} identifier Used for job emits.
      * @param {[Objective]} objectives
      */
-    constructor(player, objectives = []) {
+    constructor(player, identifier, objectives = []) {
         this.objectives = objectives;
         this.party = [player];
+        this.identifier = identifier;
         this.freeze = false;
         player.job = this;
     }
@@ -531,6 +570,7 @@ export class Job {
                 player.playAudio('complete');
                 alt.emitClient(player, 'objective:Info', null);
                 this.removeJobVehicles(player, true);
+                alt.emit('job:Complete', this.identifier, player);
             });
             return;
         }
@@ -539,6 +579,7 @@ export class Job {
         this.party.forEach(player => {
             player.playAudio('complete');
             objective.sync(player);
+            alt.emit('job:ObjectiveComplete', this.identifier, player);
         });
 
         this.freeze = false;
@@ -556,13 +597,13 @@ export class Job {
         alt.emitClient(player, 'objective:SetIntoVehicle', vehicle);
     }
 
-    checkObjective(player) {
+    checkObjective(player, hash = undefined) {
         if (this.freeze) {
             return;
         }
 
         const objective = this.objectives[0];
-        if (!objective.check(player)) {
+        if (!objective.check(player, hash)) {
             this.party.forEach(partyMember => {
                 objective.sync(partyMember);
             });
@@ -600,7 +641,7 @@ alt.onClient('job:AddPlayer', addPlayer);
  * @param {*} player
  * @param {Job} job
  */
-function objectiveTest(player, job = null) {
+function objectiveTest(player, hash = undefined, job = null) {
     if (!player) {
         return;
     }
@@ -610,7 +651,7 @@ function objectiveTest(player, job = null) {
     }
 
     job = player.job;
-    job.checkObjective(player);
+    job.checkObjective(player, hash);
 }
 
 /**

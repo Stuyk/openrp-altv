@@ -7,7 +7,6 @@ import { loadAnim } from '/client/systems/animation.js';
 /**
  * Creates Clickable Peds with Optional Context Options
  */
-
 const renderDistance = 25;
 const pedStreams = [];
 

@@ -231,8 +231,18 @@ function clearShop() {
 }
 
 function shopKey() {
-    if (alt.Player.local.getMeta('viewOpen')) return;
-    if (currentShop === undefined) return;
+    if (alt.Player.local.getMeta('viewOpen')) {
+        return;
+    }
+
+    if (currentShop === undefined) {
+        return;
+    }
+
+    if (alt.Player.local.interactionPoint) {
+        return;
+    }
+
     native.beginTextCommandDisplayHelp('STRING');
     native.addTextComponentSubstringPlayerName(currentShop.message);
     native.endTextCommandDisplayHelp(0, false, false, -1);

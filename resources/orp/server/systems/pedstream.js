@@ -1,7 +1,5 @@
 import * as alt from 'alt';
 
-fewfewfews;
-
 const pedStreams = [];
 
 export class PedStream {

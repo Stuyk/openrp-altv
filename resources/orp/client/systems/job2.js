@@ -124,7 +124,7 @@ function display() {
             { x: objective.pos.x, y: objective.pos.y, z: objective.pos.z - 1 },
             emptyVec,
             emptyVec,
-            { x: 0.5, y: 0.5, z: 3 },
+            objective.scale,
             objective.color.r,
             objective.color.g,
             objective.color.b,
@@ -260,7 +260,6 @@ function checkObjective(dist) {
             return;
         }
 
-        alt.log('Starting Minigame...');
         startMiniGame();
         return;
     }

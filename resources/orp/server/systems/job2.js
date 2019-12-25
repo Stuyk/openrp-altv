@@ -26,8 +26,9 @@ class Objective {
         this.maxProgress = 10;
         this.pos = pos;
         this.range = range;
-        this.markerType = -1;
-        this.color = { r: 255, g: 255, b: 255, a: 100 };
+        this.markerType = 1;
+        this.color = { r: 0, g: 255, b: 0, a: 100 };
+        this.scale = { x: 1, y: 1, z: 0.2 };
         this.checkingObjective = false;
         this.flags = 0;
         this.baseItemRequirements = [];
@@ -46,7 +47,7 @@ class Objective {
         this.objectiveIdentifier = objectiveIdentifier;
 
         if (this.range < 2) {
-            this.range = 3;
+            this.range = 3; 
         }
     }
 
@@ -60,6 +61,8 @@ class Objective {
     /**
      *
      * @param {Object} options
+     * @param {Number} [options.markerType] The type of marker to display.
+     * @param {{x, y, z}} [options.scale] The size of the marker to display.
      * @param {String} [options.description] Text to display.
      * @param {Number} [options.progress] Current progress.
      * @param {Number} [options.maxProgress] Maximum progress to mark as complete.

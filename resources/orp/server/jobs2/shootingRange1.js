@@ -1,9 +1,11 @@
 import * as alt from 'alt';
 import { Interaction } from '../systems/interaction.js';
 import { Job, Objectives, ObjectiveFlags } from '../systems/job2.js';
+import { PedStream } from '../systems/pedstream.js';
+import { distance } from '../utility/vector.js';
 
 const jobIdentifier = 'job:ShootingRange1';
-alt.on('job:ShootingRange1', startJob);
+alt.onClient(jobIdentifier, startJob);
 alt.on('job:Complete', completedJob);
 alt.on('job:ObjectiveComplete', completedObjective);
 
@@ -16,18 +18,20 @@ const positions = [
     { x: 15.975090980529785, y: -1091.344482421875, z: 29.797260284423828 }
 ];
 
-const startPoint = { x: 12.9, y: -1099.2, z: 29.2 };
-const interaction = new Interaction(
-    startPoint,
-    'job',
-    jobIdentifier,
-    3,
-    3,
-    'to try out the shooting range.'
-);
-interaction.addBlip(313, 4, jobIdentifier, 'Shooting Range');
+const startPoint = { x: 17.665916442871094, y: -1100.62744140625, z: 29.796998977661133 };
+const pedStream = new PedStream('u_m_y_chip', startPoint, 85.15, 'Shooting Range');
+pedStream.addInteraction({
+    name: 'Start Work',
+    isServer: true,
+    eventName: jobIdentifier,
+    data: {}
+});
 
 function startJob(player) {
+    if (distance(player.pos, startPoint) >= 5) {
+        return;
+    }
+
     if (!player.equipment[11] || player.equipment[11].base !== 'weapon') {
         player.send('You must have a weapon to use the shooting range.');
         return;
@@ -61,7 +65,6 @@ function completedJob(identifier, player) {
     }
 
     player.send('{FFFF00} Job has been completed. Try another round.');
-    player.addItem('unrefinedmetal', 1);
     player.notify('Added 1 Unrefined Metal');
 }
 

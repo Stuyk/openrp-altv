@@ -5,15 +5,7 @@ var currentConnection;
 
 // Singleton Connection Info
 export default class ConnectionInfo {
-    constructor(
-        dbType,
-        dbHost,
-        dbPort,
-        dbUsername,
-        dbPassword,
-        dbName,
-        entityArray
-    ) {
+    constructor(dbType, dbHost, dbPort, dbUsername, dbPassword, dbName, entityArray) {
         // If instance does not exist.
         if (currentConnection === undefined) {
             // Configuration Template
@@ -92,7 +84,7 @@ export default class ConnectionInfo {
 
     fetchLastId(repoName, callback) {
         const repo = this.connection.getRepository(repoName);
-        repo.findOne({ order: { id: "DESC" } }).then(res => {
+        repo.findOne({ order: { id: 'DESC' } }).then(res => {
             callback(res);
         });
     }

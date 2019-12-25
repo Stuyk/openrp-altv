@@ -257,6 +257,9 @@ alt.Vehicle.prototype.repair = function repair() {
     const rot = { ...this.rot };
     const data = { ...this.data };
 
+    rot.x = 0;
+    rot.y = 0;
+
     try {
         this.destroy();
     } catch (err) {}
@@ -265,7 +268,7 @@ alt.Vehicle.prototype.repair = function repair() {
     data.rotation = JSON.stringify(rot);
     data.stats = JSON.stringify({
         bodyHealth: 1000,
-        engineHealth: 0,
+        engineHealth: 1000,
         lockState: data.lockState
     });
 

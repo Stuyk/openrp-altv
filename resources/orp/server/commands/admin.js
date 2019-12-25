@@ -272,3 +272,16 @@ chat.registerRankedCmd('setadmin', AdminFlags.MAX, (player, args) => {
 
     target.setRank(rank);
 });
+
+chat.registerRankedCmd('claimturf', AdminFlags.MAX, player => {
+    if (player.data.faction === -1) {
+        player.send('Must be in a faction.');
+        return;
+    }
+
+    if (!player.colshape) {
+        return;
+    }
+
+    alt.emit('turf:Update', player.colshape, [player]);
+});

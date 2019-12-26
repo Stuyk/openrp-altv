@@ -25,10 +25,9 @@ alt.on('discord:FinishLogin', async (player, discord) => {
     }
 
     player.rank = 0;
-    db.upsertData({ userid: discord.id }, 'Account', res => {
-        player.accountID = res.id;
-        player.pgid = res.userid;
-        cache.cacheAccount(res.userid, res.id, 0);
-        alt.emit('orp:Login', player, res.id, discord.id);
-    });
+    const accData = await db.upsertData({ userid: discord.id }, 'Account');
+    player.accountID = accData.id;
+    player.pgid = accData.userid;
+    cache.cacheAccount(accData.userid, accData.id, 0);
+    alt.emit('orp:Login', player, accData.id, discord.id);
 });

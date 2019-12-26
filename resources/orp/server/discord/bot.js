@@ -82,27 +82,27 @@ async function handleEmailBind(author, msg) {
         return;
     }
 
-    db.fetchData('userid', author.id, 'Account', async (res) => {
-        if (!res) {
-            await author.send('You must create an account in-game before using this.').catch(() => {
+    const dbData = await db.fetchData('userid', author.id, 'Account');
+    if (!dbData) {
+        await author
+            .send('You must create an account in-game before using this.')
+            .catch(() => {
                 return;
             });
+        return;
+    }
+
+    const oldEmail = res.email;
+    const dbUpdateData = await db.updatePartialData(res.id, { email }, 'Account');
+    if (oldEmail === '') {
+        await author.send(`Your account is now bound to ${email}`).catch(() => {
             return;
-        }
-
-        const oldEmail = res.email;
-        db.updatePartialData(res.id, { email }, 'Account', async (res) => {
-            if (oldEmail === '') {
-                await author.send(`Your account is now bound to ${email}`).catch(() => {
-                    return;
-                });
-                return;
-            }
-
-            await author.send(`Your account was bound from ${oldEmail} to ${email}`).catch(() => {
-                return;
-            });
         });
+        return;
+    }
+
+    await author.send(`Your account was bound from ${oldEmail} to ${email}`).catch(() => {
+        return;
     });
 }
 

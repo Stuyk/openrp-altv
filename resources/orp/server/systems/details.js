@@ -4,17 +4,20 @@ import SQL from '../../../postgres-wrapper/database.js';
 const db = new SQL();
 export let details;
 
-db.fetchByIds([1], 'Details', res => {
-    if (!res) {
+async function parseMdc() {
+    const mdcData = await db.fetchByIds([1], 'Details');
+    if (!mdcData) {
         details = { id: 1, mdc: '[]' };
-        db.upsertData(details, 'Details', () => {});
+        await db.upsertData(details, 'Details');
         return;
     }
 
-    details = res[0];
-});
-
-export function updateField(field, value) {
-    details[field] = JSON.stringify(value);
-    db.updatePartialData(1, { [field]: details[field] }, 'Details', res => {});
+    details = mdcData[0];
 }
+
+export async function updateField(field, value) {
+    details[field] = JSON.stringify(value);
+    await db.updatePartialData(1, { [field]: details[field] }, 'Details');
+}
+
+parseMdc();

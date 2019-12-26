@@ -1,19 +1,18 @@
 import * as alt from 'alt';
 import orm from 'typeorm';
+import pg from 'pg';
+
+const pool = new pg.Pool({});
+pool.on('error', err => {
+    console.log('Connection Refused Error');
+    console.log(err);
+});
 
 var currentConnection;
 
 // Singleton Connection Info
 export default class ConnectionInfo {
-    constructor(
-        dbType,
-        dbHost,
-        dbPort,
-        dbUsername,
-        dbPassword,
-        dbName,
-        entityArray
-    ) {
+    constructor(dbType, dbHost, dbPort, dbUsername, dbPassword, dbName, entityArray) {
         // If instance does not exist.
         if (currentConnection === undefined) {
             // Configuration Template
@@ -26,7 +25,7 @@ export default class ConnectionInfo {
                 database: `${dbName}`,
                 entities: entityArray,
                 cache: true,
-                extra: { max: 25 }
+                extra: { min: 2, max: 90 }
             };
 
             console.log(`---> Starting Database Connection`);
@@ -56,16 +55,18 @@ export default class ConnectionInfo {
      * @param repoName ie. "Account"
      * @param callback undefined | document
      */
-    fetchData(fieldName, fieldValue, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-        repo.findOne({ where: { [fieldName]: fieldValue } })
-            .then(res => {
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
+    async fetchData(fieldName, fieldValue, repoName) {
+        return new Promise(resolve => {
+            const repo = this.connection.getRepository(repoName);
+            repo.findOne({ where: { [fieldName]: fieldValue } })
+                .then(res => {
+                    return callback(res);
+                })
+                .catch(err => {
+                    console.error(err);
+                    return callback(undefined);
+                });
+        });
     }
 
     /**
@@ -90,10 +91,16 @@ export default class ConnectionInfo {
         });
     }
 
-    fetchLastId(repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-        repo.findOne({ order: { id: "DESC" } }).then(res => {
-            callback(res);
+    /**
+     * Fetch last item inserted.
+     * @param {*} repoName
+     */
+    async fetchLastId(repoName) {
+        return new Promise(resolve => {
+            const repo = this.connection.getRepository(repoName);
+            repo.findOne({ order: { id: 'DESC' } }).then(res => {
+                resolve(res);
+            });
         });
     }
 
@@ -104,36 +111,16 @@ export default class ConnectionInfo {
      * @param repoName The reponame where to look.
      * @param callback Result is an array or undefined.
      */
-    fetchAllByField(fieldName, fieldValue, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-
-        repo.find({ where: { [fieldName]: fieldValue } })
-            .then(res => {
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     *
-     * @param fieldName The name of the field.
-     * @param fieldValue The value of that field.
-     * @param repoName The reponame where to look.
-     */
-    async fetchAllByFieldAsync(fieldName, fieldValue, repoName) {
-        return new Promise((resolve, reject) => {
+    async fetchAllByField(fieldName, fieldValue, repoName) {
+        return new Promise(resolve => {
             const repo = this.connection.getRepository(repoName);
-
             repo.find({ where: { [fieldName]: fieldValue } })
                 .then(res => {
                     return resolve(res);
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }
@@ -144,27 +131,8 @@ export default class ConnectionInfo {
      * @param repoName The name of the table.
      * @param callback Returns Updated/Inserted document with id or UNDEFINED.
      */
-    upsertData(document, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-
-        repo.save(document)
-            .then(res => {
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Async Version
-     * Update or Insert a new document.
-     * @param document Document pulled down from table.
-     * @param repoName The name of the table.
-     */
-    async upsertDataAsync(document, repoName) {
-        return new Promise((resolve, reject) => {
+    async upsertData(document, repoName) {
+        return new Promise(resolve => {
             const repo = this.connection.getRepository(repoName);
 
             repo.save(document)
@@ -173,7 +141,7 @@ export default class ConnectionInfo {
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }
@@ -184,26 +152,8 @@ export default class ConnectionInfo {
      * @param repoName The name of the table.
      * @param callback Returns Updated/Inserted document with id.
      */
-    insertData(document, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-
-        repo.insert(document)
-            .then(res => {
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Async Version
-     * @param document Document pulled down from table.
-     * @param repoName The name of the table.
-     */
-    async insertDataAsync(document, repoName) {
-        return new Promise((resolve, reject) => {
+    async insertData(document, repoName) {
+        return new Promise(resolve => {
             const repo = this.connection.getRepository(repoName);
 
             repo.insert(document)
@@ -212,7 +162,7 @@ export default class ConnectionInfo {
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }
@@ -224,57 +174,29 @@ export default class ConnectionInfo {
      * @param repoName The name of the table.
      * @param callback Result is undefined | object if updated
      */
-    updatePartialData(id, partialObjectData, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
+    async updatePartialData(id, partialObjectData, repoName) {
+        return new Promise(resolve => {
+            const repo = this.connection.manager.getRepository(repoName);
+            repo.findByIds([id])
+                .then(res => {
+                    if (res.length <= 0) {
+                        return resolve(undefined);
+                    }
 
-        repo.findByIds([id])
-            .then(res => {
-                if (res.length <= 0) return callback(undefined);
-                // Results after this.
-
-                repo.update(id, partialObjectData)
-                    .then(res => {
-                        return callback(res);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        return callback(undefined);
-                    });
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Async
-     * Update partial data for a document; based on object data based.
-     * @param id ID of Document
-     * @param partialObjectData Object
-     * @param repoName The name of the table.
-     */
-    updatePartialDataAsync(id, partialObjectData, repoName) {
-        const repo = this.connection.getRepository(repoName);
-
-        repo.findByIds([id])
-            .then(res => {
-                if (res.length <= 0) return callback(undefined);
-                // Results after this.
-
-                repo.update(id, partialObjectData)
-                    .then(res => {
-                        return callback(res);
-                    })
-                    .catch(err => {
-                        console.err(err);
-                        return callback(undefined);
-                    });
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
+                    repo.update(id, partialObjectData)
+                        .then(res => {
+                            return resolve(res);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            return resolve(undefined);
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                    return resolve(undefined);
+                });
+        });
     }
 
     /**
@@ -283,34 +205,9 @@ export default class ConnectionInfo {
      * @param repoName The name of the table.
      * @param callback Returns undefined | Array<documents>
      */
-    fetchByIds(ids, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-        let idRef = ids;
-
-        if (!Array.isArray(ids)) {
-            idRef = [ids];
-        }
-
-        repo.findByIds(idRef)
-            .then(res => {
-                if (res.length <= 0) return callback(undefined);
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Async Version
-     * Fetch documents by ID or IDs.
-     * @param ids
-     * @param repoName The name of the table.
-     */
-    fetchByIdsAsync(ids, repoName) {
-        return new Promise((resolve, reject) => {
-            const repo = this.connection.getRepository(repoName);
+    async fetchByIds(ids, repoName) {
+        return new Promise(resolve => {
+            const repo = this.connection.manager.getRepository(repoName);
             let idRef = ids;
 
             if (!Array.isArray(ids)) {
@@ -324,7 +221,7 @@ export default class ConnectionInfo {
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }
@@ -335,33 +232,8 @@ export default class ConnectionInfo {
      * @param repoName The name of the table.
      * @param callback
      */
-    deleteByIds(ids, repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-
-        let idRef = ids;
-
-        if (!Array.isArray(ids)) {
-            idRef = [ids];
-        }
-
-        repo.delete(idRef)
-            .then(res => {
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Async Version
-     * Delete documents from the database by ID.
-     * @param ids Can be array or single id.
-     * @param repoName The name of the table.
-     */
-    deleteByIdsAsync(ids, repoName) {
-        return new Promise((resolve, reject) => {
+    async deleteByIds(ids, repoName) {
+        return new Promise(resolve => {
             const repo = this.connection.getRepository(repoName);
 
             let idRef = ids;
@@ -376,7 +248,7 @@ export default class ConnectionInfo {
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }
@@ -386,36 +258,21 @@ export default class ConnectionInfo {
      * @param repoName The name of the table.
      * @param callback returns undefined | array of results
      */
-    fetchAllData(repoName, callback) {
-        const repo = this.connection.getRepository(repoName);
-
-        repo.find()
-            .then(res => {
-                if (res.length <= 0) return callback(undefined);
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Fetch all documents by repo name.
-     * @param repoName The name of the table.
-     */
-    fetchAllDataAsync(repoName) {
-        return new Promise((resolve, reject) => {
+    async fetchAllData(repoName) {
+        return new Promise(resolve => {
             const repo = this.connection.getRepository(repoName);
 
             repo.find()
                 .then(res => {
-                    if (res.length <= 0) return reject(undefined);
+                    if (res.length <= 0) {
+                        return resolve(undefined);
+                    }
+
                     return resolve(res);
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }
@@ -426,34 +283,8 @@ export default class ConnectionInfo {
      * @param fieldNamesArray
      * @param callback Returns undefined | Array of documents
      */
-    selectData(repoName, fieldNamesArray, callback) {
-        const repo = this.connection.getRepository(repoName);
-
-        let selectionRef = fieldNamesArray;
-
-        if (!Array.isArray(fieldNamesArray)) {
-            selectionRef = [selectionRef];
-        }
-
-        repo.find({ select: selectionRef })
-            .then(res => {
-                if (res.length <= 0) return callback(undefined);
-                return callback(res);
-            })
-            .catch(err => {
-                console.error(err);
-                return callback(undefined);
-            });
-    }
-
-    /**
-     * Async Version
-     * Select a table by fieldNames that apply.
-     * @param repoName
-     * @param fieldNamesArray
-     */
-    async selectDataAsync(repoName, fieldNamesArray) {
-        return new Promise((resolve, reject) => {
+    async selectData(repoName, fieldNamesArray) {
+        return new Promise(resolve => {
             const repo = this.connection.getRepository(repoName);
 
             let selectionRef = fieldNamesArray;
@@ -464,12 +295,15 @@ export default class ConnectionInfo {
 
             repo.find({ select: selectionRef })
                 .then(res => {
-                    if (res.length <= 0) return reject(undefined);
+                    if (res.length <= 0) {
+                        return resolve(undefined);
+                    }
+
                     return resolve(res);
                 })
                 .catch(err => {
                     console.error(err);
-                    return reject(undefined);
+                    return resolve(undefined);
                 });
         });
     }

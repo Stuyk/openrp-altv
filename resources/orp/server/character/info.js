@@ -36,7 +36,8 @@ export function select(player, id) {
     delete player.characters;
 }
 
-export function newCharacter(player) {
+alt.onClient('character:New', newCharacter);
+async function newCharacter(player) {
     const currentTime = Date.now();
 
     // New Character
@@ -52,9 +53,6 @@ export function newCharacter(player) {
 
     // Update ped flags for new user.
     player.emitMeta('pedflags', undefined);
-
-    // Save the new Character data to the database and assign to the player.
-    db.upsertData(data, 'Character', data => {
-        existingCharacter(player, data);
-    });
+    const newData = await db.upsertData(data, 'Character');
+    existingCharacter(player, newData);
 }

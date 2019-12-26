@@ -154,8 +154,8 @@ alt.on('door:CacheDoor', (id, data) => {
     alt.log(`Cached door ${door.id} - Owner: ${door.guid}`);
 });
 
-alt.on('updateDoorLockState', (id, state) => {
-    db.updatePartialData(id, { lockstate: state }, 'Door', () => {});
+alt.on('updateDoorLockState', async (id, state) => {
+    await db.updatePartialData(id, { lockstate: state }, 'Door');
 });
 
 // Update sectors with door information
@@ -171,12 +171,17 @@ alt.on('parseDoorSector', data => {
     }
 });
 
-alt.on('door:PurchaseDynamicDoor', (player, data) => {
+alt.on('door:PurchaseDynamicDoor', async (player, data) => {
     const id = data.id;
     let door = getDoor(id);
-    if (!door) return;
+    if (!door) {
+        return;
+    }
+
     const dist = distance(door.enter.position, player.pos);
-    if (dist > 5) return;
+    if (dist > 5) {
+        return;
+    }
 
     // Server Ownership
     if (door.guid <= -1) {
@@ -188,30 +193,27 @@ alt.on('door:PurchaseDynamicDoor', (player, data) => {
 
         door.guid = player.data.id;
         door.salePrice = -1;
-        db.upsertData(door, 'Door', res => {});
+        await db.upsertData(door, 'Door');
         changeDoorOwnership(door);
         return;
     }
 
-    db.fetchByIds(door.guid, 'Character', res => {
-        if (!res) {
-            player.notify('User does not exist.');
-            return;
-        }
+    const character = await db.fetchByIds(door.guid, 'Character');
+    if (!character) {
+        player.notify('User does not exist.');
+        return;
+    }
 
-        if (!player.subCash(door.salePrice)) {
-            player.playAudio('error');
-            player.notify('You do not have enough cash.');
-            return;
-        }
+    if (!player.subCash(door.salePrice)) {
+        player.playAudio('error');
+        player.notify('You do not have enough cash.');
+        return;
+    }
 
-        res.cash += door.salePrice;
-        door.guid = player.data.id;
-        door.salePrice = -1;
-        db.upsertData(door, 'Door', res => {});
-        db.updatePartialData(res.id, { cash: res.cash }, 'Character', res => {
-            console.log('Cash was recieved by other user for door sale.');
-        });
-        changeDoorOwnership(door);
-    });
+    character.cash += door.salePrice;
+    door.guid = player.data.id;
+    door.salePrice = -1;
+    await db.upsertData(door, 'Door');
+    await db.updatePartialData(character.id, { cash: character.cash }, 'Character');
+    changeDoorOwnership(door);
 });

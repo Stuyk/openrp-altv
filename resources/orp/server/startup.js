@@ -97,53 +97,57 @@ function LoadFiles() {
 }
 
 // Used to speed up the server dramatically.
-function cacheInformation() {
-    db.fetchLastId('Vehicle', res => {
-        if (!res) {
-            setVehicleID(0);
-        } else {
-            setVehicleID(res.id);
+async function cacheInformation() {
+    // Fetch Last Vehicle ID
+    const vehicleData = await db.fetchLastId('Vehicle');
+    if (!vehicleData) {
+        setVehicleID(0);
+    } else {
+        setVehicleID(vehicleData.id);
+    }
+
+    // Cache Accounts
+    const accounts = await db.selectData('Account', ['id', 'userid', 'rank', 'email']);
+    if (accounts) {
+        for (let i = 0; i < accounts.length; i++) {
+            cacheAccount(
+                accounts[i].userid,
+                accounts[i].id,
+                accounts[i].rank,
+                accounts[i].email
+            );
         }
-    });
 
-    // Passwords are encrypted.
-    db.selectData('Account', ['id', 'userid', 'rank', 'email'], data => {
-        if (!data) return;
+        alt.log(`=====> Cached: ${accounts.length} Accounts`);
+    }
 
-        for (let i = 0; i < data.length; i++) {
-            cacheAccount(data[i].userid, data[i].id, data[i].rank, data[i].email);
+    // Cache Some Character Data
+    const characters = await db.selectData('Character', ['id', 'name']);
+    if (characters) {
+        for (let i = 0; i < characters.length; i++) {
+            cacheCharacter(characters[i].id, characters[i].name);
         }
+    }
 
-        alt.log(`=====> Cached: ${data.length} Accounts`);
-    });
-
-    db.selectData('Character', ['id', 'name'], data => {
-        if (!data) return;
-
-        for (let i = 0; i < data.length; i++) {
-            cacheCharacter(data[i].id, data[i].name);
-        }
-    });
-
-    // Cache dynamic doors
+    // Cache Dynamic Doors
     // Only persists the dynamic values
     for (let i = 0; i < Doors.length; i++) {
-        db.fetchByIds(Doors[i].id, 'Door', res => {
-            if (res) {
-                alt.emit('door:CacheDoor', res[0].id, res[0]);
-            } else {
-                // Create new door with defaults from configuration
-                let door = {
-                    id: Doors[i].id,
-                    guid: Doors[i].guid,
-                    lockstate: Doors[i].lockstate,
-                    salePrice: Doors[i].salePrice
-                };
-                db.insertData(door, 'Door', res => {
-                    alt.emit('door:CacheDoor', door.id, door);
-                });
-            }
-        });
+        const doorData = await db.fetchByIds(Doors[i].id, 'Door');
+        if (doorData) {
+            alt.emit('door:CacheDoor', doorData[0].id, doorData[0]);
+            continue;
+        }
+
+        // Create new door with defaults from configuration
+        let door = {
+            id: Doors[i].id,
+            guid: Doors[i].guid,
+            lockstate: Doors[i].lockstate,
+            salePrice: Doors[i].salePrice
+        };
+
+        const newDoorData = await db.insertData(door, 'Door');
+        alt.emit('door:CacheDoor', door.id, newDoorData);
     }
 
     alt.emit('cache:Complete');

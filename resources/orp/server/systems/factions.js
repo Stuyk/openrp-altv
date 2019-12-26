@@ -26,7 +26,9 @@ let totalFactions = 0;
 let totalPoliceFactions = 0;
 let totalEMSFactions = 0;
 
-db.fetchAllData('Factions', currentFactions => {
+async function setupExistingFactions() {
+    console.log('===> Setting Up Existing Factions');
+    const currentFactions = await db.fetchAllData('Factions');
     if (!currentFactions) {
         return;
     }
@@ -49,7 +51,7 @@ db.fetchAllData('Factions', currentFactions => {
     });
 
     alt.log(`Total Factions ${totalFactions}`);
-});
+}
 
 alt.on('faction:Attach', factionAttach);
 alt.on('faction:AcceptMember', factionAcceptMember);
@@ -70,6 +72,7 @@ alt.onClient('faction:AddVehiclePoint', factionAddVehiclePoint);
 alt.onClient('faction:RemoveVehiclePoint', factionRemoveVehiclePoint);
 alt.onClient('faction:SetSubType', factionSetSubType);
 alt.onClient('faction:SetColor', factionSetColor);
+setupExistingFactions();
 
 export class Faction {
     constructor(factionData) {
@@ -98,15 +101,8 @@ export class Faction {
         totalFactions += 1;
     }
 
-    saveField(fieldName, fieldValue) {
-        db.updatePartialData(
-            this.id,
-            {
-                [fieldName]: fieldValue
-            },
-            'Factions',
-            () => {}
-        );
+    async saveField(fieldName, fieldValue) {
+        await db.updatePartialData(this.id, { [fieldName]: fieldValue }, 'Factions');
     }
 
     notifyAll(message) {
@@ -412,9 +408,8 @@ export class Faction {
 
         currentTurfs.push(id);
         this.turfs = JSON.stringify(currentTurfs);
-        db.updatePartialData(this.id, { turfs: this.turfs }, 'Factions', res => {
-            console.log(`Turf ${id} was added to gang ${this.name}`);
-        });
+        this.saveField('turfs', this.turfs);
+        console.log(`Turf ${id} was added to Faction: ${this.name}`);
 
         colshape.factions.owner = this;
         colshape.sector.color = this.color;
@@ -443,13 +438,12 @@ export class Faction {
 
         currentTurfs.splice(index, 1);
         this.turfs = JSON.stringify(currentTurfs);
-        db.updatePartialData(this.id, { turfs: this.turfs }, 'Factions', res => {
-            console.log(`Turf ${id} was removed from gang ${this.name}.`);
-        });
+        this.saveField('turfs', this.turfs);
+        console.log(`Turf ${id} was removed from Faction ${this.name}.`);
         return true;
     }
 
-    disband(player) {
+    async disband(player) {
         player.isDisbanding = true;
         if (player.data.id !== this.id) {
             player.notify('You do not own this faction.');
@@ -492,11 +486,14 @@ export class Faction {
             target.notify('Your faction has disbanded.');
         });
 
-        db.deleteByIds(player.data.id, 'Factions', res => {
-            player.emitMeta('readyForNewFaction', true);
-            player.notify('The faction is now completely disbanded.');
-            player.isDisbanding = false;
-        });
+        player.send('Please wait a moment before attempting to create a new faction.');
+        await db.deleteByIds(player.data.id, 'Factions');
+        player.emitMeta('readyForNewFaction', true);
+        player.notify(
+            'The faction is now completely disbanded; feel free to make a new one.'
+        );
+
+        player.isDisbanding = false;
         return true;
     }
 
@@ -837,7 +834,7 @@ function factionAttach(player) {
     player.faction.addActivity(player);
 }
 
-function factionCreate(player, type, factionName) {
+async function factionCreate(player, type, factionName) {
     alt.log('Creating Faction...');
 
     const isPoliceSlotsExceeded = totalPoliceFactions >= Config.maxPoliceFactions;
@@ -894,14 +891,14 @@ function factionCreate(player, type, factionName) {
     alt.log('Saving created faction.');
 
     player.data.faction = player.data.id;
-    db.upsertData(factionData, 'Factions', newFactionData => {
-        const parsedFactionData = new Faction(newFactionData);
-        player.saveField(player.data.id, 'faction', player.data.id);
-        player.emitMeta('faction:Id', player.data.id);
-        player.emitMeta('faction:Info', JSON.stringify(parsedFactionData));
-        player.faction = parsedFactionData;
-        alt.emit('faction:SetSkillTree', player);
-    });
+
+    const newFactionData = await db.upsertData(factionData, 'Factions');
+    const parsedFactionData = new Faction(newFactionData);
+    player.saveField(player.data.id, 'faction', player.data.id);
+    player.emitMeta('faction:Id', player.data.id);
+    player.emitMeta('faction:Info', JSON.stringify(parsedFactionData));
+    player.faction = parsedFactionData;
+    alt.emit('faction:SetSkillTree', player);
 }
 
 function factionRankUp(player, id) {

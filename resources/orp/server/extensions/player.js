@@ -35,8 +35,12 @@ alt.Player.prototype.emitMeta = function emitMeta(key, value) {
  *  Used to save all `this.data` information.
  * @memberof player
  */
-alt.Player.prototype.save = function save() {
-    db.upsertData(this.data, 'Character', () => {});
+alt.Player.prototype.save = async function save() {
+    const result = await db.upsertData(this.data, 'Character');
+
+    if (!result) {
+        alt.log(`Failed to Save ${this.data.name}`);
+    }
 };
 
 /**
@@ -46,16 +50,26 @@ alt.Player.prototype.save = function save() {
  * @param {string} fieldName The field name to use.
  * @param {any} fieldValue The field value to apply.
  */
-alt.Player.prototype.saveField = function saveField(id, fieldName, fieldValue) {
-    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Character', () => {});
+alt.Player.prototype.saveField = async function saveField(id, fieldName, fieldValue) {
+    const result = await db.updatePartialData(
+        id,
+        { [fieldName]: fieldValue },
+        'Character'
+    );
+
+    if (!result) {
+        alt.log(`Failed to save ${this.data.name} for field ${fieldName}`);
+    }
 };
 
-alt.Player.prototype.setRank = function setRank(flag) {
+alt.Player.prototype.setRank = async function setRank(flag) {
     this.rank = flag;
     modifyRank(this.pgid, flag);
-    db.updatePartialData(this.accountID, { rank: flag }, 'Account', () => {
-        alt.log(`Updated ${this.pgid} to rank ${flag}`);
-    });
+    const result = await db.updatePartialData(this.accountID, { rank: flag }, 'Account');
+
+    if (!result) {
+        alt.log(`Failed to update rank for ${this.data.name}`);
+    }
 };
 
 /**
@@ -1011,21 +1025,24 @@ alt.Player.prototype.playAnimation = function playAnimation(
 
 // =================================
 // Vehicles
-alt.Player.prototype.spawnVehicles = function spawnVehicles() {
+alt.Player.prototype.spawnVehicles = async function spawnVehicles() {
     if (!this.vehicles) {
         this.vehicles = [];
         this.emitMeta('pedflags', true);
     }
 
-    db.fetchAllByField('guid', this.data.id, 'Vehicle', vehicles => {
-        if (vehicles === undefined) return;
+    const vehicles = await db.fetchAllByField('guid', this.data.id, 'Vehicle');
+    if (!vehicles) {
+        return;
+    }
 
-        if (vehicles.length <= 0) return;
+    if (vehicles.length <= 0) {
+        return;
+    }
 
-        vehicles.forEach(veh => {
-            if (!this) return;
-            spawnVehicle(this, veh);
-        });
+    vehicles.forEach(veh => {
+        if (!this) return;
+        spawnVehicle(this, veh);
     });
 };
 
@@ -1040,7 +1057,7 @@ alt.Player.prototype.hasVehicleSlot = function hasVehicleSlot() {
     return true;
 };
 
-alt.Player.prototype.addVehicle = function addVehicle(model, pos, rot) {
+alt.Player.prototype.addVehicle = async function addVehicle(model, pos, rot) {
     if (Array.isArray(this.vehicles)) {
         const vehicles = this.vehicles.filter(veh => veh.data);
         const extraSlots = parseInt(this.data.extraVehicleSlots);
@@ -1071,14 +1088,17 @@ alt.Player.prototype.addVehicle = function addVehicle(model, pos, rot) {
     };
 
     spawnVehicle(this, veh, true);
-    db.upsertData(veh, 'Vehicle', res => {});
+    await db.upsertData(veh, 'Vehicle');
     return true;
 };
 
-alt.Player.prototype.deleteVehicle = function deleteVehicle(id) {
-    db.deleteByIds([id], 'Vehicle', res => {
-        console.log(res);
-    });
+alt.Player.prototype.deleteVehicle = async function deleteVehicle(id) {
+    const result = await db.deleteByIds([id], 'Vehicle');
+    if (!result) {
+        return;
+    }
+
+    alt.log(`Vehicle ID: ${id} was deleted by ${this.data.name}`);
 };
 
 // =================

@@ -5,7 +5,7 @@ import { getDoor } from '../systems/door.js';
 
 const db = new SQL(); // Get DB Reference
 
-alt.on('orp:Login', (player, id, discordID) => {
+alt.on('orp:Login', async (player, id, discordID) => {
     const existing = alt.Player.all.find(
         target => target && target.discord === discordID
     );
@@ -22,39 +22,37 @@ alt.on('orp:Login', (player, id, discordID) => {
     player.setMeta('id', player.guid);
     player.setMeta('discord', player.discord);
 
-    db.fetchAllByField('guid', player.guid, 'Character', characters => {
-        if (Array.isArray(characters) && characters.length >= 1) {
-            alt.log('Loading existing characters...');
+    const characters = await db.fetchAllByField('guid', player.guid, 'Character');
+    if (Array.isArray(characters) && characters.length >= 1) {
+        alt.log('Loading existing characters...');
 
-            // Existing Characters
-            player.characters = characters;
-            alt.emitClient(
-                player,
-                'character:Select',
-                characters,
-                Config.characterPoint,
-                Config.characterCamPoint
-            );
-        } else {
-            alt.log('Creating new character...');
+        // Existing Characters
+        player.characters = characters;
+        alt.emitClient(
+            player,
+            'character:Select',
+            characters,
+            Config.characterPoint,
+            Config.characterCamPoint
+        );
+        return;
+    }
 
-            // New Character
-            const currentTime = Date.now();
-            const data = {
-                guid: player.guid,
-                lastposition: JSON.stringify(Config.defaultSpawnPoint),
-                health: 200,
-                cash: Config.defaultPlayerCash,
-                creation: currentTime,
-                lastlogin: currentTime
-            };
+    // New Character
+    alt.log('Creating new character...');
+    const currentTime = Date.now();
+    const data = {
+        guid: player.guid,
+        lastposition: JSON.stringify(Config.defaultSpawnPoint),
+        health: 200,
+        cash: Config.defaultPlayerCash,
+        creation: currentTime,
+        lastlogin: currentTime
+    };
 
-            // Save the new Character data to the database and assign to the player.
-            db.upsertData(data, 'Character', data => {
-                existingCharacter(player, data);
-            });
-        }
-    });
+    // Save the new Character data to the database and assign to the player.
+    const newCharacter = await db.upsertData(data, 'Character');
+    existingCharacter(player, newCharacter);
 });
 
 // Called for any existing characters.

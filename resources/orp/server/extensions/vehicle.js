@@ -20,7 +20,7 @@ alt.Vehicle.prototype.startTick = function startTick() {
     alt.emit('parse:Vehicle', this);
 };
 
-alt.Vehicle.prototype.save = function save() {
+alt.Vehicle.prototype.save = async function save() {
     if (this.noSave) {
         return;
     }
@@ -39,15 +39,15 @@ alt.Vehicle.prototype.save = function save() {
     });
 
     this.markedForSave = [];
-    db.updatePartialData(this.data.id, dataToSave, 'Vehicle', res => {});
+    await db.updatePartialData(this.data.id, dataToSave, 'Vehicle');
 };
 
-alt.Vehicle.prototype.saveField = function saveField(id, fieldName, fieldValue) {
+alt.Vehicle.prototype.saveField = async function saveField(id, fieldName, fieldValue) {
     if (this.noSave) {
         return;
     }
 
-    db.updatePartialData(id, { [fieldName]: fieldValue }, 'Vehicle', () => {});
+    await db.updatePartialData(id, { [fieldName]: fieldValue }, 'Vehicle');
 };
 
 alt.Vehicle.prototype.updateField = function updateField(fieldName, fieldValue) {
@@ -252,7 +252,7 @@ alt.Vehicle.prototype.honkHorn = function honkHorn(times, duration) {
     alt.emitClient(null, 'vehicle:HonkHorn', this, times, duration);
 };
 
-alt.Vehicle.prototype.repair = function repair() {
+alt.Vehicle.prototype.repair = async function repair() {
     const pos = { ...this.pos };
     const rot = { ...this.rot };
     const data = { ...this.data };
@@ -272,11 +272,10 @@ alt.Vehicle.prototype.repair = function repair() {
         lockState: data.lockState
     });
 
-    db.updatePartialData(
+    await db.updatePartialData(
         data.id,
         { position: data.position, rotation: data.rotation, stats: data.stats },
-        'Vehicle',
-        () => {}
+        'Vehicle'
     );
 
     if (!this.owner) {

@@ -1,6 +1,178 @@
 import * as alt from 'alt';
 import fs from 'fs';
 
+// Break down weapons into raw materials on death
+
+// Faction Types
+const SubTypes = {
+    MIN: 0,
+    BUSINESS: 1,
+    GANG: 2,
+    POLICE: 4,
+    FBI: 8,
+    SWAT: 16,
+    FIRE: 32,
+    HMA: 64,
+    NEWS: 128
+};
+
+// Unlockable Skills
+const Unlocks = {
+    MIN: 0,
+    CHAT: 1, // Private Chat for Members
+    RADIO: 2, // Radio for Members (IC)
+    RECON: 4, // See Own Members
+    WAREHOUSE: 8, // Faction Warehouse for Shared Storage
+    VEHICLE: 16, // Vehicle Unlocks
+    AIRCRAFT: 32, // Aircraft Unlocks
+    DRUG_JOBS: 64, // Unlock Drug Jobs
+    GUN_JOBS: 128, // Unlock Gun Jobs
+    CAN_ARREST: 256, // Can Arrest Players
+    CAN_INVESTIGATE: 512, // Can Investigate Dead Bodies, See Random Items in Warehouse with Cooldown
+    PISTOL_LOCKER: 1024, // Unlock Pistols
+    SUB_MACHINE_LOCKER: 2048, // Unlock Submachine Guns
+    SHOTGUN_LOCKER: 4096, // Unlock Shotguns
+    ASSAULT_LOCKER: 8192, // Unlock Assault Rifles
+    EXPLOSIVE_LOCKER: 16384, // Unlock Explosives
+    UTILITY_LOCKER: 32768, // Unlock Tazer, Parachute, Flashlight, Fire Ext, etc.
+    ARMOUR_LOCKER: 65536, // Access to Armor
+    OUTFIT_LOCKER: 131072, // Access to Predefined Outfits by Leader
+    CAN_SPY: 262144, // Bug Players, Vehicles, etc.
+    CAN_DISGUISE: 524288, // Can Change Name Anywhere - Fake ID
+    IGNORE_SAFEZONE: 1048576, // Ignores Safe Zone for Combat
+    DEPARTMENT_RADIO: 2097152, // Talk across other factions that have this flag.
+    TEXT_LINE: 4194304, // Text a specific WORD to relay it to all members.
+    CAN_BE_RAIDED: 8388608, // Warehouse can be raided
+    CAN_RAID: 16777216, // Can raid warehouses
+    CAN_RESTORE: 33554432, // Can restore destroyed by fire points.
+    CAN_BADGE: 67108864, // Can Faction Badge Up
+    GLOBAL_BROADCAST: 134217728 // Weazel News
+};
+
+const SubTypeAccess = {
+    [SubTypes.BUSINESS]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.TEXT_LINE |
+        Unlocks.CAN_BE_RAIDED,
+    [SubTypes.GANG]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.DRUG_JOBS |
+        Unlocks.GUN_JOBS |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.CAN_BE_RAIDED,
+    [SubTypes.POLICE]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.CAN_ARREST |
+        Unlocks.PISTOL_LOCKER |
+        Unlocks.SHOTGUN_LOCKER |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.ARMOUR_LOCKER |
+        Unlocks.OUTFIT_LOCKER |
+        Unlocks.DEPARTMENT_RADIO,
+    [SubTypes.FBI]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.CAN_ARREST |
+        Unlocks.PISTOL_LOCKER |
+        Unlocks.SHOTGUN_LOCKER |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.ARMOUR_LOCKER |
+        Unlocks.OUTFIT_LOCKER |
+        Unlocks.CAN_DISGUISE |
+        Unlocks.CAN_INVESTIGATE |
+        Unlocks.CAN_SPY |
+        Unlocks.DEPARTMENT_RADIO,
+    [SubTypes.SWAT]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.PISTOL_LOCKER |
+        Unlocks.SHOTGUN_LOCKER |
+        Unlocks.SUB_MACHINE_LOCKER |
+        Unlocks.ASSAULT_LOCKER |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.ARMOUR_LOCKER |
+        Unlocks.OUTFIT_LOCKER |
+        Unlocks.DEPARTMENT_RADIO |
+        Unlocks.CAN_RAID,
+    [SubTypes.FIRE]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.ARMOUR_LOCKER |
+        Unlocks.OUTFIT_LOCKER |
+        Unlocks.DEPARTMENT_RADIO,
+    [SubTypes.HMA]:
+        Unlocks.CHAT |
+        Unlocks.RADIO |
+        Unlocks.RECON |
+        Unlocks.WAREHOUSE |
+        Unlocks.VEHICLE |
+        Unlocks.AIRCRAFT |
+        Unlocks.CAN_ARREST |
+        Unlocks.PISTOL_LOCKER |
+        Unlocks.SHOTGUN_LOCKER |
+        Unlocks.UTILITY_LOCKER |
+        Unlocks.ARMOUR_LOCKER |
+        Unlocks.OUTFIT_LOCKER |
+        Unlocks.EXPLOSIVE_LOCKER |
+        Unlocks.CAN_INVESTIGATE |
+        Unlocks.CAN_DISGUISE |
+        Unlocks.DEPARTMENT_RADIO
+};
+
+// Their Powers
+const SubTypeDefaults = {};
+
+// Minimum Reward Points Per Unlock
+const VehicleUnlocks = {
+    MIN: 1024,
+    TWO: 2048,
+    THREE: 4096,
+    FOUR: 8192,
+    FIVE: 16384,
+    SIX: 32768,
+    SEVEN: 65536,
+    EIGHT: 131072,
+    NINE: 262144,
+    TEN: 524288,
+    MAX: 1047552
+};
+
+// Minimum Reward Points Per Unlock
+const AircraftUnlocks = {
+    MIN: 16384,
+    TWO: 32768,
+    MAX: 65536
+};
+
 const standardGang = {
     radio: {
         description: 'A faction designated chat.',

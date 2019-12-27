@@ -180,8 +180,15 @@ class App extends Component {
     }
 
     setInput(e) {
-        if (!this.state.showingInput) return;
-        if (e.target.value.length > 255) return;
+        if (!this.state.showingInput) {
+            return;
+        }
+
+        if (e.target.value.length > 255) {
+            this.setState({ inputValue: this.state.inputValue });
+            return;
+        }
+
         this.setState({ inputValue: e.target.value });
     }
 

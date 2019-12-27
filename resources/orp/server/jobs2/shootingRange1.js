@@ -65,7 +65,6 @@ function completedJob(identifier, player) {
     }
 
     player.send('{FFFF00} Job has been completed. Try another round.');
-    player.notify('Added 1 Unrefined Metal');
 }
 
 function completedObjective(identifier, objective, player) {

@@ -162,8 +162,10 @@ function display() {
             targetObject
         );
 
-        const firing = native.isControlPressed(0, 24);
         if (isFreeAiming && ent === targetObject) {
+            native.enableControlAction(0, 24, true);
+            const firing = native.isControlPressed(0, 24);
+
             if (firing) {
                 alt.emit('objective:Hit', dist);
             }

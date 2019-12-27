@@ -350,15 +350,26 @@ function getPointsNeeded(skillNumber) {
 class Skills extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            points: 1
+        };
     }
 
     appendPoint(e) {
         const id = parseInt(e.target.id);
+        const amount = parseInt(e.target.value);
+
         if ('alt' in window) {
-            alt.emit('faction:AppendPoint', id);
+            alt.emit('faction:AppendPoint', id, amount);
         } else {
+            console.log('id / amount');
             console.log(id);
+            console.log(amount);
         }
+    }
+
+    updatePointAllocator(points) {
+        this.setState({ points });
     }
 
     renderSubSkills({ props }) {
@@ -395,19 +406,33 @@ class Skills extends Component {
                   })
                 : pointsNeeded;
 
-            // Get the Button Type
-            const buttonType =
-                unlockPoints === pointData || unlockPoints <= -1
-                    ? h('button', { class: 'disabled' }, 'Unlocked')
-                    : h(
-                          'button',
-                          {
-                              class: 'appendPoint',
-                              id: Unlocks[unlock],
-                              onclick: this.appendPoint.bind(this)
-                          },
-                          'Add Point'
-                      );
+            let maxPointSpend = this.state.points;
+            if (this.state.points > pointData - unlockPoints) {
+                maxPointSpend = pointData - unlockPoints;
+            }
+
+            let buttonType = h('button', { class: 'disabled' }, 'No Points Available');
+
+            if (unlockPoints === pointData || unlockPoints <= -1 || !pointData) {
+                buttonType = h('button', { class: 'unlocked' }, 'Unlocked');
+            }
+
+            if (
+                state.rewardPoints >= 1 &&
+                unlockPoints !== pointData &&
+                unlockPoints >= 0
+            ) {
+                buttonType = h(
+                    'button',
+                    {
+                        class: 'appendPoint',
+                        id: Unlocks[unlock],
+                        onclick: this.appendPoint.bind(this),
+                        value: maxPointSpend
+                    },
+                    `Use ${maxPointSpend} Point(s)`
+                );
+            }
 
             // Get Description for Unlock
             const pointDesc = UnlocksDesc[Unlocks[unlock]];
@@ -422,7 +447,9 @@ class Skills extends Component {
                     h(
                         'div',
                         { class: 'name' },
-                        `${unlock} [${unlockPoints}/${pointData}]`
+                        `${unlock} [${unlockPoints}/${
+                            pointData ? pointData : unlockPoints
+                        }]`
                     ),
                     buttonType
                 ),
@@ -439,9 +466,33 @@ class Skills extends Component {
             }
         });
 
+        const rewardPoints = props.state.rewardPoints;
+
         return h(
             'div',
             { class: 'skillPage' },
+            rewardPoints >= 1 &&
+                h(
+                    'div',
+                    { class: 'pointAllocation' },
+                    h('p', {}, `You have ${rewardPoints} Point(s) Available.`),
+                    h(
+                        'p',
+                        {},
+                        'Allocate points to your faction to unlock new features. Points that are spent will not be regained if the faction disbands.'
+                    ),
+                    h('input', {
+                        id: 'pointAllocator',
+                        type: 'range',
+                        min: 1,
+                        max: rewardPoints,
+                        value: this.state.points,
+                        oninput: e => {
+                            const value = e.target.value;
+                            this.updatePointAllocator(value);
+                        }
+                    })
+                ),
             h(this.renderSubSkills.bind(this), { props })
         );
     }

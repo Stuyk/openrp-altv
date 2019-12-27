@@ -202,6 +202,5 @@ alt.onServer('pedstream:Append', pedJson => {
         const newPedStream = new PedStream(hash, stream.pos, stream.heading);
 
         newPedStream.addInteraction(stream.interactions, stream.title);
-        alt.log('PedStrema was created');
     });
 });

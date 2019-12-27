@@ -246,7 +246,7 @@ const SubTypeDefaults = {
         Unlocks.ARMOUR_LOCKER |
         Unlocks.OUTFIT_LOCKER |
         Unlocks.CAN_INVESTIGATE |
-        Unlocks.CAN_DISGUISE |
+        Unlocks.CAN_DISGUISE
 };
 
 /**

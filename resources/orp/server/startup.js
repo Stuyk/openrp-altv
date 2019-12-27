@@ -146,8 +146,9 @@ async function cacheInformation() {
             salePrice: Doors[i].salePrice
         };
 
-        const newDoorData = await db.insertData(door, 'Door');
-        alt.emit('door:CacheDoor', door.id, newDoorData);
+        db.insertData(door, 'Door').then(newDoorData => {
+            alt.emit('door:CacheDoor', door.id, newDoorData);
+        });
     }
 
     alt.emit('cache:Complete');

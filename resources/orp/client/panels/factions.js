@@ -38,6 +38,7 @@ export function showDialogue() {
     webview.on('faction:RemoveVehiclePoint', removeVehiclePoint);
     webview.on('faction:SetSubType', setSubType);
     webview.on('faction:SetColor', setColor);
+    webview.on('faction:AppendPoint', appendPoint);
     native.triggerScreenblurFadeIn(0);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
@@ -68,11 +69,14 @@ function parseData() {
     const id = alt.Player.local.getSyncedMeta('id');
     const members = JSON.parse(parsedInfo.members);
     const member = members.find(member => member.id === id);
-
+    const availablePoints = alt.Player.local.getMeta('reward:Available');
     const skillTree = alt.Player.local.getMeta('faction:SkillTree');
+
     if (skillTree) {
         webview.emit('faction:SetSkillTree', skillTree);
     }
+
+    webview.emit('faction:RewardPoints', availablePoints);
 
     if (!member) {
         return;
@@ -151,6 +155,14 @@ function setSubType(type) {
 
 function setColor(id) {
     alt.emitServer('faction:SetColor', id);
+}
+
+function appendPoint(id, amount) {
+    if (amount <= 0) {
+        return;
+    }
+
+    alt.emitServer('faction:AppendPoint', id, amount);
 }
 
 alt.onServer('faction:Error', msg => {

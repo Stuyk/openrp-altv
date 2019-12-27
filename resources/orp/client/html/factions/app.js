@@ -115,6 +115,7 @@ class App extends Component {
         };
 
         this.state = {
+            rewardPoints: 0,
             subtype: -1,
             skilltree: {},
             messages: [],
@@ -138,6 +139,7 @@ class App extends Component {
             alt.on('faction:Ready', this.ready.bind(this));
             alt.on('faction:Error', this.factionError.bind(this));
             alt.on('faction:Success', this.factionSuccess.bind(this));
+            alt.on('faction:RewardPoints', this.setRewardPoints.bind(this));
             alt.emit('faction:Ready');
         } else {
             const members = [];
@@ -219,6 +221,10 @@ class App extends Component {
         const messages = [...this.state.messages];
         messages.push({ time: Date.now() + 2000, msg, type: 'success' });
         this.setState({ messages });
+    }
+
+    setRewardPoints(points) {
+        this.setState({ rewardPoints: points });
     }
 
     setMyData(rank, id) {

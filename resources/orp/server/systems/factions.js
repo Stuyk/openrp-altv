@@ -4,7 +4,13 @@ import { colshapes } from './grid.js';
 import { Config } from '../configuration/config.js';
 import { isFlagged } from '../utility/flags.js';
 import { distance } from '../utility/vector.js';
-import { SubTypes, PoliceTypes, Unlocks, SubTypeAccess } from './factiontree.js';
+import {
+    SubTypes,
+    PoliceTypes,
+    Unlocks,
+    SubTypeAccess,
+    UnlockPoints
+} from './factiontree.js';
 
 const factions = [];
 const db = new SQL();
@@ -48,7 +54,7 @@ alt.onClient('faction:Disband', factionDisband);
 alt.onClient('faction:AppendRank', factionAppendRank);
 alt.onClient('faction:RemoveRank', factionRemoveRank);
 alt.onClient('faction:SetFlags', factionSetFlags);
-alt.onClient('faction:AddPoint', factionAddPoint);
+alt.onClient('faction:AppendPoint', factionAppendPoint);
 alt.onClient('faction:SetInfo', factionSetInfo);
 alt.onClient('faction:SaveRank', factionSaveRank);
 alt.onClient('faction:InviteMember', factionInviteMember);
@@ -613,24 +619,36 @@ export class Faction {
         alt.emitClient(player, 'faction:Success', 'Flags have been updated.');
     }
 
-    updateSkills(player, id) {
+    updateSkills(player, id, amount) {
         const unlocks = JSON.parse(this.unlocks);
 
         if (!unlocks[id]) {
-            unlocks[id] = 1;
-            return true;
+            unlocks[id] = amount;
         } else {
-            if (unlocks[id] + 1 > UnlockPoints[id]) {
+            const currentPoints = unlocks[id]; // Points Currently Allocated
+            const totalPoints = Array.isArray(UnlockPoints[id])
+                ? UnlockPoints[id].find(total => {
+                      // CurrentPoints: 1024; Amount: 1024; Total: 2048
+                      if (total > currentPoints) {
+                          if (currentPoints !== total) {
+                              return total;
+                          }
+                      }
+                  })
+                : UnlockPoints[id];
+
+            if (unlocks[id] + amount > totalPoints) {
                 alt.emitClient(player, 'faction:Error', 'Skill is already maxed out.');
                 return false;
             }
 
-            unlocks[id] += 1;
+            unlocks[id] += amount;
         }
 
         this.unlocks = JSON.stringify(unlocks);
         this.saveField('unlocks', this.unlocks);
         this.syncMembers();
+        return true;
     }
 
     /**
@@ -638,7 +656,7 @@ export class Faction {
      * @param {*} player
      * @param {Unlocks} id
      */
-    addPoint(player, id) {
+    addPoint(player, id, amount) {
         const unlockables = SubTypeAccess[this.subtype];
 
         if (isNaN(id)) {
@@ -646,7 +664,7 @@ export class Faction {
             return;
         }
 
-        if (isFlagged(unlockables, id)) {
+        if (!isFlagged(unlockables, id)) {
             alt.emitClient(
                 player,
                 'faction:Error',
@@ -655,21 +673,20 @@ export class Faction {
             return;
         }
 
-        if (player.rewardpoints <= 0) {
+        if (player.data.rewardpoints <= 0 || player.data.rewardpoints < amount) {
             alt.emitClient(
                 player,
                 'faction:Error',
-                'You have no reward points available.'
+                'You do not have enough reward points.'
             );
             return;
         }
 
-        if (!this.updateSkills(id)) {
+        if (!this.updateSkills(player, id, amount)) {
             return;
         }
 
-        player.data.rewardpoints -= 1;
-        player.saveField(player.data.id, 'rewardpoints', player.data.rewardpoints);
+        player.removeRewardPoints(amount);
         alt.emitClient(player, 'faction:Success', 'Skill point was appended.');
         this.syncMembers();
     }
@@ -857,8 +874,8 @@ async function factionCreate(player, type, factionName) {
         return;
     }
 
-    if (!SubTypes[type]) {
-        alt.log('Subtype does not exist.');
+    if (!isFlagged(SubTypes.GANG | SubTypes.BUSINESS, type)) {
+        alt.log('Subtype is not valid for normal players.');
         return;
     }
 
@@ -884,7 +901,7 @@ async function factionCreate(player, type, factionName) {
         name,
         members,
         ranks,
-        subtype: id
+        subtype: type
     };
 
     alt.log('Saving created faction.');
@@ -961,12 +978,20 @@ function factionSetFlags(player, index, flags) {
  * @param {*} player
  * @param {Unlocks} skillNumber
  */
-function factionAddPoint(player, skillNumber) {
+function factionAppendPoint(player, skillNumber, amount) {
     if (!player.faction) {
         return;
     }
 
-    player.faction.addPoint(player, skillNumber);
+    if (amount <= 0) {
+        return;
+    }
+
+    console.log('Sent Up');
+    console.log(skillNumber);
+    console.log(amount);
+
+    player.faction.addPoint(player, skillNumber, amount);
 }
 
 function factionSetInfo(player, infoName, info) {

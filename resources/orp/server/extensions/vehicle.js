@@ -218,12 +218,23 @@ alt.Vehicle.prototype.syncCustom = function syncCustom() {
 
             if (index !== 23) {
                 try {
+                    if (value === 0) {
+                        return;
+                    }
                     this.setMod(index, value);
                 } catch (e) {
                     console.log(`Mod: ${index} could not be applied with value ${value}`);
                 }
             } else {
-                this.setSyncedMeta('vehicleWheels', value);
+                try {
+                    if (value === 0) {
+                        return;
+                    }
+                    vehicle.setWheels(23, value);
+                } catch (e) {
+                    console.log(`Mod: ${index} could not be applied with value ${value}`);
+                }
+                // this.setSyncedMeta('vehicleWheels', value);
             }
             return;
         }

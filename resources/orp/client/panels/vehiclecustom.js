@@ -9,6 +9,9 @@ let vehicleChanges = {};
 let previousVehicle = {};
 let previousColors = {};
 let colors = {};
+let wheelType = 0;
+let wheelIndex = 0;
+let targetVeh;
 
 const modTypes = [
     'Spoiler', // 0
@@ -79,51 +82,57 @@ export function showDialogue() {
 
     // Setup Webview
     webview.open(url, true);
-    webview.on('vehicle:FetchModList', buildModList);
-    webview.on('vehicle:UpdateLocalVehicle', updateLocalVehicle);
-    webview.on('vehicle:UpdateColor', updateVehicleColor);
-    webview.on('vehicle:SaveChanges', saveChanges);
-    webview.on('vehicle:Exit', exit);
+    webview.on('custom:FetchMods', customFetchMods);
+    webview.on('custom:AdjustMod', customAdjustMod);
+    webview.on('custom:AdjustWheelType', customAdjustWheelType);
+    webview.on('custom:AdjustRotation', customAdjustRotation);
+    webview.on('custom:AdjustColor', customAdjustColor);
+    alt.emit('hud:Hide', true);
+    alt.emit('chat:Hide', true);
     getPreviousVehicleMods();
 }
 
-function getPreviousVehicleMods() {
-    previousVehicle = {};
+function customAdjustRotation(value) {
+    native.setEntityHeading(targetVeh, value);
+}
 
-    const vehID = alt.Player.local.vehicle.scriptID;
-    native.setVehicleModKit(vehID, 0);
+function getPreviousVehicleMods() {
+    targetVeh = alt.Player.local.vehicle.scriptID;
+    native.setVehicleModKit(targetVeh, 0);
+
+    // Parse Previous Mods
     for (let i = 0; i <= 48; i++) {
-        let value = native.getVehicleMod(vehID, i);
+        let value = native.getVehicleMod(targetVeh, i);
         previousVehicle[i] = value;
     }
 
-    getPreviousVehicleColors(vehID);
+    getPreviousVehicleColors();
 }
 
-function getPreviousVehicleColors(vehID) {
+function getPreviousVehicleColors() {
     const [_null1, pr, pg, pb] = native.getVehicleCustomPrimaryColour(
-        vehID,
+        targetVeh,
         undefined,
         undefined,
         undefined
     );
 
     const [_null2, sr, sg, sb] = native.getVehicleCustomSecondaryColour(
-        vehID,
+        targetVeh,
         undefined,
         undefined,
         undefined
     );
 
     const [_null3, primaryPaintType] = native.getVehicleModColor1(
-        vehID,
+        targetVeh,
         undefined,
         undefined,
         undefined
     );
 
     const [_null4, secondaryPaintType] = native.getVehicleModColor2(
-        vehID,
+        targetVeh,
         undefined,
         undefined,
         undefined
@@ -149,132 +158,62 @@ function getPreviousVehicleColors(vehID) {
     };
 }
 
-function buildModList() {
-    if (!webview) return;
+function customFetchMods() {
+    if (!webview) {
+        return;
+    }
+
     showCursor(true);
-    const vehID = alt.Player.local.vehicle.scriptID;
-
-    native.setVehicleModKit(vehID, 0);
-
+    const mods = [];
     for (let i = 0; i <= 48; i++) {
-        if (i === 17 || i === 19 || i === 21) continue;
+        if (i === 17 || i === 19 || i === 21) {
+            continue;
+        }
 
         const mod = {
             index: i,
-            numMods: 0,
-            modLabels: [],
+            max: 0,
             slotName: modTypes[i],
-            active: native.getVehicleMod(vehID, i)
+            active: native.getVehicleMod(targetVeh, i)
         };
 
-        mod.numMods = isToggleMod(i) ? 1 : native.getNumVehicleMods(vehID, i); // 18 = Turbo
-
-        if (mod.numMods >= 1) {
-            for (let modIndex = -1; modIndex < mod.numMods; modIndex++) {
-                let displayName = native.getLabelText(
-                    native.getModTextLabel(vehID, i, modIndex)
-                );
-
-                if (isToggleMod(i)) {
-                    if (modIndex === -1) displayName = `Disabled`;
-                    if (displayName === 'NULL') displayName = `Enabled`;
-                } else if (isTuningMod(i)) {
-                    if (modIndex === -1) displayName = `Stock`;
-                    if (displayName === 'NULL') displayName = `Level ${modIndex}`;
-                } else {
-                    if (modIndex === -1) displayName = 'Stock';
-                    if (displayName === 'NULL') displayName = `Mod #${modIndex}`;
-                }
-
-                if (
-                    modIndex !== -1 &&
-                    (modIndex === native.getVehicleMod(vehID, i) ||
-                        native.isToggleModOn(vehID, i))
-                ) {
-                    displayName = `${displayName}*`;
-                    mod.modLabels.unshift({
-                        displayName,
-                        index: modIndex
-                    });
-                    continue;
-                }
-
-                mod.modLabels.push({
-                    displayName,
-                    index: modIndex
-                });
-            }
-
-            if (mod.modLabels.length > 0) {
-                webview.emit('parseMod', JSON.stringify(mod));
-            }
-        }
+        mod.max = native.getNumVehicleMods(targetVeh, i);
+        mods.push(mod);
     }
 
-    webview.emit('parseColors', previousColors);
+    webview.emit('custom:SetMods', mods);
+    webview.emit('custom:SetColors', previousColors);
 }
 
-function isToggleMod(modNumber) {
-    return modNumber >= 17 && modNumber <= 22;
+function customAdjustMod(index, value) {
+    native.setVehicleModKit(targetVeh, 0);
+
+    if (index === 23) {
+        wheelIndex = value;
+        native.setVehicleWheelType(targetVeh, wheelType);
+        native.setVehicleMod(targetVeh, index, value, true);
+        return;
+    }
+
+    native.setVehicleMod(targetVeh, index, value, false);
+    vehicleChanges[index] = value;
 }
 
-function isTuningMod(modNumber) {
-    return modNumber >= 11 && modNumber <= 16;
+function customAdjustWheelType(value) {
+    native.setVehicleModKit(targetVeh, 0);
+    wheelType = value;
+    native.setVehicleWheelType(targetVeh, value);
+    native.setVehicleMod(targetVeh, 23, wheelIndex, true);
 }
 
-function updateLocalVehicle({ modType, modIndex }) {
-    const veh = alt.Player.local.vehicle.scriptID;
-
-    native.setVehicleModKit(veh, 0);
-    native.setVehicleMod(veh, modType, modIndex, false);
-    vehicleChanges[modType] = modIndex;
-}
-
-function updateVehicleColor(
-    primaryPaintType,
-    secondaryPaintType,
-    primaryColor,
-    secondaryColor
-) {
-    const veh = alt.Player.local.vehicle.scriptID;
-
-    /**
-     * 0: Normal
-     * 1: Metallic
-     * 2: Pearl
-     * 3: Matte
-     * 4: Metal
-     * 5: Chrome
-     */
-
-    native.setVehicleModColor1(veh, primaryPaintType, 0, 0);
-    native.setVehicleCustomPrimaryColour(
-        veh,
-        primaryColor.r,
-        primaryColor.g,
-        primaryColor.b
-    );
-
-    native.setVehicleModColor2(veh, secondaryPaintType, 0, 0);
+function customAdjustColor(primary, secondary) {
+    native.setVehicleCustomPrimaryColour(targetVeh, primary.pr, primary.pg, primary.pb);
     native.setVehicleCustomSecondaryColour(
-        veh,
-        secondaryColor.r,
-        secondaryColor.g,
-        secondaryColor.b
+        targetVeh,
+        secondary.sr,
+        secondary.sg,
+        secondary.sb
     );
-
-    // This is stored at the top of the file.
-    // Set it; when the player enters the shop.
-    colors = {
-        primary: {
-            type: primaryPaintType,
-            color: primaryColor
-        },
-        secondary: {
-            type: secondaryPaintType,
-            color: secondaryColor
-        }
-    };
 }
 
 function saveChanges() {
@@ -286,16 +225,6 @@ function saveChanges() {
         previousVehicle[key] = vehicleChanges[key];
     });
 
-    /*
-    Object.keys(previousVehicle).forEach(key => {
-        if (previousVehicle[key] === -1) delete previousVehicle[key];
-    });
-    */
-
-    /*
-        Need to add colors into this event here; for the previousVehicle data.
-        The server-side mod distribution; also needs to handle this.
-    */
     previousVehicle.colors = colors;
 
     // New modification list is sent up.

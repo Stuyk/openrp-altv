@@ -116,6 +116,14 @@ function deathboxPickup(player, data) {
 }
 
 function deathboxCreate(player) {
+    if (!player.valid) {
+        return;
+    }
+
+    if (!player.inventory) {
+        return;
+    }
+
     new Deathbox(player);
     alt.emitClient(null, 'deathbox:Sync', JSON.stringify(deathBoxes));
 }

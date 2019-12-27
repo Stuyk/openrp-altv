@@ -21,8 +21,8 @@ function kick(args) {
 }
 
 function setAdmin(args) {
-    const id = args[0];
-    const rank = args[1];
+    const id = parseInt(args[0]);
+    const rank = parseInt(args[1]);
     if (rank === undefined || id === undefined) {
         alt.log('setadmin <id> <rank>');
         return;

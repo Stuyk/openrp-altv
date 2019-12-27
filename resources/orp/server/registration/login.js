@@ -195,16 +195,23 @@ alt.on('sync:Player', player => {
         return;
     }
 
-    player.health = player.data.health;
-    player.armour = player.data.armour;
     player.spawn(lastKnownPos.x, lastKnownPos.y, lastKnownPos.z, 0);
-    player.pos = lastKnownPos;
-    player.syncInventory(true);
     alt.emit('faction:Attach', player);
 
     player.timeoutTicker = setTimeout(() => {
         alt.emit('parse:Player', player);
     }, 10000);
+
+    setTimeout(() => {
+        if (!player.valid) {
+            return;
+        }
+
+        player.syncInventory(true);
+        player.health = player.data.health;
+        player.armour = player.data.armour;
+        player.pos = lastKnownPos;
+    }, 1000);
 
     const products = player.getMeta('gumroad:Products');
     if (products && products.length >= 1) {

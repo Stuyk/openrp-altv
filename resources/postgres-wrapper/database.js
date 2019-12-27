@@ -60,11 +60,11 @@ export default class ConnectionInfo {
             const repo = this.connection.getRepository(repoName);
             repo.findOne({ where: { [fieldName]: fieldValue } })
                 .then(res => {
-                    return callback(res);
+                    return resolve(res);
                 })
                 .catch(err => {
                     console.error(err);
-                    return callback(undefined);
+                    return resolve(undefined);
                 });
         });
     }

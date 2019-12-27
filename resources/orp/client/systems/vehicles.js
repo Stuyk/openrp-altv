@@ -39,10 +39,11 @@ alt.on('gameEntityCreate', entity => {
                 );
             }
 
+            /*
             if (wheels) {
-                native.setVehicleMod(entity.scriptID, 23, wheels, true);
-                native.setVehicleMod(entity.scriptID, 24, wheels, true);
+                native.setVehicleWheelType(entity.scriptID, wheels);
             }
+            */
         }, 1000);
     }
 });

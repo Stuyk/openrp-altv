@@ -4,6 +4,7 @@ import { Config } from '../configuration/config.js';
 import { actionMessage } from '../chat/chat.js';
 import { Items, BaseItems } from '../configuration/items.js';
 
+alt.onClient('custom:Wheel', customWheel);
 alt.on('vehicle:Respawn', (player, veh) => {
     spawnVehicle(player, veh);
 });
@@ -459,3 +460,16 @@ alt.onClient('vehicle:RemoveItemFromVehicle', (player, hash, vehicle) => {
 
     alt.emitClient(null, 'vehicle:SyncInventory', vehicle, vehicle.getInventory());
 });
+
+function customWheel(player, wheelType, wheelIndex) {
+    if (!player || !player.valid) {
+        return;
+    }
+
+    const vehicle = player.vehicle;
+    if (!vehicle || !vehicle.valid) {
+        return;
+    }
+
+    vehicle.setWheels(wheelType, wheelIndex);
+}

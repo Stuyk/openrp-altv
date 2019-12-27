@@ -1,11 +1,12 @@
 @sidebarWidth: 320px;
 @tabHeight: 50px;
 @footerHeight: 25px;
-
 @dark: #141414e0;
 @light: #d7e1e5;
 @contrast1: rgb(0, 217, 255);
-@contrast2: #7d909b;
+@contrast2: rgb(255, 153, 0);
+@success: rgb(131, 255, 162);
+@error: rgb(255, 123, 123);
 @darkaccent: rgb(8, 8, 8);
 @fontface: 'Roboto';
 
@@ -18,12 +19,6 @@ html {
     font-family: @fontface;
     text-transform: uppercase;
     user-select: none;
-}
-
-.data-menu {
-    width: @sidebarWidth;
-    height: 100%;
-    float: left;
     color: white;
 }
 
@@ -34,175 +29,130 @@ html {
     height: 100%;
 }
 
-.tab {
-    width: 97.5%;
-    background: @dark;
-    text-align: center;
-    line-height: 30px;
-    box-shadow: 8px 0px 0px 0px @darkaccent;
-
-    .title {
-        font-size: 16px;
-        font-family: @fontface;
-        font-weight: 100;
-        color: @contrast1;
-        transition: 0.1s;
-    }
-
-    .title:hover {
-        color: white;
-        user-select: none;
-    }
-}
-
-.footer {
-    position: fixed;
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-auto-rows: 45px;
-    row-gap: 5px;
-    width: 10vw;
-    height: auto;
+.mods {
+    position: absolute;
     right: 0;
-    bottom: 0;
-    margin: 25px;
-
-    .footer-button {
-        border: 0px;
-        background: @dark;
-        color: white;
-        width: 100%;
-        font-size: 12px;
-        text-align: center;
-        transition: 0.2s;
-    }
-
-    .footer-button:hover {
-        cursor: pointer;
-        color: @contrast1;
-        box-shadow: inset 0px -2px 0px 0px @contrast1;
-    }
-
-    .footer-button:focus {
-        outline: none;
-    }
-}
-
-/*********************************/
-/*********      MODS     *********/
-/*********************************/
-
-.mod-list {
-    overflow-y: auto;
-    background: @dark;
-}
-
-.mod {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-columns: auto;
-    grid-auto-rows: auto;
-    grid-row-gap: 5px;
-    grid-column-gap: 5px;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
     align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    transition: 0.2s;
-    font-size: 10px;
+    align-content: center;
+    width: 400px;
+    padding: 30px;
 
-    .spacer-left {
-        display: flex;
-        grid-column: span 2;
-    }
-
-    .spacer-right {
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .spacer {
-        grid-column: span 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .item-switcher {
-        display: flex;
-        transition: 2s;
-    }
-
-    .title {
-        grid-area: title;
-        transition: 2s;
-
-        &:first-child {
-            margin-right: 5px;
-            color: @contrast2;
-            min-width: 80px;
-        }
-    }
-
-    .count {
-        padding-left: 5px;
-        grid-area: count;
-        text-align: right;
-        transition: 2s;
-    }
-
-    .buy {
-        padding: 10px;
-        font-size: 10px;
-        color: white;
-        margin: 0;
-        border: 1px solid white;
-        text-transform: uppercase;
+    .mod {
         width: 100%;
-        grid-column: span 2;
-        transition: 0.2s;
-    }
-
-    .buy:hover {
-        color: lime;
-        border: 1px solid lime;
-    }
-
-    button {
-        background: rgba(0, 0, 0, 0);
-        border: 0;
-        color: #feffff;
-        font-weight: bold;
-        transition: 0.2s;
-        font-size: 24px;
-    }
-
-    button:hover {
-        cursor: pointer;
-        color: @contrast1;
-    }
-
-    button:focus {
-        outline: none;
-    }
-
-    select {
-        appearance: none;
-        border: none;
-        height: 25px;
-        padding-left: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         background: @dark;
-        color: #feffff;
+        border: 2px solid @dark;
+        margin-bottom: 10px;
 
-        option {
-            color: @contrast1;
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            justify-items: center;
+            align-content: center;
+            align-items: center;
 
-            &:disabled {
-                color: @contrast2;
+            button {
+                width: 35px;
+                height: 35px;
+            }
+
+            .label {
+                padding-right: 10px;
+            }
+        }
+
+        .footer {
+            padding-top: 10px;
+            display: flex;
+            flex-direction: column;
+
+            .rangeBox {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                justify-items: center;
+                align-content: center;
+                align-items: center;
+
+                .smallInput {
+                    max-width: 50px;
+                    border: 2px solid rgba(255, 255, 255, 0.1);
+                    background: transparent;
+                    color: white;
+                }
+
+                input {
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+                    text-align: center;
+
+                    &:focus {
+                        outline: none;
+                        border: 2px solid @contrast2;
+                    }
+                }
+
+                p {
+                    padding: 0px 10px;
+                    margin: 0;
+                }
+            }
+
+            .largeInput {
+                background: rgba(0, 0, 0, 0.2);
+                height: 30px;
+                margin-bottom: 10px;
+                width: 100%;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                text-align: center;
+                box-sizing: border-box;
+
+                &:focus {
+                    outline: none;
+                    border: 2px solid @contrast2;
+                }
+            }
+
+            button {
+                width: 100%;
+                height: 35px;
             }
         }
     }
 }
+
+button {
+    width: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: @contrast1;
+    background: transparent;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:hover {
+        border: 2px solid @contrast2;
+        color: @contrast2;
+    }
+}
+
+.rotation {
+    position: fixed;
+    width: 35%;
+    left: 10%;
+    bottom: 10px;
+}
+
 /********************************/
 /****      Color Popout     ****/
 /********************************/
@@ -218,16 +168,6 @@ html {
         pointer-events: none;
     }
 
-    input[type='range'].green {
-        background: rgba(0, 255, 0, 0.55);
-    }
-    input[type='range'].red {
-        background: rgba(255, 0, 0, 0.55);
-    }
-    input[type='range'].blue {
-        background: rgba(0, 0, 255, 0.55);
-    }
-
     .colorBox {
         display: block;
         grid-column: span 3;
@@ -237,37 +177,16 @@ html {
     }
 }
 
-/********************************/
-/****      Item Switcher     ****/
-/********************************/
+input[type='range'].green {
+    background: rgba(0, 255, 0, 0.55);
+}
 
-.item-switcher {
-    grid-area: switcher;
-    width: 100%;
-    text-align: center;
-    padding: 0px;
+input[type='range'].red {
+    background: rgba(255, 0, 0, 0.55);
+}
 
-    display: flex;
-    justify-content: flex-end;
-
-    button {
-        background: rgba(0, 0, 0, 0);
-        border: 0;
-        color: #feffff;
-        font-weight: bold;
-        transition: 1s;
-        font-size: 24px;
-        padding: 5px;
-    }
-
-    button:hover {
-        cursor: pointer;
-        color: @contrast1;
-    }
-
-    button:focus {
-        outline: none;
-    }
+input[type='range'].blue {
+    background: rgba(0, 0, 255, 0.55);
 }
 
 .scroll::-webkit-scrollbar {
@@ -328,4 +247,19 @@ input[type='range']::-webkit-slider-runnable-track {
     height: 5px;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.15);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: @darkaccent;
+    box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer !important;
 }

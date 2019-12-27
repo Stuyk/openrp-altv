@@ -45,6 +45,7 @@ class App extends Component {
             this.appendMessage('O:RP Framework');
             this.appendMessage('Hit F1 to toggle help menu.');
             this.appendMessage('Hold TAB to interact with objects by right-clicking.');
+            this.appendMessage('Shift + F7 to Toggle and Untoggle the Chat');
         } else {
             setInterval(() => {
                 this.appendMessage(

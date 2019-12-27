@@ -24,6 +24,7 @@ function drawPlayerNames() {
     native.hideHudComponentThisFrame(8);
     native.hideHudComponentThisFrame(9);
     native.hideHudComponentThisFrame(2);
+    native.disableControlAction(0, 200, true);
     native.setPedConfigFlag(alt.Player.local.scriptID, 429, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 184, 1);
     native.setPedConfigFlag(alt.Player.local.scriptID, 35, 0);
@@ -33,7 +34,11 @@ function drawPlayerNames() {
     }
 
     if (native.isPlayerFreeAiming(alt.Player.local)) {
-        const [_unk, wepHash] = native.getCurrentPedWeapon(alt.Player.local.scriptID, 0, 1);
+        const [_unk, wepHash] = native.getCurrentPedWeapon(
+            alt.Player.local.scriptID,
+            0,
+            1
+        );
         if (!noAmmoWeapons.includes(wepHash)) {
             const [_unk2, clipCount] = native.getAmmoInClip(
                 alt.Player.local.scriptID,

@@ -11,8 +11,17 @@
 	  
 	<body>
 		<div class="menu" id="render"></div>
-		<script src="../preact.min.js"></script>
-		<script src="./app.js" type="text/javascript"></script>
+        <script src="../preact.min.js"></script>
+        <!-- Preact -->
+        <script>
+        const { createElement, render, Component } = preact;
+        const h = createElement;
+        </script>
+        <!-- Pages -->
+        <script src="./pages/skills.js" type="text/javascript"></script>
+        <!-- Main App -->
+        <script src="./app.js" type="text/javascript"></script>
+        <!-- Less -->
 		<script src="../less.min.js" ></script>
 		<script>
 		  less.pageLoadFinished.then(() => document.querySelector('#render').style.display = 'block');

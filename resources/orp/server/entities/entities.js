@@ -216,14 +216,6 @@ export const Factions = new orm.EntitySchema({
             type: 'int',
             default: 1
         },
-        classification: {
-            type: 'int',
-            default: 0
-        },
-        skills: {
-            type: 'text',
-            default: '[]'
-        },
         notice: {
             type: 'text',
             default: 'Welcome to your faction. You can write messages here.'
@@ -237,8 +229,12 @@ export const Factions = new orm.EntitySchema({
             default: '[]'
         },
         subtype: {
+            type: 'int',
+            default: 1
+        },
+        unlocks: {
             type: 'text',
-            default: ''
+            default: '{}'
         }
     }
 });

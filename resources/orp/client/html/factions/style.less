@@ -540,10 +540,9 @@ body {
 }
 
 .skillPage {
-    padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     justify-items: center;
     align-items: center;
     align-content: center;
@@ -580,19 +579,69 @@ body {
         }
     }
 
-    .selectType {
-        width: 100%;
+    .unlocks {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        justify-items: center;
+        align-items: center;
+        align-content: center;
 
-        .subtype {
-            padding: 0px 10px;
+        .unlock {
+            width: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            justify-items: center;
             align-items: center;
             align-content: center;
-            border: 2px solid rgba(0, 0, 0, 0.2);
-            background: rgba(0, 0, 0, 0.1);
-            margin: 10px 0px;
+            padding: 10px;
+
+            .header {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                align-content: center;
+                text-align: left;
+            }
+
+            .footer {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                align-content: center;
+                width: 98%;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                text-align: left;
+
+                p {
+                    padding-top: 10px;
+                    padding-right: 10px;
+                    width: 100%;
+                }
+            }
+        }
+
+        .disabled {
+            border: 2px solid rgba(0, 0, 0, 0.5) !important;
+            color: rgba(0, 0, 0, 0.8) !important;
+
+            &:hover {
+                border: 2px solid rgba(0, 0, 0, 0.5) !important;
+                color: rgba(0, 0, 0, 0.8) !important;
+            }
+        }
+
+        .dark {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .light {
+            background-color: rgba(0, 0, 0, 0.1);
         }
     }
 }

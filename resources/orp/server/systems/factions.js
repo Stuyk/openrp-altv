@@ -4,16 +4,11 @@ import { colshapes } from './grid.js';
 import { Config } from '../configuration/config.js';
 import { isFlagged } from '../utility/flags.js';
 import { distance } from '../utility/vector.js';
+import { SubTypes, PoliceTypes, Unlocks, SubTypeAccess } from './factiontree.js';
 
 const factions = [];
 const db = new SQL();
 const defaultRanks = [{ name: 'Owner', flags: 7 }, { name: 'Recruit', flags: 0 }];
-const classifications = {
-    GANG: 0,
-    POLICE: 1,
-    EMS: 2,
-    BUSINESS: 3
-};
 const permissions = {
     MIN: 0,
     RECRUIT: 1,
@@ -23,8 +18,6 @@ const permissions = {
 };
 
 let totalFactions = 0;
-let totalPoliceFactions = 0;
-let totalEMSFactions = 0;
 
 async function setupExistingFactions() {
     console.log('===> Setting Up Existing Factions');
@@ -39,14 +32,6 @@ async function setupExistingFactions() {
 
     currentFactions.forEach(factionData => {
         new Faction(factionData);
-        if (factionData.classification === classifications.POLICE) {
-            totalPoliceFactions += 1;
-        }
-
-        if (factionData.classification === classifications.EMS) {
-            totalEMSFactions += 1;
-        }
-
         totalFactions += 1;
     });
 
@@ -75,6 +60,21 @@ alt.onClient('faction:SetColor', factionSetColor);
 setupExistingFactions();
 
 export class Faction {
+    /**
+     *
+     * @param {Object} factionData
+     * @param {Number} factionData.subtype
+     * @param {String} factionData.unlocks JSON String Object of Unlock Points
+     * @param {String} factionData.turfs JSON String Array of Turfs
+     * @param {String} factionData.members JSON String Array of Members
+     * @param {String} factionData.ranks JSON String Array of Ranks
+     * @param {String} factionData.home JSON String Vector3 of Home Coordinate
+     * @param {String} factionData.vehiclepoints JSON String of Vehicle Points
+     * @param {Color} factionData.color Blip Color
+     * @param {Name} factionData.name Name of the facton
+     * @param {Notice} factionData.notice Notice board text
+     * @param {Date} factionData.creation Creation of the faction
+     */
     constructor(factionData) {
         Object.keys(factionData).forEach(key => {
             this[key] = factionData[key];
@@ -88,14 +88,6 @@ export class Faction {
             };
             colshapes[turf].sector.color = this.color;
         });
-
-        if (factionData.classification === classifications.POLICE) {
-            totalPoliceFactions += 1;
-        }
-
-        if (factionData.classification === classifications.EMS) {
-            totalEMSFactions += 1;
-        }
 
         factions.push(this);
         totalFactions += 1;
@@ -396,7 +388,7 @@ export class Faction {
     }
 
     addTurf(id, colshape) {
-        if (this.classification !== classifications.GANG) {
+        if (!isFlagged(this.subtype, SubTypes.GANG)) {
             return;
         }
 
@@ -622,29 +614,47 @@ export class Faction {
     }
 
     updateSkills(player, id) {
-        if (!factionSkills[id]) {
-            alt.emitClient(player, 'faction:Error', 'That skill does not exist.');
-            return false;
+        const unlocks = JSON.parse(this.unlocks);
+
+        if (!unlocks[id]) {
+            unlocks[id] = 1;
+            return true;
+        } else {
+            if (unlocks[id] + 1 > UnlockPoints[id]) {
+                alt.emitClient(player, 'faction:Error', 'Skill is already maxed out.');
+                return false;
+            }
+
+            unlocks[id] += 1;
         }
 
-        const skills = JSON.parse(this.skills);
-        if (!skills[id]) {
-            skills[id] = 0;
-        }
-
-        const max = factionSkills[id].requirement;
-        if (skills[id] + 1 > max) {
-            alt.emitClient(player, 'faction:Error', 'Skill is already maxed out.');
-            return false;
-        }
-
-        skills[id] += 1;
-        this.skills = JSON.stringify(skills);
-        this.saveField('skills', this.skills);
+        this.unlocks = JSON.stringify(unlocks);
+        this.saveField('unlocks', this.unlocks);
         this.syncMembers();
     }
 
+    /**
+     *
+     * @param {*} player
+     * @param {Unlocks} id
+     */
     addPoint(player, id) {
+        const unlockables = SubTypeAccess[this.subtype];
+
+        if (isNaN(id)) {
+            alt.emitClient(player, 'faction:Error', 'Skill ID is not a number.');
+            return;
+        }
+
+        if (isFlagged(unlockables, id)) {
+            alt.emitClient(
+                player,
+                'faction:Error',
+                'That unlock is not available for your faction.'
+            );
+            return;
+        }
+
         if (player.rewardpoints <= 0) {
             alt.emitClient(
                 player,
@@ -837,9 +847,6 @@ function factionAttach(player) {
 async function factionCreate(player, type, factionName) {
     alt.log('Creating Faction...');
 
-    const isPoliceSlotsExceeded = totalPoliceFactions >= Config.maxPoliceFactions;
-    const isEMSSlotsExceeded = totalEMSFactions >= Config.maxEMSFactions;
-
     if (player.data.faction !== -1) {
         alt.log('You already own or are in a faction.');
         return;
@@ -850,15 +857,8 @@ async function factionCreate(player, type, factionName) {
         return;
     }
 
-    if (type === classifications.POLICE && isPoliceSlotsExceeded) {
-        player.notify('Too many police factions.');
-        alt.log('Too Many Police Factions');
-        return;
-    }
-
-    if (type === classifications.EMS && isEMSSlotsExceeded) {
-        player.notify('Too many ems factions.');
-        alt.log('Too Many EMS Factions');
+    if (!SubTypes[type]) {
+        alt.log('Subtype does not exist.');
         return;
     }
 
@@ -873,7 +873,6 @@ async function factionCreate(player, type, factionName) {
         }
     ]);
     const ranks = JSON.stringify(defaultRanks);
-    const classification = type;
 
     let color = Math.floor(Math.random() * 84) + 1;
     if (color === 4) {
@@ -885,7 +884,7 @@ async function factionCreate(player, type, factionName) {
         name,
         members,
         ranks,
-        classification
+        subtype: id
     };
 
     alt.log('Saving created faction.');
@@ -957,12 +956,17 @@ function factionSetFlags(player, index, flags) {
     player.faction.setFlags(player, index, flags);
 }
 
-function factionAddPoint(player, category) {
+/**
+ *
+ * @param {*} player
+ * @param {Unlocks} skillNumber
+ */
+function factionAddPoint(player, skillNumber) {
     if (!player.faction) {
         return;
     }
 
-    player.faction.addPoint(player, category);
+    player.faction.addPoint(player, skillNumber);
 }
 
 function factionSetInfo(player, infoName, info) {
@@ -1122,11 +1126,7 @@ alt.on('turf:Update', (colshape, players) => {
             return;
         }
 
-        if (player.faction.classification === classifications.EMS) {
-            return;
-        }
-
-        if (player.faction.classification === classifications.BUSINESS) {
+        if (isFlagged(player.faction.subtype, SubTypes.BUSINESS)) {
             return;
         }
 
@@ -1163,7 +1163,15 @@ alt.on('turf:Update', (colshape, players) => {
         return;
     }
 
-    const isPoliceFaction = faction.classification === classifications.POLICE;
+    const subType = faction.subtype;
+    const isPoliceFaction = false;
+
+    PoliceTypes.forEach(type => {
+        if (isFlagged(subType, type)) {
+            isPoliceFaction = true;
+        }
+    });
+
     const isCurrentOwner = colshape.factions.owner.id === faction.id;
 
     if (isPoliceFaction && colshape.factions.owner.id === -2) {
@@ -1179,10 +1187,10 @@ alt.on('turf:Update', (colshape, players) => {
         return;
     }
 
-    alt.emit('grid:AddTurf', faction.id, turfID);
+    alt.emit('grid:AddTurf', faction.id, turfID, isPoliceFaction);
 });
 
-alt.on('grid:AddTurf', (id, turfID) => {
+alt.on('grid:AddTurf', (id, turfID, isPoliceFaction) => {
     const index = factions.findIndex(factionData => factionData.id === id);
     const faction = factions[index];
 
@@ -1196,7 +1204,7 @@ alt.on('grid:AddTurf', (id, turfID) => {
     }
 
     setTurfToNeutral(turfID);
-    if (faction.classification === classifications.POLICE) {
+    if (isPoliceFaction) {
         const currentPlayers = [...alt.Player.all];
         currentPlayers.forEach(player => {
             player.send(

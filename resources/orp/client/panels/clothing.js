@@ -198,4 +198,6 @@ export function closeDialogue() {
 
 function purchaseClothing(json) {
     alt.emitServer('clothing:Purchase', json);
+    alt.emit('hud:Hide', false);
+    alt.emit('chat:Hide', false);
 }

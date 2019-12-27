@@ -128,7 +128,6 @@ function ready() {
         });
 
         webview.emit('character:SetFaceProperties', JSON.stringify(facePropsClone));
-        resetCamera();
     }
 
     alt.emit('animation:Play', {
@@ -137,6 +136,11 @@ function ready() {
         duration: -1,
         flag: 2
     });
+
+    alt.setTimeout(() => {
+        resetCamera();
+        adjustCamera();
+    }, 500);
 }
 
 function changeZoom(value) {

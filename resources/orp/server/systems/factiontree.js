@@ -9,7 +9,7 @@ export const SubTypes = {
     SHERIFF: 32,
     FIRE: 64,
     HMA: 128,
-    NEWS: 246
+    NEWS: 256
 };
 
 export const PoliceTypes = [
@@ -21,7 +21,6 @@ export const PoliceTypes = [
 
 // Unlockable Skills
 export const Unlocks = {
-    MIN: 0,
     CHAT: 1, // Private Chat for Members
     RADIO: 2, // Radio for Members (IC)
     RECON: 4, // See Own Members
@@ -273,7 +272,7 @@ export function isSkillUnlocked(skillNumber, factionPoints) {
     }
 
     if (UnlockPoints[skillNumber] <= -1) {
-        return 0;
+        return 1;
     }
 
     if (factionPoints < UnlockPoints[skillNumber]) {

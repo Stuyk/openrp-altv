@@ -9,7 +9,8 @@ import {
     PoliceTypes,
     Unlocks,
     SubTypeAccess,
-    UnlockPoints
+    UnlockPoints,
+    isSkillUnlocked
 } from './factiontree.js';
 
 const factions = [];
@@ -79,7 +80,10 @@ export class Faction {
      * @param {Color} factionData.color Blip Color
      * @param {Name} factionData.name Name of the facton
      * @param {Notice} factionData.notice Notice board text
-     * @param {Date} factionData.creation Creation of the faction
+     * @param {Date} factionData.creation Creation of the faction,
+     * @param {Number} factionData.unlocks Flag value of unlocked skills
+     * @param {Number} factionData.vehiclesAvailable Faction vehicles available
+     * @param {Number} factionData.aircraftAvailable Faction aircraft available
      */
     constructor(factionData) {
         Object.keys(factionData).forEach(key => {
@@ -146,6 +150,8 @@ export class Faction {
     }
 
     syncMembers() {
+        this.syncSkillData();
+
         const members = alt.Player.all.filter(member => {
             if (member.data && member.data.faction === this.id) {
                 return member;
@@ -166,6 +172,9 @@ export class Faction {
                 return;
             }
 
+            member.emitMeta('faction:Unlocks', this.unlocked);
+            member.emitMeta('faction:VehiclesAvailable', this.vehiclesAvailable);
+            member.emitMeta('faction:AircraftAvailable', this.aircraftAvailable);
             member.emitMeta('faction:Id', this.id);
             member.emitMeta('faction:Info', factionData);
         });
@@ -174,6 +183,9 @@ export class Faction {
     syncMember(player) {
         player.emitMeta('faction:Id', this.id);
         player.emitMeta('faction:Info', JSON.stringify(this));
+        player.emitMeta('faction:Unlocks', this.unlocked);
+        player.emitMeta('faction:VehiclesAvailable', this.vehiclesAvailable);
+        player.emitMeta('faction:AircraftAvailable', this.aircraftAvailable);
     }
 
     getRank(id) {
@@ -576,6 +588,11 @@ export class Faction {
             target.data.faction = -1;
             target.saveField(target.data.id, 'faction', target.data.faction);
             target.notify('You have been kicked from the faction.');
+            player.emitMeta('faction:Id', -1);
+            player.emitMeta('faction:Info', null);
+            target.emitMeta('faction:Unlocks', null);
+            target.emitMeta('faction:VehiclesAvailable', null);
+            target.emitMeta('faction:AircraftAvailable', null);
         }
     }
 
@@ -647,8 +664,65 @@ export class Faction {
 
         this.unlocks = JSON.stringify(unlocks);
         this.saveField('unlocks', this.unlocks);
-        this.syncMembers();
         return true;
+    }
+
+    syncSkillData() {
+        const unlocks = JSON.parse(this.unlocks);
+        let unlocked = 0;
+        let vehiclesAvailable = 0;
+        let aircraftAvailable = 0;
+        const unlockables = SubTypeAccess[this.subtype];
+        Object.keys(Unlocks).forEach(key => {
+            const unlock = Unlocks[key];
+
+            if (!isFlagged(unlockables, unlock)) {
+                return;
+            }
+
+            if (key === 'VEHICLE' || key === 'AIRCRAFT') {
+                let total = 0;
+                let slotPoints = unlocks[unlock];
+                UnlockPoints[unlock].forEach(neededPoints => {
+                    if (!slotPoints || slotPoints < neededPoints) {
+                        return;
+                    }
+
+                    total += 1;
+                });
+
+                if (key === 'VEHICLE') {
+                    vehiclesAvailable = total;
+                }
+
+                if (key === 'AIRCRAFT') {
+                    aircraftAvailable = total;
+                }
+                return;
+            }
+
+            if (UnlockPoints[unlock] === -1) {
+                unlocked += unlock;
+                return;
+            }
+
+            if (!unlocks[unlock]) {
+                return;
+            }
+
+            if (!isSkillUnlocked(unlock, unlocks[unlock])) {
+                return;
+            }
+
+            unlocked += unlock;
+        });
+
+        this.unlocked = unlocked;
+        this.vehiclesAvailable = vehiclesAvailable;
+        this.aircraftAvailable = aircraftAvailable;
+        this.saveField('unlocked', this.unlocked);
+        this.saveField('vehiclesAvailable', this.vehiclesAvailable);
+        this.saveField('aircraftAvailable', this.aircraftAvailable);
     }
 
     /**
@@ -904,8 +978,6 @@ async function factionCreate(player, type, factionName) {
         subtype: type
     };
 
-    alt.log('Saving created faction.');
-
     player.data.faction = player.data.id;
 
     const newFactionData = await db.upsertData(factionData, 'Factions');
@@ -914,6 +986,7 @@ async function factionCreate(player, type, factionName) {
     player.emitMeta('faction:Id', player.data.id);
     player.emitMeta('faction:Info', JSON.stringify(parsedFactionData));
     player.faction = parsedFactionData;
+    player.faction.syncMembers();
     alt.emit('faction:SetSkillTree', player);
 }
 
@@ -986,10 +1059,6 @@ function factionAppendPoint(player, skillNumber, amount) {
     if (amount <= 0) {
         return;
     }
-
-    console.log('Sent Up');
-    console.log(skillNumber);
-    console.log(amount);
 
     player.faction.addPoint(player, skillNumber, amount);
 }

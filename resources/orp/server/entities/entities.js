@@ -235,6 +235,18 @@ export const Factions = new orm.EntitySchema({
         unlocks: {
             type: 'text',
             default: '{}'
+        },
+        unlocked: {
+            type: 'int',
+            default: 0
+        },
+        vehiclesAvailable: {
+            type: 'int',
+            default: 0
+        },
+        aircraftAvailable: {
+            type: 'int',
+            default: 0
         }
     }
 });

@@ -86,6 +86,18 @@ alt.Player.prototype.addRewardPoint = function addRewardPoint() {
     this.syncRewardPoints();
 };
 
+/**
+ * 
+ */
+alt.Player.prototype.addRewardPoints = function addRewardPoint(amount) {
+    this.data.rewardpoints += amount;
+    this.data.totalrewardpoints += amount;
+
+    this.saveField(this.data.id, 'rewardpoints', this.data.rewardpoints);
+    this.saveField(this.data.id, 'totalrewardpoints', this.data.totalrewardpoints);
+    this.syncRewardPoints();
+};
+
 alt.Player.prototype.removeRewardPoints = function removeRewardPoints(amount) {
     if (isNaN(amount)) {
         return false;

@@ -9,7 +9,7 @@ const SubTypes = {
     SHERIFF: 32,
     FIRE: 64,
     HMA: 128,
-    NEWS: 246
+    NEWS: 256
 };
 
 const PoliceTypes = [SubTypes.POLICE, SubTypes.SHERIFF, SubTypes.SWAT, SubTypes.FBI];

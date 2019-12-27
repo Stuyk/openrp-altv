@@ -216,7 +216,7 @@ export default class ConnectionInfo {
 
             repo.findByIds(idRef)
                 .then(res => {
-                    if (res.length <= 0) return callback(undefined);
+                    if (res.length <= 0) return resolve(undefined);
                     return resolve(res);
                 })
                 .catch(err => {

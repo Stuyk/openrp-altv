@@ -46,8 +46,6 @@ alt.onClient('resource:Prospect', (player, data) => {
     }
 
     const resourceData = resources[type][coordsHash];
-    console.log(coordsHash);
-    console.log(resourceData);
     alt.emitClient(
         player,
         'resource:Update',

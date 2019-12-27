@@ -1,6 +1,7 @@
 import * as alt from 'alt';
 import * as chat from '../chat/chat.js';
 import fs from 'fs';
+import { Job, Objectives, ObjectiveFlags } from '../systems/job2.js';
 
 // Development sandbox commands
 const sandboxhelp = [
@@ -125,10 +126,19 @@ chat.registerCmd('tempdoor', (player, args) => {
     }
 });
 
-/*
-chat.registerCmd('showturfs', player => {
-    if (player.data.gang === -1) return;
-    const sectors = fetchTurfSectors(player);
-    alt.emitClient(player, 'grid:TempTurfs', sectors);
+chat.registerCmd('testjob', player => {
+    const objectives = [];
+    const testObjective = new Objectives.MiniGame(
+        { x: -1881.7315673828125, y: 2164.57421875, z: 115.81851196289062 },
+        2,
+        1,
+        { r: 255, g: 255, b: 255, a: 100 },
+        'GrabTheLeaves'
+    );
+    objectives.push(testObjective);
+    const jobInstance = new Job(player, 'test', [...objectives]);
 });
-*/
+
+chat.registerCmd('startjob', player => {
+    player.job.start();
+});

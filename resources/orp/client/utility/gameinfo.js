@@ -13,4 +13,5 @@ export function printInteriorInfo() {
 
 export function printLocation() {
     alt.log(JSON.stringify(alt.Player.local.pos));
+    alt.log(native.getEntityHeading(alt.Player.local.scriptID));
 }

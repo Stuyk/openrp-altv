@@ -32,7 +32,6 @@ function disableCombat() {
     if (!pvpEnabled) {
         native.disablePlayerFiring(alt.Player.local.scriptID, true);
         native.disableControlAction(0, 24, true);
-        native.disableControlAction(0, 25, true);
         native.disableControlAction(0, 140, true);
         native.disableControlAction(0, 141, true);
         native.disableControlAction(0, 142, true);

@@ -1,3 +1,4 @@
+/*
 import * as alt from 'alt';
 import {
     Job,
@@ -429,3 +430,4 @@ alt.on('job:GatheringKevlarium1', player => {
 
     job.start(player);
 });
+*/

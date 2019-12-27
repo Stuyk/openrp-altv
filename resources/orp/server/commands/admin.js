@@ -272,3 +272,31 @@ chat.registerRankedCmd('setadmin', AdminFlags.MAX, (player, args) => {
 
     target.setRank(rank);
 });
+
+chat.registerRankedCmd('claimturf', AdminFlags.MAX, player => {
+    if (player.data.faction === -1) {
+        player.send('Must be in a faction.');
+        return;
+    }
+
+    if (!player.colshape) {
+        return;
+    }
+
+    alt.emit('turf:Update', player.colshape, [player]);
+});
+
+chat.registerRankedCmd('addrewardpoints', AdminFlags.MAX, (player, arg) => {
+    const amount = parseInt(arg[0]);
+    if (!amount || amount <= 0) {
+        player.send('Must use a positive value.');
+        player.send(`/addrewardpoints <amount>`);
+        return;
+    }
+
+    if (isNaN(amount)) {
+        return;
+    }
+
+    player.addRewardPoints(amount);
+});

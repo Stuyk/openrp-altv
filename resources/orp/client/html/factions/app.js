@@ -1,6 +1,3 @@
-const { createElement, render, Component } = preact;
-const h = createElement;
-
 const permissions = {
     MIN: 0,
     RECRUIT: 1,
@@ -95,7 +92,6 @@ const blipColors = {
     81: 'f2a40c',
     82: 'a4ccaa',
     83: 'a854f2',
-    84: '65b8e6',
     85: '000000'
 };
 
@@ -119,8 +115,8 @@ class App extends Component {
         };
 
         this.state = {
-            subtype: '',
-            classification: -1,
+            rewardPoints: 0,
+            subtype: -1,
             skilltree: {},
             messages: [],
             ranks: [],
@@ -139,11 +135,11 @@ class App extends Component {
 
     componentDidMount() {
         if ('alt' in window) {
-            alt.on('faction:SetSkillTree', this.setSkillTree.bind(this));
             alt.on('faction:SetMyData', this.setMyData.bind(this));
             alt.on('faction:Ready', this.ready.bind(this));
             alt.on('faction:Error', this.factionError.bind(this));
             alt.on('faction:Success', this.factionSuccess.bind(this));
+            alt.on('faction:RewardPoints', this.setRewardPoints.bind(this));
             alt.emit('faction:Ready');
         } else {
             const members = [];
@@ -173,22 +169,18 @@ class App extends Component {
                     ranks:
                         '[{"name":"Owner", "flags": 7},{"name":"Recruit", "flags": 0}, {"name":"Less Recruit", "flags": 0}, {"name":"Lesser Recruit", "flags": 0}]',
                     turfs: '[69,82,154,72,81]',
-                    skills: '[]',
+                    unlocks: JSON.stringify({
+                        [Unlocks.CHAT]: 199,
+                        [Unlocks.RADIO]: 400,
+                        [Unlocks.VEHICLE]: 0
+                    }),
                     classification: 0,
                     vehiclepoints: '[{"x": 0, "y": 0, "z": 0}, {"x": 0, "y": 0, "z": 0}]',
                     home: '{"x": 0, "y": 0, "z": 0}',
-                    subtype: '',
+                    subtype: 8,
                     color: '1'
                 })
             );
-
-            this.setSkillTree(skillTreeExample);
-
-            /*
-            for (let i = 0; i < 20; i++) {
-                this.factionSuccess(`test ${i}`);
-            }
-            */
         }
 
         window.addEventListener('keyup', this.keyUpBind);
@@ -200,12 +192,6 @@ class App extends Component {
         }
 
         window.removeEventListener('keyup', this.keyUpBind);
-    }
-
-    setSkillTree(jsonData) {
-        console.log(jsonData);
-
-        this.setState({ skilltree: JSON.parse(jsonData) });
     }
 
     parseMessages() {
@@ -235,6 +221,10 @@ class App extends Component {
         const messages = [...this.state.messages];
         messages.push({ time: Date.now() + 2000, msg, type: 'success' });
         this.setState({ messages });
+    }
+
+    setRewardPoints(points) {
+        this.setState({ rewardPoints: points });
     }
 
     setMyData(rank, id) {
@@ -276,9 +266,9 @@ class App extends Component {
             notice: newData.notice,
             vehiclepoints: JSON.parse(newData.vehiclepoints),
             home: JSON.parse(newData.home),
-            classification: newData.classification,
             subtype: newData.subtype,
-            color: newData.color
+            color: newData.color,
+            unlocks: JSON.parse(newData.unlocks)
         };
 
         if (!this.state.hasMounted) {
@@ -1012,73 +1002,6 @@ class Ranks extends Component {
     }
 }
 
-class Skills extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    setSubType(e) {
-        const type = e.target.id;
-
-        if (!type) {
-            return;
-        }
-
-        if ('alt' in window) {
-            alt.emit('faction:SetSubType', type);
-        } else {
-            console.log(type);
-        }
-    }
-
-    renderSubSkills({ props }) {
-        const state = props.state;
-        const subTree = state.skilltree[state.classification];
-        if (state.subtype === '') {
-            const subtypes = Object.keys(subTree).map(key => {
-                return h(
-                    'div',
-                    { class: 'subtype' },
-                    h('h4', {}, `${key.toUpperCase()} Subtype`),
-                    h('p', {}, subTree[key].desc),
-                    h(
-                        'button',
-                        {
-                            class: 'subtypebtn',
-                            id: key,
-                            onclick: this.setSubType.bind(this)
-                        },
-                        `Select ${key.toUpperCase()} Subtype`
-                    )
-                );
-            });
-
-            return h(
-                'div',
-                { class: 'selectType' },
-                h('h3', {}, 'Select Faction Subtype'),
-                h(
-                    'p',
-                    {},
-                    'A subtype will give you access to a specific skill tree for your faction.'
-                ),
-                subtypes
-            );
-        }
-
-        // Show other Types
-        return 'Working!';
-    }
-
-    render(props) {
-        return h(
-            'div',
-            { class: 'skillPage' },
-            h(this.renderSubSkills.bind(this), { props })
-        );
-    }
-}
-
 class Options extends Component {
     constructor(props) {
         super(props);
@@ -1281,30 +1204,57 @@ class CreateFaction extends Component {
 
     renderFactionSelection() {
         const pageNames = ['gang', 'police', 'ems', 'business'];
-        const pages = pageNames.map((page, index) => {
-            return h(
+        const pages = [];
+
+        pages.push(
+            h(
                 'div',
                 { class: 'group' },
-                h('h4', { class: 'factionLabel' }, page.toUpperCase()),
+                h('h4', { class: 'factionLabel' }, 'Business'),
                 h(
                     'div',
                     { class: 'icon-wrapper' },
                     h('svg', {
                         type: 'image/svg+xml',
-                        style: `background: url('../icons/${page}.svg');`
+                        style: `background: url('../icons/business.svg');`
                     })
                 ),
                 h(
                     'button',
                     {
                         class: 'factionBtn',
-                        id: index,
+                        id: 1,
                         onclick: this.beginCreation.bind(this)
                     },
                     'Create'
                 )
-            );
-        });
+            )
+        );
+
+        pages.push(
+            h(
+                'div',
+                { class: 'group' },
+                h('h4', { class: 'factionLabel' }, 'Gang'),
+                h(
+                    'div',
+                    { class: 'icon-wrapper' },
+                    h('svg', {
+                        type: 'image/svg+xml',
+                        style: `background: url('../icons/gang.svg');`
+                    })
+                ),
+                h(
+                    'button',
+                    {
+                        class: 'factionBtn',
+                        id: 2,
+                        onclick: this.beginCreation.bind(this)
+                    },
+                    'Create'
+                )
+            )
+        );
 
         return h('div', { class: 'pages' }, pages);
     }

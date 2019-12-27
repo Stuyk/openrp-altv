@@ -7,7 +7,6 @@ import { loadAnim } from '/client/systems/animation.js';
 /**
  * Creates Clickable Peds with Optional Context Options
  */
-
 const renderDistance = 25;
 const pedStreams = [];
 
@@ -183,4 +182,25 @@ alt.on('pedStream:Interact', id => {
     }
 
     pedStreams[index].interact();
+});
+
+alt.onServer('pedstream:Append', pedJson => {
+    const data = JSON.parse(pedJson);
+    if (!data) {
+        return;
+    }
+
+    if (data.length <= 0) {
+        return;
+    }
+
+    data.forEach(stream => {
+        const hash = native.getHashKey(stream.model);
+        native.requestModel(hash);
+        alt.loadModel(hash);
+
+        const newPedStream = new PedStream(hash, stream.pos, stream.heading);
+
+        newPedStream.addInteraction(stream.interactions, stream.title);
+    });
 });

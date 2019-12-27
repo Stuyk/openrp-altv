@@ -42,7 +42,8 @@ export class GridCuboid extends alt.ColshapeCuboid {
                 player.data && // has data
                 player.data.faction >= 0 && // is in a faction
                 !player.data.dead && // is not dead
-                player.dimension === 0 // is in dimension 0
+                player.dimension === 0 && // is in dimension 0
+                !player.vehicle
         );
 
         if (validPlayers.length <= 0) {

@@ -35,7 +35,10 @@ import * as systemsSkills from '/client/systems/skills.js';
 import * as systemsTime from '/client/systems/time.js';
 import * as systemsProps from '/client/systems/props.js';
 import * as systemsSkyCam from '/client/systems/skycam.js';
+import * as systemsJobTwo from '/client/systems/job2.js';
+
 import * as utilitySandbox from '/client/utility/sandbox.js';
+import * as utilityExplosion from '/client/utility/explosion.js';
 import * as hud from '/client/hud/hud.js';
 import * as discord from '/client/panels/discord.js';
 

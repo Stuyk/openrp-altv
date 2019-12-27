@@ -18,6 +18,8 @@ alt.on('meta:Changed', (key, value) => {
             alt.clearInterval(interval);
             interval = undefined;
         }
+
+        alt.Player.local.interactionPoint = false;
         return;
     }
 
@@ -28,6 +30,7 @@ alt.on('meta:Changed', (key, value) => {
     // Show prompt for interaction.
     interactionEnabled = true;
     interval = alt.setInterval(showKeyPress, 0);
+    alt.Player.local.interactionPoint = true;
     alt.log(`interaction.js ${interval}`);
 });
 
@@ -37,7 +40,7 @@ function showKeyPress() {
 
     native.beginTextCommandDisplayHelp('STRING');
     native.addTextComponentSubstringPlayerName(`Press ~INPUT_CONTEXT~ ${currentLabel}`);
-    native.endTextCommandDisplayHelp(0, false, true, -1);
+    native.endTextCommandDisplayHelp(0, false, false, -1);
 
     if (native.isControlJustPressed(0, 38)) {
         alt.emitServer('interaction:Exec');

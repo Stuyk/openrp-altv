@@ -44,6 +44,11 @@ export const GeneralStore = {
             name: 'Rusty Fishing Rod',
             key: 'fishingrod',
             price: 125
+        },
+        dice: {
+            name: 'Dice',
+            key: 'dice',
+            price: 50
         }
     },
     food: {

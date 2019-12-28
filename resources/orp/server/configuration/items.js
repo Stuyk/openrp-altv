@@ -480,6 +480,17 @@ export const BaseItems = {
             rename: false,
             stack: false
         }
+    },
+    dice: {
+        eventcall: '',
+        abilities: {
+            drop: true,
+            use: false,
+            destroy: true,
+            sell: false,
+            rename: false,
+            stack: false
+        }
     }
 };
 
@@ -1020,6 +1031,14 @@ export const Items = {
         props: {},
         quantity: 0,
         icon: ''
+    },
+    dice: {
+        name: 'Dice',
+        base: 'dice',
+        key: 'dice',
+        props: {},
+        quantity: 0,
+        icon: 'dice'
     }
 };
 

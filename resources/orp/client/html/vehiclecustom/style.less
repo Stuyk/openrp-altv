@@ -17,7 +17,7 @@ html {
     padding: 0;
     background: transparent;
     font-family: @fontface;
-    text-transform: uppercase;
+    text-transform: none;
     user-select: none;
     color: white;
 }
@@ -29,6 +29,92 @@ html {
     height: 100%;
 }
 
+.basket {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    justify-items: left;
+    align-items: center;
+    align-content: center;
+    top: 30px;
+    left: 30px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    background: @dark;
+    min-width: 200px;
+    max-width: 200px;
+    box-sizing: border-box;
+    padding: 10px;
+
+    p {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .items {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+        justify-items: left;
+        align-items: center;
+        align-content: center;
+
+        .item {
+            height: 35px;
+            background: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            display: flex;
+            justify-content: left;
+            justify-items: left;
+            align-items: center;
+            align-content: center;
+            margin-bottom: 10px;
+            text-align: left;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+
+            .label {
+                padding-left: 5px;
+                width: 100%;
+                text-align: left;
+                font-size: 12px;
+            }
+
+            button {
+                width: 35px;
+                height: 100%;
+
+                &:hover {
+                    border: 2px solid @error;
+                }
+            }
+        }
+
+        .purchase {
+            height: 35px;
+            margin-bottom: 10px;
+            color: @success;
+            border: 2px solid @success;
+
+            &:hover {
+                color: @contrast2;
+                border: 2px solid @contrast2;
+            }
+        }
+
+        .exit {
+            height: 35px;
+            border: 2px solid @error;
+            color: @error;
+
+            &:hover {
+                color: @contrast2;
+                border: 2px solid @contrast2;
+            }
+        }
+    }
+}
+
 .mods {
     position: absolute;
     right: 0;
@@ -38,7 +124,7 @@ html {
     justify-items: center;
     align-items: center;
     align-content: center;
-    width: 400px;
+    width: 300px;
     padding: 30px;
 
     .mod {
@@ -65,6 +151,9 @@ html {
 
             .label {
                 padding-right: 10px;
+                text-align: center;
+                text-transform: none;
+                width: 100%;
             }
         }
 
@@ -72,6 +161,21 @@ html {
             padding-top: 10px;
             display: flex;
             flex-direction: column;
+
+            .paintTypes {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-content: center;
+                justify-items: center;
+                justify-content: center;
+
+                p {
+                    padding: 0;
+                    margin: 0;
+                    font-size: 12px;
+                }
+            }
 
             .rangeBox {
                 width: 100%;

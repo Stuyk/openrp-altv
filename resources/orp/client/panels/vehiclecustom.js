@@ -5,12 +5,11 @@ import { showCursor } from '/client/utility/cursor.js';
 
 const url = 'http://resource/client/html/vehiclecustom/index.html';
 let webview;
-let vehicleChanges = {};
 let previousVehicle = {};
-let previousColors = {};
-let colors = {};
 let wheelType = 0;
 let wheelIndex = 0;
+let paintType1 = 0;
+let paintType2 = 0;
 let targetVeh;
 
 const modTypes = [
@@ -76,9 +75,6 @@ export function showDialogue() {
     if (alt.Player.local.getMeta('arrest')) return;
 
     previousVehicle = {};
-    vehicleChanges = {};
-    previousColors = {};
-    colors = {};
 
     // Setup Webview
     webview.open(url, true);
@@ -87,6 +83,9 @@ export function showDialogue() {
     webview.on('custom:AdjustWheelType', customAdjustWheelType);
     webview.on('custom:AdjustRotation', customAdjustRotation);
     webview.on('custom:AdjustColor', customAdjustColor);
+    webview.on('custom:Buy', customBuy);
+    webview.on('custom:Close', customClose);
+    webview.on('custom:AdjustPaint', customAdjustPaint);
     alt.emit('hud:Hide', true);
     alt.emit('chat:Hide', true);
     getPreviousVehicleMods();
@@ -138,24 +137,22 @@ function getPreviousVehicleColors() {
         undefined
     );
 
-    previousColors = {
-        primary: {
-            type: primaryPaintType,
-            color: {
-                r: pr,
-                g: pg,
-                b: pb
-            }
-        },
-        secondary: {
-            type: secondaryPaintType,
-            color: {
-                r: sr,
-                g: sg,
-                b: sb
-            }
-        }
+    previousVehicle[`${-1}`] = {
+        r: pr,
+        g: pg,
+        b: pb
     };
+
+    previousVehicle[`${-2}`] = {
+        r: sr,
+        g: sg,
+        b: sb
+    };
+
+    previousVehicle[`${-3}`] = primaryPaintType;
+    previousVehicle[`${-4}`] = secondaryPaintType;
+    paintType1 = primaryPaintType;
+    paintType2 = secondaryPaintType;
 }
 
 function customFetchMods() {
@@ -182,7 +179,7 @@ function customFetchMods() {
     }
 
     webview.emit('custom:SetMods', mods);
-    webview.emit('custom:SetColors', previousColors);
+    // webview.emit('custom:SetColors', previousColors);
 }
 
 function customAdjustMod(index, value) {
@@ -206,15 +203,26 @@ function customAdjustWheelType(value) {
     native.setVehicleMod(targetVeh, 23, wheelIndex, true);
 }
 
-function customAdjustColor(primary, secondary) {
-    native.setVehicleCustomPrimaryColour(targetVeh, primary.pr, primary.pg, primary.pb);
-    native.setVehicleCustomSecondaryColour(
-        targetVeh,
-        secondary.sr,
-        secondary.sg,
-        secondary.sb
-    );
+function customAdjustPaint(variable, value) {
+    if (variable === -3) {
+        paintType1 = value;
+        return;
+    }
+
+    paintType2 = value;
 }
+
+function customAdjustColor(prim, sec) {
+    native.setVehicleModColor1(targetVeh, paintType1, 0, 0);
+    native.setVehicleCustomPrimaryColour(targetVeh, prim.pr, prim.pg, prim.pb);
+
+    native.setVehicleModColor2(targetVeh, paintType2, 0, 0);
+    native.setVehicleCustomSecondaryColour(targetVeh, sec.sr, sec.sg, sec.sb);
+}
+
+function customBuy(newData) {}
+
+function customClose() {}
 
 function saveChanges() {
     webview.close();
@@ -224,8 +232,6 @@ function saveChanges() {
     Object.keys(vehicleChanges).forEach(key => {
         previousVehicle[key] = vehicleChanges[key];
     });
-
-    previousVehicle.colors = colors;
 
     // New modification list is sent up.
     alt.emitServer(

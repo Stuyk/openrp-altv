@@ -30,7 +30,8 @@ class App extends Component {
             pb: 0,
             sr: 0,
             sg: 0,
-            sb: 0
+            sb: 0,
+            cart: []
         };
     }
 
@@ -93,10 +94,142 @@ class App extends Component {
         }
     }
 
+    adjustPaint(variable, value) {
+        value = parseInt(value);
+        this.setState({ [variable]: value });
+        if ('alt' in window) {
+            alt.emit('custom:AdjustPaint', variable, value);
+            alt.emit(
+                'custom:AdjustColor',
+                {
+                    pr: this.state.pr,
+                    pg: this.state.pg,
+                    pb: this.state.pb
+                },
+                {
+                    sr: this.state.sr,
+                    sg: this.state.sg,
+                    sb: this.state.sb
+                }
+            );
+        }
+    }
+
     toggleExpand(e) {
         const value = e.target.id;
         const toggleState = !this.state[`toggle${value}`] ? true : false;
         this.setState({ [`toggle${value}`]: toggleState });
+    }
+
+    addToBasket(index, value, name) {
+        const cart = [...this.state.cart];
+        const existIndex = cart.findIndex(item => item.id === index);
+        if (existIndex !== -1) {
+            cart[existIndex].value = value;
+        } else {
+            cart.push({ id: index, value, name });
+        }
+
+        this.setState({ cart });
+    }
+
+    rmvFromBasket(e) {
+        const id = parseInt(e.target.id);
+        const cart = [...this.state.cart];
+        cart.splice(id, 1);
+        this.setState({ cart });
+    }
+
+    purchase() {
+        const cart = [...this.state.cart];
+        if (cart.length <= 0) {
+            return;
+        }
+
+        const saveData = {};
+        cart.forEach(item => {
+            if (item.id === -1) {
+                saveData[item.id] = {
+                    r: this.state.pr,
+                    g: this.state.pg,
+                    b: this.state.pb
+                };
+
+                return;
+            }
+
+            if (item.id === -2) {
+                saveData[item.id] = {
+                    r: this.state.sr,
+                    g: this.state.sg,
+                    b: this.state.sb
+                };
+                return;
+            }
+
+            saveData[item.id] = item.value;
+        });
+
+        // Primary Paint
+        if (this.state[-3]) {
+            saveData[-3] = this.state[-3];
+        }
+
+        // Secondary Paint
+        if (this.state[-4]) {
+            saveData[-4] = this.state[-4];
+        }
+
+        if ('alt' in window) {
+            alt.emit('custom:Buy', saveData);
+        } else {
+            console.log(saveData);
+        }
+    }
+
+    exit() {
+        if ('alt' in window) {
+            alt.emit('custom:Close');
+        }
+    }
+
+    getShoppingBasket() {
+        const basket = this.state.cart.map((item, index) => {
+            return h(
+                'div',
+                { class: 'item' },
+                h('div', { class: 'label' }, `${item.name} : ${item.value}`),
+                h(
+                    'button',
+                    {
+                        class: 'remove',
+                        id: index,
+                        onclick: this.rmvFromBasket.bind(this)
+                    },
+                    'X'
+                )
+            );
+        });
+
+        if (basket.length >= 1) {
+            basket.push(
+                h(
+                    'button',
+                    { class: 'purchase', onclick: this.purchase.bind(this) },
+                    'Purchase All'
+                )
+            );
+        }
+
+        basket.push(
+            h(
+                'button',
+                { class: 'exit', onclick: this.exit.bind(this) },
+                'Exit (No Purchase)'
+            )
+        );
+
+        return h('div', { class: 'items' }, basket);
     }
 
     render() {
@@ -109,7 +242,9 @@ class App extends Component {
                     adjustMod: this.adjustMod.bind(this),
                     adjustWheelType: this.adjustWheelType.bind(this),
                     toggleExpand: this.toggleExpand.bind(this),
-                    adjustColor: this.adjustColor.bind(this)
+                    adjustColor: this.adjustColor.bind(this),
+                    addToBasket: this.addToBasket.bind(this),
+                    adjustPaint: this.adjustPaint.bind(this)
                 }
             }),
             h(
@@ -121,6 +256,13 @@ class App extends Component {
                     max: 360,
                     oninput: this.adjustRotation.bind(this)
                 })
+            ),
+            h(
+                'div',
+                { class: 'basket' },
+                h('div', { class: 'label' }, 'Basket'),
+                h('p', {}, 'Add items on the right into this basket for purchase.'),
+                h(this.getShoppingBasket.bind(this))
             )
         );
     }
@@ -174,7 +316,16 @@ const ModItem = ({ state, functions }) => {
                         }),
                         h('p', {}, mod.max)
                     ),
-                    h('button', { class: 'addToBasket' }, 'Add To Basket')
+                    h(
+                        'button',
+                        {
+                            class: 'addToBasket',
+                            onclick: e => {
+                                functions.addToBasket(mod.index, value, mod.slotName);
+                            }
+                        },
+                        'Add To Basket'
+                    )
                 )
         );
     });
@@ -222,7 +373,16 @@ const ModItem = ({ state, functions }) => {
                         }),
                         h('p', {}, 7)
                     ),
-                    h('button', { class: 'addToBasket' }, 'Add To Basket')
+                    h(
+                        'button',
+                        {
+                            class: 'addToBasket',
+                            onclick: e => {
+                                functions.addToBasket(221, state.wheelType, 'Wheel Type');
+                            }
+                        },
+                        'Add To Basket'
+                    )
                 )
         )
     );
@@ -253,6 +413,55 @@ const ModItem = ({ state, functions }) => {
                 h(
                     'div',
                     { class: 'footer' },
+                    h(
+                        'div',
+                        { class: 'paintTypes' },
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint2',
+                            value: 0,
+                            onclick: e => {
+                                functions.adjustPaint(-4, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Normal'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint2',
+                            value: 1,
+                            onclick: e => {
+                                functions.adjustPaint(-4, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Metallic'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint2',
+                            value: 2,
+                            onclick: e => {
+                                functions.adjustPaint(-4, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Pearl'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint2',
+                            value: 3,
+                            onclick: e => {
+                                functions.adjustPaint(-4, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Metal'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint2',
+                            value: 4,
+                            onclick: e => {
+                                functions.adjustPaint(-4, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Chrome')
+                    ),
                     h(colorPicker, { state, functions, letter: 's' }),
                     h('input', {
                         class: 'largeInput',
@@ -270,7 +479,16 @@ const ModItem = ({ state, functions }) => {
                             functions.adjustColor('sb', color.b);
                         }
                     }),
-                    h('button', { class: 'addToBasket' }, 'Add To Basket')
+                    h(
+                        'button',
+                        {
+                            class: 'addToBasket',
+                            onclick: e => {
+                                functions.addToBasket(-2, 'srgb', 'Secondary Color');
+                            }
+                        },
+                        'Add To Basket'
+                    )
                 )
         )
     );
@@ -301,6 +519,55 @@ const ModItem = ({ state, functions }) => {
                 h(
                     'div',
                     { class: 'footer' },
+                    h(
+                        'div',
+                        { class: 'paintTypes' },
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint1',
+                            value: 0,
+                            onclick: e => {
+                                functions.adjustPaint(-3, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Normal'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint1',
+                            value: 1,
+                            onclick: e => {
+                                functions.adjustPaint(-3, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Metallic'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint1',
+                            value: 2,
+                            onclick: e => {
+                                functions.adjustPaint(-3, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Pearl'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint1',
+                            value: 3,
+                            onclick: e => {
+                                functions.adjustPaint(-3, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Metal'),
+                        h('input', {
+                            type: 'radio',
+                            name: 'paint1',
+                            value: 4,
+                            onclick: e => {
+                                functions.adjustPaint(-3, e.target.value);
+                            }
+                        }),
+                        h('p', {}, 'Chrome')
+                    ),
                     h(colorPicker, { state, functions, letter: 'p' }),
                     h('input', {
                         class: 'largeInput',
@@ -318,7 +585,16 @@ const ModItem = ({ state, functions }) => {
                             functions.adjustColor('pb', color.b);
                         }
                     }),
-                    h('button', { class: 'addToBasket' }, 'Add To Basket')
+                    h(
+                        'button',
+                        {
+                            class: 'addToBasket',
+                            onclick: e => {
+                                functions.addToBasket(-1, 'prgb', 'Primary Color');
+                            }
+                        },
+                        'Add To Basket'
+                    )
                 )
         )
     );

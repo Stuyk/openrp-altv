@@ -116,6 +116,13 @@ chat.registerCmd('sf', player => {
 });
 
 chat.registerCmd('d20', player => {
+    const diceCount = player.hasQuantityOfItem('dice', 1);
+
+    if (!diceCount) {
+        player.send('You cannot roll without a dice.');
+        return;
+    }
+
     const d20 = Math.floor(Math.random() * 20) + 1;
     const msg = `Rolls a dice and it lands on ${d20}`;
     let inRange = vector.getPlayersInRange(

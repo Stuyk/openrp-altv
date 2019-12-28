@@ -118,7 +118,8 @@ const icons = [
     'wheat',
     'wine',
     'wood',
-    'woodcutting'
+    'woodcutting',
+    'dice'
 ];
 
 const slots = [

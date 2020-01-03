@@ -25,7 +25,7 @@ class App extends Component {
             noteFade: 0.0,
             xOffset: 0,
             isInVehicle: false,
-            watermark: ' '
+            watermark: 'Created by https://twitch.tv/stuyksoft - https://github.com/Stuyk/altV-Open-Roleplay-altLife-Official'
         };
         this.contextRef = createRef();
         setInterval(this.notificationInterval.bind(this), 1000);

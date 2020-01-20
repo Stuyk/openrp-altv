@@ -30,7 +30,7 @@ export const ClothingProperties = {
         },
         {
             label: 'Undershirt Texture',
-            key: 'undershirt',
+            key: 'undershirttexture',
             value: 0,
             min: 0,
             max: 1,

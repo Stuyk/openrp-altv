@@ -30,6 +30,10 @@ I have put a ton of work into this project. If you do not want to contribute cod
 3. Don't Remove O:RP Links or Twitch Links from gamemode.
 4. At least mention this repository; before claiming it as your own.
 
+### Servers Who Have Monetization Allowance
+
+* ctgaming.fr
+
 ### 🚧 Feature List and Roadmap
 
 You can find a full list of features and the roadmap [here](https://docs.google.com/document/d/19f9xTn6m3qVfUZYV6cQ8dMstLLdfYC2BavTV7YpzfLc/).

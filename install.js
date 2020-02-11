@@ -1,12 +1,20 @@
-const fs = require('fs');
-const download = require('download');
-const path = require('path');
-const exec = require('child_process').exec;
-const platform = process.platform === 'win32' ? 'windows' : 'linux';
-const readline = require('readline').createInterface({
+import { existsSync, writeFile, copyFile } from 'fs';
+import download from 'download';
+import { join } from 'path';
+import { exec } from 'child_process';
+import readline from 'readline';
+
+var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
-});
+  });
+
+import path from 'path';
+const __dirname = path.resolve();
+
+
+const platform = process.platform === 'win32' ? 'windows' : 'linux';
+
 const terms = {
     author: '\r\nAuthor: https://github.com/stuyk/ \r\n',
     license: 'License: GNU GENERAL PUBLIC LICENSE v3 \r\n',
@@ -99,7 +107,7 @@ let linuxURLS = [
 
 async function question(question) {
     return new Promise(resolve => {
-        readline.question(`\x1b[32m${question}\x1b[0m`, res => {
+        rl.question(`\x1b[32m${question}\x1b[0m`, res => {
             if (!res) {
                 res = undefined;
             }
@@ -129,10 +137,10 @@ async function startup() {
         console.log(term);
     });
 
-    const termPath = path.join(__dirname, '/resources/orp/terms-and-conditions.json');
+    const termPath = join(__dirname, '/resources/orp/terms-and-conditions.json');
     let res;
 
-    if (!fs.existsSync(termPath)) {
+    if (!existsSync(termPath)) {
         // Terms and Conditions
         const q1 = '\r\nPlease read the above terms and conditions. \r\n \r\n';
         res = await question(q1);
@@ -146,7 +154,7 @@ async function startup() {
 
         terms.do_you_agree = true;
         await new Promise(resolve => {
-            fs.writeFile(termPath, JSON.stringify(terms, null, '\t'), () => {
+            writeFile(termPath, JSON.stringify(terms, null, '\t'), () => {
                 console.log('\r\n Terms written successfully. \r\n');
                 resolve();
             });
@@ -154,7 +162,7 @@ async function startup() {
     }
 
     // Database Setup
-    const dbPath = path.join(
+    const dbPath = join(
         __dirname,
         '/resources/orp/server/configuration/database.json'
     );
@@ -203,7 +211,7 @@ async function startup() {
         }
 
         await new Promise(resolve => {
-            fs.writeFile(dbPath, JSON.stringify(dbDefault, null, '\t'), () => {
+            writeFile(dbPath, JSON.stringify(dbDefault, null, '\t'), () => {
                 console.log('\r\nDatabase configured.\r\n');
                 resolve();
             });
@@ -253,13 +261,13 @@ async function startup() {
             res = undefined;
         }
 
-        const discordConfigPath = path.join(
+        const discordConfigPath = join(
             __dirname,
             '/resources/orp/server/discord/configuration.json'
         );
 
         await new Promise(resolve => {
-            fs.writeFile(
+            writeFile(
                 discordConfigPath,
                 JSON.stringify(discordAppInfo, null, '\t'),
                 () => {
@@ -320,9 +328,9 @@ async function startup() {
     }
 
     // Copy server.cfg
-    const serverCfgFile = path.join(__dirname, '/server.cfg');
-    if (!fs.existsSync(serverCfgFile)) {
-        fs.copyFile(serverCfgFile + '.example', serverCfgFile, err => {
+    const serverCfgFile = join(__dirname, '/server.cfg');
+    if (!existsSync(serverCfgFile)) {
+        copyFile(serverCfgFile + '.example', serverCfgFile, err => {
             if (err) throw err;
             console.log('server.cfg.example was copied to server.cfg');
         });

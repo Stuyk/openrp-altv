@@ -16,7 +16,6 @@ const platform = process.platform === 'win32' ? 'windows' : 'linux';
 
 const terms = {
     author: '\r\nAuthor: https://github.com/stuyk/ \r\n',
-    license: 'License: GNU GENERAL PUBLIC LICENSE v3 \r\n',
     terms: [
         'By using this software for your Roleplay mode you agree to the following:',
         'Manipulation of bootscreen logos, and splash marks may not be removed. This data',
@@ -131,7 +130,6 @@ async function downloadAll(urls) {
 
 async function startup() {
     console.log(terms.author);
-    console.log(terms.license);
     terms.terms.forEach(term => {
         console.log(term);
     });

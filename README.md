@@ -32,7 +32,7 @@ I have put a ton of work into this project. If you do not want to contribute cod
 
 ### Servers Who Have Monetization Allowance
 
-* ctgaming.fr
+-   ctgaming.fr
 
 ### 🚧 Feature List and Roadmap
 
@@ -49,14 +49,13 @@ Tab --------> Press to Toggle Cursor
 Tab + RMB  -> Show Context Menu on User
 Tab + LMB  -> Select Context Option
 T ----------> Open Chat
-F1 ---------> Help Menu
 U ----------> Open Gang Menu (Notoriety 25+)
 Shift + F7 -> Toggle Chat
 ```
 
 ## 💻 Installation
 
-#### If you don't have NodeJS v12+; please go install it.
+#### If you don't have NodeJS v13+; please go install it.
 
 **Requirements:**
 

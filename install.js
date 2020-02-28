@@ -7,11 +7,10 @@ import readline from 'readline';
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
-  });
+});
 
 import path from 'path';
 const __dirname = path.resolve();
-
 
 const platform = process.platform === 'win32' ? 'windows' : 'linux';
 
@@ -25,7 +24,7 @@ const terms = {
         'of this game mode is STRICTLY PROHIBITED. You may NOT establish any form of monetization',
         'features in this gamemode. \r\n',
         'Setting the agreement boolean below to true; means you AGREE to these terms and',
-        'conditions. \r\n',
+        'conditions. If you wish to monetize this gamemode. Contact Stuyk. \r\n',
         'If you have any issues with these conditions; contact Stuyk promptly.',
         'If you agree with these terms. Please type true.',
         '\r\n\x1b[31mINSTALL POSTGRES V11.5 BEFORE RUNNING THIS\r\n\x1b[0m'
@@ -162,10 +161,7 @@ async function startup() {
     }
 
     // Database Setup
-    const dbPath = join(
-        __dirname,
-        '/resources/orp/server/configuration/database.json'
-    );
+    const dbPath = join(__dirname, '/resources/orp/server/configuration/database.json');
 
     const newDatabase = 'Setup new database? (y/n) Default is y \r\n';
     res = await question(newDatabase);
@@ -279,8 +275,7 @@ async function startup() {
     }
 
     console.log(`Downloading Latest alt:V Server Files.`);
-    const q6 =
-        '\r\nWhich alt:V Branch? 0: Stable, 1: Beta, 2: Alpha [Default: Stable]\r\n';
+    const q6 = '\r\nWhich alt:V Branch? 0: Release, 1: RC, 2: Dev [Default: Release]\r\n';
     res = await question(q6);
 
     if (!res) {
@@ -291,33 +286,33 @@ async function startup() {
         if (platform === 'windows') {
             console.log('Windows');
             windowsURLS.forEach(res => {
-                res.url = res.url.replace('beta', 'stable');
+                res.url = res.url.replace('beta', 'release');
             });
-            console.log('You have selected the STABLE branch.');
+            console.log('You have selected the RELEASE branch.');
         } else {
             console.log('Linux');
             linuxURLS.forEach(res => {
-                res.url = res.url.replace('beta', 'stable');
+                res.url = res.url.replace('beta', 'release');
             });
-            console.log('You have selected the STABLE branch.');
+            console.log('You have selected the RELEASE branch.');
         }
     }
 
     if (parseInt(res) === 1) {
-        console.log('You have selected the BETA branch.');
+        console.log('You have selected the RC branch.');
     }
 
     if (parseInt(res) === 2) {
         if (platform === 'windows') {
             windowsURLS.forEach(res => {
-                res.url = res.url.replace('beta', 'alpha');
+                res.url = res.url.replace('beta', 'dev');
             });
-            console.log('You have selected the STABLE branch.');
+            console.log('You have selected the DEV branch.');
         } else {
             linuxURLS.forEach(res => {
-                res.url = res.url.replace('beta', 'alpha');
+                res.url = res.url.replace('beta', 'dev');
             });
-            console.log('You have selected the STABLE branch.');
+            console.log('You have selected the DEV branch.');
         }
     }
 

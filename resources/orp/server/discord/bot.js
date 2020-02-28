@@ -9,8 +9,6 @@ const db = new SQL();
 const client = new Discord.Client();
 alt.log('!!! => Loading Discord Bot');
 
-alt.onClient('discord:BearerToken', parseBearerToken);
-
 client.on('ready', () => {
     alt.log('!!! => Discord bot has authenticated successfully...');
 });
@@ -146,50 +144,3 @@ async function handleLoginRequest(author, msg) {
 
 // Establish Connection
 client.login(config.token);
-
-async function parseBearerToken(player, bearerToken) {
-    const result = await new Promise(resolve => {
-        get(
-            'https://discordapp.com/api/users/@me',
-            {
-                headers: {
-                    Authorization: `Bearer ${bearerToken}`
-                }
-            },
-            res => {
-                res.on('data', d => {
-                    resolve({ statusCode: res.statusCode, data: d.toString() });
-                });
-            }
-        ).on('error', e => {
-            return resolve({ statusCode: e.statusCode, data: '' });
-        });
-    });
-
-    if (result.statusCode !== 200) {
-        return;
-    }
-
-    const data = JSON.parse(result.data);
-    player.token = undefined;
-    delete player.token;
-    alt.emitClient(player, 'discord:Done');
-    alt.emit('discord:FinishLogin', player, {
-        id: data.id,
-        username: data.username,
-        discriminator: data.discriminator
-    });
-
-    const discordUser = client.users.get(data.id);
-    if (discordUser) {
-        const embed = new Discord.RichEmbed()
-            .setColor('#ff9100')
-            .setTitle('Login')
-            .setDescription(`You have been logged in under the IP of ${player.ip}`);
-
-        await discordUser.send({ embed }).catch(err => {
-            alt.log(`User could not be sent a PM.`);
-            return undefined;
-        });
-    }
-}

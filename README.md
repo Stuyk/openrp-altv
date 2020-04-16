@@ -2,11 +2,9 @@
 
 ---
 
-Open Roleplay is the base framework for my server: [alt:V Life](https://discord.gg/fc7P9eH).
-
 This project now serves as a reference for RP servers in the future; all additional updates are put on hold and privatized for alt:Life. The code base up to this point is considered free but the Terms and Conditions as well as licensing still stands.
 
-Reach out if you wish to monetize this gamemode.
+**IMPORTANT** If you are not a developer; this may not be the project for you. There is some general configuration that needs to be done and understanding code is important. This is NOT an OUT OF THE BOX gamemode. You must understand what is inside of this gamemode to get it to work properly.
 
 ---
 
@@ -22,6 +20,7 @@ I have put a ton of work into this project. If you do not want to contribute cod
 -   [PayPal Tipping](paypal.me/stuyk)
 -   [Twitch Subscription](https://www.twitch.tv/stuyksoft/)
 -   [Brave Browser Referral](https://brave.com/stu514)
+-   [alt:V Discord](https://discord.gg/q3zUUEC)
 
 ### 📝 Licensing
 
@@ -29,29 +28,23 @@ I have put a ton of work into this project. If you do not want to contribute cod
 2. Don't Remove Splash Marks
 3. Don't Remove O:RP Links or Twitch Links from gamemode.
 4. At least mention this repository; before claiming it as your own.
+5. Don't Resell my work. You're scum if you do this.
+6. Don't convert this project to other clients.
 
 ### Servers Who Have Monetization Allowance
 
 -   ctgaming.fr
 
+If you are interested in Monetizing this project it's a contract of 20% of total donations per month. You can reach out to me on Discord in the alt:V channels to get set this up.
+
 ### 🚧 Feature List and Roadmap
 
 You can find a full list of features and the roadmap [here](https://docs.google.com/document/d/19f9xTn6m3qVfUZYV6cQ8dMstLLdfYC2BavTV7YpzfLc/).
 
-**IMPORTANT** If you are not a developer; this may not be the project for you. There is some general configuration that needs to be done and understanding code is important.
+
 
 I **will not** be providing direct support for this gamemode; if you have an issue or come across actual functionality issues please raise an issue in the **issues** tab. Otherwise; additional help can be found by subscribing through [my twitch page](https://www.twitch.tv/stuyksoft/) and then joining the [Discord Group](https://discord.gg/gVfJkcs)
 
-### ⌨️ Hotkeys
-
-```
-Tab --------> Press to Toggle Cursor
-Tab + RMB  -> Show Context Menu on User
-Tab + LMB  -> Select Context Option
-T ----------> Open Chat
-U ----------> Open Gang Menu (Notoriety 25+)
-Shift + F7 -> Toggle Chat
-```
 
 ## 💻 Installation
 

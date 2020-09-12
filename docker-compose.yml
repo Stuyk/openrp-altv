@@ -16,7 +16,7 @@ services:
         - SERVER_PASSWORD=''
         - DISCORD_URL=
         - DISCORD_TOKEN=
-        - ALTV_VERSION=beta
+        - ALTV_VERSION=latest
     image: altv-openrp:latest
     container_name: altv-openrp
     ports:
